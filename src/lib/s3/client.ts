@@ -1,0 +1,14 @@
+import { S3Client } from "@aws-sdk/client-s3";
+
+export const s3Client = new S3Client({
+  region: process.env.AWS_REGION || "ap-northeast-2",
+  credentials: process.env.AWS_ACCESS_KEY_ID
+    ? {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      }
+    : undefined,
+});
+
+export const S3_BUCKET_UPLOADS = process.env.S3_BUCKET_UPLOADS || "kwonrishop-uploads";
+export const S3_BUCKET_REPORTS = process.env.S3_BUCKET_REPORTS || "kwonrishop-reports";

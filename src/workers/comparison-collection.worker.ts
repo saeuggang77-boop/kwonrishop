@@ -1,0 +1,158 @@
+import { Worker, type Job } from "bullmq";
+import { redis } from "@/lib/redis/client";
+import { prisma } from "@/lib/prisma";
+
+const RADII = [1, 3, 5]; // km
+
+function haversineDistance(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+interface ComparisonJobData {
+  listingId?: string; // If provided, process single listing. Otherwise all active.
+}
+
+async function collectComparisons(job: Job<ComparisonJobData>) {
+  const whereClause = {
+    status: "ACTIVE" as const,
+    latitude: { not: null },
+    longitude: { not: null },
+    ...(job.data.listingId ? { id: job.data.listingId } : {}),
+  };
+
+  const listings = await prisma.listing.findMany({
+    where: whereClause,
+    select: {
+      id: true,
+      latitude: true,
+      longitude: true,
+      rightsCategory: true,
+      price: true,
+    },
+  });
+
+  // All active listings for comparison (when processing a single listing)
+  const allListings = job.data.listingId
+    ? await prisma.listing.findMany({
+        where: {
+          status: "ACTIVE",
+          latitude: { not: null },
+          longitude: { not: null },
+        },
+        select: {
+          id: true,
+          latitude: true,
+          longitude: true,
+          rightsCategory: true,
+          price: true,
+        },
+      })
+    : listings;
+
+  let updated = 0;
+
+  for (const listing of listings) {
+    if (!listing.latitude || !listing.longitude) continue;
+
+    for (const radius of RADII) {
+      const nearby = allListings.filter((other) => {
+        if (other.id === listing.id) return false;
+        if (other.rightsCategory !== listing.rightsCategory) return false;
+        if (!other.latitude || !other.longitude) return false;
+        return (
+          haversineDistance(
+            listing.latitude!,
+            listing.longitude!,
+            other.latitude!,
+            other.longitude!
+          ) <= radius
+        );
+      });
+
+      if (nearby.length === 0) continue;
+
+      const prices = nearby
+        .map((n) => Number(n.price))
+        .sort((a, b) => a - b);
+      const avg = Math.round(
+        prices.reduce((a, b) => a + b, 0) / prices.length
+      );
+      const median =
+        prices.length % 2 === 0
+          ? Math.round(
+              (prices[prices.length / 2 - 1] + prices[prices.length / 2]) / 2
+            )
+          : prices[Math.floor(prices.length / 2)];
+
+      const listingPrice = Number(listing.price);
+      const belowCount = prices.filter((p) => p <= listingPrice).length;
+      const percentile = (belowCount / prices.length) * 100;
+
+      await prisma.listingComparison.upsert({
+        where: {
+          listingId_radiusKm: { listingId: listing.id, radiusKm: radius },
+        },
+        create: {
+          listingId: listing.id,
+          radiusKm: radius,
+          comparableCount: nearby.length,
+          avgKwonriPrice: BigInt(avg),
+          medianPrice: BigInt(median),
+          minPrice: BigInt(prices[0]),
+          maxPrice: BigInt(prices[prices.length - 1]),
+          pricePercentile: Math.round(percentile * 10) / 10,
+          computedAt: new Date(),
+        },
+        update: {
+          comparableCount: nearby.length,
+          avgKwonriPrice: BigInt(avg),
+          medianPrice: BigInt(median),
+          minPrice: BigInt(prices[0]),
+          maxPrice: BigInt(prices[prices.length - 1]),
+          pricePercentile: Math.round(percentile * 10) / 10,
+          computedAt: new Date(),
+        },
+      });
+
+      updated++;
+    }
+  }
+
+  return {
+    listingsProcessed: listings.length,
+    comparisonsUpdated: updated,
+    processedAt: new Date().toISOString(),
+  };
+}
+
+export const comparisonCollectionWorker = new Worker<ComparisonJobData>(
+  "comparison-collection",
+  collectComparisons,
+  {
+    connection: redis,
+    concurrency: 2,
+  }
+);
+
+comparisonCollectionWorker.on("completed", (job, result) => {
+  console.log(
+    `[comparison-collection] Completed: ${job.id} — ${result?.comparisonsUpdated ?? 0} updated`
+  );
+});
+
+comparisonCollectionWorker.on("failed", (job, err) => {
+  console.error(`[comparison-collection] Failed: ${job?.id}`, err.message);
+});

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="150" viewBox="0 0 600 150">
+  <!-- 배경(투명) -->
+  <rect width="600" height="150" fill="none"/>
+  <!-- 심볼: 핀 + 돋보기 (민트 + 딥네이비) -->
+  <g transform="translate(30,15)">
+    <path d="M40 0 C61 0 78 17 78 38 C78 68 40 110 40 110 C40 110 2 68 2 38 C2 17 19 0 40 0 Z" fill="#2EC4B6"/>
+    <circle cx="40" cy="38" r="16" fill="#ffffff"/>
+    <circle cx="40" cy="38" r="11" fill="#0B3B57"/>
+    <!-- 돋보기 손잡이 -->
+    <rect x="64" y="64" width="8" height="36" rx="4" transform="rotate(35 64 64)" fill="#0B3B57"/>
+    <circle cx="74" cy="74" r="6" fill="#0B3B57"/>
+  </g>
+  <!-- 워드마크: '권리샵' -->
+  <g transform="translate(140,60)" fill="#0B3B57" font-family="Noto Sans KR, Montserrat, sans-serif" font-weight="700">
+    <text x="0" y="0" font-size="48">권리샵</text>
+  </g>
+</svg>

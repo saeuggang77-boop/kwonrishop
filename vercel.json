@@ -1,0 +1,25 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/cron/collect-comparisons",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/etl-metrics",
+      "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/cron/settlements",
+      "schedule": "0 21 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-documents",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/expire-listings",
+      "schedule": "0 15 * * *"
+    }
+  ]
+}

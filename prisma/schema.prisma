@@ -1,0 +1,738 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  PENDING_VERIFICATION
+  HIDDEN
+  SOLD
+  EXPIRED
+  DELETED
+}
+
+enum RightsCategory {
+  JEONSE
+  WOLSE
+  MORTGAGE
+  OWNERSHIP
+  SUPERFICIES
+  EASEMENT
+  LIEN
+  PROVISIONAL_REG
+  LEASE_RIGHT
+  AUCTION
+  OTHER
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  OFFICETEL
+  DETACHED_HOUSE
+  COMMERCIAL
+  OFFICE
+  LAND
+  FACTORY
+  OTHER
+}
+
+enum DocumentType {
+  REGISTRY_COPY
+  BUILDING_LEDGER
+  LAND_LEDGER
+  CADASTRAL_MAP
+  CONTRACT
+  ID_VERIFICATION
+  BUSINESS_LICENSE
+  OTHER
+}
+
+enum DocumentAccessLevel {
+  PUBLIC
+  BUYER_ONLY
+  ADMIN_ONLY
+  OWNER_ONLY
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  FAILED
+  CANCELLED
+  REFUNDED
+  PARTIAL_REFUND
+}
+
+enum PaymentType {
+  PREMIUM_SUBSCRIPTION
+  DEEP_REPORT
+  FEATURED_LISTING
+  ADVERTISEMENT
+}
+
+enum SubscriptionTier {
+  FREE
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+}
+
+enum FraudRuleType {
+  DUPLICATE_PHOTO
+  PRICE_SPIKE
+  MULTI_ACCOUNT_CONTACT
+  SUSPICIOUS_DESCRIPTION
+  RAPID_RELISTING
+}
+
+enum FraudSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FraudViolationStatus {
+  PENDING
+  REVIEWED
+  APPROVED
+  REJECTED
+}
+
+enum AdminActionType {
+  APPROVE
+  REJECT
+  REQUEST_MORE_INFO
+  HIDE_LISTING
+  RESTORE_LISTING
+  SUSPEND_USER
+  UNSUSPEND_USER
+}
+
+enum ReportStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum EventType {
+  VIEW_LISTING
+  CLICK_CTA
+  INQUIRY_SENT
+  PURCHASE_PREMIUM
+  UPLOAD_DOCUMENT
+  DOWNLOAD_REPORT
+  SEARCH_PERFORMED
+  LISTING_CREATED
+  LISTING_UPDATED
+  PAYMENT_COMPLETED
+}
+
+enum SettlementStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ============================================================
+// AUTH (NextAuth.js v5 / Auth.js)
+// ============================================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================
+// USER
+// ============================================================
+
+model User {
+  id               String           @id @default(cuid())
+  name             String?
+  email            String?          @unique
+  emailVerified    DateTime?
+  image            String?
+  phone            String?          @unique
+  hashedPassword   String?
+  role             UserRole         @default(BUYER)
+  accountStatus    AccountStatus    @default(ACTIVE)
+  businessName     String?
+  businessNumber   String?
+  subscriptionTier SubscriptionTier @default(FREE)
+  violationCount   Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  listings        Listing[]
+  documents       Document[]
+  inquiriesSent   Inquiry[]          @relation("InquirySender")
+  inquiriesRecv   Inquiry[]          @relation("InquiryReceiver")
+  payments        Payment[]
+  subscription    Subscription?
+  reports         Report[]
+  events          Event[]
+  fraudFlags      FraudViolation[]   @relation("FlaggedUser")
+  adminActions    AdminAuditLog[]    @relation("AdminActor")
+  settlements     Settlement[]
+  notifications   Notification[]
+
+  @@index([role])
+  @@index([accountStatus])
+  @@map("users")
+}
+
+// ============================================================
+// LISTING
+// ============================================================
+
+model Listing {
+  id              String         @id @default(cuid())
+  sellerId        String
+  title           String
+  description     String         @db.Text
+  rightsCategory  RightsCategory
+  propertyType    PropertyType
+  price           BigInt
+  monthlyRent     BigInt?
+  maintenanceFee  BigInt?
+  address         String
+  addressDetail   String?
+  city            String
+  district        String
+  neighborhood    String?
+  postalCode      String?
+  latitude        Float?
+  longitude       Float?
+  areaM2          Float?
+  areaPyeong      Float?
+  floor           Int?
+  totalFloors     Int?
+  buildYear       Int?
+  roomCount       Int?
+  bathroomCount   Int?
+  registryNumber  String?
+  rightsPriority  Int?
+  expirationDate  DateTime?
+  status          ListingStatus  @default(DRAFT)
+  isFeatured      Boolean        @default(false)
+  isPremium       Boolean        @default(false)
+  viewCount       Int            @default(0)
+  inquiryCount    Int            @default(0)
+  favoriteCount   Int            @default(0)
+  contactPhone    String?
+  contactEmail    String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  publishedAt     DateTime?
+  expiresAt       DateTime?
+
+  seller          User              @relation(fields: [sellerId], references: [id])
+  images          ListingImage[]
+  documents       Document[]
+  inquiries       Inquiry[]
+  fraudViolations FraudViolation[]
+  comparisons     ListingComparison[]
+  reports         Report[]
+  events          Event[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([rightsCategory])
+  @@index([propertyType])
+  @@index([city, district])
+  @@index([price])
+  @@index([latitude, longitude])
+  @@index([createdAt])
+  @@map("listings")
+}
+
+model ListingImage {
+  id             String   @id @default(cuid())
+  listingId      String
+  url            String
+  s3Key          String
+  thumbnailUrl   String?
+  perceptualHash String?
+  averageHash    String?
+  sortOrder      Int      @default(0)
+  isPrimary      Boolean  @default(false)
+  width          Int?
+  height         Int?
+  sizeBytes      Int?
+  mimeType       String?
+  createdAt      DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([perceptualHash])
+  @@map("listing_images")
+}
+
+// ============================================================
+// DOCUMENT (task 012)
+// ============================================================
+
+model Document {
+  id              String              @id @default(cuid())
+  uploaderId      String
+  listingId       String?
+  documentType    DocumentType
+  fileName        String
+  mimeType        String
+  sizeBytes       Int
+  s3Key           String
+  kmsKeyId        String?
+  encryptionIv    String?
+  accessLevel     DocumentAccessLevel @default(OWNER_ONLY)
+  expiresAt       DateTime?
+  isDeleted       Boolean             @default(false)
+  deletedAt       DateTime?
+  consentGiven    Boolean             @default(false)
+  consentGivenAt  DateTime?
+  hasClientMask   Boolean             @default(false)
+  maskRegions     Json?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  uploader User     @relation(fields: [uploaderId], references: [id])
+  listing  Listing? @relation(fields: [listingId], references: [id])
+
+  @@index([uploaderId])
+  @@index([listingId])
+  @@index([expiresAt])
+  @@index([documentType])
+  @@map("documents")
+}
+
+// ============================================================
+// INQUIRY
+// ============================================================
+
+model Inquiry {
+  id         String   @id @default(cuid())
+  listingId  String
+  senderId   String
+  receiverId String
+  message    String   @db.Text
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  listing  Listing @relation(fields: [listingId], references: [id])
+  sender   User    @relation("InquirySender", fields: [senderId], references: [id])
+  receiver User    @relation("InquiryReceiver", fields: [receiverId], references: [id])
+
+  @@index([listingId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+  @@map("inquiries")
+}
+
+// ============================================================
+// PAYMENT (TossPayments)
+// ============================================================
+
+model Payment {
+  id              String        @id @default(cuid())
+  userId          String
+  orderId         String        @unique
+  tossPaymentKey  String?       @unique
+  tossOrderName   String?
+  amount          BigInt
+  paymentType     PaymentType
+  paymentStatus   PaymentStatus @default(PENDING)
+  method          String?
+  cardCompany     String?
+  cardNumber      String?
+  receiptUrl      String?
+  refundAmount    BigInt?
+  refundReason    String?
+  refundedAt      DateTime?
+  metadata        Json?
+  paidAt          DateTime?
+  failedAt        DateTime?
+  failReason      String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id])
+  report       Report?
+  settlement   Settlement? @relation(fields: [settlementId], references: [id])
+  settlementId String?
+
+  @@index([userId])
+  @@index([paymentStatus])
+  @@index([paymentType])
+  @@index([createdAt])
+  @@map("payments")
+}
+
+// ============================================================
+// SUBSCRIPTION
+// ============================================================
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  tier               SubscriptionTier   @default(FREE)
+  status             SubscriptionStatus @default(ACTIVE)
+  billingKey         String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelledAt        DateTime?
+  cancelReason       String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([status])
+  @@index([currentPeriodEnd])
+  @@map("subscriptions")
+}
+
+// ============================================================
+// FRAUD DETECTION (task 011)
+// ============================================================
+
+model FraudRule {
+  id          String        @id @default(cuid())
+  ruleType    FraudRuleType
+  name        String
+  description String?
+  parameters  Json
+  isActive    Boolean       @default(true)
+  severity    FraudSeverity @default(MEDIUM)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  violations FraudViolation[]
+
+  @@map("fraud_rules")
+}
+
+model FraudViolation {
+  id         String               @id @default(cuid())
+  listingId  String
+  userId     String
+  ruleId     String
+  severity   FraudSeverity
+  status     FraudViolationStatus @default(PENDING)
+  details    Json
+  reviewedBy String?
+  reviewedAt DateTime?
+  reviewNote String?
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  listing Listing   @relation(fields: [listingId], references: [id])
+  user    User      @relation("FlaggedUser", fields: [userId], references: [id])
+  rule    FraudRule @relation(fields: [ruleId], references: [id])
+
+  @@index([listingId])
+  @@index([userId])
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt])
+  @@map("fraud_violations")
+}
+
+// ============================================================
+// ADMIN AUDIT (task 014)
+// ============================================================
+
+model AdminAuditLog {
+  id         String          @id @default(cuid())
+  adminId    String
+  action     AdminActionType
+  targetType String
+  targetId   String
+  reason     String?
+  metadata   Json?
+  createdAt  DateTime        @default(now())
+
+  admin User @relation("AdminActor", fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
+}
+
+// ============================================================
+// REPORT (tasks 013, 018)
+// ============================================================
+
+model Report {
+  id               String       @id @default(cuid())
+  userId           String
+  listingId        String
+  paymentId        String?      @unique
+  status           ReportStatus @default(QUEUED)
+  dataSources      Json?
+  modelAssumptions Json?
+  modelVersion     String?
+  generatedAt      DateTime?
+  legalDisclaimer  String?      @db.Text
+  s3Key            String?
+  downloadUrl      String?
+  emailSentAt      DateTime?
+  errorMessage     String?
+  retryCount       Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  listing Listing  @relation(fields: [listingId], references: [id])
+  payment Payment? @relation(fields: [paymentId], references: [id])
+
+  @@index([userId])
+  @@index([listingId])
+  @@index([status])
+  @@map("reports")
+}
+
+// ============================================================
+// EVENTS & ANALYTICS (task 016)
+// ============================================================
+
+model Event {
+  id        String    @id @default(cuid())
+  userId    String?
+  listingId String?
+  eventType EventType
+  metadata  Json?
+  sessionId String?
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+  createdAt DateTime  @default(now())
+
+  user    User?    @relation(fields: [userId], references: [id])
+  listing Listing? @relation(fields: [listingId], references: [id])
+
+  @@index([eventType])
+  @@index([userId])
+  @@index([listingId])
+  @@index([createdAt])
+  @@map("events")
+}
+
+model DailyListingMetric {
+  id            String   @id @default(cuid())
+  listingId     String
+  date          DateTime @db.Date
+  viewCount     Int      @default(0)
+  ctaClickCount Int      @default(0)
+  inquiryCount  Int      @default(0)
+  favoriteCount Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  @@unique([listingId, date])
+  @@index([listingId])
+  @@index([date])
+  @@map("daily_listing_metrics")
+}
+
+model DailySellerMetric {
+  id             String   @id @default(cuid())
+  sellerId       String
+  date           DateTime @db.Date
+  totalViews     Int      @default(0)
+  totalInquiries Int      @default(0)
+  totalCtaClicks Int      @default(0)
+  conversionRate Float?
+  activeListings Int      @default(0)
+  newListings    Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@unique([sellerId, date])
+  @@index([sellerId])
+  @@index([date])
+  @@map("daily_seller_metrics")
+}
+
+// ============================================================
+// COMPARABLE LISTINGS (task 017)
+// ============================================================
+
+model ListingComparison {
+  id              String   @id @default(cuid())
+  listingId       String
+  radiusKm        Float
+  comparableCount Int      @default(0)
+  avgKwonriPrice  BigInt?
+  avgRentPrice    BigInt?
+  avgSalePrice    BigInt?
+  medianPrice     BigInt?
+  minPrice        BigInt?
+  maxPrice        BigInt?
+  pricePercentile Float?
+  computedAt      DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@unique([listingId, radiusKm])
+  @@index([listingId])
+  @@map("listing_comparisons")
+}
+
+// ============================================================
+// SETTLEMENT (task 020)
+// ============================================================
+
+model Settlement {
+  id            String           @id @default(cuid())
+  sellerId      String
+  periodStart   DateTime
+  periodEnd     DateTime
+  totalAmount   BigInt
+  feeAmount     BigInt
+  netAmount     BigInt
+  status        SettlementStatus @default(PENDING)
+  bankCode      String?
+  accountNumber String?
+  accountHolder String?
+  processedAt   DateTime?
+  emailSentAt   DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  seller   User      @relation(fields: [sellerId], references: [id])
+  payments Payment[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([periodStart, periodEnd])
+  @@map("settlements")
+}
+
+// ============================================================
+// NOTIFICATION
+// ============================================================
+
+model Notification {
+  id         String   @id @default(cuid())
+  userId     String
+  title      String
+  message    String   @db.Text
+  link       String?
+  isRead     Boolean  @default(false)
+  readAt     DateTime?
+  sourceType String?
+  sourceId   String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================================
+// LEGAL (task 015)
+// ============================================================
+
+model LegalDocument {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  content       String   @db.Text
+  version       String
+  isActive      Boolean  @default(true)
+  effectiveDate DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  consents UserConsent[]
+
+  @@map("legal_documents")
+}
+
+model UserConsent {
+  id              String   @id @default(cuid())
+  userId          String
+  legalDocumentId String
+  consentedAt     DateTime @default(now())
+  ipAddress       String?
+  userAgent       String?
+
+  legalDocument LegalDocument @relation(fields: [legalDocumentId], references: [id])
+
+  @@unique([userId, legalDocumentId])
+  @@index([userId])
+  @@map("user_consents")
+}

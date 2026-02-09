@@ -1,0 +1,19 @@
+import { z } from "zod/v4";
+
+export const confirmPaymentSchema = z.object({
+  paymentKey: z.string().min(1),
+  orderId: z.string().min(6).max(64),
+  amount: z.number().int().positive(),
+});
+
+export const purchaseReportSchema = z.object({
+  listingId: z.string().min(1),
+});
+
+export const createSubscriptionSchema = z.object({
+  tier: z.enum(["BASIC", "PREMIUM"]),
+});
+
+export type ConfirmPaymentInput = z.infer<typeof confirmPaymentSchema>;
+export type PurchaseReportInput = z.infer<typeof purchaseReportSchema>;
+export type CreateSubscriptionInput = z.infer<typeof createSubscriptionSchema>;

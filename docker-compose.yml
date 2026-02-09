@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kwonrishop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kwonrishop
+      POSTGRES_PASSWORD: kwonrishop_dev
+      POSTGRES_DB: kwonrishop
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: kwonrishop-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  workers:
+    build:
+      context: .
+      dockerfile: Dockerfile.workers
+    container_name: kwonrishop-workers
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: postgresql://kwonrishop:kwonrishop_dev@postgres:5432/kwonrishop
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
+  redis_data:

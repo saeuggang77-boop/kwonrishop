@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+docker-compose.yml
+Dockerfile*
+.dockerignore
+.env
+.env.*
+!.env.example
+prisma/migrations
