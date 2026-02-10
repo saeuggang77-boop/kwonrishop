@@ -4,7 +4,7 @@ import { ArrowLeft, AlertTriangle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { formatDateTimeKR, formatKRW } from "@/lib/utils/format";
-import { FRAUD_SEVERITY_LABELS, RIGHTS_CATEGORY_LABELS, LISTING_STATUS_LABELS } from "@/lib/utils/constants";
+import { FRAUD_SEVERITY_LABELS, BUSINESS_CATEGORY_LABELS, LISTING_STATUS_LABELS } from "@/lib/utils/constants";
 import { ViolationActions } from "./actions";
 
 export const metadata = { title: "위반 상세" };
@@ -95,7 +95,7 @@ export default async function ViolationDetailPage({
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <InfoRow label="매물명" value={listing.title} />
               <InfoRow label="가격" value={formatKRW(listing.price)} />
-              <InfoRow label="권리유형" value={RIGHTS_CATEGORY_LABELS[listing.rightsCategory] ?? listing.rightsCategory} />
+              <InfoRow label="업종" value={BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory} />
               <InfoRow label="매물 상태" value={LISTING_STATUS_LABELS[listing.status] ?? listing.status} />
               <InfoRow label="주소" value={`${listing.city} ${listing.district} ${listing.address}`} />
               <InfoRow label="등록일" value={formatDateTimeKR(listing.createdAt)} />

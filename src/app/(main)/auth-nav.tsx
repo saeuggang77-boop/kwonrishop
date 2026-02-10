@@ -13,12 +13,14 @@ export function AuthNavItems() {
 
   if (!session) {
     return (
-      <Link
-        href="/login"
-        className="rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint-dark"
-      >
-        로그인
-      </Link>
+      <div className="flex items-center gap-4">
+        <Link href="/login" className="text-sm text-gray-600 hover:text-navy">
+          로그인
+        </Link>
+        <Link href="/register" className="text-sm font-medium text-mint hover:text-mint-dark">
+          회원가입
+        </Link>
+      </div>
     );
   }
 
@@ -27,7 +29,7 @@ export function AuthNavItems() {
       <NotificationBell />
       {(session.user.role === "SELLER" || session.user.role === "ADMIN") && (
         <Link href="/listings/new" className="rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint-dark">
-          매물 등록
+          점포 등록
         </Link>
       )}
       <Link href="/dashboard" className="text-sm text-gray-600 hover:text-navy">

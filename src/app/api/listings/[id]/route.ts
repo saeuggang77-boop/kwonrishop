@@ -10,7 +10,10 @@ function serializeListing(listing: Record<string, unknown>) {
     ...listing,
     price: listing.price?.toString(),
     monthlyRent: (listing.monthlyRent as bigint | null)?.toString() ?? null,
-    maintenanceFee: (listing.maintenanceFee as bigint | null)?.toString() ?? null,
+    managementFee: (listing.managementFee as bigint | null)?.toString() ?? null,
+    premiumFee: (listing.premiumFee as bigint | null)?.toString() ?? null,
+    monthlyRevenue: (listing.monthlyRevenue as bigint | null)?.toString() ?? null,
+    monthlyProfit: (listing.monthlyProfit as bigint | null)?.toString() ?? null,
   };
 }
 
@@ -85,9 +88,13 @@ export async function PUT(
         ...parsed,
         price: parsed.price ? BigInt(parsed.price) : undefined,
         monthlyRent: parsed.monthlyRent !== undefined ? (parsed.monthlyRent ? BigInt(parsed.monthlyRent) : null) : undefined,
-        maintenanceFee: parsed.maintenanceFee !== undefined ? (parsed.maintenanceFee ? BigInt(parsed.maintenanceFee) : null) : undefined,
+        managementFee: parsed.managementFee !== undefined ? (parsed.managementFee ? BigInt(parsed.managementFee) : null) : undefined,
+        premiumFee: parsed.premiumFee !== undefined ? (parsed.premiumFee ? BigInt(parsed.premiumFee) : null) : undefined,
+        monthlyRevenue: parsed.monthlyRevenue !== undefined ? (parsed.monthlyRevenue ? BigInt(parsed.monthlyRevenue) : null) : undefined,
+        monthlyProfit: parsed.monthlyProfit !== undefined ? (parsed.monthlyProfit ? BigInt(parsed.monthlyProfit) : null) : undefined,
+        businessSubtype: parsed.businessSubtype !== undefined ? parsed.businessSubtype : undefined,
+        operatingYears: parsed.operatingYears !== undefined ? parsed.operatingYears : undefined,
         areaPyeong: parsed.areaM2 ? m2ToPyeong(parsed.areaM2) : undefined,
-        expirationDate: parsed.expirationDate ? new Date(parsed.expirationDate) : undefined,
       },
     });
 

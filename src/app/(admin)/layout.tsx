@@ -37,7 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
 
       {/* Main Content */}
-      <main className="ml-56 flex-1 bg-gray-50 p-8">
+      <main className="relative z-0 ml-56 flex-1 bg-gray-50 p-8">
         {children}
       </main>
     </div>
@@ -48,7 +48,7 @@ function SideLink({ href, icon, label }: { href: string; icon: React.ReactNode; 
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-300 transition hover:bg-navy-light hover:text-white"
+      className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-300 transition hover:bg-navy-light hover:text-white"
     >
       {icon}
       {label}

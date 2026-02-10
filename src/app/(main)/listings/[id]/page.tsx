@@ -6,8 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { InquiryForm } from "@/components/listings/inquiry-form";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
 import {
-  RIGHTS_CATEGORY_LABELS,
-  PROPERTY_TYPE_LABELS,
+  BUSINESS_CATEGORY_LABELS,
+  STORE_TYPE_LABELS,
   LISTING_STATUS_LABELS,
 } from "@/lib/utils/constants";
 import { m2ToPyeong } from "@/lib/utils/area";
@@ -101,10 +101,10 @@ export default async function ListingDetailPage({
         <div className="lg:col-span-2">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-md bg-navy px-2.5 py-1 text-xs font-medium text-white">
-              {RIGHTS_CATEGORY_LABELS[listing.rightsCategory] ?? listing.rightsCategory}
+              {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}
             </span>
             <span className="rounded-md bg-gray-100 px-2.5 py-1 text-xs text-gray-600">
-              {PROPERTY_TYPE_LABELS[listing.propertyType] ?? listing.propertyType}
+              {STORE_TYPE_LABELS[listing.storeType] ?? listing.storeType}
             </span>
             <span className={`rounded-md px-2.5 py-1 text-xs font-medium ${
               listing.status === "ACTIVE"
@@ -124,7 +124,7 @@ export default async function ListingDetailPage({
 
           {/* Price */}
           <div className="mt-6 rounded-lg bg-mint/5 p-6">
-            <p className="text-sm text-gray-500">가격</p>
+            <p className="text-sm text-gray-500">보증금</p>
             <p className="mt-1 text-3xl font-bold text-navy">
               {formatKRW(listing.price)}
             </p>
@@ -133,40 +133,47 @@ export default async function ListingDetailPage({
                 월세 {formatKRW(listing.monthlyRent)}
               </p>
             )}
-            {listing.maintenanceFee && Number(listing.maintenanceFee) > 0 && (
+            {listing.premiumFee && Number(listing.premiumFee) > 0 && (
+              <p className="mt-1 text-gray-600">
+                권리금 {formatKRW(listing.premiumFee)}
+              </p>
+            )}
+            {listing.managementFee && Number(listing.managementFee) > 0 && (
               <p className="text-sm text-gray-500">
-                관리비 {formatKRW(listing.maintenanceFee)}
+                관리비 {formatKRW(listing.managementFee)}
+              </p>
+            )}
+            {listing.monthlyRevenue && Number(listing.monthlyRevenue) > 0 && (
+              <p className="mt-1 text-gray-600">
+                월매출 {formatKRW(listing.monthlyRevenue)}
+              </p>
+            )}
+            {listing.monthlyProfit && Number(listing.monthlyProfit) > 0 && (
+              <p className="mt-1 text-gray-600">
+                월수익 {formatKRW(listing.monthlyProfit)}
               </p>
             )}
           </div>
 
-          {/* Property Details */}
+          {/* Store Details */}
           <div className="mt-6">
             <h2 className="text-lg font-bold text-navy">매물 정보</h2>
             <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <DetailItem label="업종" value={BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory} />
+              {listing.businessSubtype && (
+                <DetailItem label="세부업종" value={listing.businessSubtype} />
+              )}
               {listing.areaM2 && (
                 <DetailItem icon={<Layers className="h-4 w-4" />} label="면적" value={`${listing.areaM2}m² (${areaPyeong?.toFixed(1)}평)`} />
               )}
               {listing.floor && (
-                <DetailItem icon={<Building className="h-4 w-4" />} label="층" value={`${listing.floor}층${listing.totalFloors ? ` / ${listing.totalFloors}층` : ""}`} />
+                <DetailItem icon={<Building className="h-4 w-4" />} label="층수" value={`${listing.floor}층${listing.totalFloors ? ` / ${listing.totalFloors}층` : ""}`} />
               )}
-              {listing.buildYear && (
-                <DetailItem icon={<Calendar className="h-4 w-4" />} label="건축년도" value={`${listing.buildYear}년`} />
+              {listing.operatingYears != null && (
+                <DetailItem label="영업기간" value={`${listing.operatingYears}년`} />
               )}
-              {listing.roomCount !== null && (
-                <DetailItem label="방" value={`${listing.roomCount}개`} />
-              )}
-              {listing.bathroomCount !== null && (
-                <DetailItem label="화장실" value={`${listing.bathroomCount}개`} />
-              )}
-              {listing.registryNumber && (
-                <DetailItem label="등기번호" value={listing.registryNumber} />
-              )}
-              {listing.rightsPriority && (
-                <DetailItem label="권리순위" value={`${listing.rightsPriority}순위`} />
-              )}
-              {listing.expirationDate && (
-                <DetailItem icon={<Calendar className="h-4 w-4" />} label="만료일" value={formatDateKR(listing.expirationDate)} />
+              {listing.expiresAt && (
+                <DetailItem icon={<Calendar className="h-4 w-4" />} label="만료일" value={formatDateKR(listing.expiresAt)} />
               )}
             </div>
           </div>

@@ -22,8 +22,7 @@ export async function valuateListing(
       areaM2: true,
       city: true,
       district: true,
-      rightsCategory: true,
-      propertyType: true,
+      businessCategory: true,
     },
   });
 
@@ -33,7 +32,7 @@ export async function valuateListing(
       id: { not: listingId },
       city: listing.city,
       district: listing.district,
-      rightsCategory: listing.rightsCategory,
+      businessCategory: listing.businessCategory,
       status: "ACTIVE",
     },
     select: { price: true, areaM2: true },

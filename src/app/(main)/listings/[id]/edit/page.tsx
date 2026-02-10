@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { RIGHTS_CATEGORY_LABELS, PROPERTY_TYPE_LABELS } from "@/lib/utils/constants";
+import { BUSINESS_CATEGORY_LABELS, STORE_TYPE_LABELS } from "@/lib/utils/constants";
 
 export default function EditListingPage() {
   const router = useRouter();
@@ -22,10 +22,16 @@ export default function EditListingPage() {
         setForm({
           title: l.title ?? "",
           description: l.description ?? "",
-          rightsCategory: l.rightsCategory ?? "",
-          propertyType: l.propertyType ?? "",
+          businessCategory: l.businessCategory ?? "",
+          storeType: l.storeType ?? "",
           price: l.price ?? "",
           monthlyRent: l.monthlyRent ?? "",
+          premiumFee: l.premiumFee ?? "",
+          managementFee: l.managementFee ?? "",
+          monthlyRevenue: l.monthlyRevenue ?? "",
+          monthlyProfit: l.monthlyProfit ?? "",
+          operatingYears: l.operatingYears ?? "",
+          businessSubtype: l.businessSubtype ?? "",
           address: l.address ?? "",
           city: l.city ?? "",
           district: l.district ?? "",
@@ -50,6 +56,11 @@ export default function EditListingPage() {
     const body: Record<string, unknown> = { ...form };
     if (form.price) body.price = Number(form.price);
     if (form.monthlyRent) body.monthlyRent = Number(form.monthlyRent);
+    if (form.premiumFee) body.premiumFee = Number(form.premiumFee);
+    if (form.managementFee) body.managementFee = Number(form.managementFee);
+    if (form.monthlyRevenue) body.monthlyRevenue = Number(form.monthlyRevenue);
+    if (form.monthlyProfit) body.monthlyProfit = Number(form.monthlyProfit);
+    if (form.operatingYears) body.operatingYears = Number(form.operatingYears);
 
     try {
       const res = await fetch(`/api/listings/${id}`, {
@@ -86,21 +97,53 @@ export default function EditListingPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">권리유형</label>
-              <select value={form.rightsCategory} onChange={(e) => update("rightsCategory", e.target.value)} className="input-field">
-                {Object.entries(RIGHTS_CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              <label className="mb-1 block text-sm font-medium text-gray-700">업종</label>
+              <select value={form.businessCategory} onChange={(e) => update("businessCategory", e.target.value)} className="input-field">
+                {Object.entries(BUSINESS_CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">매물유형</label>
-              <select value={form.propertyType} onChange={(e) => update("propertyType", e.target.value)} className="input-field">
-                {Object.entries(PROPERTY_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              <label className="mb-1 block text-sm font-medium text-gray-700">상가유형</label>
+              <select value={form.storeType} onChange={(e) => update("storeType", e.target.value)} className="input-field">
+                {Object.entries(STORE_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">가격 (원)</label>
-            <input type="number" value={form.price} onChange={(e) => update("price", e.target.value)} className="input-field" />
+            <label className="mb-1 block text-sm font-medium text-gray-700">세부업종</label>
+            <input value={form.businessSubtype} onChange={(e) => update("businessSubtype", e.target.value)} className="input-field" placeholder="예: 삼겹살, 카페" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">보증금 (원)</label>
+              <input type="number" value={form.price} onChange={(e) => update("price", e.target.value)} className="input-field" />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">월세 (원)</label>
+              <input type="number" value={form.monthlyRent} onChange={(e) => update("monthlyRent", e.target.value)} className="input-field" />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">권리금 (원)</label>
+              <input type="number" value={form.premiumFee} onChange={(e) => update("premiumFee", e.target.value)} className="input-field" />
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">관리비 (원)</label>
+              <input type="number" value={form.managementFee} onChange={(e) => update("managementFee", e.target.value)} className="input-field" />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">월매출 (원)</label>
+              <input type="number" value={form.monthlyRevenue} onChange={(e) => update("monthlyRevenue", e.target.value)} className="input-field" />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">월수익 (원)</label>
+              <input type="number" value={form.monthlyProfit} onChange={(e) => update("monthlyProfit", e.target.value)} className="input-field" />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">영업기간 (년)</label>
+            <input type="number" value={form.operatingYears} onChange={(e) => update("operatingYears", e.target.value)} className="input-field" />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">상세 설명</label>

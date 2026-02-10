@@ -14,7 +14,7 @@ export default async function ComparisonPage({
   const { id } = await params;
   const listing = await prisma.listing.findUnique({
     where: { id },
-    select: { id: true, title: true, price: true, city: true, district: true, rightsCategory: true },
+    select: { id: true, title: true, price: true, city: true, district: true, businessCategory: true },
   });
 
   if (!listing) notFound();
@@ -45,7 +45,7 @@ export default async function ComparisonPage({
         <div className="mt-6 space-y-4">
           {comparisons.map((c) => {
             const myPrice = Number(listing.price);
-            const avg = c.avgKwonriPrice ? Number(c.avgKwonriPrice) : null;
+            const avg = c.avgPremiumFee ? Number(c.avgPremiumFee) : null;
             const diff = avg ? myPrice - avg : null;
             const diffPercent = avg && avg > 0 ? ((myPrice - avg) / avg) * 100 : null;
 
@@ -61,7 +61,7 @@ export default async function ComparisonPage({
                   <p className="mt-3 text-sm text-gray-400">해당 반경에 비교 가능한 매물이 없습니다.</p>
                 ) : (
                   <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <StatCard label="평균 권리가" value={c.avgKwonriPrice ? formatKRW(c.avgKwonriPrice) : "-"} />
+                    <StatCard label="평균 권리금" value={c.avgPremiumFee ? formatKRW(c.avgPremiumFee) : "-"} />
                     <StatCard label="중간가" value={c.medianPrice ? formatKRW(c.medianPrice) : "-"} />
                     <StatCard label="최저가" value={c.minPrice ? formatKRW(c.minPrice) : "-"} />
                     <StatCard label="최고가" value={c.maxPrice ? formatKRW(c.maxPrice) : "-"} />

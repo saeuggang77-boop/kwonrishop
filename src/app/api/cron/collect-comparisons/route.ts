@@ -29,7 +29,7 @@ export async function POST() {
         id: true,
         latitude: true,
         longitude: true,
-        rightsCategory: true,
+        businessCategory: true,
         price: true,
       },
     });
@@ -42,7 +42,7 @@ export async function POST() {
       for (const radius of RADII) {
         const nearby = listings.filter((other) => {
           if (other.id === listing.id) return false;
-          if (other.rightsCategory !== listing.rightsCategory) return false;
+          if (other.businessCategory !== listing.businessCategory) return false;
           if (!other.latitude || !other.longitude) return false;
           const dist = haversineDistance(
             listing.latitude!, listing.longitude!,
@@ -71,7 +71,7 @@ export async function POST() {
             listingId: listing.id,
             radiusKm: radius,
             comparableCount: nearby.length,
-            avgKwonriPrice: BigInt(avg),
+            avgPremiumFee: BigInt(avg),
             medianPrice: BigInt(median),
             minPrice: BigInt(prices[0]),
             maxPrice: BigInt(prices[prices.length - 1]),
@@ -80,7 +80,7 @@ export async function POST() {
           },
           update: {
             comparableCount: nearby.length,
-            avgKwonriPrice: BigInt(avg),
+            avgPremiumFee: BigInt(avg),
             medianPrice: BigInt(median),
             minPrice: BigInt(prices[0]),
             maxPrice: BigInt(prices[prices.length - 1]),

@@ -5,19 +5,23 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import {
-  RIGHTS_CATEGORY_LABELS,
-  PROPERTY_TYPE_LABELS,
+  BUSINESS_CATEGORY_LABELS,
+  STORE_TYPE_LABELS,
 } from "@/lib/utils/constants";
 import { ImageUploader } from "@/components/listings/image-uploader";
 
 interface FormData {
   title: string;
   description: string;
-  rightsCategory: string;
-  propertyType: string;
+  businessCategory: string;
+  storeType: string;
+  businessSubtype: string;
   price: string;
   monthlyRent: string;
-  maintenanceFee: string;
+  premiumFee: string;
+  managementFee: string;
+  monthlyRevenue: string;
+  monthlyProfit: string;
   address: string;
   addressDetail: string;
   city: string;
@@ -26,10 +30,7 @@ interface FormData {
   areaM2: string;
   floor: string;
   totalFloors: string;
-  buildYear: string;
-  roomCount: string;
-  bathroomCount: string;
-  registryNumber: string;
+  operatingYears: string;
   contactPhone: string;
   contactEmail: string;
 }
@@ -37,11 +38,15 @@ interface FormData {
 const initialForm: FormData = {
   title: "",
   description: "",
-  rightsCategory: "",
-  propertyType: "",
+  businessCategory: "",
+  storeType: "",
+  businessSubtype: "",
   price: "",
   monthlyRent: "",
-  maintenanceFee: "",
+  premiumFee: "",
+  managementFee: "",
+  monthlyRevenue: "",
+  monthlyProfit: "",
   address: "",
   addressDetail: "",
   city: "",
@@ -50,10 +55,7 @@ const initialForm: FormData = {
   areaM2: "",
   floor: "",
   totalFloors: "",
-  buildYear: "",
-  roomCount: "",
-  bathroomCount: "",
-  registryNumber: "",
+  operatingYears: "",
   contactPhone: "",
   contactEmail: "",
 };
@@ -79,8 +81,8 @@ export default function NewListingPage() {
       const body: Record<string, unknown> = {
         title: form.title,
         description: form.description,
-        rightsCategory: form.rightsCategory,
-        propertyType: form.propertyType,
+        businessCategory: form.businessCategory,
+        storeType: form.storeType,
         price: Number(form.price),
         address: form.address,
         city: form.city,
@@ -88,16 +90,17 @@ export default function NewListingPage() {
       };
 
       if (form.monthlyRent) body.monthlyRent = Number(form.monthlyRent);
-      if (form.maintenanceFee) body.maintenanceFee = Number(form.maintenanceFee);
+      if (form.premiumFee) body.premiumFee = Number(form.premiumFee);
+      if (form.managementFee) body.managementFee = Number(form.managementFee);
+      if (form.monthlyRevenue) body.monthlyRevenue = Number(form.monthlyRevenue);
+      if (form.monthlyProfit) body.monthlyProfit = Number(form.monthlyProfit);
+      if (form.businessSubtype) body.businessSubtype = form.businessSubtype;
       if (form.addressDetail) body.addressDetail = form.addressDetail;
       if (form.neighborhood) body.neighborhood = form.neighborhood;
       if (form.areaM2) body.areaM2 = Number(form.areaM2);
       if (form.floor) body.floor = Number(form.floor);
       if (form.totalFloors) body.totalFloors = Number(form.totalFloors);
-      if (form.buildYear) body.buildYear = Number(form.buildYear);
-      if (form.roomCount) body.roomCount = Number(form.roomCount);
-      if (form.bathroomCount) body.bathroomCount = Number(form.bathroomCount);
-      if (form.registryNumber) body.registryNumber = form.registryNumber;
+      if (form.operatingYears) body.operatingYears = Number(form.operatingYears);
       if (form.contactPhone) body.contactPhone = form.contactPhone;
       if (form.contactEmail) body.contactEmail = form.contactEmail;
       if (uploadedImages.length > 0) body.images = uploadedImages;
@@ -137,7 +140,7 @@ export default function NewListingPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="text-2xl font-bold text-navy">매물 등록</h1>
-      <p className="mt-1 text-sm text-gray-500">부동산 권리 매물 정보를 입력해주세요.</p>
+      <p className="mt-1 text-sm text-gray-500">상가 매물 정보를 입력해주세요.</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-8">
         {errorMsg && (
@@ -153,38 +156,46 @@ export default function NewListingPage() {
               required
               value={form.title}
               onChange={(e) => update("title", e.target.value)}
-              placeholder="예: 강남역 전세권 아파트 2억"
+              placeholder="예: 강남역 치킨집 양도"
               className="input-field"
             />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="권리유형" required>
+            <Field label="업종" required>
               <select
                 required
-                value={form.rightsCategory}
-                onChange={(e) => update("rightsCategory", e.target.value)}
+                value={form.businessCategory}
+                onChange={(e) => update("businessCategory", e.target.value)}
                 className="input-field"
               >
                 <option value="">선택</option>
-                {Object.entries(RIGHTS_CATEGORY_LABELS).map(([k, v]) => (
+                {Object.entries(BUSINESS_CATEGORY_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
                 ))}
               </select>
             </Field>
-            <Field label="매물유형" required>
+            <Field label="상가유형" required>
               <select
                 required
-                value={form.propertyType}
-                onChange={(e) => update("propertyType", e.target.value)}
+                value={form.storeType}
+                onChange={(e) => update("storeType", e.target.value)}
                 className="input-field"
               >
                 <option value="">선택</option>
-                {Object.entries(PROPERTY_TYPE_LABELS).map(([k, v]) => (
+                {Object.entries(STORE_TYPE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
                 ))}
               </select>
             </Field>
           </div>
+          <Field label="세부업종">
+            <input
+              value={form.businessSubtype}
+              onChange={(e) => update("businessSubtype", e.target.value)}
+              placeholder="예: 삼겹살, 커피전문점"
+              className="input-field"
+            />
+          </Field>
           <Field label="상세 설명" required>
             <textarea
               required
@@ -200,13 +211,13 @@ export default function NewListingPage() {
         {/* Price */}
         <Section title="가격 정보">
           <div className="grid gap-4 sm:grid-cols-3">
-            <Field label="가격 (원)" required>
+            <Field label="보증금 (원)" required>
               <input
                 type="number"
                 required
                 value={form.price}
                 onChange={(e) => update("price", e.target.value)}
-                placeholder="200000000"
+                placeholder="50000000"
                 className="input-field"
               />
             </Field>
@@ -219,11 +230,40 @@ export default function NewListingPage() {
                 className="input-field"
               />
             </Field>
+            <Field label="권리금 (원)">
+              <input
+                type="number"
+                value={form.premiumFee}
+                onChange={(e) => update("premiumFee", e.target.value)}
+                placeholder="0"
+                className="input-field"
+              />
+            </Field>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
             <Field label="관리비 (원)">
               <input
                 type="number"
-                value={form.maintenanceFee}
-                onChange={(e) => update("maintenanceFee", e.target.value)}
+                value={form.managementFee}
+                onChange={(e) => update("managementFee", e.target.value)}
+                placeholder="0"
+                className="input-field"
+              />
+            </Field>
+            <Field label="월매출 (원)">
+              <input
+                type="number"
+                value={form.monthlyRevenue}
+                onChange={(e) => update("monthlyRevenue", e.target.value)}
+                placeholder="0"
+                className="input-field"
+              />
+            </Field>
+            <Field label="월수익 (원)">
+              <input
+                type="number"
+                value={form.monthlyProfit}
+                onChange={(e) => update("monthlyProfit", e.target.value)}
                 placeholder="0"
                 className="input-field"
               />
@@ -280,31 +320,22 @@ export default function NewListingPage() {
           </Field>
         </Section>
 
-        {/* Property Details */}
+        {/* Store Details */}
         <Section title="매물 상세">
           <div className="grid gap-4 sm:grid-cols-3">
             <Field label="면적 (m²)">
-              <input type="number" step="0.01" value={form.areaM2} onChange={(e) => update("areaM2", e.target.value)} placeholder="84.5" className="input-field" />
+              <input type="number" step="0.01" value={form.areaM2} onChange={(e) => update("areaM2", e.target.value)} placeholder="66.1" className="input-field" />
             </Field>
             <Field label="층">
-              <input type="number" value={form.floor} onChange={(e) => update("floor", e.target.value)} placeholder="12" className="input-field" />
+              <input type="number" value={form.floor} onChange={(e) => update("floor", e.target.value)} placeholder="1" className="input-field" />
             </Field>
             <Field label="총 층수">
-              <input type="number" value={form.totalFloors} onChange={(e) => update("totalFloors", e.target.value)} placeholder="25" className="input-field" />
+              <input type="number" value={form.totalFloors} onChange={(e) => update("totalFloors", e.target.value)} placeholder="5" className="input-field" />
             </Field>
-            <Field label="건축년도">
-              <input type="number" value={form.buildYear} onChange={(e) => update("buildYear", e.target.value)} placeholder="2020" className="input-field" />
-            </Field>
-            <Field label="방 수">
-              <input type="number" value={form.roomCount} onChange={(e) => update("roomCount", e.target.value)} placeholder="3" className="input-field" />
-            </Field>
-            <Field label="화장실 수">
-              <input type="number" value={form.bathroomCount} onChange={(e) => update("bathroomCount", e.target.value)} placeholder="2" className="input-field" />
+            <Field label="영업기간 (년)">
+              <input type="number" value={form.operatingYears} onChange={(e) => update("operatingYears", e.target.value)} placeholder="3" className="input-field" />
             </Field>
           </div>
-          <Field label="등기번호">
-            <input value={form.registryNumber} onChange={(e) => update("registryNumber", e.target.value)} placeholder="등기번호 입력" className="input-field" />
-          </Field>
         </Section>
 
         {/* Images */}

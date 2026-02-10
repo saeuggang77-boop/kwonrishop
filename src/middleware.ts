@@ -20,13 +20,15 @@ export default auth((req) => {
   }
 
   // Public routes
-  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium"];
+  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium", "/franchise", "/bbs"];
   const isPublicPath = publicPaths.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
   const isPublicApi =
     pathname.startsWith("/api/auth") ||
     (pathname.startsWith("/api/listings") && req.method === "GET") ||
+    (pathname.startsWith("/api/franchise") && req.method === "GET") ||
+    (pathname.startsWith("/api/bbs") && req.method === "GET") ||
     pathname.startsWith("/api/events");
 
   // CRON routes - secured by secret

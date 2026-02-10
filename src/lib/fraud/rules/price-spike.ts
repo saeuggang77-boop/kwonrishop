@@ -18,21 +18,21 @@ export async function checkPriceSpike(
       price: true,
       city: true,
       district: true,
-      rightsCategory: true,
-      propertyType: true,
+      businessCategory: true,
+      storeType: true,
     },
   });
 
   if (!listing) return null;
 
-  // Find comparable listings in same district with same rights category
+  // Find comparable listings in same district with same business category
   const comparables = await prisma.listing.findMany({
     where: {
       id: { not: listingId },
       city: listing.city,
       district: listing.district,
-      rightsCategory: listing.rightsCategory,
-      propertyType: listing.propertyType,
+      businessCategory: listing.businessCategory,
+      storeType: listing.storeType,
       status: "ACTIVE",
     },
     select: { price: true },

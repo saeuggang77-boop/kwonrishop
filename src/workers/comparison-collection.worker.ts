@@ -39,7 +39,7 @@ async function collectComparisons(job: Job<ComparisonJobData>) {
       id: true,
       latitude: true,
       longitude: true,
-      rightsCategory: true,
+      businessCategory: true,
       price: true,
     },
   });
@@ -56,7 +56,7 @@ async function collectComparisons(job: Job<ComparisonJobData>) {
           id: true,
           latitude: true,
           longitude: true,
-          rightsCategory: true,
+          businessCategory: true,
           price: true,
         },
       })
@@ -70,7 +70,7 @@ async function collectComparisons(job: Job<ComparisonJobData>) {
     for (const radius of RADII) {
       const nearby = allListings.filter((other) => {
         if (other.id === listing.id) return false;
-        if (other.rightsCategory !== listing.rightsCategory) return false;
+        if (other.businessCategory !== listing.businessCategory) return false;
         if (!other.latitude || !other.longitude) return false;
         return (
           haversineDistance(
@@ -109,7 +109,7 @@ async function collectComparisons(job: Job<ComparisonJobData>) {
           listingId: listing.id,
           radiusKm: radius,
           comparableCount: nearby.length,
-          avgKwonriPrice: BigInt(avg),
+          avgPremiumFee: BigInt(avg),
           medianPrice: BigInt(median),
           minPrice: BigInt(prices[0]),
           maxPrice: BigInt(prices[prices.length - 1]),
@@ -118,7 +118,7 @@ async function collectComparisons(job: Job<ComparisonJobData>) {
         },
         update: {
           comparableCount: nearby.length,
-          avgKwonriPrice: BigInt(avg),
+          avgPremiumFee: BigInt(avg),
           medianPrice: BigInt(median),
           minPrice: BigInt(prices[0]),
           maxPrice: BigInt(prices[prices.length - 1]),

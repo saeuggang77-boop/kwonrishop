@@ -4,7 +4,7 @@ import { Eye, MessageSquare, MousePointerClick, Package, Plus, TrendingUp, Trend
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatNumber, formatPercent, formatKRW, formatRelativeTime } from "@/lib/utils/format";
-import { LISTING_STATUS_LABELS, RIGHTS_CATEGORY_LABELS } from "@/lib/utils/constants";
+import { LISTING_STATUS_LABELS, BUSINESS_CATEGORY_LABELS } from "@/lib/utils/constants";
 
 export const metadata = { title: "대시보드" };
 
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
       select: {
         id: true,
         title: true,
-        rightsCategory: true,
+        businessCategory: true,
         price: true,
         status: true,
         viewCount: true,
@@ -128,7 +128,7 @@ export default async function DashboardPage() {
                       </Link>
                     </td>
                     <td className="px-4 py-4 text-gray-500">
-                      {RIGHTS_CATEGORY_LABELS[listing.rightsCategory] ?? listing.rightsCategory}
+                      {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}
                     </td>
                     <td className="px-4 py-4 text-right font-medium text-navy">
                       {formatKRW(listing.price)}

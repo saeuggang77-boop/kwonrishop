@@ -28,7 +28,7 @@ export async function GET(
         location: `${listing.city} ${listing.district}`,
         comparisons: comparisons.map((c) => ({
           ...c,
-          avgKwonriPrice: c.avgKwonriPrice?.toString() ?? null,
+          avgPremiumFee: c.avgPremiumFee?.toString() ?? null,
           avgRentPrice: c.avgRentPrice?.toString() ?? null,
           avgSalePrice: c.avgSalePrice?.toString() ?? null,
           medianPrice: c.medianPrice?.toString() ?? null,

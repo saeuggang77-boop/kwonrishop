@@ -23,8 +23,8 @@ export async function GET(req: NextRequest) {
         { address: { contains: parsed.query, mode: "insensitive" } },
       ];
     }
-    if (parsed.rightsCategory) where.rightsCategory = parsed.rightsCategory;
-    if (parsed.propertyType) where.propertyType = parsed.propertyType;
+    if (parsed.businessCategory) where.businessCategory = parsed.businessCategory;
+    if (parsed.storeType) where.storeType = parsed.storeType;
     if (parsed.city) where.city = parsed.city;
     if (parsed.district) where.district = parsed.district;
     if (parsed.priceMin || parsed.priceMax) {
@@ -56,7 +56,10 @@ export async function GET(req: NextRequest) {
         ...l,
         price: l.price.toString(),
         monthlyRent: l.monthlyRent?.toString() ?? null,
-        maintenanceFee: l.maintenanceFee?.toString() ?? null,
+        managementFee: l.managementFee?.toString() ?? null,
+        premiumFee: l.premiumFee?.toString() ?? null,
+        monthlyRevenue: l.monthlyRevenue?.toString() ?? null,
+        monthlyProfit: l.monthlyProfit?.toString() ?? null,
       })),
       meta: {
         cursor: data[data.length - 1]?.id,
@@ -87,9 +90,13 @@ export async function POST(req: NextRequest) {
         ...parsed,
         price: BigInt(parsed.price),
         monthlyRent: parsed.monthlyRent ? BigInt(parsed.monthlyRent) : null,
-        maintenanceFee: parsed.maintenanceFee ? BigInt(parsed.maintenanceFee) : null,
+        managementFee: parsed.managementFee ? BigInt(parsed.managementFee) : null,
+        premiumFee: parsed.premiumFee ? BigInt(parsed.premiumFee) : null,
+        monthlyRevenue: parsed.monthlyRevenue ? BigInt(parsed.monthlyRevenue) : null,
+        monthlyProfit: parsed.monthlyProfit ? BigInt(parsed.monthlyProfit) : null,
+        businessSubtype: parsed.businessSubtype ?? null,
+        operatingYears: parsed.operatingYears ?? null,
         areaPyeong: parsed.areaM2 ? m2ToPyeong(parsed.areaM2) : null,
-        expirationDate: parsed.expirationDate ? new Date(parsed.expirationDate) : null,
         status: "ACTIVE",
         publishedAt: new Date(),
       },
@@ -127,7 +134,10 @@ export async function POST(req: NextRequest) {
           ...listing,
           price: listing.price.toString(),
           monthlyRent: listing.monthlyRent?.toString() ?? null,
-          maintenanceFee: listing.maintenanceFee?.toString() ?? null,
+          managementFee: listing.managementFee?.toString() ?? null,
+          premiumFee: listing.premiumFee?.toString() ?? null,
+          monthlyRevenue: listing.monthlyRevenue?.toString() ?? null,
+          monthlyProfit: listing.monthlyProfit?.toString() ?? null,
         },
       },
       { status: 201 }

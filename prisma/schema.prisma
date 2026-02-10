@@ -33,29 +33,32 @@ enum ListingStatus {
   DELETED
 }
 
-enum RightsCategory {
-  JEONSE
-  WOLSE
-  MORTGAGE
-  OWNERSHIP
-  SUPERFICIES
-  EASEMENT
-  LIEN
-  PROVISIONAL_REG
-  LEASE_RIGHT
-  AUCTION
+enum BusinessCategory {
+  KOREAN_FOOD
+  CHINESE_FOOD
+  JAPANESE_FOOD
+  WESTERN_FOOD
+  CHICKEN
+  PIZZA
+  CAFE_BAKERY
+  BAR_PUB
+  BUNSIK
+  DELIVERY
+  OTHER_FOOD
+  SERVICE
+  RETAIL
+  ENTERTAINMENT
+  EDUCATION
+  ACCOMMODATION
   OTHER
 }
 
-enum PropertyType {
-  APARTMENT
-  VILLA
-  OFFICETEL
-  DETACHED_HOUSE
-  COMMERCIAL
+enum StoreType {
+  GENERAL_STORE
+  FRANCHISE
+  FOOD_STREET
   OFFICE
-  LAND
-  FACTORY
+  COMPLEX_MALL
   OTHER
 }
 
@@ -257,45 +260,44 @@ model User {
 // ============================================================
 
 model Listing {
-  id              String         @id @default(cuid())
-  sellerId        String
-  title           String
-  description     String         @db.Text
-  rightsCategory  RightsCategory
-  propertyType    PropertyType
-  price           BigInt
-  monthlyRent     BigInt?
-  maintenanceFee  BigInt?
-  address         String
-  addressDetail   String?
-  city            String
-  district        String
-  neighborhood    String?
-  postalCode      String?
-  latitude        Float?
-  longitude       Float?
-  areaM2          Float?
-  areaPyeong      Float?
-  floor           Int?
-  totalFloors     Int?
-  buildYear       Int?
-  roomCount       Int?
-  bathroomCount   Int?
-  registryNumber  String?
-  rightsPriority  Int?
-  expirationDate  DateTime?
-  status          ListingStatus  @default(DRAFT)
-  isFeatured      Boolean        @default(false)
-  isPremium       Boolean        @default(false)
-  viewCount       Int            @default(0)
-  inquiryCount    Int            @default(0)
-  favoriteCount   Int            @default(0)
-  contactPhone    String?
-  contactEmail    String?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  publishedAt     DateTime?
-  expiresAt       DateTime?
+  id               String           @id @default(cuid())
+  sellerId         String
+  title            String
+  description      String           @db.Text
+  businessCategory BusinessCategory
+  storeType        StoreType
+  businessSubtype  String?          // 세부업종 (자유입력)
+  price            BigInt           // 보증금
+  monthlyRent      BigInt?          // 월세
+  premiumFee       BigInt?          // 권리금
+  managementFee    BigInt?          // 관리비
+  monthlyRevenue   BigInt?          // 월매출
+  monthlyProfit    BigInt?          // 월수익
+  operatingYears   Int?             // 영업기간(년)
+  address          String
+  addressDetail    String?
+  city             String
+  district         String
+  neighborhood     String?
+  postalCode       String?
+  latitude         Float?
+  longitude        Float?
+  areaM2           Float?
+  areaPyeong       Float?
+  floor            Int?
+  totalFloors      Int?
+  status           ListingStatus    @default(DRAFT)
+  isFeatured       Boolean          @default(false)
+  isPremium        Boolean          @default(false)
+  viewCount        Int              @default(0)
+  inquiryCount     Int              @default(0)
+  favoriteCount    Int              @default(0)
+  contactPhone     String?
+  contactEmail     String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  publishedAt      DateTime?
+  expiresAt        DateTime?
 
   seller          User              @relation(fields: [sellerId], references: [id])
   images          ListingImage[]
@@ -308,8 +310,8 @@ model Listing {
 
   @@index([sellerId])
   @@index([status])
-  @@index([rightsCategory])
-  @@index([propertyType])
+  @@index([businessCategory])
+  @@index([storeType])
   @@index([city, district])
   @@index([price])
   @@index([latitude, longitude])
@@ -633,7 +635,7 @@ model ListingComparison {
   listingId       String
   radiusKm        Float
   comparableCount Int      @default(0)
-  avgKwonriPrice  BigInt?
+  avgPremiumFee   BigInt?
   avgRentPrice    BigInt?
   avgSalePrice    BigInt?
   medianPrice     BigInt?
@@ -735,4 +737,50 @@ model UserConsent {
   @@unique([userId, legalDocumentId])
   @@index([userId])
   @@map("user_consents")
+}
+
+// ============================================================
+// FRANCHISE
+// ============================================================
+
+model Franchise {
+  id              String   @id @default(cuid())
+  brandName       String
+  category        String   // 외식/도소매/서비스
+  subcategory     String   // 한식/커피/치킨 등
+  logoUrl         String?
+  monthlyAvgSales BigInt?  // 월 평균 매출액
+  startupCost     BigInt?  // 창업비용
+  storeCount      Int?     // 가맹+직영점 수
+  dataYear        Int?     // 데이터 기준년도
+  description     String?  @db.Text
+  isPromoting     Boolean  @default(false)
+  favoriteCount   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([category])
+  @@index([subcategory])
+  @@map("franchises")
+}
+
+// ============================================================
+// BOARD (창업정보 게시판)
+// ============================================================
+
+model BoardPost {
+  id           String   @id @default(cuid())
+  authorId     String?
+  category     String   // 창업정보, 뉴스, 팁 등
+  title        String
+  content      String   @db.Text
+  thumbnailUrl String?
+  viewCount    Int      @default(0)
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([category])
+  @@index([createdAt])
+  @@map("board_posts")
 }

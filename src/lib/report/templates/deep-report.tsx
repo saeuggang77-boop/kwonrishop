@@ -131,15 +131,21 @@ export interface ReportData {
     title: string;
     price: string;
     address: string;
-    rightsCategory: string;
-    propertyType: string;
+    businessCategory: string;
+    storeType: string;
     areaM2: number | null;
+    premiumFee: string | null;
+    monthlyRevenue: string | null;
+    monthlyProfit: string | null;
+    managementFee: string | null;
+    businessSubtype: string | null;
+    operatingYears: number | null;
     description: string;
   };
   comparisons: {
     radiusKm: number;
     comparableCount: number;
-    avgKwonriPrice?: string;
+    avgPremiumFee?: string;
     medianPrice?: string;
     minPrice?: string;
     maxPrice?: string;
@@ -175,24 +181,31 @@ function formatPrice(value: string | number | undefined): string {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  JEONSE: "전세권",
-  MONTHLY_RENT: "월세권",
-  DEPOSIT: "보증금",
-  LEASE: "임차권",
-  MORTGAGE: "근저당권",
-  LIEN: "유치권",
-  SUPERFICIES: "지상권",
-  EASEMENT: "지역권",
-  OTHER: "기타 권리",
+  KOREAN_FOOD: "한식",
+  CHINESE_FOOD: "중식",
+  JAPANESE_FOOD: "일식/회",
+  WESTERN_FOOD: "양식",
+  CHICKEN: "치킨",
+  PIZZA: "피자",
+  CAFE_BAKERY: "카페/베이커리",
+  BAR_PUB: "주류/호프",
+  BUNSIK: "분식",
+  DELIVERY: "배달전문",
+  OTHER_FOOD: "기타 외식",
+  SERVICE: "서비스업",
+  RETAIL: "도소매업",
+  ENTERTAINMENT: "오락/스포츠",
+  EDUCATION: "교육/학원",
+  ACCOMMODATION: "숙박업",
+  OTHER: "기타",
 };
 
-const PROPERTY_LABELS: Record<string, string> = {
-  APARTMENT: "아파트",
-  VILLA: "빌라/다세대",
-  OFFICETEL: "오피스텔",
-  HOUSE: "단독주택",
-  COMMERCIAL: "상가/사무실",
-  LAND: "토지",
+const STORE_LABELS: Record<string, string> = {
+  GENERAL_STORE: "일반상가",
+  FRANCHISE: "프랜차이즈",
+  FOOD_STREET: "먹자골목",
+  OFFICE: "사무실",
+  COMPLEX_MALL: "복합상가",
   OTHER: "기타",
 };
 
@@ -209,7 +222,7 @@ export function DeepReportDocument({ data }: { data: ReportData }) {
         </View>
 
         {/* Title */}
-        <Text style={styles.title}>권리 분석 심층 리포트</Text>
+        <Text style={styles.title}>상가 분석 심층 리포트</Text>
         <Text style={{ fontSize: 12, color: "#374151", marginBottom: 15 }}>
           {listing.title}
         </Text>
@@ -227,17 +240,53 @@ export function DeepReportDocument({ data }: { data: ReportData }) {
           <Text style={styles.value}>{listing.address}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>권리유형</Text>
-          <Text style={styles.value}>{CATEGORY_LABELS[listing.rightsCategory] ?? listing.rightsCategory}</Text>
+          <Text style={styles.label}>업종</Text>
+          <Text style={styles.value}>{CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>매물유형</Text>
-          <Text style={styles.value}>{PROPERTY_LABELS[listing.propertyType] ?? listing.propertyType}</Text>
+          <Text style={styles.label}>상가유형</Text>
+          <Text style={styles.value}>{STORE_LABELS[listing.storeType] ?? listing.storeType}</Text>
         </View>
+        {listing.businessSubtype && (
+          <View style={styles.row}>
+            <Text style={styles.label}>세부업종</Text>
+            <Text style={styles.value}>{listing.businessSubtype}</Text>
+          </View>
+        )}
         {listing.areaM2 && (
           <View style={styles.row}>
             <Text style={styles.label}>면적</Text>
             <Text style={styles.value}>{listing.areaM2}m²</Text>
+          </View>
+        )}
+        {listing.premiumFee && (
+          <View style={styles.row}>
+            <Text style={styles.label}>권리금</Text>
+            <Text style={styles.value}>{formatPrice(listing.premiumFee)}</Text>
+          </View>
+        )}
+        {listing.monthlyRevenue && (
+          <View style={styles.row}>
+            <Text style={styles.label}>월매출</Text>
+            <Text style={styles.value}>{formatPrice(listing.monthlyRevenue)}</Text>
+          </View>
+        )}
+        {listing.monthlyProfit && (
+          <View style={styles.row}>
+            <Text style={styles.label}>월수익</Text>
+            <Text style={styles.value}>{formatPrice(listing.monthlyProfit)}</Text>
+          </View>
+        )}
+        {listing.managementFee && (
+          <View style={styles.row}>
+            <Text style={styles.label}>관리비</Text>
+            <Text style={styles.value}>{formatPrice(listing.managementFee)}</Text>
+          </View>
+        )}
+        {listing.operatingYears !== null && listing.operatingYears !== undefined && (
+          <View style={styles.row}>
+            <Text style={styles.label}>운영기간</Text>
+            <Text style={styles.value}>{listing.operatingYears}년</Text>
           </View>
         )}
 
@@ -280,7 +329,7 @@ export function DeepReportDocument({ data }: { data: ReportData }) {
                 <View key={i} style={styles.tableRow}>
                   <Text style={styles.tableCell}>{c.radiusKm}km</Text>
                   <Text style={styles.tableCell}>{c.comparableCount}건</Text>
-                  <Text style={styles.tableCell}>{formatPrice(c.avgKwonriPrice)}</Text>
+                  <Text style={styles.tableCell}>{formatPrice(c.avgPremiumFee)}</Text>
                   <Text style={styles.tableCell}>{formatPrice(c.medianPrice)}</Text>
                   <Text style={styles.tableCell}>
                     {c.pricePercentile !== null ? `상위 ${(100 - c.pricePercentile).toFixed(0)}%` : "-"}
