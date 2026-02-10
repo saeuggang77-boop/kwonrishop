@@ -26,10 +26,13 @@ export function AuthNavItems() {
     <div className="flex items-center gap-4">
       <NotificationBell />
       {(session.user.role === "SELLER" || session.user.role === "ADMIN") && (
-        <Link href="/dashboard" className="text-sm text-gray-600 hover:text-navy">
-          대시보드
+        <Link href="/listings/new" className="rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint-dark">
+          매물 등록
         </Link>
       )}
+      <Link href="/dashboard" className="text-sm text-gray-600 hover:text-navy">
+        대시보드
+      </Link>
       {session.user.role === "ADMIN" && (
         <Link href="/admin" className="text-sm text-gray-600 hover:text-navy">
           관리자
