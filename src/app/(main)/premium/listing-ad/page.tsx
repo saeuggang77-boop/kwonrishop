@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Check, Crown, Star, Zap } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { PREMIUM_AD_PLANS } from "@/lib/utils/constants";
+
+const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "";
 
 interface MyListing {
   id: string;
@@ -35,6 +37,7 @@ export default function PremiumListingAdPage() {
 }
 
 function PremiumListingAdContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedListingId = searchParams.get("listingId");
   const isExtend = searchParams.get("extend") === "true";
@@ -43,6 +46,7 @@ function PremiumListingAdContent() {
   const [selectedListingId, setSelectedListingId] = useState(preselectedListingId ?? "");
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [myListings, setMyListings] = useState<MyListing[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/listings?limit=50")
@@ -62,12 +66,53 @@ function PremiumListingAdContent() {
 
   const selectedPlan = PREMIUM_AD_PLANS.find((p) => p.tier === selectedTier);
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!selectedListingId) {
       alert("매물을 선택해주세요.");
       return;
     }
-    alert("결제 시스템 준비 중입니다.");
+
+    setIsLoading(true);
+
+    try {
+      // 1) Create Payment record in DB
+      const createRes = await fetch("/api/payments/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentType: "ADVERTISEMENT",
+          tier: selectedTier,
+          listingId: selectedListingId,
+        }),
+      });
+      if (!createRes.ok) {
+        const err = await createRes.json();
+        throw new Error(err.error?.message ?? "결제 생성에 실패했습니다.");
+      }
+      const { data } = await createRes.json();
+
+      // 2) TossPayments SDK 호출
+      const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
+      const tossPayments = await loadTossPayments(TOSS_CLIENT_KEY);
+      const payment = tossPayments.payment({ customerKey: crypto.randomUUID() });
+
+      await payment.requestPayment({
+        method: "CARD",
+        amount: { currency: "KRW", value: data.amount },
+        orderId: data.orderId,
+        orderName: data.orderName,
+        successUrl: `${window.location.origin}/premium/listing-ad/success?listingId=${selectedListingId}&tier=${selectedTier}`,
+        failUrl: `${window.location.origin}/premium/listing-ad/fail`,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("USER_CANCEL")) {
+        // User cancelled - do nothing
+      } else {
+        router.push("/premium/listing-ad/fail");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -184,9 +229,10 @@ function PremiumListingAdContent() {
         </div>
         <button
           onClick={handlePayment}
-          className="mt-6 w-full rounded-lg bg-mint py-3.5 text-lg font-medium text-white transition-colors hover:bg-mint-dark"
+          disabled={isLoading}
+          className="mt-6 w-full rounded-lg bg-mint py-3.5 text-lg font-medium text-white transition-colors hover:bg-mint-dark disabled:opacity-50"
         >
-          {isExtend ? "광고 연장하기" : "광고 결제하기"}
+          {isLoading ? "결제 준비 중..." : isExtend ? "광고 연장하기" : "광고 결제하기"}
         </button>
         <p className="mt-3 text-center text-xs text-gray-500">
           토스페이먼츠 안전 결제로 진행됩니다. 광고 기간 만료 후 자동 갱신되지 않습니다.

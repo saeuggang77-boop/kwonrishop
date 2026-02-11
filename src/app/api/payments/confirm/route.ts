@@ -5,6 +5,7 @@ import { confirmPayment } from "@/lib/toss/confirm";
 import { confirmPaymentSchema } from "@/lib/validators/payment";
 import { errorToResponse } from "@/lib/utils/errors";
 import { reportGenerationQueue } from "@/lib/queue";
+import { createNotification } from "@/lib/notifications/create";
 
 export async function POST(req: NextRequest) {
   try {
@@ -60,6 +61,8 @@ export async function POST(req: NextRequest) {
 
     if (payment.paymentType === "PREMIUM_SUBSCRIPTION") {
       // Activate subscription
+      const meta = payment.metadata as Record<string, string> | null;
+      const tier = meta?.tier ?? "PREMIUM";
       const now = new Date();
       const periodEnd = new Date(now);
       periodEnd.setMonth(periodEnd.getMonth() + 1);
@@ -68,18 +71,69 @@ export async function POST(req: NextRequest) {
         where: { userId: session.user.id },
         create: {
           userId: session.user.id,
-          tier: "PREMIUM",
+          tier: tier as "BASIC" | "PREMIUM",
           status: "ACTIVE",
           currentPeriodStart: now,
           currentPeriodEnd: periodEnd,
         },
         update: {
+          tier: tier as "BASIC" | "PREMIUM",
           status: "ACTIVE",
           currentPeriodStart: now,
           currentPeriodEnd: periodEnd,
         },
       });
     }
+
+    if (payment.paymentType === "ADVERTISEMENT" || payment.paymentType === "FEATURED_LISTING") {
+      const meta = payment.metadata as Record<string, string> | null;
+      const listingId = meta?.listingId;
+      const adTier = meta?.tier ?? "BASIC";
+
+      if (listingId) {
+        // Find or create PremiumPlan
+        const plan = await prisma.premiumPlan.findUnique({
+          where: { name: adTier as "BASIC" | "PREMIUM" | "VIP" },
+        });
+
+        if (plan) {
+          const now = new Date();
+          const endDate = new Date(now);
+          endDate.setDate(endDate.getDate() + plan.durationDays);
+
+          await prisma.premiumListing.create({
+            data: {
+              listingId,
+              planId: plan.id,
+              status: "ACTIVE",
+              startDate: now,
+              endDate,
+              paymentMethod: "CARD",
+              paymentStatus: "PAID",
+            },
+          });
+
+          const tierRankMap: Record<string, number> = { BASIC: 1, PREMIUM: 2, VIP: 3 };
+          await prisma.listing.update({
+            where: { id: listingId },
+            data: {
+              isPremium: true,
+              premiumRank: tierRankMap[adTier] ?? 1,
+            },
+          });
+        }
+      }
+    }
+
+    // Notify user
+    await createNotification({
+      userId: session.user.id,
+      title: "결제가 완료되었습니다",
+      message: `${payment.tossOrderName ?? payment.paymentType} 결제가 성공적으로 완료되었습니다.`,
+      link: "/profile",
+      sourceType: "PAYMENT",
+      sourceId: payment.id,
+    });
 
     // Track event
     await prisma.event.create({

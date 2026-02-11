@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { errorToResponse } from "@/lib/utils/errors";
+import { createNotification } from "@/lib/notifications/create";
 import type { AdminActionType } from "@prisma/client";
 
 export async function POST(
@@ -92,6 +93,28 @@ export async function POST(
         reason: reason ?? null,
       },
     });
+
+    // Notify listing owner
+    if (action === "APPROVE" || action === "DELETE") {
+      const listingWithUser = await prisma.listing.findUnique({
+        where: { id },
+        select: { sellerId: true, title: true },
+      });
+
+      if (listingWithUser) {
+        const isApprove = action === "APPROVE";
+        await createNotification({
+          userId: listingWithUser.sellerId,
+          title: isApprove ? "매물이 승인되었습니다" : "매물이 반려되었습니다",
+          message: isApprove
+            ? `"${listingWithUser.title}" 매물이 승인되어 공개되었습니다.`
+            : `"${listingWithUser.title}" 매물이 반려되었습니다.${reason ? ` 사유: ${reason}` : ""}`,
+          link: `/listings/${id}`,
+          sourceType: "LISTING",
+          sourceId: id,
+        });
+      }
+    }
 
     const data = JSON.parse(
       JSON.stringify(listing, (_, v) =>

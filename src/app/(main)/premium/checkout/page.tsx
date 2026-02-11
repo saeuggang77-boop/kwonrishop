@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { SUBSCRIPTION_TIER_LABELS, SUBSCRIPTION_PRICES } from "@/lib/utils/constants";
 import { formatKRW } from "@/lib/utils/format";
-import { v4 as uuidv4 } from "uuid";
-
 const tiers = [
   { key: "FREE", features: ["매물 검색", "기본 시세 정보", "일일 5건 조회"] },
   { key: "BASIC", features: ["무제한 매물 검색", "시세 분석 리포트", "비교 매물 데이터", "이메일 알림"] },
@@ -32,17 +30,27 @@ export default function PremiumCheckoutPage() {
     setIsLoading(true);
 
     try {
-      // Dynamic import of TossPayments SDK
+      // 1) Create Payment record in DB
+      const createRes = await fetch("/api/payments/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentType: "PREMIUM_SUBSCRIPTION", tier: selected }),
+      });
+      if (!createRes.ok) {
+        const err = await createRes.json();
+        throw new Error(err.error?.message ?? "결제 생성에 실패했습니다.");
+      }
+      const { data } = await createRes.json();
+
+      // 2) Dynamic import of TossPayments SDK
       const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
       const tossPayments = await loadTossPayments(TOSS_CLIENT_KEY);
-      const payment = tossPayments.payment({ customerKey: uuidv4() });
-
-      const orderId = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const payment = tossPayments.payment({ customerKey: crypto.randomUUID() });
 
       await payment.requestPayment({
         method: "CARD",
-        amount: { currency: "KRW", value: amount },
-        orderId,
+        amount: { currency: "KRW", value: data.amount },
+        orderId: data.orderId,
         orderName: `${SUBSCRIPTION_TIER_LABELS[selected]} 구독`,
         successUrl: `${window.location.origin}/premium/success?tier=${selected}`,
         failUrl: `${window.location.origin}/premium/fail`,

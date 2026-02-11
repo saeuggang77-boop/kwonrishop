@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications/create";
 
 export async function POST() {
   try {
@@ -10,7 +11,9 @@ export async function POST() {
         status: "ACTIVE",
         endDate: { lte: now },
       },
-      select: { id: true, listingId: true },
+      include: {
+        listing: { select: { sellerId: true, title: true } },
+      },
     });
 
     if (expiredPremiums.length === 0) {
@@ -33,6 +36,23 @@ export async function POST() {
         data: { isPremium: false, premiumRank: 0 },
       }),
     ]);
+
+    // 3) Notify listing owners
+    const notified = new Set<string>();
+    for (const premium of expiredPremiums) {
+      const key = `${premium.listing.sellerId}_${premium.listingId}`;
+      if (notified.has(key)) continue;
+      notified.add(key);
+
+      await createNotification({
+        userId: premium.listing.sellerId,
+        title: "프리미엄 광고가 만료되었습니다",
+        message: `"${premium.listing.title}" 매물의 프리미엄 광고 기간이 종료되었습니다. 재등록하시려면 광고 관리 페이지를 방문하세요.`,
+        link: "/premium/listing-ad",
+        sourceType: "PREMIUM_LISTING",
+        sourceId: premium.id,
+      });
+    }
 
     return Response.json({
       data: {

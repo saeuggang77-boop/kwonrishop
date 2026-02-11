@@ -6,6 +6,7 @@ import { getDownloadPresignedUrl } from "@/lib/s3/presigned";
 import { sendEmail } from "@/lib/ses/send";
 import { reportReadyEmail } from "@/lib/ses/templates";
 import { buildReportMeta } from "@/lib/report/disclaimer";
+import { createNotification } from "@/lib/notifications/create";
 import { valuateListing } from "@/lib/insights/valuation";
 import { renderToBuffer } from "@react-pdf/renderer";
 import React from "react";
@@ -119,6 +120,16 @@ async function generateReport(job: Job<ReportJobData>) {
         data: { emailSentAt: new Date() },
       });
     }
+
+    // In-app notification
+    await createNotification({
+      userId,
+      title: "분석 리포트가 준비되었습니다",
+      message: `"${listing.title}" 매물에 대한 심층 분석 리포트가 완성되었습니다.`,
+      link: `/reports/${reportId}`,
+      sourceType: "REPORT",
+      sourceId: reportId,
+    });
 
     return { reportId, s3Key };
   } catch (error) {

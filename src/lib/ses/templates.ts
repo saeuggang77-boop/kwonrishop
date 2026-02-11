@@ -1,3 +1,30 @@
+export function welcomeEmail(params: {
+  name: string;
+  verifyUrl: string;
+}): { subject: string; html: string } {
+  return {
+    subject: "[권리샵] 이메일 인증을 완료해주세요",
+    html: `
+      <div style="font-family: 'Noto Sans KR', sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: #0B3B57; padding: 20px; text-align: center;">
+          <h1 style="color: #2EC4B6; margin: 0;">권리샵</h1>
+        </div>
+        <div style="padding: 30px; background: #fff;">
+          <p>${params.name}님, 권리샵에 가입해주셔서 감사합니다!</p>
+          <p>아래 버튼을 클릭하여 이메일 인증을 완료해주세요.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${params.verifyUrl}" style="background: #2EC4B6; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 700;">이메일 인증하기</a>
+          </div>
+          <p style="color: #6B7280; font-size: 13px;">인증 링크는 24시간 동안 유효합니다. 본인이 가입하지 않으셨다면 이 메일을 무시하세요.</p>
+        </div>
+        <div style="background: #F3F4F6; padding: 15px; text-align: center; font-size: 12px; color: #6B7280;">
+          <p>본 메일은 권리샵에서 자동 발송되었습니다.</p>
+        </div>
+      </div>
+    `,
+  };
+}
+
 export function fraudAlertEmail(params: {
   sellerName: string;
   listingTitle: string;
