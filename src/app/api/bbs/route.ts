@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const category = searchParams.get("category");
     const page = parseInt(searchParams.get("page") ?? "1");
-    const limit = parseInt(searchParams.get("limit") ?? "30");
+    const limit = Math.min(parseInt(searchParams.get("limit") ?? "30"), 50);
 
     const where: Record<string, unknown> = { isPublished: true };
     if (category) where.category = category;

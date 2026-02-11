@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FileText } from "lucide-react";
 import { BBS_CATEGORIES } from "@/lib/utils/constants";
 
@@ -61,7 +62,7 @@ export default function BbsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#0B3B57]">게시판</h1>
+      <h1 className="text-2xl font-bold text-navy">게시판</h1>
       <p className="mt-1 text-sm text-gray-500">공지사항과 유용한 정보를 확인하세요</p>
 
       {/* Category Tabs */}
@@ -74,7 +75,7 @@ export default function BbsPage() {
               onClick={() => handleCategoryChange(catValue)}
               className={`px-4 py-2 text-sm font-medium transition border-b-2 ${
                 activeCategory === catValue
-                  ? "border-[#2EC4B6] text-[#2EC4B6]"
+                  ? "border-mint text-mint"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -106,19 +107,21 @@ export default function BbsPage() {
                 className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md transition"
               >
                 {post.thumbnailUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={post.thumbnailUrl}
                     alt={post.title}
+                    width={64}
+                    height={64}
                     className="h-16 w-16 rounded object-cover flex-shrink-0"
+                    unoptimized
                   />
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="inline-block rounded-full bg-[#2EC4B6]/10 px-2.5 py-0.5 text-xs font-medium text-[#2EC4B6]">
+                    <span className="inline-block rounded-full bg-mint/10 px-2.5 py-0.5 text-xs font-medium text-mint">
                       [{post.category}]
                     </span>
-                    <h3 className="text-base font-bold text-[#0B3B57] truncate">{post.title}</h3>
+                    <h3 className="text-base font-bold text-navy truncate">{post.title}</h3>
                   </div>
                   <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
                     <span>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
@@ -150,7 +153,7 @@ export default function BbsPage() {
                 onClick={() => handlePageChange(pageNum)}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                   meta.page === pageNum
-                    ? "bg-[#2EC4B6] text-white"
+                    ? "bg-mint text-white"
                     : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                 }`}
               >

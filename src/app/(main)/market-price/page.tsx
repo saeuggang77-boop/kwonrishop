@@ -154,6 +154,7 @@ export default function MarketPricePage() {
             <select
               value={region}
               onChange={(e) => { setRegion(e.target.value); setSubRegion(""); }}
+              aria-label="시/도 선택"
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
             >
               {Object.keys(REGIONS).map((r) => (
@@ -166,6 +167,7 @@ export default function MarketPricePage() {
             <select
               value={subRegion}
               onChange={(e) => setSubRegion(e.target.value)}
+              aria-label="구/군 선택"
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
             >
               <option value="">전체</option>
@@ -179,6 +181,7 @@ export default function MarketPricePage() {
             <select
               value={businessType}
               onChange={(e) => setBusinessType(e.target.value)}
+              aria-label="업종 선택"
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
             >
               <option value="">전체 업종</option>
@@ -315,6 +318,7 @@ export default function MarketPricePage() {
                   <select
                     value={selectedListingId}
                     onChange={(e) => setSelectedListingId(e.target.value)}
+                    aria-label="내 매물 선택"
                     className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
                   >
                     <option value="">매물을 선택하세요</option>

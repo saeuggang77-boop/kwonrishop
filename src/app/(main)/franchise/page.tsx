@@ -72,7 +72,7 @@ export default function FranchisePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#0B3B57]">프랜차이즈 정보</h1>
+      <h1 className="text-2xl font-bold text-navy">프랜차이즈 정보</h1>
       <p className="mt-1 text-sm text-gray-500">브랜드별 매출, 창업비용, 가맹점 현황을 확인하세요</p>
 
       {/* Category Tabs */}
@@ -83,7 +83,7 @@ export default function FranchisePage() {
             onClick={() => setActiveTab(cat)}
             className={`rounded-lg px-5 py-2 text-sm font-medium transition ${
               activeTab === cat
-                ? "bg-[#2EC4B6] text-white"
+                ? "bg-mint text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -101,11 +101,12 @@ export default function FranchisePage() {
             onChange={(e) => setKeyword(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="브랜드명 검색"
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+            aria-label="브랜드명 검색"
+            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
           />
           <button
             onClick={handleSearch}
-            className="rounded-lg bg-[#2EC4B6] px-6 py-2 text-sm font-medium text-white hover:bg-[#26aea2] transition"
+            className="rounded-lg bg-mint px-6 py-2 text-sm font-medium text-white hover:bg-mint/90 transition"
           >
             검색
           </button>
@@ -113,7 +114,8 @@ export default function FranchisePage() {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+          aria-label="정렬 기준"
+          className="rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
         >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -145,8 +147,8 @@ export default function FranchisePage() {
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-xs font-medium text-[#2EC4B6]">{brand.subcategory}</span>
-                    <h3 className="mt-1 text-lg font-bold text-[#0B3B57]">{brand.brandName}</h3>
+                    <span className="text-xs font-medium text-mint">{brand.subcategory}</span>
+                    <h3 className="mt-1 text-lg font-bold text-navy">{brand.brandName}</h3>
                   </div>
                   {brand.isPromoting && (
                     <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-600">
@@ -160,7 +162,7 @@ export default function FranchisePage() {
                     <div className="flex items-center gap-2 text-sm">
                       <TrendingUp className="h-4 w-4 text-gray-500" />
                       <span className="text-gray-500">월 평균매출</span>
-                      <span className="ml-auto font-bold text-[#0B3B57]">
+                      <span className="ml-auto font-bold text-navy">
                         {formatKRW(Number(brand.monthlyAvgSales))}
                         {brand.dataYear && (
                           <span className="ml-1 text-xs font-normal text-gray-500">
@@ -174,7 +176,7 @@ export default function FranchisePage() {
                     <div className="flex items-center gap-2 text-sm">
                       <DollarSign className="h-4 w-4 text-gray-500" />
                       <span className="text-gray-500">창업비용</span>
-                      <span className="ml-auto font-bold text-[#0B3B57]">
+                      <span className="ml-auto font-bold text-navy">
                         {formatKRW(Number(brand.startupCost))}
                       </span>
                     </div>
@@ -183,7 +185,7 @@ export default function FranchisePage() {
                     <div className="flex items-center gap-2 text-sm">
                       <Store className="h-4 w-4 text-gray-500" />
                       <span className="text-gray-500">가맹+직영점</span>
-                      <span className="ml-auto font-bold text-[#0B3B57]">
+                      <span className="ml-auto font-bold text-navy">
                         {brand.storeCount.toLocaleString()}개
                       </span>
                     </div>
@@ -214,7 +216,7 @@ export default function FranchisePage() {
                 onClick={() => handlePageChange(pageNum)}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                   meta.page === pageNum
-                    ? "bg-[#2EC4B6] text-white"
+                    ? "bg-mint text-white"
                     : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                 }`}
               >

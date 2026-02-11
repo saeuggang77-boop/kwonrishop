@@ -6,8 +6,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const category = searchParams.get("category");
     const page = parseInt(searchParams.get("page") ?? "1");
-    const limit = parseInt(searchParams.get("limit") ?? "12");
-    const sortBy = searchParams.get("sortBy") ?? "createdAt";
+    const limit = Math.min(parseInt(searchParams.get("limit") ?? "12"), 50);
+    let sortBy = searchParams.get("sortBy") ?? "createdAt";
+
+    const ALLOWED_SORT = ["createdAt", "storeCount", "startupCost", "monthlyAvgSales"];
+    if (!ALLOWED_SORT.includes(sortBy)) sortBy = "createdAt";
     const keyword = searchParams.get("keyword");
     const salesMin = searchParams.get("salesMin");
     const salesMax = searchParams.get("salesMax");

@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
 
     const cursor = req.nextUrl.searchParams.get("cursor");
-    const limit = parseInt(req.nextUrl.searchParams.get("limit") ?? "20");
+    const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") ?? "20"), 100);
 
     // Show only severity >= HIGH or users with 2+ violations
     const violations = await prisma.fraudViolation.findMany({

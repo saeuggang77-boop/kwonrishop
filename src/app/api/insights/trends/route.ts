@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
     const city = req.nextUrl.searchParams.get("city");
     const district = req.nextUrl.searchParams.get("district");
-    const days = parseInt(req.nextUrl.searchParams.get("days") ?? "30");
+    const days = Math.min(parseInt(req.nextUrl.searchParams.get("days") ?? "30"), 365);
 
     if (!city || !district) {
       return Response.json({ error: { message: "시/도와 구/군을 입력해주세요." } }, { status: 400 });

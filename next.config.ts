@@ -46,6 +46,15 @@ const nextConfig: NextConfig = {
           key: "Strict-Transport-Security",
           value: "max-age=31536000; includeSubDomains",
         },
+        {
+          key: "Permissions-Policy",
+          value: "camera=(), microphone=(), geolocation=(), payment=(self)",
+        },
+        {
+          key: "Content-Security-Policy",
+          value:
+            "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.tosspayments.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; connect-src 'self' https://api.tosspayments.com https://*.amazonaws.com; frame-src https://js.tosspayments.com;",
+        },
       ],
     },
   ],

@@ -300,6 +300,7 @@ export default function ListingsPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
+              aria-label="매물 검색"
               placeholder="매물 검색 (지역, 업종, 키워드)"
               value={filters.query}
               onChange={(e) =>
@@ -341,6 +342,7 @@ export default function ListingsPage() {
             <select
               value={filters.city}
               onChange={(e) => handleCityChange(e.target.value)}
+              aria-label="시/도 선택"
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 outline-none focus:border-mint"
             >
               <option value="">시/도 전체</option>
@@ -357,6 +359,7 @@ export default function ListingsPage() {
                 setFilters((f) => ({ ...f, district: e.target.value }))
               }
               disabled={!filters.city}
+              aria-label="구/군 선택"
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 outline-none focus:border-mint disabled:bg-gray-50 disabled:text-gray-400"
             >
               <option value="">구/군 전체</option>
@@ -373,6 +376,7 @@ export default function ListingsPage() {
                 const [sortBy, sortOrder] = e.target.value.split("-");
                 setFilters((f) => ({ ...f, sortBy, sortOrder }));
               }}
+              aria-label="정렬 기준"
               className="ml-auto rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 outline-none focus:border-mint"
             >
               {SORT_OPTIONS.map((opt) => (
@@ -678,7 +682,7 @@ function ListingCard({ listing }: { listing: ListingItem }) {
       {/* Content */}
       <div className="p-4">
         {/* Title */}
-        <h3 className="truncate font-bold text-navy group-hover:text-mint transition-colors">
+        <h3 className="truncate font-bold text-navy group-hover:text-mint transition-colors" title={listing.title}>
           {listing.title}
         </h3>
 

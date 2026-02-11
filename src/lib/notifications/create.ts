@@ -17,14 +17,19 @@ export async function createNotification({
   sourceType,
   sourceId,
 }: CreateNotificationParams) {
-  return prisma.notification.create({
-    data: {
-      userId,
-      title,
-      message,
-      link,
-      sourceType,
-      sourceId,
-    },
-  });
+  try {
+    return await prisma.notification.create({
+      data: {
+        userId,
+        title,
+        message,
+        link,
+        sourceType,
+        sourceId,
+      },
+    });
+  } catch (error) {
+    console.error("[notifications] Failed to create notification:", error);
+    return null;
+  }
 }

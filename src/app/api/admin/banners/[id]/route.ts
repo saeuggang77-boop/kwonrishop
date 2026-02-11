@@ -1,7 +1,16 @@
 import { NextRequest } from "next/server";
+import { z } from "zod/v4";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { errorToResponse } from "@/lib/utils/errors";
+
+const bannerUpdateSchema = z.object({
+  title: z.string().min(1).max(100),
+  imageUrl: z.string().url(),
+  linkUrl: z.string().url().nullable(),
+  sortOrder: z.number().int().min(0),
+  isActive: z.boolean(),
+}).partial();
 
 export async function PATCH(
   req: NextRequest,
@@ -18,18 +27,18 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { title, imageUrl, linkUrl, sortOrder, isActive } = body;
+    const parsed = bannerUpdateSchema.safeParse(body);
 
-    const updateData: Record<string, unknown> = {};
-    if (title !== undefined) updateData.title = title;
-    if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
-    if (linkUrl !== undefined) updateData.linkUrl = linkUrl;
-    if (sortOrder !== undefined) updateData.sortOrder = sortOrder;
-    if (isActive !== undefined) updateData.isActive = isActive;
+    if (!parsed.success) {
+      return Response.json(
+        { error: { message: "유효하지 않은 입력입니다.", details: parsed.error.issues } },
+        { status: 400 }
+      );
+    }
 
     const banner = await prisma.banner.update({
       where: { id },
-      data: updateData,
+      data: parsed.data,
     });
 
     return Response.json({ data: banner });

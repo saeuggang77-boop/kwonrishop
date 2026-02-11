@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { errorToResponse } from "@/lib/utils/errors";
+import { serializeBigInt } from "@/lib/utils/bigint-json";
 import { createNotification } from "@/lib/notifications/create";
 import type { AdminActionType } from "@prisma/client";
 
@@ -116,13 +117,7 @@ export async function POST(
       }
     }
 
-    const data = JSON.parse(
-      JSON.stringify(listing, (_, v) =>
-        typeof v === "bigint" ? v.toString() : v
-      )
-    );
-
-    return Response.json({ data });
+    return Response.json({ data: serializeBigInt(listing) });
   } catch (error) {
     return errorToResponse(error);
   }

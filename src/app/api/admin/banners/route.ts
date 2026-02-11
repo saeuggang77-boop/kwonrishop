@@ -1,7 +1,15 @@
 import { NextRequest } from "next/server";
+import { z } from "zod/v4";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { errorToResponse } from "@/lib/utils/errors";
+
+const bannerCreateSchema = z.object({
+  title: z.string().min(1).max(100),
+  imageUrl: z.string().url(),
+  linkUrl: z.string().url().optional(),
+  sortOrder: z.number().int().min(0).optional(),
+});
 
 export async function GET() {
   try {
@@ -34,14 +42,16 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, imageUrl, linkUrl, sortOrder, isActive } = body;
+    const parsed = bannerCreateSchema.safeParse(body);
 
-    if (!title || !imageUrl) {
+    if (!parsed.success) {
       return Response.json(
-        { error: { message: "필수 필드가 누락되었습니다." } },
+        { error: { message: "유효하지 않은 입력입니다.", details: parsed.error.issues } },
         { status: 400 }
       );
     }
+
+    const { title, imageUrl, linkUrl, sortOrder } = parsed.data;
 
     const banner = await prisma.banner.create({
       data: {
@@ -49,7 +59,7 @@ export async function POST(req: NextRequest) {
         imageUrl,
         linkUrl: linkUrl ?? null,
         sortOrder: sortOrder ?? 0,
-        isActive: isActive ?? true,
+        isActive: true,
       },
     });
 

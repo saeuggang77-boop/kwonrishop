@@ -33,7 +33,9 @@ for (const worker of workers) {
 // Graceful shutdown
 async function shutdown() {
   console.log("[workers] Shutting down...");
+  const forceExit = setTimeout(() => process.exit(1), 30000);
   await Promise.all(workers.map((w) => w.close()));
+  clearTimeout(forceExit);
   console.log("[workers] All workers stopped.");
   process.exit(0);
 }

@@ -8,16 +8,16 @@ import Credentials from "next-auth/providers/credentials";
 export default {
   providers: [
     Kakao({
-      clientId: process.env.AUTH_KAKAO_ID,
-      clientSecret: process.env.AUTH_KAKAO_SECRET,
+      clientId: process.env.AUTH_KAKAO_ID ?? "", // Required: set AUTH_KAKAO_ID
+      clientSecret: process.env.AUTH_KAKAO_SECRET ?? "", // Required: set AUTH_KAKAO_SECRET
     }),
     Naver({
-      clientId: process.env.AUTH_NAVER_ID,
-      clientSecret: process.env.AUTH_NAVER_SECRET,
+      clientId: process.env.AUTH_NAVER_ID ?? "", // Required: set AUTH_NAVER_ID
+      clientSecret: process.env.AUTH_NAVER_SECRET ?? "", // Required: set AUTH_NAVER_SECRET
     }),
     Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      clientId: process.env.AUTH_GOOGLE_ID ?? "", // Required: set AUTH_GOOGLE_ID
+      clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "", // Required: set AUTH_GOOGLE_SECRET
     }),
     Credentials({
       name: "credentials",
