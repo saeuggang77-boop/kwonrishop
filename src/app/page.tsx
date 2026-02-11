@@ -388,7 +388,6 @@ export default function HomePage() {
 
       {/* Premium Listings Carousel */}
       {premiumListings.length > 0 && (
-        <RevealOnScroll>
           <section className="border-t border-gray-200 bg-gradient-to-b from-amber-50/50 to-gray-50 py-10">
             <div className="mx-auto max-w-7xl px-4">
               <div className="flex items-center justify-between">
@@ -457,7 +456,6 @@ export default function HomePage() {
               </div>
             </div>
           </section>
-        </RevealOnScroll>
       )}
 
       {/* Today's Recommended Listings */}
