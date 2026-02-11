@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod/v4";
 import type { Prisma } from "@prisma/client";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const trackEventSchema = z.object({
   eventType: z.enum([
@@ -17,6 +18,12 @@ const trackEventSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+    try {
+      const limited = await checkRateLimit(`events:${ip}`, 100, 60);
+      if (limited) return limited;
+    } catch {}
+
     const session = await auth();
     const body = await req.json();
     const parsed = trackEventSchema.parse(body);

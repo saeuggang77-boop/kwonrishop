@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -63,49 +64,58 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+      const limited = await checkRateLimit(`inquiry:${session.user.id}`, 10, 60);
+      if (limited) return limited;
+    } catch {}
+
+    const { listingId, message } = await req.json();
+    if (!listingId || !message?.trim()) {
+      return Response.json({ error: "listingId and message required" }, { status: 400 });
+    }
+
+    const listing = await prisma.listing.findUnique({
+      where: { id: listingId },
+      select: { sellerId: true, title: true },
+    });
+
+    if (!listing) {
+      return Response.json({ error: "Listing not found" }, { status: 404 });
+    }
+
+    if (listing.sellerId === session.user.id) {
+      return Response.json({ error: "Cannot inquire on your own listing" }, { status: 400 });
+    }
+
+    const inquiry = await prisma.inquiry.create({
+      data: {
+        listingId,
+        senderId: session.user.id,
+        receiverId: listing.sellerId,
+        message: message.trim(),
+      },
+    });
+
+    // Create notification for receiver
+    await prisma.notification.create({
+      data: {
+        userId: listing.sellerId,
+        title: "새 문의가 도착했습니다",
+        message: `"${listing.title}"에 대한 새 문의가 있습니다.`,
+        link: `/dashboard/inquiries`,
+        sourceType: "inquiry",
+        sourceId: inquiry.id,
+      },
+    });
+
+    return Response.json({ data: inquiry }, { status: 201 });
+  } catch (error) {
+    return Response.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }
-
-  const { listingId, message } = await req.json();
-  if (!listingId || !message?.trim()) {
-    return Response.json({ error: "listingId and message required" }, { status: 400 });
-  }
-
-  const listing = await prisma.listing.findUnique({
-    where: { id: listingId },
-    select: { sellerId: true, title: true },
-  });
-
-  if (!listing) {
-    return Response.json({ error: "Listing not found" }, { status: 404 });
-  }
-
-  if (listing.sellerId === session.user.id) {
-    return Response.json({ error: "Cannot inquire on your own listing" }, { status: 400 });
-  }
-
-  const inquiry = await prisma.inquiry.create({
-    data: {
-      listingId,
-      senderId: session.user.id,
-      receiverId: listing.sellerId,
-      message: message.trim(),
-    },
-  });
-
-  // Create notification for receiver
-  await prisma.notification.create({
-    data: {
-      userId: listing.sellerId,
-      title: "새 문의가 도착했습니다",
-      message: `"${listing.title}"에 대한 새 문의가 있습니다.`,
-      link: `/dashboard/inquiries`,
-      sourceType: "inquiry",
-      sourceId: inquiry.id,
-    },
-  });
-
-  return Response.json({ data: inquiry }, { status: 201 });
 }

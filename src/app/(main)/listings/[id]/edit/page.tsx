@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { BUSINESS_CATEGORY_LABELS, STORE_TYPE_LABELS } from "@/lib/utils/constants";
+import { useToast } from "@/components/ui/toast";
 
 export default function EditListingPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function EditListingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     fetch(`/api/listings/${id}`)
@@ -50,6 +52,18 @@ export default function EditListingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.title?.trim()) {
+      toast("info", "제목을 입력해주세요.");
+      return;
+    }
+    if (!form.description?.trim()) {
+      toast("info", "설명을 입력해주세요.");
+      return;
+    }
+    if (!form.price || Number(form.price) <= 0) {
+      toast("info", "보증금을 올바르게 입력해주세요.");
+      return;
+    }
     setIsSaving(true);
     setErrorMsg("");
 

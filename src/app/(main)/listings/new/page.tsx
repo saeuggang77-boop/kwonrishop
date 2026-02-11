@@ -155,6 +155,7 @@ export default function NewListingPage() {
   const [uploadedImages, setUploadedImages] = useState<{ key: string; url: string }[]>([]);
   const [uploadedDocs, setUploadedDocs] = useState<{ name: string; key: string; url: string }[]>([]);
   const [showFairTradeModal, setShowFairTradeModal] = useState(false);
+  const { toast } = useToast();
 
   const districtOptions = form.city ? REGIONS[form.city] ?? [] : [];
 
@@ -191,7 +192,37 @@ export default function NewListingPage() {
     );
   }, [form.goodwillPremium, form.facilityPremium, form.floorPremium, form.noPremium]);
 
-  const goNext = () => { if (step < TOTAL_STEPS) setStep(step + 1); };
+  const goNext = () => {
+    if (step >= TOTAL_STEPS) return;
+    // Step validation
+    switch (step) {
+      case 1: // Location
+        if (!form.city || !form.district || !form.address) {
+          toast("info", "주소를 입력해주세요.");
+          return;
+        }
+        break;
+      case 2: // Category
+        if (!form.businessCategory) {
+          toast("info", "업종을 선택해주세요.");
+          return;
+        }
+        break;
+      case 3: // Price
+        if (!form.deposit) {
+          toast("info", "보증금을 입력해주세요.");
+          return;
+        }
+        break;
+      case 4: // Details
+        if (!form.title || !form.description) {
+          toast("info", "제목과 설명을 입력해주세요.");
+          return;
+        }
+        break;
+    }
+    setStep(step + 1);
+  };
   const goPrev = () => { if (step > 1) setStep(step - 1); };
 
   const handleSubmit = async () => {
@@ -317,7 +348,7 @@ export default function NewListingPage() {
         {step === 4 && <Step4Additional form={form} update={update} investmentTotal={investmentTotal} netProfit={netProfit} expensePercent={expensePercent} />}
         {step === 5 && <Step5Description form={form} update={update} />}
         {step === 6 && <Step6Photos form={form} update={update} setUploadedImages={setUploadedImages} uploadedDocs={uploadedDocs} setUploadedDocs={setUploadedDocs} />}
-        {step === 7 && <Step7Integration form={form} update={update} />}
+        {step === 7 && <Step7Integration />}
       </div>
 
       {/* Navigation Buttons */}
@@ -1123,18 +1154,13 @@ function Step6Photos({
    STEP 7: 매출 매입자료 연동
    ═══════════════════════════════════════════════════ */
 
-function Step7Integration({
-  form, update,
-}: {
-  form: FormData;
-  update: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
-}) {
-  const integrations: { key: keyof FormData; label: string; desc: string; color: string; icon: string }[] = [
-    { key: "hometaxLinked", label: "홈택스", desc: "매출/매입 세금계산서 자동 연동", color: "bg-blue-500", icon: "🏛️" },
-    { key: "creditCardLinked", label: "여신금융협회", desc: "카드 매출 데이터 연동", color: "bg-green-600", icon: "💳" },
-    { key: "baeminLinked", label: "배달의민족", desc: "배민 매출 데이터 연동", color: "bg-sky-400", icon: "🛵" },
-    { key: "yogiyoLinked", label: "요기요", desc: "요기요 매출 데이터 연동", color: "bg-red-500", icon: "🍽️" },
-    { key: "coupangLinked", label: "쿠팡이츠", desc: "쿠팡이츠 매출 데이터 연동", color: "bg-yellow-500", icon: "📦" },
+function Step7Integration() {
+  const integrations: { label: string; desc: string; color: string; icon: string }[] = [
+    { label: "홈택스", desc: "매출/매입 세금계산서 자동 연동", color: "bg-blue-500", icon: "🏛️" },
+    { label: "여신금융협회", desc: "카드 매출 데이터 연동", color: "bg-green-600", icon: "💳" },
+    { label: "배달의민족", desc: "배민 매출 데이터 연동", color: "bg-sky-400", icon: "🛵" },
+    { label: "요기요", desc: "요기요 매출 데이터 연동", color: "bg-red-500", icon: "🍽️" },
+    { label: "쿠팡이츠", desc: "쿠팡이츠 매출 데이터 연동", color: "bg-yellow-500", icon: "📦" },
   ];
 
   return (
@@ -1144,47 +1170,36 @@ function Step7Integration({
           <Link2 className="mt-0.5 h-5 w-5 text-purple" />
           <div>
             <p className="text-sm font-medium text-gray-800">매출 데이터를 연동하면 매물 신뢰도가 높아집니다.</p>
-            <p className="mt-1 text-xs text-gray-500">연동된 데이터는 암호화되어 안전하게 보관됩니다.</p>
+            <p className="mt-1 text-xs text-gray-500">연동 기능은 현재 준비 중이며, 곧 제공될 예정입니다.</p>
           </div>
         </div>
       </div>
 
       <div className="space-y-3">
-        {integrations.map((item) => {
-          const isLinked = form[item.key] as boolean;
-          return (
-            <div key={item.key} className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-purple/30">
-              <div className="flex items-center gap-3">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${item.color} text-xl text-white`}>
-                  {item.icon}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-800">{item.label}</p>
-                  <p className="text-xs text-gray-500">{item.desc}</p>
-                </div>
+        {integrations.map((item) => (
+          <div key={item.label} className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4">
+            <div className="flex items-center gap-3">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${item.color} text-xl text-white opacity-50`}>
+                {item.icon}
               </div>
-              <button
-                type="button"
-                onClick={() => update(item.key, !isLinked as never)}
-                className={`rounded-lg px-4 py-2 text-xs font-bold transition-all ${
-                  isLinked
-                    ? "bg-purple/10 text-purple"
-                    : "bg-gray-100 text-gray-500 hover:bg-purple/10 hover:text-purple"
-                }`}
-              >
-                {isLinked ? (
-                  <span className="flex items-center gap-1"><Check className="h-3 w-3" /> 연동됨</span>
-                ) : (
-                  "연동하기"
-                )}
-              </button>
+              <div>
+                <p className="text-sm font-medium text-gray-800">{item.label}</p>
+                <p className="text-xs text-gray-500">{item.desc}</p>
+              </div>
             </div>
-          );
-        })}
+            <button
+              type="button"
+              disabled
+              className="rounded-lg bg-gray-100 px-4 py-2 text-xs font-bold text-gray-400 cursor-not-allowed"
+            >
+              준비 중
+            </button>
+          </div>
+        ))}
       </div>
 
       <p className="text-center text-xs text-gray-400">
-        연동은 선택사항이며, 나중에 마이페이지에서도 연동할 수 있습니다.
+        연동 기능은 준비 중이며, 나중에 마이페이지에서 연동할 수 있습니다.
       </p>
     </div>
   );

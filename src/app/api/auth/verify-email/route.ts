@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
+  try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+    const limited = await checkRateLimit(`verify:${ip}`, 10, 60);
+    if (limited) return limited;
+  } catch {}
+
   const token = req.nextUrl.searchParams.get("token");
 
   if (!token) {

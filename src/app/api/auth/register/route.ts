@@ -4,11 +4,18 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/ses/send";
 import { welcomeEmail } from "@/lib/ses/templates";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const BASE_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+    try {
+      const limited = await checkRateLimit(`register:${ip}`, 5, 300);
+      if (limited) return limited;
+    } catch {}
+
     const { name, email, phone, password, role } = await req.json();
 
     if (!name || !email || !password) {

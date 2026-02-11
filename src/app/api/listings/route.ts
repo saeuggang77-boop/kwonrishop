@@ -103,8 +103,7 @@ export async function POST(req: NextRequest) {
         businessSubtype: parsed.businessSubtype ?? null,
         operatingYears: parsed.operatingYears ?? null,
         areaPyeong: parsed.areaM2 ? m2ToPyeong(parsed.areaM2) : null,
-        status: "ACTIVE",
-        publishedAt: new Date(),
+        status: "PENDING_VERIFICATION",
       },
     });
 

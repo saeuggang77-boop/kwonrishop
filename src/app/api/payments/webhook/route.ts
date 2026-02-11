@@ -27,6 +27,15 @@ export async function POST(req: NextRequest) {
 
         const mappedStatus = statusMap[status];
         if (mappedStatus && paymentKey) {
+          // Idempotency check: skip if already processed
+          const existingPayment = await prisma.payment.findFirst({
+            where: { tossPaymentKey: paymentKey },
+            select: { paymentStatus: true },
+          });
+          if (!existingPayment || existingPayment.paymentStatus === mappedStatus) {
+            break; // Already processed or not found
+          }
+
           await prisma.payment.updateMany({
             where: { tossPaymentKey: paymentKey },
             data: {
@@ -43,6 +52,6 @@ export async function POST(req: NextRequest) {
     return Response.json({ success: true });
   } catch (error) {
     console.error("Webhook error:", error);
-    return Response.json({ success: true }); // Always return 200 to avoid retries
+    return Response.json({ success: false, error: "Internal processing error" });
   }
 }
