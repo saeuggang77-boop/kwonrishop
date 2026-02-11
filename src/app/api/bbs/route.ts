@@ -4,15 +4,31 @@ import { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const category = searchParams.get("category");
+  const page = parseInt(searchParams.get("page") ?? "1");
+  const limit = parseInt(searchParams.get("limit") ?? "30");
 
   const where: Record<string, unknown> = { isPublished: true };
   if (category) where.category = category;
 
-  const posts = await prisma.boardPost.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-    take: 30,
-  });
+  const [posts, total] = await Promise.all([
+    prisma.boardPost.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.boardPost.count({ where }),
+  ]);
 
-  return Response.json({ data: posts });
+  const totalPages = Math.ceil(total / limit);
+
+  return Response.json({
+    data: posts,
+    meta: {
+      total,
+      page,
+      limit,
+      totalPages,
+    },
+  });
 }

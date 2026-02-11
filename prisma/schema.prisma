@@ -110,6 +110,13 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
+enum SafetyGrade {
+  A
+  B
+  C
+  D
+}
+
 enum FraudRuleType {
   DUPLICATE_PHOTO
   PRICE_SPIKE
@@ -167,6 +174,18 @@ enum SettlementStatus {
   PROCESSING
   COMPLETED
   FAILED
+}
+
+enum PremiumAdTier {
+  BASIC
+  PREMIUM
+  VIP
+}
+
+enum PremiumAdStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
 }
 
 // ============================================================
@@ -288,7 +307,10 @@ model Listing {
   totalFloors      Int?
   status           ListingStatus    @default(DRAFT)
   isFeatured       Boolean          @default(false)
+  safetyGrade      SafetyGrade?
+  safetyComment    String?          // 등급 판정 요약
   isPremium        Boolean          @default(false)
+  premiumRank      Int              @default(0)
   viewCount        Int              @default(0)
   inquiryCount     Int              @default(0)
   favoriteCount    Int              @default(0)
@@ -307,6 +329,7 @@ model Listing {
   comparisons     ListingComparison[]
   reports         Report[]
   events          Event[]
+  premiumListings PremiumListing[]
 
   @@index([sellerId])
   @@index([status])
@@ -783,4 +806,59 @@ model BoardPost {
   @@index([category])
   @@index([createdAt])
   @@map("board_posts")
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  imageUrl  String
+  linkUrl   String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@map("banners")
+}
+
+// ============================================================
+// PREMIUM AD SYSTEM
+// ============================================================
+
+model PremiumPlan {
+  id            String         @id @default(cuid())
+  name          PremiumAdTier  @unique
+  displayName   String
+  price         BigInt
+  durationDays  Int
+  features      Json
+  sortOrder     Int            @default(0)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  subscriptions PremiumListing[]
+  @@map("premium_plans")
+}
+
+model PremiumListing {
+  id             String          @id @default(cuid())
+  listingId      String
+  planId         String
+  status         PremiumAdStatus @default(ACTIVE)
+  startDate      DateTime        @default(now())
+  endDate        DateTime
+  paymentMethod  String?
+  paymentStatus  String          @default("PENDING")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  listing Listing     @relation(fields: [listingId], references: [id])
+  plan    PremiumPlan @relation(fields: [planId], references: [id])
+
+  @@index([listingId])
+  @@index([status])
+  @@index([endDate])
+  @@map("premium_listings")
 }

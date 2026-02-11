@@ -12,6 +12,7 @@ import {
   MessageSquare,
   FolderOpen,
   User,
+  Star,
 } from "lucide-react";
 
 interface NavItem {
@@ -29,6 +30,7 @@ const navItems: NavItem[] = [
   { href: "/dashboard/notifications", label: "알림", icon: Bell, roles: ["SELLER", "ADMIN", "BUYER"] },
   { href: "/dashboard/documents", label: "문서", icon: FolderOpen, roles: ["SELLER", "ADMIN"] },
   { href: "/dashboard/reports", label: "리포트", icon: FileText, roles: ["SELLER", "ADMIN", "BUYER"] },
+  { href: "/dashboard/premium", label: "프리미엄 광고", icon: Star, roles: ["SELLER", "ADMIN"] },
   { href: "/dashboard/settlements", label: "정산 내역", icon: DollarSign, roles: ["SELLER", "ADMIN"] },
   { href: "/profile", label: "프로필", icon: User, roles: ["SELLER", "ADMIN", "BUYER"] },
 ];

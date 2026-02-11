@@ -39,7 +39,7 @@ export default async function ComparisonPage({
         <div className="mt-12 rounded-xl border border-gray-200 bg-white py-16 text-center">
           <MapPin className="mx-auto h-12 w-12 text-gray-300" />
           <p className="mt-4 text-lg font-medium text-gray-500">비교 데이터가 없습니다</p>
-          <p className="mt-1 text-sm text-gray-400">주변 유사 매물이 아직 수집되지 않았습니다.</p>
+          <p className="mt-1 text-sm text-gray-500">주변 유사 매물이 아직 수집되지 않았습니다.</p>
         </div>
       ) : (
         <div className="mt-6 space-y-4">
@@ -54,11 +54,11 @@ export default async function ComparisonPage({
                 <div className="flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-mint" />
                   <h3 className="font-bold text-navy">반경 {c.radiusKm}km 이내</h3>
-                  <span className="text-sm text-gray-400">({formatNumber(c.comparableCount)}건 비교)</span>
+                  <span className="text-sm text-gray-500">({formatNumber(c.comparableCount)}건 비교)</span>
                 </div>
 
                 {c.comparableCount === 0 ? (
-                  <p className="mt-3 text-sm text-gray-400">해당 반경에 비교 가능한 매물이 없습니다.</p>
+                  <p className="mt-3 text-sm text-gray-500">해당 반경에 비교 가능한 매물이 없습니다.</p>
                 ) : (
                   <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <StatCard label="평균 권리금" value={c.avgPremiumFee ? formatKRW(c.avgPremiumFee) : "-"} />

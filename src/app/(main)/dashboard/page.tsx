@@ -55,12 +55,12 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-navy">대시보드</h1>
+          <h1 className="font-heading text-2xl font-bold text-navy">대시보드</h1>
           <p className="mt-1 text-sm text-gray-500">{session.user.name}님의 매물 현황</p>
         </div>
         <Link
           href="/listings/new"
-          className="flex items-center gap-2 rounded-lg bg-mint px-5 py-2.5 text-sm font-medium text-white hover:bg-mint-dark"
+          className="flex items-center gap-2 rounded-lg bg-mint px-5 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-mint-dark active:scale-[0.97]"
         >
           <Plus className="h-4 w-4" /> 매물 등록
         </Link>
@@ -69,24 +69,32 @@ export default async function DashboardPage() {
       {/* KPI Cards */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
-          icon={<Package className="h-5 w-5 text-mint" />}
+          icon={<Package className="h-5 w-5" />}
+          accentColor="bg-mint"
+          iconColor="text-mint"
           label="활성 매물"
           value={formatNumber(activeCount)}
           sub={`전체 ${listings.length}건`}
         />
         <KpiCard
-          icon={<Eye className="h-5 w-5 text-blue-500" />}
+          icon={<Eye className="h-5 w-5" />}
+          accentColor="bg-blue-500"
+          iconColor="text-blue-500"
           label="총 조회수"
           value={formatNumber(totalViews)}
           delta={viewDelta}
         />
         <KpiCard
-          icon={<MessageSquare className="h-5 w-5 text-orange-500" />}
+          icon={<MessageSquare className="h-5 w-5" />}
+          accentColor="bg-orange-500"
+          iconColor="text-orange-500"
           label="총 문의수"
           value={formatNumber(totalInquiries)}
         />
         <KpiCard
-          icon={<MousePointerClick className="h-5 w-5 text-purple-500" />}
+          icon={<MousePointerClick className="h-5 w-5" />}
+          accentColor="bg-purple-500"
+          iconColor="text-purple-500"
           label="문의 전환율"
           value={formatPercent(ctr)}
           sub="조회 → 문의"
@@ -94,62 +102,92 @@ export default async function DashboardPage() {
       </div>
 
       {/* Listings Table */}
-      <div className="mt-8 rounded-xl border border-gray-200 bg-white">
+      <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
         <div className="border-b border-gray-200 px-6 py-4">
-          <h2 className="font-bold text-navy">내 매물</h2>
+          <h2 className="font-heading font-bold text-navy">내 매물</h2>
         </div>
         {listings.length === 0 ? (
-          <div className="py-12 text-center text-gray-400">
+          <div className="py-12 text-center text-gray-500">
             <p>등록된 매물이 없습니다.</p>
             <Link href="/listings/new" className="mt-2 inline-block text-sm text-mint hover:underline">
               첫 매물 등록하기
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-left text-xs text-gray-500">
-                <tr>
-                  <th className="px-6 py-3 font-medium">매물명</th>
-                  <th className="px-4 py-3 font-medium">유형</th>
-                  <th className="px-4 py-3 font-medium text-right">가격</th>
-                  <th className="px-4 py-3 font-medium text-center">상태</th>
-                  <th className="px-4 py-3 font-medium text-right">조회</th>
-                  <th className="px-4 py-3 font-medium text-right">문의</th>
-                  <th className="px-4 py-3 font-medium text-right">등록일</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {listings.map((listing) => (
-                  <tr key={listing.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <Link href={`/listings/${listing.id}`} className="font-medium text-navy hover:text-mint">
-                        {listing.title}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-4 text-gray-500">
-                      {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}
-                    </td>
-                    <td className="px-4 py-4 text-right font-medium text-navy">
-                      {formatKRW(listing.price)}
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      <StatusBadge status={listing.status} />
-                    </td>
-                    <td className="px-4 py-4 text-right text-gray-500">
-                      {formatNumber(listing.viewCount)}
-                    </td>
-                    <td className="px-4 py-4 text-right text-gray-500">
-                      {formatNumber(listing.inquiryCount)}
-                    </td>
-                    <td className="px-4 py-4 text-right text-gray-400">
-                      {formatRelativeTime(listing.createdAt)}
-                    </td>
+          <>
+            {/* Desktop Table */}
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 text-left text-xs text-gray-500">
+                  <tr>
+                    <th className="px-6 py-3 font-medium">매물명</th>
+                    <th className="px-4 py-3 font-medium">유형</th>
+                    <th className="px-4 py-3 font-medium text-right">가격</th>
+                    <th className="px-4 py-3 font-medium text-center">상태</th>
+                    <th className="px-4 py-3 font-medium text-right">조회</th>
+                    <th className="px-4 py-3 font-medium text-right">문의</th>
+                    <th className="px-4 py-3 font-medium text-right">등록일</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {listings.map((listing) => (
+                    <tr key={listing.id} className="transition-colors hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <Link href={`/listings/${listing.id}`} className="font-medium text-navy transition-colors hover:text-mint">
+                          {listing.title}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-4 text-gray-500">
+                        {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}
+                      </td>
+                      <td className="px-4 py-4 text-right font-medium text-navy">
+                        {formatKRW(listing.price)}
+                      </td>
+                      <td className="px-4 py-4 text-center">
+                        <StatusBadge status={listing.status} />
+                      </td>
+                      <td className="px-4 py-4 text-right text-gray-500">
+                        {formatNumber(listing.viewCount)}
+                      </td>
+                      <td className="px-4 py-4 text-right text-gray-500">
+                        {formatNumber(listing.inquiryCount)}
+                      </td>
+                      <td className="px-4 py-4 text-right text-gray-500">
+                        {formatRelativeTime(listing.createdAt)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card Layout */}
+            <div className="divide-y divide-gray-100 md:hidden">
+              {listings.map((listing) => (
+                <Link
+                  key={listing.id}
+                  href={`/listings/${listing.id}`}
+                  className="block px-4 py-4 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-navy">{listing.title}</p>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}
+                      </p>
+                    </div>
+                    <StatusBadge status={listing.status} />
+                  </div>
+                  <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
+                    <span className="font-medium text-navy">{formatKRW(listing.price)}</span>
+                    <span>조회 {formatNumber(listing.viewCount)}</span>
+                    <span>문의 {formatNumber(listing.inquiryCount)}</span>
+                    <span className="ml-auto">{formatRelativeTime(listing.createdAt)}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -158,22 +196,28 @@ export default async function DashboardPage() {
 
 function KpiCard({
   icon,
+  accentColor,
+  iconColor,
   label,
   value,
   sub,
   delta,
 }: {
   icon: React.ReactNode;
+  accentColor: string;
+  iconColor: string;
   label: string;
   value: string;
   sub?: string;
   delta?: number | null;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5">
+    <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5">
+      {/* Top accent line */}
+      <div className={`absolute inset-x-0 top-0 h-1 ${accentColor}`} />
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-500">{label}</span>
-        {icon}
+        <span className="label-text">{label}</span>
+        <span className={iconColor}>{icon}</span>
       </div>
       <p className="mt-2 text-2xl font-bold text-navy">{value}</p>
       <div className="mt-1 flex items-center gap-2 text-xs">
@@ -183,7 +227,7 @@ function KpiCard({
             {formatPercent(Math.abs(delta))}
           </span>
         )}
-        {sub && <span className="text-gray-400">{sub}</span>}
+        {sub && <span className="text-gray-500">{sub}</span>}
       </div>
     </div>
   );

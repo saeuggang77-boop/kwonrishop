@@ -61,7 +61,7 @@ export default async function InquiriesPage() {
       {/* Received */}
       <h2 className="mt-8 text-lg font-bold text-navy">받은 문의</h2>
       {received.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-gray-200 bg-white py-8 text-center text-gray-400">
+        <div className="mt-4 rounded-xl border border-gray-200 bg-white py-8 text-center text-gray-500">
           <MessageSquare className="mx-auto h-8 w-8" />
           <p className="mt-2">받은 문의가 없습니다.</p>
         </div>
@@ -88,7 +88,7 @@ export default async function InquiriesPage() {
                       </p>
                     </div>
                     <p className="mt-1 text-sm text-gray-600">{inq.message}</p>
-                    <div className="mt-2 flex gap-3 text-xs text-gray-400">
+                    <div className="mt-2 flex gap-3 text-xs text-gray-500">
                       <span>매물: {listing?.title ?? inq.listingId}</span>
                       <span>{formatDateTimeKR(inq.createdAt)}</span>
                     </div>
@@ -111,7 +111,7 @@ export default async function InquiriesPage() {
       {/* Sent */}
       <h2 className="mt-10 text-lg font-bold text-navy">보낸 문의</h2>
       {sent.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-gray-200 bg-white py-8 text-center text-gray-400">
+        <div className="mt-4 rounded-xl border border-gray-200 bg-white py-8 text-center text-gray-500">
           <MessageSquare className="mx-auto h-8 w-8" />
           <p className="mt-2">보낸 문의가 없습니다.</p>
         </div>
@@ -131,7 +131,7 @@ export default async function InquiriesPage() {
                       To: {receiver?.name ?? receiver?.email ?? "판매자"}
                     </p>
                     <p className="mt-1 text-sm text-gray-600">{inq.message}</p>
-                    <div className="mt-2 flex gap-3 text-xs text-gray-400">
+                    <div className="mt-2 flex gap-3 text-xs text-gray-500">
                       <span>매물: {listing?.title ?? inq.listingId}</span>
                       <span>{formatDateTimeKR(inq.createdAt)}</span>
                       <span>{inq.isRead ? "읽음" : "미확인"}</span>

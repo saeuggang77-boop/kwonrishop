@@ -4,6 +4,8 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 function LoginForm() {
   const router = useRouter();
@@ -56,77 +58,64 @@ function LoginForm() {
         <button
           type="button"
           onClick={() => handleOAuth("kakao")}
-          className="flex items-center justify-center gap-2 rounded-lg bg-[#FEE500] px-4 py-3 text-sm font-medium text-[#191919] hover:bg-[#FDD800]"
+          className="flex items-center justify-center gap-2 rounded-lg bg-[#FEE500] px-4 py-3 text-sm font-medium text-[#191919] transition-all duration-150 hover:bg-[#FDD800] active:scale-[0.97]"
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded text-xs font-bold">K</span>
           카카오로 시작하기
         </button>
         <button
           type="button"
           onClick={() => handleOAuth("naver")}
-          className="flex items-center justify-center gap-2 rounded-lg bg-[#03C75A] px-4 py-3 text-sm font-medium text-white hover:bg-[#02b351]"
+          className="flex items-center justify-center gap-2 rounded-lg bg-[#03C75A] px-4 py-3 text-sm font-medium text-white transition-all duration-150 hover:bg-[#02b351] active:scale-[0.97]"
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded text-xs font-bold">N</span>
           네이버로 시작하기
         </button>
         <button
           type="button"
           onClick={() => handleOAuth("google")}
-          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition-all duration-150 hover:bg-gray-50 active:scale-[0.97]"
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded text-xs font-bold text-blue-500">G</span>
           Google로 시작하기
         </button>
       </div>
 
       <div className="my-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-gray-200" />
-        <span className="text-xs text-gray-400">또는</span>
+        <span className="text-xs text-gray-500">또는</span>
         <div className="h-px flex-1 bg-gray-200" />
       </div>
 
       {/* Credentials Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {errorMsg && (
-          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600" role="alert">
             {errorMsg}
           </div>
         )}
 
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
-            이메일
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
-          />
-        </div>
+        <Input
+          label="이메일"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+        />
 
-        <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-            비밀번호
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="비밀번호 입력"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
-          />
-        </div>
+        <Input
+          label="비밀번호"
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호 입력"
+        />
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="rounded-lg bg-mint px-4 py-3 text-sm font-medium text-white hover:bg-mint-dark disabled:opacity-50"
-        >
-          {isLoading ? "로그인 중..." : "이메일로 로그인"}
-        </button>
+        <Button type="submit" loading={isLoading} size="lg" className="w-full">
+          이메일로 로그인
+        </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-500">

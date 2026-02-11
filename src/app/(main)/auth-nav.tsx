@@ -1,13 +1,22 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 
 export function AuthNavItems() {
   const { data: session, status } = useSession();
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
 
-  if (status === "loading") {
+  useEffect(() => {
+    if (status === "loading") {
+      const timer = setTimeout(() => setLoadingTimeout(true), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
+  if (status === "loading" && !loadingTimeout) {
     return <div className="h-9 w-16 animate-pulse rounded-lg bg-gray-100" />;
   }
 

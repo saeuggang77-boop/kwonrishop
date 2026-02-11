@@ -155,6 +155,8 @@ async function main() {
       latitude: 37.4979,
       longitude: 127.0276,
       contactPhone: "010-1234-5678",
+      safetyGrade: "A" as const,
+      safetyComment: "매출증빙 완료, 권리금 시세 적정가 범위",
     },
     {
       title: "홍대 치킨호프 급매",
@@ -179,6 +181,8 @@ async function main() {
       latitude: 37.5567,
       longitude: 126.9237,
       contactPhone: "010-1234-5678",
+      safetyGrade: "A" as const,
+      safetyComment: "매출증빙 완료, 5년 운영 안정 점포",
     },
     {
       title: "잠실 한식당 양도",
@@ -203,6 +207,8 @@ async function main() {
       latitude: 37.5133,
       longitude: 127.1001,
       contactPhone: "010-1234-5678",
+      safetyGrade: "B" as const,
+      safetyComment: "사업자등록증 확인 완료, 매출증빙 일부",
     },
     {
       title: "이태원 바/펍 양도",
@@ -227,6 +233,8 @@ async function main() {
       latitude: 37.5345,
       longitude: 126.9945,
       contactPhone: "010-1234-5678",
+      safetyGrade: "C" as const,
+      safetyComment: "매출증빙 미비, 권리금 시세 대비 다소 높음",
     },
     {
       title: "교대역 미용실 양도",
@@ -251,6 +259,8 @@ async function main() {
       latitude: 37.4937,
       longitude: 127.0145,
       contactPhone: "010-1234-5678",
+      safetyGrade: "A" as const,
+      safetyComment: "매출증빙 완료, 세무 자료 확인 완료",
     },
     {
       title: "왕십리 편의점 양도",
@@ -275,6 +285,8 @@ async function main() {
       latitude: 37.5612,
       longitude: 127.0368,
       contactPhone: "010-1234-5678",
+      safetyGrade: "C" as const,
+      safetyComment: "프랜차이즈 확인됨, 매출증빙 미비",
     },
     {
       title: "마곡 피자 프랜차이즈 양도",
@@ -299,6 +311,8 @@ async function main() {
       latitude: 37.5676,
       longitude: 126.8372,
       contactPhone: "010-1234-5678",
+      safetyGrade: "B" as const,
+      safetyComment: "매출증빙 일부 제출, 권리금 시세 범위",
     },
     {
       title: "노원 PC방 양도",
@@ -323,6 +337,8 @@ async function main() {
       latitude: 37.6543,
       longitude: 127.0614,
       contactPhone: "010-1234-5678",
+      safetyGrade: "D" as const,
+      safetyComment: "매출증빙 없음, 권리금 적정성 미확인",
     },
   ];
 
@@ -345,6 +361,56 @@ async function main() {
     createdListings.push(created);
   }
   console.log(`  Listings: ${createdListings.length}`);
+
+  // ──────────────────────────────────────────────
+  // 4b. Premium Plans & Premium Listings
+  // ──────────────────────────────────────────────
+  const premiumPlans = [
+    { id: "plan-basic", name: "BASIC" as const, displayName: "BASIC", price: BigInt(100_000), durationDays: 30, features: ["매물 목록 상단 노출", "BASIC 배지 표시", "일반 테두리 하이라이트"], sortOrder: 0 },
+    { id: "plan-premium", name: "PREMIUM" as const, displayName: "PREMIUM", price: BigInt(200_000), durationDays: 30, features: ["매물 목록 상단 노출", "PREMIUM 배지 표시", "보라색 프리미엄 테두리", "홈페이지 추천 섹션 노출"], sortOrder: 1 },
+    { id: "plan-vip", name: "VIP" as const, displayName: "VIP", price: BigInt(300_000), durationDays: 30, features: ["매물 목록 최상단 노출", "VIP 골드 배지", "골드 프리미엄 테두리", "홈페이지 추천 섹션 최우선", "상세페이지 VIP 전용 헤더"], sortOrder: 2 },
+  ];
+
+  for (const plan of premiumPlans) {
+    await prisma.premiumPlan.upsert({
+      where: { id: plan.id },
+      update: {},
+      create: plan,
+    });
+  }
+  console.log("  Premium plans: 3");
+
+  // Set premium status on sample listings: 강남역 카페 → VIP, 홍대 치킨호프 → PREMIUM, 잠실 한식당 → BASIC
+  const premiumMappings = [
+    { listingIdx: 0, planId: "plan-vip", rank: 3 },
+    { listingIdx: 1, planId: "plan-premium", rank: 2 },
+    { listingIdx: 2, planId: "plan-basic", rank: 1 },
+  ];
+
+  for (const mapping of premiumMappings) {
+    const listing = createdListings[mapping.listingIdx];
+    if (!listing) continue;
+
+    await prisma.listing.update({
+      where: { id: listing.id },
+      data: { isPremium: true, premiumRank: mapping.rank },
+    });
+
+    await prisma.premiumListing.upsert({
+      where: { id: `seed-premium-${mapping.listingIdx}` },
+      update: {},
+      create: {
+        id: `seed-premium-${mapping.listingIdx}`,
+        listingId: listing.id,
+        planId: mapping.planId,
+        status: "ACTIVE",
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        paymentStatus: "PAID",
+      },
+    });
+  }
+  console.log("  Premium listings: 3");
 
   // ──────────────────────────────────────────────
   // 5. Sample Inquiries
@@ -425,19 +491,55 @@ async function main() {
   // 8. Sample Board Posts
   // ──────────────────────────────────────────────
   const boardPosts = [
-    { category: "창업정보", title: "2026년 유망 창업 아이템 TOP 10", content: "올해 가장 주목받는 창업 아이템을 소개합니다. 무인매장, 건강식 전문점, 반려동물 서비스 등이 상위권을 차지했습니다." },
-    { category: "창업정보", title: "상가 임대차 계약 시 꼭 확인해야 할 5가지", content: "상가 계약 전 반드시 확인해야 할 사항들: 권리금 보호, 임대차 기간, 원상복구 조건, 관리비 내역, 영업 제한 조건 등을 정리했습니다." },
-    { category: "뉴스", title: "소상공인 지원금 신청 안내 (2026년)", content: "정부 소상공인 지원 정책이 확대되었습니다. 신규 창업자 대상 최대 5,000만원 저리 대출이 가능합니다." },
+    { category: "공지사항", title: "권리샵 오픈 안내", content: "안녕하세요, 권리샵이 정식 오픈하였습니다.\n\n상가 점포 매매·양도 전문 플랫폼으로서 안전하고 투명한 거래를 지원합니다.\n\n많은 이용 부탁드립니다." },
+    { category: "이용가이드", title: "매물 등록 방법 가이드", content: "1. 회원가입 후 로그인합니다.\n2. '점포 팔기' 메뉴를 클릭합니다.\n3. 매물 정보(업종, 가격, 위치 등)를 입력합니다.\n4. 사진을 첨부하면 매물 노출에 유리합니다.\n5. 등록 완료 후 관리자 검토를 거쳐 게시됩니다." },
+    { category: "창업정보", title: "2026년 유망 창업 아이템 TOP 10", content: "올해 가장 주목받는 창업 아이템을 소개합니다.\n\n1. 무인매장 (카페, 아이스크림)\n2. 건강식 전문점\n3. 반려동물 서비스\n4. 셀프 세탁소\n5. 스터디카페\n6. 배달 전문점\n7. 키즈카페\n8. 네일아트\n9. 코인 노래방\n10. 밀키트 전문점\n\n지역별 상권 분석과 함께 참고하시기 바랍니다." },
+    { category: "창업정보", title: "상가 임대차 계약 시 꼭 확인해야 할 5가지", content: "상가 계약 전 반드시 확인해야 할 사항들:\n\n1. 권리금 보호: 상가건물 임대차보호법 적용 여부\n2. 임대차 기간: 최소 5년 보장 여부\n3. 원상복구 조건: 인테리어 철거 범위\n4. 관리비 내역: 포함/별도 항목 확인\n5. 영업 제한 조건: 업종 변경 가능 여부\n\n전문가 자문을 받으시길 권장합니다." },
+    { category: "알림공지", title: "소상공인 지원금 신청 안내 (2026년)", content: "정부 소상공인 지원 정책이 확대되었습니다.\n\n- 신규 창업자 대상 최대 5,000만원 저리 대출\n- 기존 소상공인 운영자금 3,000만원 지원\n- 디지털 전환 지원금 500만원\n\n신청기간: 2026년 3월 1일 ~ 12월 31일\n자세한 내용은 소상공인시장진흥공단 홈페이지를 참조하세요." },
+    { category: "이용가이드", title: "프리미엄 서비스 이용 안내", content: "프리미엄 회원이 되시면 다음과 같은 혜택을 받으실 수 있습니다.\n\n- 매물 상단 노출 (검색 결과 우선 표시)\n- 상세 매출 분석 리포트\n- 비교 매물 분석\n- 전문가 상담 무료 연결\n- 계약서 템플릿 제공\n\n자세한 내용은 '프리미엄' 페이지를 확인해주세요." },
   ];
 
   for (let i = 0; i < boardPosts.length; i++) {
     await prisma.boardPost.upsert({
       where: { id: `seed-post-${i}` },
       update: {},
-      create: { id: `seed-post-${i}`, ...boardPosts[i] },
+      create: { id: `seed-post-${i}`, ...boardPosts[i], isPublished: true },
     });
   }
-  console.log("  Board posts: 3");
+  console.log(`  Board posts: ${boardPosts.length}`);
+
+  // ──────────────────────────────────────────────
+  // 9. Sample Banners
+  // ──────────────────────────────────────────────
+  const banners = [
+    {
+      title: "권리샵 그랜드 오픈",
+      imageUrl: "gradient:linear-gradient(135deg, #2EC4B6 0%, #0B3B57 100%)",
+      linkUrl: "/listings",
+      sortOrder: 0,
+    },
+    {
+      title: "프리미엄 회원 혜택",
+      imageUrl: "gradient:linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      linkUrl: "/premium",
+      sortOrder: 1,
+    },
+    {
+      title: "안전한 거래, 권리샵과 함께",
+      imageUrl: "gradient:linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+      linkUrl: "/legal/terms",
+      sortOrder: 2,
+    },
+  ];
+
+  for (let i = 0; i < banners.length; i++) {
+    await prisma.banner.upsert({
+      where: { id: `seed-banner-${i}` },
+      update: {},
+      create: { id: `seed-banner-${i}`, ...banners[i], isActive: true },
+    });
+  }
+  console.log(`  Banners: ${banners.length}`);
 
   console.log("\nSeeding complete!");
   console.log("─────────────────────────────────");

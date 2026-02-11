@@ -51,6 +51,7 @@ export const searchListingsSchema = z.object({
   rentMax: z.coerce.number().int().positive().optional(),
   areaMin: z.coerce.number().nonnegative().optional(),
   areaMax: z.coerce.number().positive().optional(),
+  premiumOnly: z.coerce.boolean().optional(),
   sortBy: z.enum(["createdAt", "price", "viewCount", "favoriteCount", "monthlyRevenue", "monthlyProfit"]).optional().default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
   cursor: z.string().optional(),

@@ -26,7 +26,7 @@ export default async function DashboardReportsPage() {
       <h1 className="text-2xl font-bold text-navy">내 리포트</h1>
 
       {reports.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-gray-200 bg-white py-12 text-center text-gray-400">
+        <div className="mt-8 rounded-xl border border-gray-200 bg-white py-12 text-center text-gray-500">
           <FileText className="mx-auto h-10 w-10" />
           <p className="mt-3">구매한 리포트가 없습니다.</p>
           <Link href="/listings" className="mt-2 inline-block text-sm text-mint hover:underline">매물에서 심층 리포트 구매하기</Link>

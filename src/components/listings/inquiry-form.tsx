@@ -13,6 +13,7 @@ interface InquiryFormProps {
 export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
   const { data: session } = useSession();
   const [message, setMessage] = useState("");
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   // Don't show for own listing
@@ -38,7 +39,7 @@ export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || !privacyConsent) return;
 
     setStatus("sending");
     try {
@@ -51,6 +52,7 @@ export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
       if (res.ok) {
         setStatus("sent");
         setMessage("");
+        setPrivacyConsent(false);
       } else {
         setStatus("error");
       }
@@ -90,9 +92,20 @@ export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
         {status === "error" && (
           <p className="mt-1 text-xs text-red-500">전송에 실패했습니다. 다시 시도해주세요.</p>
         )}
+        <label className="mt-3 flex items-start gap-2 text-xs text-gray-600">
+          <input
+            type="checkbox"
+            checked={privacyConsent}
+            onChange={(e) => setPrivacyConsent(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-mint focus:ring-mint"
+          />
+          <span>
+            개인정보 수집 및 이용에 동의합니다. (필수)
+          </span>
+        </label>
         <button
           type="submit"
-          disabled={status === "sending" || !message.trim()}
+          disabled={status === "sending" || !message.trim() || !privacyConsent}
           className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-navy px-4 py-3 text-sm font-medium text-white hover:bg-navy/90 disabled:opacity-50"
         >
           <Send className="h-4 w-4" />

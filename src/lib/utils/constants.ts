@@ -89,7 +89,120 @@ export const ALLOWED_DOCUMENT_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
+export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; description: string }> = {
+  A: { label: "A등급", color: "text-green-700", bg: "bg-green-100", border: "border-green-300", description: "매출증빙 완료 + 권리금 적정" },
+  B: { label: "B등급", color: "text-yellow-700", bg: "bg-yellow-100", border: "border-yellow-300", description: "일부 증빙 있음" },
+  C: { label: "C등급", color: "text-orange-700", bg: "bg-orange-100", border: "border-orange-300", description: "증빙 부족" },
+  D: { label: "D등급", color: "text-red-700", bg: "bg-red-100", border: "border-red-300", description: "주의 필요" },
+};
+
 export const FRANCHISE_CATEGORIES = ["외식", "도소매", "서비스"] as const;
+
+export const PREMIUM_AD_CONFIG: Record<string, { label: string; badge: string; color: string; bg: string; border: string; gradient: string }> = {
+  BASIC:   { label: "BASIC",   badge: "AD",      color: "text-amber-700",  bg: "bg-amber-50",    border: "border-amber-300", gradient: "from-amber-100 to-amber-50" },
+  PREMIUM: { label: "PREMIUM", badge: "PREMIUM", color: "text-purple-700", bg: "bg-purple-50",   border: "border-purple-300", gradient: "from-purple-100 to-purple-50" },
+  VIP:     { label: "VIP",     badge: "VIP",     color: "text-yellow-800", bg: "bg-yellow-50",   border: "border-yellow-400", gradient: "from-yellow-200 via-amber-100 to-yellow-50" },
+};
+
+export const PREMIUM_AD_PLANS = [
+  { tier: "BASIC",   price: 100_000, days: 30, features: ["매물 목록 상단 노출", "BASIC 배지 표시", "일반 테두리 하이라이트"] },
+  { tier: "PREMIUM", price: 200_000, days: 30, features: ["매물 목록 상단 노출", "PREMIUM 배지 표시", "보라색 프리미엄 테두리", "홈페이지 추천 섹션 노출"] },
+  { tier: "VIP",     price: 300_000, days: 30, features: ["매물 목록 최상단 노출", "VIP 골드 배지", "골드 프리미엄 테두리", "홈페이지 추천 섹션 최우선", "상세페이지 VIP 전용 헤더"] },
+];
+
+// 업종 대분류 → 세부 카테고리 매핑 (레퍼런스 사이트 기준)
+export const BUSINESS_CATEGORY_GROUPS: Record<string, string[]> = {
+  외식업: ["KOREAN_FOOD", "CHINESE_FOOD", "JAPANESE_FOOD", "WESTERN_FOOD", "CHICKEN", "PIZZA", "CAFE_BAKERY", "BAR_PUB", "BUNSIK", "DELIVERY", "OTHER_FOOD"],
+  서비스업: ["SERVICE"],
+  "도/소매업": ["RETAIL"],
+  "예술/스포츠/시설업": ["ENTERTAINMENT"],
+  "교육/학원업": ["EDUCATION"],
+  숙박업: ["ACCOMMODATION"],
+  기타: ["OTHER"],
+};
+
+// 업종 세부 카테고리 (이모지 + 라벨) — 매물등록 스텝 폼용
+export const BUSINESS_SUBCATEGORIES: Record<string, { key: string; emoji: string; label: string; subtype?: string }[]> = {
+  외식업: [
+    { key: "KOREAN_FOOD", emoji: "🍚", label: "한식" },
+    { key: "CHINESE_FOOD", emoji: "🥟", label: "중식" },
+    { key: "JAPANESE_FOOD", emoji: "🍣", label: "일식/회" },
+    { key: "WESTERN_FOOD", emoji: "🍝", label: "양식" },
+    { key: "CHICKEN", emoji: "🍗", label: "치킨" },
+    { key: "PIZZA", emoji: "🍕", label: "피자" },
+    { key: "CAFE_BAKERY", emoji: "☕", label: "카페/베이커리" },
+    { key: "BAR_PUB", emoji: "🍺", label: "주류/호프" },
+    { key: "BUNSIK", emoji: "🍜", label: "분식" },
+    { key: "DELIVERY", emoji: "🛵", label: "배달전문" },
+    { key: "OTHER_FOOD", emoji: "🍴", label: "기타 외식" },
+  ],
+  서비스업: [
+    { key: "SERVICE", emoji: "💇", label: "미용실", subtype: "미용실" },
+    { key: "SERVICE", emoji: "💅", label: "네일/속눈썹", subtype: "네일/속눈썹" },
+    { key: "SERVICE", emoji: "🧖", label: "피부관리", subtype: "피부관리" },
+    { key: "SERVICE", emoji: "👔", label: "세탁소", subtype: "세탁소" },
+    { key: "SERVICE", emoji: "🔧", label: "수리/정비", subtype: "수리/정비" },
+    { key: "SERVICE", emoji: "📱", label: "통신/휴대폰", subtype: "통신/휴대폰" },
+    { key: "SERVICE", emoji: "🏢", label: "기타 서비스", subtype: "기타 서비스" },
+  ],
+  "도/소매업": [
+    { key: "RETAIL", emoji: "🏪", label: "편의점", subtype: "편의점" },
+    { key: "RETAIL", emoji: "🥬", label: "마트/슈퍼", subtype: "마트/슈퍼" },
+    { key: "RETAIL", emoji: "👗", label: "의류/패션", subtype: "의류/패션" },
+    { key: "RETAIL", emoji: "💊", label: "약국", subtype: "약국" },
+    { key: "RETAIL", emoji: "🌸", label: "꽃집", subtype: "꽃집" },
+    { key: "RETAIL", emoji: "📦", label: "기타 소매", subtype: "기타 소매" },
+  ],
+  "예술/스포츠/시설업": [
+    { key: "ENTERTAINMENT", emoji: "🎤", label: "노래방", subtype: "노래방" },
+    { key: "ENTERTAINMENT", emoji: "🎱", label: "당구장", subtype: "당구장" },
+    { key: "ENTERTAINMENT", emoji: "🏋️", label: "헬스장/PT", subtype: "헬스장/PT" },
+    { key: "ENTERTAINMENT", emoji: "🧘", label: "요가/필라테스", subtype: "요가/필라테스" },
+    { key: "ENTERTAINMENT", emoji: "⚽", label: "축구/풋살장", subtype: "축구/풋살장" },
+    { key: "ENTERTAINMENT", emoji: "🎮", label: "PC방/오락실", subtype: "PC방/오락실" },
+  ],
+  "교육/학원업": [
+    { key: "EDUCATION", emoji: "📚", label: "입시학원", subtype: "입시학원" },
+    { key: "EDUCATION", emoji: "🎨", label: "예체능학원", subtype: "예체능학원" },
+    { key: "EDUCATION", emoji: "🌐", label: "어학원", subtype: "어학원" },
+    { key: "EDUCATION", emoji: "👶", label: "유아교육", subtype: "유아교육" },
+    { key: "EDUCATION", emoji: "💻", label: "코딩/IT교육", subtype: "코딩/IT교육" },
+    { key: "EDUCATION", emoji: "📝", label: "기타 학원", subtype: "기타 학원" },
+  ],
+  숙박업: [
+    { key: "ACCOMMODATION", emoji: "🏨", label: "모텔", subtype: "모텔" },
+    { key: "ACCOMMODATION", emoji: "🏠", label: "펜션/민박", subtype: "펜션/민박" },
+    { key: "ACCOMMODATION", emoji: "🏡", label: "게스트하우스", subtype: "게스트하우스" },
+    { key: "ACCOMMODATION", emoji: "🏢", label: "기타 숙박", subtype: "기타 숙박" },
+  ],
+  기타: [
+    { key: "OTHER", emoji: "🔖", label: "기타" },
+  ],
+};
+
+// 매물 특성/테마 옵션 — 매물등록 스텝 폼용
+export const STORE_FEATURES = [
+  "복층", "테라스", "신축", "역세권", "코너자리",
+  "대로변", "엘리베이터", "화장실분리", "주방분리", "1층",
+] as const;
+
+export const BBS_CATEGORIES = ["공지사항", "이용가이드", "창업정보", "알림공지"] as const;
+
+export const FLOOR_OPTIONS = [
+  { label: "지하", value: "B1" },
+  { label: "1층", value: "1" },
+  { label: "2층", value: "2" },
+  { label: "3층 이상", value: "3+" },
+] as const;
+
+export const AREA_OPTIONS = [
+  { label: "10평 이하", min: 0, max: 33 },
+  { label: "10평대", min: 33, max: 66 },
+  { label: "20평대", min: 66, max: 99 },
+  { label: "30평대", min: 99, max: 132 },
+  { label: "40평대", min: 132, max: 165 },
+  { label: "50평 이상", min: 165, max: 999999 },
+] as const;
 
 export const SORT_OPTIONS = [
   { value: "createdAt-desc", label: "최신 등록순" },

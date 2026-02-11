@@ -4,16 +4,21 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     role: "BUYER" as "BUYER" | "SELLER",
   });
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -35,6 +40,11 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!termsAccepted || !privacyAccepted) {
+      setErrorMsg("이용약관과 개인정보 수집·이용에 모두 동의해주세요.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -44,6 +54,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name: form.name,
           email: form.email,
+          phone: form.phone,
           password: form.password,
           role: form.role,
         }),
@@ -93,139 +104,156 @@ export default function RegisterPage() {
         <button
           type="button"
           onClick={() => handleOAuth("kakao")}
-          className="flex items-center justify-center gap-2 rounded-lg bg-[#FEE500] px-4 py-3 text-sm font-medium text-[#191919] hover:bg-[#FDD800]"
+          className="flex items-center justify-center gap-2 rounded-lg bg-[#FEE500] px-4 py-3 text-sm font-medium text-[#191919] transition-all duration-150 hover:bg-[#FDD800] active:scale-[0.97]"
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded text-xs font-bold">K</span>
           카카오로 시작하기
         </button>
         <button
           type="button"
           onClick={() => handleOAuth("naver")}
-          className="flex items-center justify-center gap-2 rounded-lg bg-[#03C75A] px-4 py-3 text-sm font-medium text-white hover:bg-[#02b351]"
+          className="flex items-center justify-center gap-2 rounded-lg bg-[#03C75A] px-4 py-3 text-sm font-medium text-white transition-all duration-150 hover:bg-[#02b351] active:scale-[0.97]"
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded text-xs font-bold">N</span>
           네이버로 시작하기
         </button>
         <button
           type="button"
           onClick={() => handleOAuth("google")}
-          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition-all duration-150 hover:bg-gray-50 active:scale-[0.97]"
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded text-xs font-bold text-blue-500">G</span>
           Google로 시작하기
         </button>
       </div>
 
       <div className="my-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-gray-200" />
-        <span className="text-xs text-gray-400">또는 이메일로 가입</span>
+        <span className="text-xs text-gray-500">또는 이메일로 가입</span>
         <div className="h-px flex-1 bg-gray-200" />
       </div>
 
       {/* Register Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {errorMsg && (
-          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600" role="alert">
             {errorMsg}
           </div>
         )}
 
-        <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
-            이름
-          </label>
-          <input
-            id="name"
-            type="text"
-            required
-            value={form.name}
-            onChange={(e) => updateField("name", e.target.value)}
-            placeholder="홍길동"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
-          />
-        </div>
+        <Input
+          label="이름"
+          type="text"
+          required
+          value={form.name}
+          onChange={(e) => updateField("name", e.target.value)}
+          placeholder="홍길동"
+        />
 
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
-            이메일
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={form.email}
-            onChange={(e) => updateField("email", e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
-          />
-        </div>
+        <Input
+          label="이메일"
+          type="email"
+          required
+          value={form.email}
+          onChange={(e) => updateField("email", e.target.value)}
+          placeholder="you@example.com"
+        />
 
-        <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-            비밀번호
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={8}
-            value={form.password}
-            onChange={(e) => updateField("password", e.target.value)}
-            placeholder="8자 이상"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
-          />
-        </div>
+        <Input
+          label="전화번호"
+          type="tel"
+          required
+          value={form.phone}
+          onChange={(e) => updateField("phone", e.target.value)}
+          placeholder="010-1234-5678"
+        />
 
-        <div>
-          <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-gray-700">
-            비밀번호 확인
-          </label>
-          <input
-            id="confirmPassword"
-            type="password"
-            required
-            value={form.confirmPassword}
-            onChange={(e) => updateField("confirmPassword", e.target.value)}
-            placeholder="비밀번호 재입력"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
-          />
-        </div>
+        <Input
+          label="비밀번호"
+          type="password"
+          required
+          minLength={8}
+          value={form.password}
+          onChange={(e) => updateField("password", e.target.value)}
+          placeholder="8자 이상"
+        />
+
+        <Input
+          label="비밀번호 확인"
+          type="password"
+          required
+          value={form.confirmPassword}
+          onChange={(e) => updateField("confirmPassword", e.target.value)}
+          placeholder="비밀번호 재입력"
+        />
 
         {/* Role Selection */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">
+          <label className="mb-2 block text-sm font-medium text-navy">
             가입 유형
           </label>
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => updateField("role", "BUYER")}
-              className={`rounded-lg border px-4 py-3 text-sm font-medium transition ${
+              className={`rounded-lg border px-4 py-3 text-sm font-medium transition-all duration-150 ${
                 form.role === "BUYER"
                   ? "border-mint bg-mint/5 text-mint"
                   : "border-gray-300 text-gray-500 hover:border-gray-400"
               }`}
             >
-              매수자 (구매)
+              임차인
             </button>
             <button
               type="button"
               onClick={() => updateField("role", "SELLER")}
-              className={`rounded-lg border px-4 py-3 text-sm font-medium transition ${
+              className={`rounded-lg border px-4 py-3 text-sm font-medium transition-all duration-150 ${
                 form.role === "SELLER"
                   ? "border-mint bg-mint/5 text-mint"
                   : "border-gray-300 text-gray-500 hover:border-gray-400"
               }`}
             >
-              매도자 (판매)
+              임대인
             </button>
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="mt-2 rounded-lg bg-mint px-4 py-3 text-sm font-medium text-white hover:bg-mint-dark disabled:opacity-50"
-        >
-          {isLoading ? "가입 중..." : "회원가입"}
-        </button>
+        {/* Terms Checkboxes */}
+        <div className="space-y-2 border-t border-gray-200 pt-4">
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 accent-mint"
+            />
+            <span className="text-sm text-gray-700">
+              <Link href="/legal/terms" target="_blank" className="font-medium text-mint hover:underline">
+                이용약관
+              </Link>
+              에 동의합니다 (필수)
+            </span>
+          </label>
+
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={privacyAccepted}
+              onChange={(e) => setPrivacyAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 accent-mint"
+            />
+            <span className="text-sm text-gray-700">
+              <Link href="/legal/privacy" target="_blank" className="font-medium text-mint hover:underline">
+                개인정보 수집·이용
+              </Link>
+              에 동의합니다 (필수)
+            </span>
+          </label>
+        </div>
+
+        <Button type="submit" loading={isLoading} size="lg" className="mt-2 w-full">
+          회원가입
+        </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-500">

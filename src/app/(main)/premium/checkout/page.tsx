@@ -108,7 +108,7 @@ export default function PremiumCheckoutPage() {
           {isLoading ? "결제 준비 중..." : selected === "FREE" ? "무료로 시작" : `${SUBSCRIPTION_TIER_LABELS[selected]} 구독하기`}
         </button>
         {selected !== "FREE" && (
-          <p className="mt-3 text-xs text-gray-400">
+          <p className="mt-3 text-xs text-gray-500">
             토스페이먼츠 안전 결제로 진행됩니다. 언제든 해지 가능합니다.
           </p>
         )}

@@ -57,7 +57,12 @@ export default function RootLayout({
       <body
         className={`${notoSansKr.variable} ${montserrat.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <a href="#main-content" className="skip-to-content">
+          본문으로 건너뛰기
+        </a>
+        <Providers>
+          <div id="main-content">{children}</div>
+        </Providers>
       </body>
     </html>
   );

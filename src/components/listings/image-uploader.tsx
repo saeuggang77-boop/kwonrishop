@@ -7,7 +7,7 @@ import { Upload, X } from "lucide-react";
 interface UploadedImage {
   key: string;
   url: string;
-  file: File;
+  preview: string;
 }
 
 interface ImageUploaderProps {
@@ -54,30 +54,24 @@ export function ImageUploader({ listingId, onImagesChange }: ImageUploaderProps)
 
     for (const file of validFiles) {
       try {
-        // Get presigned URL
+        // Upload via FormData (works locally without S3)
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("listingId", listingId);
+
         const res = await fetch("/api/upload/image", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            listingId,
-            contentType: file.type,
-            fileName: file.name,
-          }),
+          body: formData,
         });
 
-        if (!res.ok) throw new Error("Failed to get upload URL");
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error?.message ?? "업로드 실패");
+        }
 
         const { data } = await res.json();
-
-        // Upload to S3
-        await fetch(data.presignedUrl, {
-          method: "PUT",
-          body: file,
-          headers: { "Content-Type": file.type },
-        });
-
-        const url = data.presignedUrl.split("?")[0]; // Remove query params for display URL
-        newImages.push({ key: data.key, url, file });
+        const preview = URL.createObjectURL(file);
+        newImages.push({ key: data.key, url: data.url, preview });
       } catch {
         setError("일부 이미지 업로드에 실패했습니다.");
       }
@@ -90,6 +84,8 @@ export function ImageUploader({ listingId, onImagesChange }: ImageUploaderProps)
   };
 
   const removeImage = (index: number) => {
+    const removed = images[index];
+    if (removed?.preview) URL.revokeObjectURL(removed.preview);
     const updated = images.filter((_, i) => i !== index);
     setImages(updated);
     onImagesChange(updated.map((img) => ({ key: img.key, url: img.url })));
@@ -101,7 +97,7 @@ export function ImageUploader({ listingId, onImagesChange }: ImageUploaderProps)
         {images.map((img, i) => (
           <div key={img.key} className="group relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-200">
             <Image
-              src={URL.createObjectURL(img.file)}
+              src={img.preview}
               alt={`업로드 ${i + 1}`}
               fill
               className="object-cover"
@@ -127,7 +123,7 @@ export function ImageUploader({ listingId, onImagesChange }: ImageUploaderProps)
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 text-gray-400 transition-colors hover:border-mint hover:text-mint disabled:opacity-50"
+            className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 transition-colors hover:border-mint hover:text-mint disabled:opacity-50"
           >
             {uploading ? (
               <span className="h-6 w-6 animate-spin rounded-full border-2 border-mint border-t-transparent" />
@@ -148,7 +144,7 @@ export function ImageUploader({ listingId, onImagesChange }: ImageUploaderProps)
         className="hidden"
       />
 
-      <p className="mt-2 text-xs text-gray-400">
+      <p className="mt-2 text-xs text-gray-500">
         {images.length}/{MAX_FILES}장 | JPEG, PNG, WebP | 최대 10MB
       </p>
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}

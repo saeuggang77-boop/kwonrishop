@@ -23,6 +23,13 @@
   --warning: #F59E0B;
   --error: #EF4444;
   --info: #3B82F6;
+  --purple: #7C5CFC;
+  --purple-light: #9B82FD;
+  --purple-dark: #6344E0;
+  --admin-sidebar-bg: #1e1e2d;
+  --admin-sidebar-hover: #2a2a3d;
+  --admin-text-muted: #a2a3b7;
+  --admin-text-dim: #636674;
 }
 
 @theme inline {
@@ -38,8 +45,35 @@
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-info: var(--info);
+  --color-purple: var(--purple);
+  --color-purple-light: var(--purple-light);
+  --color-purple-dark: var(--purple-dark);
   --font-sans: var(--font-noto-sans-kr);
   --font-heading: var(--font-montserrat);
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  --animate-slide-up: slideUp 0.4s ease-out;
+  --animate-fade-in-scale: fadeInScale 0.2s ease-out;
+  --animate-slide-in-right: slideInRight 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 body {
@@ -50,4 +84,40 @@ body {
 
 .input-field {
   @apply w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-mint focus:ring-1 focus:ring-mint;
+}
+
+.step-input {
+  @apply w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-purple focus:ring-2 focus:ring-purple/20 placeholder:text-gray-400;
+}
+
+.step-select {
+  @apply w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-purple focus:ring-2 focus:ring-purple/20;
+}
+
+.label-text {
+  @apply text-xs font-medium text-gray-500;
+}
+
+.skip-to-content {
+  @apply absolute -top-full left-4 z-[100] rounded-b-lg bg-mint px-4 py-2 text-sm font-medium text-white transition-all;
+}
+.skip-to-content:focus {
+  @apply top-0;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

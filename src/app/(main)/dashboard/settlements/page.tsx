@@ -21,7 +21,7 @@ export default async function DashboardSettlementsPage() {
       <h1 className="text-2xl font-bold text-navy">정산 내역</h1>
 
       {payments.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-gray-200 bg-white py-12 text-center text-gray-400">
+        <div className="mt-8 rounded-xl border border-gray-200 bg-white py-12 text-center text-gray-500">
           <DollarSign className="mx-auto h-10 w-10" />
           <p className="mt-3">결제 내역이 없습니다.</p>
         </div>

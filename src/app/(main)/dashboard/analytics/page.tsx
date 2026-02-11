@@ -46,7 +46,7 @@ export default async function DashboardAnalyticsPage() {
       </div>
 
       {metrics.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-gray-200 bg-white py-12 text-center text-gray-400">
+        <div className="mt-8 rounded-xl border border-gray-200 bg-white py-12 text-center text-gray-500">
           아직 분석 데이터가 없습니다.
         </div>
       ) : (

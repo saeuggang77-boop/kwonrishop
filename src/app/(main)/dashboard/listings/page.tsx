@@ -34,7 +34,7 @@ export default async function DashboardListingsPage() {
 
       <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
         {listings.length === 0 ? (
-          <div className="py-12 text-center text-gray-400">등록된 매물이 없습니다.</div>
+          <div className="py-12 text-center text-gray-500">등록된 매물이 없습니다.</div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs text-gray-500">
@@ -58,7 +58,7 @@ export default async function DashboardListingsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-4 text-right text-gray-500">{formatNumber(l.viewCount)}</td>
-                  <td className="px-4 py-4 text-right text-gray-400">{formatRelativeTime(l.createdAt)}</td>
+                  <td className="px-4 py-4 text-right text-gray-500">{formatRelativeTime(l.createdAt)}</td>
                   <td className="px-4 py-4 text-right">
                     <Link href={`/listings/${l.id}/edit`} className="text-mint hover:underline">수정</Link>
                   </td>

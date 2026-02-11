@@ -55,7 +55,7 @@ export default async function NotificationsPage() {
                     <p className="font-medium text-navy">{n.title}</p>
                   </div>
                   <p className="mt-1 text-sm text-gray-600">{n.message}</p>
-                  <p className="mt-2 text-xs text-gray-400">
+                  <p className="mt-2 text-xs text-gray-500">
                     {formatDateTimeKR(n.createdAt)}
                   </p>
                 </div>

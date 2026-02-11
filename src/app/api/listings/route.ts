@@ -32,8 +32,14 @@ export async function GET(req: NextRequest) {
       if (parsed.priceMin) (where.price as Record<string, unknown>).gte = BigInt(parsed.priceMin);
       if (parsed.priceMax) (where.price as Record<string, unknown>).lte = BigInt(parsed.priceMax);
     }
+    if (parsed.premiumOnly) {
+      where.isPremium = true;
+    }
 
-    const orderBy = { [parsed.sortBy]: parsed.sortOrder };
+    const orderBy = [
+      { premiumRank: "desc" as const },
+      { [parsed.sortBy]: parsed.sortOrder },
+    ];
 
     const listings = await prisma.listing.findMany({
       where: {
