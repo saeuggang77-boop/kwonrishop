@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Calendar, Eye, Building, Layers, Phone, Mail, FileSearch, TrendingUp, Lock } from "lucide-react";
+import { MapPin, Calendar, Eye, Building, Layers, Phone, Mail, FileSearch, TrendingUp, Lock, Calculator } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { InquiryForm } from "@/components/listings/inquiry-form";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
@@ -431,6 +431,15 @@ export default async function ListingDetailPage({
                 storeType: listing.storeType,
               }}
             />
+
+            {/* Simulator Button */}
+            <Link
+              href={`/simulator?listingId=${listing.id}&keyMoney=${Math.round(Number(listing.premiumFee || 0) / 10000)}&deposit=${Math.round(Number(listing.price || 0) / 10000)}&monthlyRent=${Math.round(Number(listing.monthlyRent || 0) / 10000)}&businessType=${encodeURIComponent(BUSINESS_CATEGORY_LABELS[listing.businessCategory] || "기타")}`}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-mint bg-mint/5 px-4 py-3 text-sm font-bold text-mint transition-colors hover:bg-mint/10"
+            >
+              <Calculator className="h-4 w-4" />
+              이 매물로 창업 시뮬레이션
+            </Link>
 
             {/* Disclaimer */}
             <div className="rounded-lg bg-yellow-50 p-4 text-xs leading-relaxed text-yellow-800">

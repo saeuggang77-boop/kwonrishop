@@ -280,6 +280,7 @@ model User {
   settlements      Settlement[]
   notifications    Notification[]
   reportPurchases  ReportPurchase[]
+  simulations      Simulation[]
 
   @@index([role])
   @@index([accountStatus])
@@ -344,6 +345,7 @@ model Listing {
   premiumListings  PremiumListing[]
   reportPurchases  ReportPurchase[]
   reportData       ReportData[]
+  simulations      Simulation[]
 
   @@index([sellerId])
   @@index([status])
@@ -953,4 +955,24 @@ model MarketPrice {
   @@index([region, subRegion])
   @@index([businessType])
   @@map("market_prices")
+}
+
+// ============================================================
+// SIMULATION (창업 시뮬레이션)
+// ============================================================
+
+model Simulation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  input     Json
+  result    Json
+  listingId String?
+  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("simulations")
 }

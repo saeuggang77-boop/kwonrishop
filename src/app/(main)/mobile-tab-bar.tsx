@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, MessageSquare, Building, User } from "lucide-react";
+import { Home, Search, Calculator, Building, User } from "lucide-react";
 
 const tabs = [
   { href: "/", icon: Home, label: "홈", match: "exact" as const },
   { href: "/listings", icon: Search, label: "매물", match: "startsWith" as const },
-  { href: "/bbs", icon: MessageSquare, label: "커뮤니티", match: "startsWith" as const },
+  { href: "/simulator", icon: Calculator, label: "시뮬레이터", match: "startsWith" as const },
   { href: "/franchise", icon: Building, label: "프랜차이즈", match: "startsWith" as const },
   { href: "/dashboard", icon: User, label: "마이", match: "startsWith" as const },
 ];

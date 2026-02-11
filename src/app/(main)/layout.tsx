@@ -35,6 +35,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <Link href="/market-price" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
               시세 정보
             </Link>
+            <Link href="/simulator" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+              창업 시뮬레이터
+            </Link>
             <Link href="/bbs" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
               이용가이드
             </Link>
