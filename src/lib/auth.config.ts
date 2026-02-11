@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
+import type { UserRole, AccountStatus, SubscriptionTier } from "@prisma/client";
 import Kakao from "next-auth/providers/kakao";
 import Naver from "next-auth/providers/naver";
 import Google from "next-auth/providers/google";
@@ -32,5 +33,19 @@ export default {
     signIn: "/login",
     newUser: "/register",
     error: "/login",
+  },
+  callbacks: {
+    jwt({ token }) {
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub!;
+        session.user.role = token.role as UserRole;
+        session.user.accountStatus = token.accountStatus as AccountStatus;
+        session.user.subscriptionTier = token.subscriptionTier as SubscriptionTier;
+      }
+      return session;
+    },
   },
 } satisfies NextAuthConfig;
