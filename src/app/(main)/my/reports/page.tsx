@@ -124,7 +124,7 @@ export default function MyReportsPage() {
                     )}
                     {purchase.status === "COMPLETED" && isPremium && purchase.data?.pdfUrl && (
                       <button
-                        onClick={() => alert("PDF 다운로드 기능 준비 중입니다.")}
+                        onClick={() => window.open(purchase.data!.pdfUrl!, "_blank")}
                         className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                       >
                         <Download className="h-4 w-4" />

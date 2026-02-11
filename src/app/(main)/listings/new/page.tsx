@@ -357,6 +357,21 @@ export default function NewListingPage() {
    STEP 1: 위치정보
    ═══════════════════════════════════════════════════ */
 
+function openDaumPostcode(onComplete: (data: { address: string; zonecode: string; sido: string; sigungu: string; bname: string }) => void) {
+  const script = document.querySelector<HTMLScriptElement>('script[src*="postcode"]');
+  const run = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    new (window as any).daum.Postcode({
+      oncomplete: onComplete,
+    }).open();
+  };
+  if (script) { run(); return; }
+  const s = document.createElement("script");
+  s.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+  s.onload = run;
+  document.head.appendChild(s);
+}
+
 function Step1Location({
   form, update, districtOptions, showFairTradeModal, setShowFairTradeModal,
 }: {
@@ -366,6 +381,15 @@ function Step1Location({
   showFairTradeModal: boolean;
   setShowFairTradeModal: (v: boolean) => void;
 }) {
+  const handleAddressSearch = () => {
+    openDaumPostcode((data) => {
+      update("address", data.address);
+      update("city", data.sido);
+      update("district", data.sigungu);
+      update("neighborhood", data.bname);
+    });
+  };
+
   return (
     <div className="space-y-5">
       {/* Address Search */}
@@ -373,7 +397,7 @@ function Step1Location({
         <SectionLabel>주소 검색</SectionLabel>
         <button
           type="button"
-          onClick={() => { /* TODO: Kakao 주소 검색 API 연동 */ }}
+          onClick={handleAddressSearch}
           className="flex w-full items-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-3.5 text-left text-sm text-gray-400 transition-colors hover:border-purple hover:bg-purple/5"
         >
           <Search className="h-5 w-5 text-purple" />
@@ -999,14 +1023,38 @@ function Step6Photos({
         <p className="mt-1 text-xs text-gray-500">
           매출 증빙자료를 첨부하면 매물 신뢰도가 높아져 거래 성사율이 올라갑니다.
         </p>
-        <button
-          type="button"
-          onClick={() => { /* TODO: document upload */ }}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 py-6 text-sm text-gray-400 transition-colors hover:border-purple hover:text-purple"
-        >
+        <label className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 py-6 text-sm text-gray-400 transition-colors hover:border-purple hover:text-purple">
           <FileText className="h-5 w-5" />
           매출 증빙자료 업로드 (PDF, 이미지)
-        </button>
+          <input
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const fd = new FormData();
+              fd.append("file", file);
+              fd.append("metadata", JSON.stringify({
+                documentType: "OTHER",
+                accessLevel: "OWNER_ONLY",
+                consentGiven: true,
+              }));
+              try {
+                const res = await fetch("/api/upload/document", { method: "POST", body: fd });
+                const json = await res.json();
+                if (json.data) {
+                  setUploadedDocs([...uploadedDocs, { name: file.name, key: json.data.id as string, url: "" }]);
+                } else {
+                  alert(json.error?.message ?? "업로드에 실패했습니다.");
+                }
+              } catch {
+                alert("파일 업로드 중 오류가 발생했습니다.");
+              }
+              e.target.value = "";
+            }}
+          />
+        </label>
         {uploadedDocs.length > 0 && (
           <div className="mt-2 space-y-1">
             {uploadedDocs.map((doc, i) => (

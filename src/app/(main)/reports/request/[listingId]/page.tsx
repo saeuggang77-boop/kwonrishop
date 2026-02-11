@@ -484,7 +484,7 @@ export default function ReportRequestPage({
                 {submitting ? "처리 중..." : "분석 리포트 결제하기"}
               </button>
               <p className="text-center text-xs text-gray-500">
-                결제 시스템 준비 중입니다. 현재는 즉시 분석 결과를 제공합니다.
+                결제 완료 후 즉시 분석 리포트가 제공됩니다.
               </p>
             </div>
           </StepWrapper>

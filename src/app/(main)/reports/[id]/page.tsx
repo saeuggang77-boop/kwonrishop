@@ -336,7 +336,14 @@ export default function ReportDetailPage({
               <p className="mt-1 text-sm text-gray-500">권리샵 로고 + 워터마크가 포함된 전체 분석 리포트</p>
             </div>
             <button
-              onClick={() => alert("PDF 다운로드 기능 준비 중입니다.")}
+              onClick={() => {
+                const url = report.data?.pdfUrl;
+                if (url) {
+                  window.open(url, "_blank");
+                } else {
+                  alert("PDF가 아직 생성되지 않았습니다. 잠시 후 다시 시도해주세요.");
+                }
+              }}
               className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
               <Download className="h-4 w-4" />
