@@ -14,6 +14,7 @@ import {
 import { m2ToPyeong } from "@/lib/utils/area";
 import { ImageGallery } from "./image-gallery";
 import { ShareButtons } from "./share-buttons";
+import { CompareSection } from "./compare-section";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
@@ -405,6 +406,31 @@ export default async function ListingDetailPage({
 
             {/* Inquiry Form */}
             <InquiryForm listingId={listing.id} sellerId={listing.sellerId} />
+
+            {/* Compare Button */}
+            <CompareSection
+              listing={{
+                id: listing.id,
+                title: listing.title,
+                businessCategory: listing.businessCategory,
+                city: listing.city,
+                district: listing.district,
+                thumbnail: images[0]?.thumbnailUrl ?? images[0]?.url ?? null,
+                price: String(listing.price),
+                monthlyRent: listing.monthlyRent ? String(listing.monthlyRent) : null,
+                premiumFee: listing.premiumFee ? String(listing.premiumFee) : null,
+                managementFee: listing.managementFee ? String(listing.managementFee) : null,
+                monthlyRevenue: listing.monthlyRevenue ? String(listing.monthlyRevenue) : null,
+                monthlyProfit: listing.monthlyProfit ? String(listing.monthlyProfit) : null,
+                areaM2: listing.areaM2,
+                areaPyeong: listing.areaPyeong ?? (listing.areaM2 ? Math.round(listing.areaM2 / 3.3058) : null),
+                floor: listing.floor,
+                safetyGrade: listing.safetyGrade,
+                isPremium: listing.isPremium,
+                premiumRank: listing.premiumRank,
+                storeType: listing.storeType,
+              }}
+            />
 
             {/* Disclaimer */}
             <div className="rounded-lg bg-yellow-50 p-4 text-xs leading-relaxed text-yellow-800">

@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Search, MapPin, X, Filter } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
+import { CompareButton } from "@/components/listings/compare-button";
 import {
   BUSINESS_CATEGORY_LABELS,
   BUSINESS_CATEGORY_GROUPS,
@@ -649,6 +650,29 @@ function ListingCard({ listing }: { listing: ListingItem }) {
             {tierConfig.badge}
           </span>
         )}
+        <CompareButton
+          listing={{
+            id: listing.id,
+            title: listing.title,
+            businessCategory: listing.businessCategory,
+            city: listing.city,
+            district: listing.district,
+            thumbnail: listing.images[0]?.thumbnailUrl ?? listing.images[0]?.url ?? null,
+            price: listing.price,
+            monthlyRent: listing.monthlyRent,
+            premiumFee: listing.premiumFee,
+            monthlyRevenue: listing.monthlyRevenue,
+            monthlyProfit: listing.monthlyProfit,
+            areaM2: listing.areaM2,
+            areaPyeong: listing.areaPyeong,
+            floor: listing.floor,
+            safetyGrade: listing.safetyGrade,
+            isPremium: listing.isPremium,
+            premiumRank: listing.premiumRank,
+            storeType: listing.storeType,
+          }}
+          variant="card"
+        />
       </div>
 
       {/* Content */}

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AuthNavItems } from "./auth-nav";
 import { MobileTabBar } from "./mobile-tab-bar";
+import { CompareFloatingBar } from "@/components/listings/compare-floating-bar";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -72,6 +73,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </p>
         </div>
       </footer>
+
+      {/* Compare Floating Bar */}
+      <CompareFloatingBar />
 
       {/* Mobile Bottom Tab Bar */}
       <MobileTabBar />
