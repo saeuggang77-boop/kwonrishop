@@ -70,6 +70,27 @@ interface BannerItem {
   linkUrl: string | null;
 }
 
+/** Raw listing shape from /api/listings before BigInt string coercion */
+interface RawListingResponse {
+  id: string;
+  title: string;
+  businessCategory: string;
+  storeType: string;
+  price: string | number | bigint;
+  monthlyRent: string | number | bigint | null;
+  premiumFee: string | number | bigint | null;
+  monthlyRevenue: string | number | bigint | null;
+  monthlyProfit: string | number | bigint | null;
+  areaPyeong: number | null;
+  floor: string | null;
+  city: string;
+  district: string;
+  images: { url: string; thumbnailUrl: string | null }[];
+  safetyGrade: string | null;
+  isPremium: boolean | null;
+  premiumRank: number | null;
+}
+
 const REGION_TABS = ["서울", "경기", "그 외"];
 const FRANCHISE_TABS = ["외식", "도소매", "서비스"];
 
@@ -92,6 +113,20 @@ const BANNERS_FALLBACK = [
 
 const regionKeys = Object.keys(REGIONS);
 
+/** Normalize raw listing API response to ListingCard shape */
+function toListingCard(l: RawListingResponse): ListingCard {
+  return {
+    ...l,
+    price: String(l.price ?? "0"),
+    monthlyRent: l.monthlyRent ? String(l.monthlyRent) : null,
+    premiumFee: l.premiumFee ? String(l.premiumFee) : null,
+    monthlyRevenue: l.monthlyRevenue ? String(l.monthlyRevenue) : null,
+    monthlyProfit: l.monthlyProfit ? String(l.monthlyProfit) : null,
+    isPremium: Boolean(l.isPremium),
+    premiumRank: Number(l.premiumRank ?? 0),
+  };
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [regionTab, setRegionTab] = useState("서울");
@@ -103,6 +138,7 @@ export default function HomePage() {
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [bannerDir, setBannerDir] = useState<"left" | "right">("right");
+  const [dataLoadError, setDataLoadError] = useState(false);
 
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -113,7 +149,7 @@ export default function HomePage() {
     fetch("/api/admin/banners")
       .then((r) => r.json())
       .then((j) => { if (j.data?.length) setBanners(j.data); })
-      .catch(() => {});
+      .catch(() => { setDataLoadError(true); /* non-critical: fallback banners used */ });
   }, []);
 
   // Auto-slide banner
@@ -133,26 +169,17 @@ export default function HomePage() {
       .then((r) => r.json())
       .then((j) =>
         setPremiumListings(
-          (j.data ?? []).map((l: Record<string, unknown>) => ({
-            ...l,
-            price: String(l.price ?? "0"),
-            monthlyRent: l.monthlyRent ? String(l.monthlyRent) : null,
-            premiumFee: l.premiumFee ? String(l.premiumFee) : null,
-            monthlyRevenue: l.monthlyRevenue ? String(l.monthlyRevenue) : null,
-            monthlyProfit: l.monthlyProfit ? String(l.monthlyProfit) : null,
-            isPremium: Boolean(l.isPremium),
-            premiumRank: Number(l.premiumRank ?? 0),
-          }))
+          (j.data ?? []).map((l: RawListingResponse) => toListingCard(l))
         )
       )
-      .catch(() => setPremiumListings([]));
+      .catch(() => { setPremiumListings([]); setDataLoadError(true); });
   }, []);
 
   useEffect(() => {
     fetch("/api/bbs?limit=5")
       .then((r) => r.json())
       .then((j) => setPosts(j.data?.slice(0, 5) ?? []))
-      .catch(() => setPosts([]));
+      .catch(() => { setPosts([]); setDataLoadError(true); });
   }, []);
 
   useEffect(() => {
@@ -161,24 +188,17 @@ export default function HomePage() {
       .then((r) => r.json())
       .then((j) =>
         setListings(
-          (j.data ?? []).map((l: Record<string, unknown>) => ({
-            ...l,
-            price: String(l.price ?? "0"),
-            monthlyRent: l.monthlyRent ? String(l.monthlyRent) : null,
-            premiumFee: l.premiumFee ? String(l.premiumFee) : null,
-            monthlyRevenue: l.monthlyRevenue ? String(l.monthlyRevenue) : null,
-            monthlyProfit: l.monthlyProfit ? String(l.monthlyProfit) : null,
-          }))
+          (j.data ?? []).map((l: RawListingResponse) => toListingCard(l))
         )
       )
-      .catch(() => setListings([]));
+      .catch(() => { setListings([]); setDataLoadError(true); });
   }, [regionTab]);
 
   useEffect(() => {
     fetch(`/api/franchise?category=${franchiseTab}`)
       .then((r) => r.json())
       .then((j) => setFranchises(j.data?.slice(0, 4) ?? []))
-      .catch(() => setFranchises([]));
+      .catch(() => { setFranchises([]); setDataLoadError(true); });
   }, [franchiseTab]);
 
   const handleLocationSearch = useCallback(
@@ -205,6 +225,13 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
+      {/* Data Load Error Banner */}
+      {dataLoadError && (
+        <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-2 text-center text-sm text-yellow-700">
+          일부 데이터를 불러오지 못했습니다.
+        </div>
+      )}
+
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend,
@@ -44,26 +45,20 @@ export default function MarketPricePage() {
   const [businessType, setBusinessType] = useState("");
   const [data, setData] = useState<MarketPriceData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<SessionUser | null>(null);
+  const { data: session } = useSession();
   const [myListings, setMyListings] = useState<MyListing[]>([]);
   const [selectedListingId, setSelectedListingId] = useState("");
 
+  const user = session?.user as SessionUser | undefined;
   const isPro = user && user.subscriptionTier !== "FREE";
 
   useEffect(() => {
-    fetch("/api/auth/session")
+    if (!session?.user) return;
+    fetch("/api/listings?limit=50")
       .then((r) => r.json())
-      .then((s) => {
-        if (s?.user) {
-          setUser(s.user);
-          fetch("/api/listings?limit=50")
-            .then((r) => r.json())
-            .then((j) => setMyListings(j.data ?? []))
-            .catch(() => {});
-        }
-      })
+      .then((j) => setMyListings(j.data ?? []))
       .catch(() => {});
-  }, []);
+  }, [session?.user]);
 
   const doSearch = useCallback(() => {
     setLoading(true);

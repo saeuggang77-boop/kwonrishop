@@ -24,10 +24,17 @@ function findMinMax(items: CompareItem[], getter: (i: CompareItem) => number) {
   return { min: Math.min(...values), max: Math.max(...values) };
 }
 
-function cellHighlight(value: number, min: number, max: number): string {
+function cellHighlight(value: number, min: number, max: number, invert = false): string {
   if (value <= 0 || min === max || min < 0) return "";
-  if (value === min) return "bg-green-50 text-green-700";
-  if (value === max) return "bg-red-50 text-red-700";
+  if (invert) {
+    // For revenue/profit: highest = green (good), lowest = red (bad)
+    if (value === max) return "bg-green-50 text-green-700";
+    if (value === min) return "bg-red-50 text-red-700";
+  } else {
+    // For costs: lowest = green (good for buyer), highest = red (bad)
+    if (value === min) return "bg-green-50 text-green-700";
+    if (value === max) return "bg-red-50 text-red-700";
+  }
   return "";
 }
 
@@ -303,7 +310,7 @@ export default function ComparePage() {
             {items.map((item) => {
               const v = numVal(item.monthlyRevenue);
               return (
-                <Cell key={item.id} className={cellHighlight(v, revenueMM.max, revenueMM.min)}>
+                <Cell key={item.id} className={cellHighlight(v, revenueMM.min, revenueMM.max, true)}>
                   <span className="font-semibold">{v > 0 ? formatKRW(v) : "-"}</span>
                 </Cell>
               );
@@ -314,7 +321,7 @@ export default function ComparePage() {
             {items.map((item) => {
               const v = numVal(item.monthlyProfit);
               return (
-                <Cell key={item.id} className={cellHighlight(v, profitMM.max, profitMM.min)}>
+                <Cell key={item.id} className={cellHighlight(v, profitMM.min, profitMM.max, true)}>
                   <span className="font-semibold">{v > 0 ? formatKRW(v) : "-"}</span>
                 </Cell>
               );

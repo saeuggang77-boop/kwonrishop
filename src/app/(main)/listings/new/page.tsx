@@ -43,6 +43,34 @@ const REGION_KEYS = Object.keys(REGIONS);
 
 const FLOOR_CHOICES = ["지하", "1층", "2층", "3층", "4층", "5층 이상"] as const;
 
+/* ─── External Library Types ─── */
+
+interface DaumPostcodeResult {
+  address: string;
+  zonecode: string;
+  sido: string;
+  sigungu: string;
+  bname: string;
+}
+
+interface DaumPostcodeInstance {
+  open(): void;
+}
+
+interface DaumPostcodeConstructor {
+  new (options: { oncomplete: (data: DaumPostcodeResult) => void }): DaumPostcodeInstance;
+}
+
+interface DaumNamespace {
+  Postcode: DaumPostcodeConstructor;
+}
+
+declare global {
+  interface Window {
+    daum?: DaumNamespace;
+  }
+}
+
 /* ─── Types ─── */
 
 interface FormData {
@@ -389,11 +417,11 @@ export default function NewListingPage() {
    STEP 1: 위치정보
    ═══════════════════════════════════════════════════ */
 
-function openDaumPostcode(onComplete: (data: { address: string; zonecode: string; sido: string; sigungu: string; bname: string }) => void) {
+function openDaumPostcode(onComplete: (data: DaumPostcodeResult) => void) {
   const script = document.querySelector<HTMLScriptElement>('script[src*="postcode"]');
   const run = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new (window as any).daum.Postcode({
+    if (!window.daum) return;
+    new window.daum.Postcode({
       oncomplete: onComplete,
     }).open();
   };

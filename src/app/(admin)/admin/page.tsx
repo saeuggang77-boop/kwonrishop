@@ -1,9 +1,11 @@
+import Link from "next/link";
 import {
   Users,
   ListChecks,
   TrendingUp,
   AlertTriangle,
   MessageSquare,
+  ChevronRight,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatNumber, formatDateKR } from "@/lib/utils/format";
@@ -12,7 +14,11 @@ import {
   LISTING_STATUS_LABELS,
 } from "@/lib/utils/constants";
 
-export const metadata = { title: "관리자 대시보드" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "관리자 대시보드 - 권리샵",
+};
 
 export default async function AdminDashboardPage() {
   const today = new Date();
@@ -183,6 +189,14 @@ export default async function AdminDashboardPage() {
               </tbody>
             </table>
           </div>
+          <div className="border-t border-gray-100 px-6 py-3 text-right">
+            <Link
+              href="/admin/listings"
+              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              더보기 <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         {/* Recent Members */}
@@ -236,6 +250,14 @@ export default async function AdminDashboardPage() {
                 )}
               </tbody>
             </table>
+          </div>
+          <div className="border-t border-gray-100 px-6 py-3 text-right">
+            <Link
+              href="/admin/users"
+              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              더보기 <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </div>

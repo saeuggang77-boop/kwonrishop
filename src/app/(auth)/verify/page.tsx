@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 
-export const metadata = { title: "이메일 인증" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "이메일 인증 - 권리샵",
+};
 
 export default function VerifyPage() {
   return (

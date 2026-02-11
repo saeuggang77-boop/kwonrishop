@@ -4,7 +4,11 @@ import { formatDateKR, formatNumber } from "@/lib/utils/format";
 import { UserActions } from "./actions";
 import { UserRole, AccountStatus } from "@prisma/client";
 
-export const metadata = { title: "회원 관리" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "회원 관리 - 권리샵",
+};
 
 const ITEMS_PER_PAGE = 20;
 

@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { XCircle } from "lucide-react";
 
-export const metadata = { title: "결제 실패" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "결제 실패 - 권리샵",
+};
 
 export default function PremiumFailPage() {
   return (

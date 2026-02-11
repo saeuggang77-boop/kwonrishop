@@ -8,7 +8,11 @@ import {
 import { ListingActions } from "./actions";
 import { ListingStatus, BusinessCategory } from "@prisma/client";
 
-export const metadata = { title: "매물 관리" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "매물 관리 - 권리샵",
+};
 
 const ITEMS_PER_PAGE = 20;
 

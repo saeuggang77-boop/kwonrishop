@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FileText } from "lucide-react";
@@ -29,7 +29,7 @@ export default function BbsPage() {
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchPosts = (category: string, page: number) => {
+  const fetchPosts = useCallback((category: string, page: number) => {
     setIsLoading(true);
     const params = new URLSearchParams();
     if (category) params.set("category", category);
@@ -43,12 +43,11 @@ export default function BbsPage() {
         setMeta(json.meta || { total: 0, page: 1, limit: 10, totalPages: 0 });
       })
       .finally(() => setIsLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPosts(activeCategory, 1);
-  }, [activeCategory]);
+  }, [activeCategory, fetchPosts]);
 
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
