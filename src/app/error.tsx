@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-
 export default function Error({
   error,
   reset,
@@ -9,10 +7,6 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    console.error("Unhandled error:", error);
-  }, [error]);
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
       <h1 className="text-4xl font-bold text-navy">오류가 발생했습니다</h1>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoreVertical, Check, EyeOff, Trash2 } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 export function ListingActions({
   listingId,
@@ -12,6 +13,7 @@ export function ListingActions({
   currentStatus: string;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,9 +46,8 @@ export function ListingActions({
 
       router.refresh();
       setIsOpen(false);
-    } catch (error) {
-      console.error("Action failed:", error);
-      alert("작업에 실패했습니다.");
+    } catch {
+      toast("error", "작업에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }

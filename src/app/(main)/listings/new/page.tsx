@@ -14,6 +14,7 @@ import {
   REGIONS,
 } from "@/lib/utils/constants";
 import { ImageUploader } from "@/components/listings/image-uploader";
+import { useToast } from "@/components/ui/toast";
 
 /* ─── Constants ─── */
 
@@ -987,6 +988,7 @@ function Step6Photos({
   uploadedDocs: { name: string; key: string; url: string }[];
   setUploadedDocs: (docs: { name: string; key: string; url: string }[]) => void;
 }) {
+  const { toast } = useToast();
   return (
     <div className="space-y-6">
       {/* Photo Upload */}
@@ -1046,10 +1048,10 @@ function Step6Photos({
                 if (json.data) {
                   setUploadedDocs([...uploadedDocs, { name: file.name, key: json.data.id as string, url: "" }]);
                 } else {
-                  alert(json.error?.message ?? "업로드에 실패했습니다.");
+                  toast("error", json.error?.message ?? "업로드에 실패했습니다.");
                 }
               } catch {
-                alert("파일 업로드 중 오류가 발생했습니다.");
+                toast("error", "파일 업로드 중 오류가 발생했습니다.");
               }
               e.target.value = "";
             }}

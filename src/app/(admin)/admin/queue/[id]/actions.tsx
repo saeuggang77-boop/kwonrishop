@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle, XCircle, MessageSquare } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 export function ViolationActions({
   violationId,
@@ -11,6 +12,7 @@ export function ViolationActions({
   listingId: string;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [note, setNote] = useState("");
 
@@ -28,10 +30,10 @@ export function ViolationActions({
         router.refresh();
       } else {
         const data = await res.json();
-        alert(data.error?.message ?? "처리에 실패했습니다.");
+        toast("error", data.error?.message ?? "처리에 실패했습니다.");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast("error", "서버 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }

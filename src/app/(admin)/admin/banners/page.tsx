@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 type Banner = {
   id: string;
@@ -14,6 +15,7 @@ type Banner = {
 };
 
 export default function AdminBannersPage() {
+  const { toast } = useToast();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -35,8 +37,8 @@ export default function AdminBannersPage() {
       const response = await fetch("/api/admin/banners");
       const result = await response.json();
       setBanners(result.data || []);
-    } catch (error) {
-      console.error("Failed to fetch banners:", error);
+    } catch {
+      // silently fail on fetch
     } finally {
       setIsLoading(false);
     }
@@ -67,10 +69,9 @@ export default function AdminBannersPage() {
 
       await fetchBanners();
       resetForm();
-      alert(editingId ? "수정되었습니다." : "등록되었습니다.");
-    } catch (error) {
-      console.error("Save failed:", error);
-      alert("저장에 실패했습니다.");
+      toast("success", editingId ? "수정되었습니다." : "등록되었습니다.");
+    } catch {
+      toast("error", "저장에 실패했습니다.");
     }
   };
 
@@ -97,10 +98,9 @@ export default function AdminBannersPage() {
       if (!response.ok) throw new Error("Failed to delete");
 
       await fetchBanners();
-      alert("삭제되었습니다.");
-    } catch (error) {
-      console.error("Delete failed:", error);
-      alert("삭제에 실패했습니다.");
+      toast("success", "삭제되었습니다.");
+    } catch {
+      toast("error", "삭제에 실패했습니다.");
     }
   };
 
@@ -115,9 +115,8 @@ export default function AdminBannersPage() {
       if (!response.ok) throw new Error("Failed to toggle active");
 
       await fetchBanners();
-    } catch (error) {
-      console.error("Toggle failed:", error);
-      alert("상태 변경에 실패했습니다.");
+    } catch {
+      toast("error", "상태 변경에 실패했습니다.");
     }
   };
 

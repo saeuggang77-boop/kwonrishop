@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Check, Crown, Star, Zap } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { PREMIUM_AD_PLANS } from "@/lib/utils/constants";
+import { useToast } from "@/components/ui/toast";
 
 const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "";
 
@@ -38,6 +39,7 @@ export default function PremiumListingAdPage() {
 
 function PremiumListingAdContent() {
   const router = useRouter();
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const preselectedListingId = searchParams.get("listingId");
   const isExtend = searchParams.get("extend") === "true";
@@ -68,7 +70,7 @@ function PremiumListingAdContent() {
 
   const handlePayment = async () => {
     if (!selectedListingId) {
-      alert("매물을 선택해주세요.");
+      toast("info", "매물을 선택해주세요.");
       return;
     }
 

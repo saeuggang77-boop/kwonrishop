@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { formatKRW, formatNumber } from "@/lib/utils/format";
 import { FRANCHISE_CATEGORIES } from "@/lib/utils/constants";
+import { useToast } from "@/components/ui/toast";
 
 type Franchise = {
   id: string;
@@ -21,6 +22,7 @@ type Franchise = {
 };
 
 export default function AdminFranchisesPage() {
+  const { toast } = useToast();
   const [franchises, setFranchises] = useState<Franchise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -47,8 +49,8 @@ export default function AdminFranchisesPage() {
       const response = await fetch("/api/admin/franchises");
       const result = await response.json();
       setFranchises(result.data || []);
-    } catch (error) {
-      console.error("Failed to fetch franchises:", error);
+    } catch {
+      // silently fail on fetch
     } finally {
       setIsLoading(false);
     }
@@ -85,10 +87,9 @@ export default function AdminFranchisesPage() {
 
       await fetchFranchises();
       resetForm();
-      alert(editingId ? "수정되었습니다." : "등록되었습니다.");
-    } catch (error) {
-      console.error("Save failed:", error);
-      alert("저장에 실패했습니다.");
+      toast("success", editingId ? "수정되었습니다." : "등록되었습니다.");
+    } catch {
+      toast("error", "저장에 실패했습니다.");
     }
   };
 
@@ -120,10 +121,9 @@ export default function AdminFranchisesPage() {
       if (!response.ok) throw new Error("Failed to delete");
 
       await fetchFranchises();
-      alert("삭제되었습니다.");
-    } catch (error) {
-      console.error("Delete failed:", error);
-      alert("삭제에 실패했습니다.");
+      toast("success", "삭제되었습니다.");
+    } catch {
+      toast("error", "삭제에 실패했습니다.");
     }
   };
 
@@ -138,9 +138,8 @@ export default function AdminFranchisesPage() {
       if (!response.ok) throw new Error("Failed to toggle promoting");
 
       await fetchFranchises();
-    } catch (error) {
-      console.error("Toggle failed:", error);
-      alert("상태 변경에 실패했습니다.");
+    } catch {
+      toast("error", "상태 변경에 실패했습니다.");
     }
   };
 

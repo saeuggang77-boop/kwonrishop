@@ -18,8 +18,8 @@ export function ShareButtons({ listingId }: ShareButtonsProps) {
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy:", err);
+    } catch {
+      // clipboard write failed silently
     }
   };
 
@@ -41,12 +41,6 @@ export function ShareButtons({ listingId }: ShareButtonsProps) {
           </>
         )}
       </button>
-
-      {/* Placeholder for future social media share buttons */}
-      {/* <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
-        <KakaoIcon className="h-4 w-4" />
-        <span>카카오</span>
-      </button> */}
     </div>
   );
 }

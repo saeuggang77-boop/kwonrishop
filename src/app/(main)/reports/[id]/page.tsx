@@ -6,6 +6,7 @@ import {
   Shield, AlertTriangle, CheckCircle, XCircle, TrendingUp, FileText,
   Download, ArrowLeft, BarChart3, Target, Clock, Building,
 } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 interface ReportDetail {
   id: string;
@@ -66,6 +67,7 @@ export default function ReportDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const { toast } = useToast();
   const [report, setReport] = useState<ReportDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [checklist, setChecklist] = useState<{ id: number; item: string; checked: boolean }[]>([]);
@@ -341,7 +343,7 @@ export default function ReportDetailPage({
                 if (url) {
                   window.open(url, "_blank");
                 } else {
-                  alert("PDF가 아직 생성되지 않았습니다. 잠시 후 다시 시도해주세요.");
+                  toast("info", "PDF가 아직 생성되지 않았습니다. 잠시 후 다시 시도해주세요.");
                 }
               }}
               className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"

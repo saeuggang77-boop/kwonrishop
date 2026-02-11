@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { formatNumber, formatDateKR } from "@/lib/utils/format";
+import { useToast } from "@/components/ui/toast";
 
 const POST_CATEGORIES = ["공지사항", "이용가이드", "창업정보", "알림공지"] as const;
 
@@ -18,6 +19,7 @@ type Post = {
 };
 
 export default function AdminPostsPage() {
+  const { toast } = useToast();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -39,8 +41,8 @@ export default function AdminPostsPage() {
       const response = await fetch("/api/admin/posts");
       const result = await response.json();
       setPosts(result.data || []);
-    } catch (error) {
-      console.error("Failed to fetch posts:", error);
+    } catch {
+      // silently fail on fetch
     } finally {
       setIsLoading(false);
     }
@@ -70,10 +72,9 @@ export default function AdminPostsPage() {
 
       await fetchPosts();
       resetForm();
-      alert(editingId ? "수정되었습니다." : "등록되었습니다.");
-    } catch (error) {
-      console.error("Save failed:", error);
-      alert("저장에 실패했습니다.");
+      toast("success", editingId ? "수정되었습니다." : "등록되었습니다.");
+    } catch {
+      toast("error", "저장에 실패했습니다.");
     }
   };
 
@@ -100,10 +101,9 @@ export default function AdminPostsPage() {
       if (!response.ok) throw new Error("Failed to delete");
 
       await fetchPosts();
-      alert("삭제되었습니다.");
-    } catch (error) {
-      console.error("Delete failed:", error);
-      alert("삭제에 실패했습니다.");
+      toast("success", "삭제되었습니다.");
+    } catch {
+      toast("error", "삭제에 실패했습니다.");
     }
   };
 
@@ -118,9 +118,8 @@ export default function AdminPostsPage() {
       if (!response.ok) throw new Error("Failed to toggle publish");
 
       await fetchPosts();
-    } catch (error) {
-      console.error("Toggle failed:", error);
-      alert("상태 변경에 실패했습니다.");
+    } catch {
+      toast("error", "상태 변경에 실패했습니다.");
     }
   };
 

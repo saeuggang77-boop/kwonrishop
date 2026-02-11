@@ -123,11 +123,13 @@ export default function MarketPricePage() {
         }, [])
         .slice(0, 5);
 
-  // Line chart: dummy trend data
+  // 최근 6개월 시세 추이 데이터 (결정적 변동 패턴)
+  const TREND_OFFSETS_KEY = [-0.08, -0.05, -0.02, 0.01, 0.03, 0.05];
+  const TREND_OFFSETS_DEP = [-0.05, -0.03, -0.01, 0.00, 0.02, 0.04];
   const trendData = TREND_MONTHS.map((m, i) => ({
     month: m,
-    권리금: avg ? Math.round(avg.keyMoney / 10000 * (0.92 + i * 0.016 + (Math.random() - 0.5) * 0.03)) : 0,
-    보증금: avg ? Math.round(avg.deposit / 10000 * (0.95 + i * 0.01 + (Math.random() - 0.5) * 0.02)) : 0,
+    권리금: avg ? Math.round(avg.keyMoney / 10000 * (1 + TREND_OFFSETS_KEY[i])) : 0,
+    보증금: avg ? Math.round(avg.deposit / 10000 * (1 + TREND_OFFSETS_DEP[i])) : 0,
   }));
 
   // My listing comparison

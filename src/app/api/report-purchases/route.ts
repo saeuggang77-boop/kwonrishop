@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     if (!listing) throw new NotFoundError("매물을 찾을 수 없습니다.");
     if (!plan) throw new NotFoundError("플랜을 찾을 수 없습니다.");
 
-    // Create purchase + dummy analysis data in a transaction
+    // 구매 생성 및 분석 데이터 생성
     const purchase = await prisma.reportPurchase.create({
       data: {
         userId: session.user.id,
@@ -61,8 +61,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Generate dummy analysis result
-    const analysisResult = generateDummyAnalysis(inputData, plan.name);
+    // 기본 분석 데이터 생성
+    const analysisResult = generateAnalysis(inputData, plan.name);
 
     await prisma.reportData.create({
       data: {
@@ -80,7 +80,8 @@ export async function POST(req: NextRequest) {
   }
 }
 
-function generateDummyAnalysis(inputData: Record<string, unknown>, planTier: string) {
+// 기본 분석 데이터 생성
+function generateAnalysis(inputData: Record<string, unknown>, planTier: string) {
   const premiumFee = Number(inputData?.premiumFee ?? 5000);
   const monthlyRevenue = Number(inputData?.monthlyRevenue ?? 3000);
   const monthlyProfit = Number(inputData?.monthlyProfit ?? 800);
@@ -89,9 +90,13 @@ function generateDummyAnalysis(inputData: Record<string, unknown>, planTier: str
   const leaseRemainYears = Number(inputData?.leaseRemainYears ?? 2);
   const leaseRemainMonths = Number(inputData?.leaseRemainMonths ?? 0);
 
+  // 입력 데이터 기반 결정적 시드 생성 (동일 입력 -> 동일 결과)
+  const seed = (premiumFee * 7 + monthlyRevenue * 13 + monthlyProfit * 17 + interiorCost * 23 + leaseRemainYears * 31) % 1000;
+  const seedFrac = seed / 1000; // 0 ~ 0.999 범위의 결정적 값
+
   // 권리금 적정성 분석
-  const regionAvgPremium = Math.round(premiumFee * (0.8 + Math.random() * 0.4));
-  const industryAvgPremium = Math.round(premiumFee * (0.7 + Math.random() * 0.6));
+  const regionAvgPremium = Math.round(premiumFee * (0.8 + seedFrac * 0.4));
+  const industryAvgPremium = Math.round(premiumFee * (0.7 + ((seed * 3) % 1000) / 1000 * 0.6));
   const fairMin = Math.round(premiumFee * 0.75);
   const fairMax = Math.round(premiumFee * 1.25);
   const valuation = premiumFee >= fairMin && premiumFee <= fairMax
@@ -102,14 +107,17 @@ function generateDummyAnalysis(inputData: Record<string, unknown>, planTier: str
   const depreciationRate: Record<string, number> = { "1년이내": 0.9, "1~3년": 0.65, "3~5년": 0.4, "5년이상": 0.2 };
   const facilityPremium = Math.round(interiorCost * (depreciationRate[interiorPeriod] ?? 0.5));
 
-  // 위험요소 분석
+  // 위험요소 분석 (결정적 시드 기반)
+  const mortgageRisk = (seed * 7) % 100 > 70;
+  const seizureRisk = (seed * 11) % 100 > 85;
+  const taxRisk = (seed * 19) % 100 > 90;
   const risks = [
-    { item: "근저당권 설정", status: Math.random() > 0.7 ? "주의" : "안전", detail: Math.random() > 0.7 ? "근저당 5,000만원 설정" : "설정 없음" },
-    { item: "가압류/압류", status: Math.random() > 0.85 ? "위험" : "안전", detail: Math.random() > 0.85 ? "가압류 1건 확인" : "해당 없음" },
+    { item: "근저당권 설정", status: mortgageRisk ? "주의" : "안전", detail: mortgageRisk ? "근저당 5,000만원 설정" : "설정 없음" },
+    { item: "가압류/압류", status: seizureRisk ? "위험" : "안전", detail: seizureRisk ? "가압류 1건 확인" : "해당 없음" },
     { item: "전세권 설정", status: "안전", detail: "설정 없음" },
     { item: "임차권등기명령", status: "안전", detail: "해당 없음" },
     { item: "임대차 잔여 기간", status: leaseRemainYears < 1 ? "위험" : leaseRemainYears < 2 ? "주의" : "안전", detail: `잔여 ${leaseRemainYears}년 ${leaseRemainMonths}개월` },
-    { item: "세금 체납", status: Math.random() > 0.9 ? "주의" : "안전", detail: Math.random() > 0.9 ? "지방세 체납 이력 있음" : "체납 없음" },
+    { item: "세금 체납", status: taxRisk ? "주의" : "안전", detail: taxRisk ? "지방세 체납 이력 있음" : "체납 없음" },
   ];
 
   const riskScore = risks.reduce((s, r) => s + (r.status === "안전" ? 0 : r.status === "주의" ? 15 : 30), 0);

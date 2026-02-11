@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, ShieldOff } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 export function UserActions({
   userId,
@@ -12,6 +13,7 @@ export function UserActions({
   currentStatus: string;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleAction = async (action: "SUSPEND" | "ACTIVATE") => {
@@ -33,9 +35,8 @@ export function UserActions({
       }
 
       router.refresh();
-    } catch (error) {
-      console.error("Action failed:", error);
-      alert("작업에 실패했습니다.");
+    } catch {
+      toast("error", "작업에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }

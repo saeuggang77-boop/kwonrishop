@@ -5,9 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { DEEP_REPORT_PRICE } from "@/lib/utils/constants";
+import { useToast } from "@/components/ui/toast";
 
 function ReportPurchaseContent() {
   const router = useRouter();
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const listingId = searchParams.get("listingId");
   const [isLoading, setIsLoading] = useState(false);
@@ -24,10 +26,10 @@ function ReportPurchaseContent() {
       if (res.ok) {
         router.push("/dashboard/reports");
       } else {
-        alert("구매에 실패했습니다.");
+        toast("error", "구매에 실패했습니다.");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast("error", "서버 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }

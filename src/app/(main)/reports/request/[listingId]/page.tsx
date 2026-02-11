@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { BUSINESS_CATEGORY_LABELS } from "@/lib/utils/constants";
 import { formatKRW } from "@/lib/utils/format";
+import { useToast } from "@/components/ui/toast";
 
 const TOTAL_STEPS = 8;
 
@@ -46,6 +47,7 @@ export default function ReportRequestPage({
 }) {
   const { listingId } = use(params);
   const router = useRouter();
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [listing, setListing] = useState<ListingData | null>(null);
   const [plans, setPlans] = useState<PlanData[]>([]);
@@ -107,7 +109,7 @@ export default function ReportRequestPage({
 
   const handleSubmit = async () => {
     if (!selectedPlanId) {
-      alert("플랜을 선택해주세요.");
+      toast("info", "플랜을 선택해주세요.");
       return;
     }
     setSubmitting(true);
@@ -147,10 +149,10 @@ export default function ReportRequestPage({
       if (json.data?.purchaseId) {
         router.push(`/reports/${json.data.purchaseId}`);
       } else {
-        alert("결제 처리 중 오류가 발생했습니다.");
+        toast("error", "결제 처리 중 오류가 발생했습니다.");
       }
     } catch {
-      alert("결제 처리 중 오류가 발생했습니다.");
+      toast("error", "결제 처리 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
     }
