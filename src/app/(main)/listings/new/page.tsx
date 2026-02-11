@@ -146,7 +146,7 @@ function pyeongToM2(py: string): string {
 
 export default function NewListingPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(initialForm);
   const [isLoading, setIsLoading] = useState(false);
@@ -251,6 +251,14 @@ export default function NewListingPage() {
       setIsLoading(false);
     }
   };
+
+  if (status === "loading") {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-mint" />
+      </div>
+    );
+  }
 
   if (!session) {
     return (

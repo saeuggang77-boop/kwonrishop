@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import {
   Store,
@@ -92,6 +93,7 @@ const BANNERS_FALLBACK = [
 const regionKeys = Object.keys(REGIONS);
 
 export default function HomePage() {
+  const router = useRouter();
   const [regionTab, setRegionTab] = useState("서울");
   const [franchiseTab, setFranchiseTab] = useState("외식");
   const [listings, setListings] = useState<ListingCard[]>([]);
@@ -185,7 +187,7 @@ export default function HomePage() {
       const params = new URLSearchParams();
       if (selectedCity) params.set("city", selectedCity);
       if (selectedDistrict) params.set("district", selectedDistrict);
-      window.location.href = `/listings?${params.toString()}`;
+      router.push(`/listings?${params.toString()}`);
     },
     [selectedCity, selectedDistrict]
   );
