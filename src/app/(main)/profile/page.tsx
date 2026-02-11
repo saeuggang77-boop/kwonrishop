@@ -1,19 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
-  const { data: session, update } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
-  const [name, setName] = useState(session?.user?.name ?? "");
+  const [name, setName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
 
-  if (!session) {
-    router.push("/login");
-    return null;
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/login");
+  }, [status, router]);
+
+  useEffect(() => {
+    if (session?.user?.name) setName(session.user.name);
+  }, [session]);
+
+  if (status === "loading" || !session) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        <div className="h-8 w-40 animate-pulse rounded bg-gray-200" />
+        <div className="mt-8 space-y-4 rounded-xl border border-gray-200 bg-white p-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-4 w-16 animate-pulse rounded bg-gray-200" />
+              <div className="h-10 animate-pulse rounded bg-gray-100" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   const handleSave = async (e: React.FormEvent) => {
