@@ -1,6 +1,12 @@
+import { NextRequest } from "next/server";
 import { processSettlements } from "@/lib/settlement/processor";
+import { verifyCronAuth } from "@/lib/cron-auth";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  if (!verifyCronAuth(req)) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const count = await processSettlements();
     return Response.json({

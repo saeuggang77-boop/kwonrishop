@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         listingId,
         planId,
         paymentMethod,
-        status: "COMPLETED",
+        status: "PENDING",
       },
     });
 

@@ -78,10 +78,10 @@ const CATEGORY_ICONS = [
   { icon: FileEdit, label: "점포 팔기", href: "/listings/new", color: "text-green-500", bg: "bg-green-50" },
   { icon: Building, label: "프랜차이즈", href: "/franchise", color: "text-purple-500", bg: "bg-purple-50" },
   { icon: Search, label: "점포찾기 의뢰", href: "/listings", color: "text-orange-500", bg: "bg-orange-50" },
-  { icon: Paintbrush, label: "인테리어 의뢰", href: "#", color: "text-pink-500", bg: "bg-pink-50" },
-  { icon: Trash2, label: "철거 의뢰", href: "#", color: "text-red-500", bg: "bg-red-50" },
-  { icon: Sparkles, label: "청소 의뢰", href: "#", color: "text-cyan-500", bg: "bg-cyan-50" },
-  { icon: Signpost, label: "간판 의뢰", href: "#", color: "text-amber-500", bg: "bg-amber-50" },
+  { icon: Paintbrush, label: "인테리어 의뢰", href: "/bbs?category=인테리어", color: "text-pink-500", bg: "bg-pink-50" },
+  { icon: Trash2, label: "철거 의뢰", href: "/bbs?category=철거", color: "text-red-500", bg: "bg-red-50" },
+  { icon: Sparkles, label: "청소 의뢰", href: "/bbs?category=청소", color: "text-cyan-500", bg: "bg-cyan-50" },
+  { icon: Signpost, label: "간판 의뢰", href: "/bbs?category=간판", color: "text-amber-500", bg: "bg-amber-50" },
 ];
 
 const BANNERS_FALLBACK = [

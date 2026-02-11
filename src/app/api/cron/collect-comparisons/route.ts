@@ -1,4 +1,6 @@
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyCronAuth } from "@/lib/cron-auth";
 
 const RADII = [1, 3, 5]; // km
 
@@ -17,7 +19,11 @@ function haversineDistance(
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  if (!verifyCronAuth(req)) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const listings = await prisma.listing.findMany({
       where: {

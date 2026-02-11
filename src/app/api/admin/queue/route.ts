@@ -1,9 +1,15 @@
 import { NextRequest } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { errorToResponse } from "@/lib/utils/errors";
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== "ADMIN") {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const cursor = req.nextUrl.searchParams.get("cursor");
     const limit = parseInt(req.nextUrl.searchParams.get("limit") ?? "20");
 

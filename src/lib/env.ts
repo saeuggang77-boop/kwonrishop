@@ -30,6 +30,13 @@ export const env = {
 
   // TossPayments
   TOSS_SECRET_KEY: optional("TOSS_SECRET_KEY", ""),
+  TOSS_WEBHOOK_SECRET: optional("TOSS_WEBHOOK_SECRET", ""),
+
+  // AWS Credentials
+  AWS_ACCESS_KEY_ID: optional("AWS_ACCESS_KEY_ID", ""),
+  AWS_SECRET_ACCESS_KEY: optional("AWS_SECRET_ACCESS_KEY", ""),
+  KMS_KEY_ID: optional("KMS_KEY_ID", ""),
+  SES_FROM_EMAIL: optional("SES_FROM_EMAIL", "noreply@kwonrishop.com"),
 
   // CRON
   CRON_SECRET: optional("CRON_SECRET", ""),
