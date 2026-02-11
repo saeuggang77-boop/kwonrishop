@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import authConfig from "./auth.config";
-import type { UserRole, AccountStatus } from "@prisma/client";
+import type { UserRole, AccountStatus, SubscriptionTier } from "@prisma/client";
 
 declare module "next-auth" {
   interface Session {
@@ -15,6 +15,7 @@ declare module "next-auth" {
       image?: string | null;
       role: UserRole;
       accountStatus: AccountStatus;
+      subscriptionTier: SubscriptionTier;
     };
   }
 }
@@ -63,10 +64,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
-          select: { role: true, accountStatus: true },
+          select: { role: true, accountStatus: true, subscriptionTier: true },
         });
         token.role = dbUser?.role ?? "BUYER";
         token.accountStatus = dbUser?.accountStatus ?? "ACTIVE";
+        token.subscriptionTier = dbUser?.subscriptionTier ?? "FREE";
       }
       return token;
     },
@@ -75,6 +77,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.sub!;
         session.user.role = token.role as UserRole;
         session.user.accountStatus = token.accountStatus as AccountStatus;
+        session.user.subscriptionTier = token.subscriptionTier as SubscriptionTier;
       }
       return session;
     },

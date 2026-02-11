@@ -541,6 +541,124 @@ async function main() {
   }
   console.log(`  Banners: ${banners.length}`);
 
+  // ──────────────────────────────────────────────
+  // 10. Report Plans (권리분석 리포트)
+  // ──────────────────────────────────────────────
+  const reportPlans = [
+    {
+      id: "rplan-basic",
+      name: "BASIC" as const,
+      displayName: "BASIC 분석",
+      price: BigInt(20_000),
+      features: ["권리금 적정성 평가", "지역/업종 평균 비교", "권리 위험요소 기본 분석", "종합 위험 등급 판정"],
+    },
+    {
+      id: "rplan-premium",
+      name: "PREMIUM" as const,
+      displayName: "PREMIUM 분석",
+      price: BigInt(40_000),
+      features: ["BASIC 전체 항목 포함", "임대차 계약 체크리스트 20항목", "상세 위험요소 분석", "PDF 리포트 다운로드"],
+    },
+  ];
+
+  for (const plan of reportPlans) {
+    await prisma.reportPlan.upsert({
+      where: { id: plan.id },
+      update: {},
+      create: plan,
+    });
+  }
+  console.log("  Report plans: 2");
+
+  // ──────────────────────────────────────────────
+  // 11. Market Prices (시세 데이터)
+  // ──────────────────────────────────────────────
+  const marketPriceData: { subRegion: string; businessType: string; avgDeposit: number; avgMonthlyRent: number; avgKeyMoney: number; avgMonthlySales: number; sampleCount: number }[] = [
+    // 강남구
+    { subRegion: "강남구", businessType: "CAFE_BAKERY", avgDeposit: 50_000_000, avgMonthlyRent: 3_500_000, avgKeyMoney: 130_000_000, avgMonthlySales: 28_000_000, sampleCount: 42 },
+    { subRegion: "강남구", businessType: "KOREAN_FOOD", avgDeposit: 80_000_000, avgMonthlyRent: 5_500_000, avgKeyMoney: 200_000_000, avgMonthlySales: 55_000_000, sampleCount: 31 },
+    { subRegion: "강남구", businessType: "CHICKEN", avgDeposit: 30_000_000, avgMonthlyRent: 2_800_000, avgKeyMoney: 90_000_000, avgMonthlySales: 32_000_000, sampleCount: 18 },
+    { subRegion: "강남구", businessType: "SERVICE", avgDeposit: 30_000_000, avgMonthlyRent: 2_500_000, avgKeyMoney: 80_000_000, avgMonthlySales: 20_000_000, sampleCount: 24 },
+    { subRegion: "강남구", businessType: "BAR_PUB", avgDeposit: 50_000_000, avgMonthlyRent: 4_500_000, avgKeyMoney: 160_000_000, avgMonthlySales: 45_000_000, sampleCount: 15 },
+    { subRegion: "강남구", businessType: "RETAIL", avgDeposit: 40_000_000, avgMonthlyRent: 3_000_000, avgKeyMoney: 60_000_000, avgMonthlySales: 50_000_000, sampleCount: 20 },
+    // 마포구
+    { subRegion: "마포구", businessType: "CAFE_BAKERY", avgDeposit: 30_000_000, avgMonthlyRent: 2_200_000, avgKeyMoney: 80_000_000, avgMonthlySales: 20_000_000, sampleCount: 38 },
+    { subRegion: "마포구", businessType: "CHICKEN", avgDeposit: 25_000_000, avgMonthlyRent: 2_000_000, avgKeyMoney: 70_000_000, avgMonthlySales: 30_000_000, sampleCount: 22 },
+    { subRegion: "마포구", businessType: "BAR_PUB", avgDeposit: 35_000_000, avgMonthlyRent: 3_000_000, avgKeyMoney: 120_000_000, avgMonthlySales: 38_000_000, sampleCount: 28 },
+    { subRegion: "마포구", businessType: "KOREAN_FOOD", avgDeposit: 40_000_000, avgMonthlyRent: 3_200_000, avgKeyMoney: 100_000_000, avgMonthlySales: 35_000_000, sampleCount: 19 },
+    { subRegion: "마포구", businessType: "WESTERN_FOOD", avgDeposit: 45_000_000, avgMonthlyRent: 3_500_000, avgKeyMoney: 110_000_000, avgMonthlySales: 30_000_000, sampleCount: 12 },
+    // 송파구
+    { subRegion: "송파구", businessType: "CAFE_BAKERY", avgDeposit: 40_000_000, avgMonthlyRent: 2_800_000, avgKeyMoney: 100_000_000, avgMonthlySales: 22_000_000, sampleCount: 35 },
+    { subRegion: "송파구", businessType: "KOREAN_FOOD", avgDeposit: 70_000_000, avgMonthlyRent: 4_800_000, avgKeyMoney: 180_000_000, avgMonthlySales: 48_000_000, sampleCount: 26 },
+    { subRegion: "송파구", businessType: "CHICKEN", avgDeposit: 25_000_000, avgMonthlyRent: 2_200_000, avgKeyMoney: 75_000_000, avgMonthlySales: 28_000_000, sampleCount: 16 },
+    { subRegion: "송파구", businessType: "ENTERTAINMENT", avgDeposit: 60_000_000, avgMonthlyRent: 5_000_000, avgKeyMoney: 200_000_000, avgMonthlySales: 40_000_000, sampleCount: 8 },
+    // 서초구
+    { subRegion: "서초구", businessType: "CAFE_BAKERY", avgDeposit: 45_000_000, avgMonthlyRent: 3_200_000, avgKeyMoney: 120_000_000, avgMonthlySales: 25_000_000, sampleCount: 30 },
+    { subRegion: "서초구", businessType: "SERVICE", avgDeposit: 25_000_000, avgMonthlyRent: 2_200_000, avgKeyMoney: 70_000_000, avgMonthlySales: 18_000_000, sampleCount: 21 },
+    { subRegion: "서초구", businessType: "KOREAN_FOOD", avgDeposit: 60_000_000, avgMonthlyRent: 4_500_000, avgKeyMoney: 150_000_000, avgMonthlySales: 42_000_000, sampleCount: 17 },
+    // 용산구
+    { subRegion: "용산구", businessType: "BAR_PUB", avgDeposit: 40_000_000, avgMonthlyRent: 3_800_000, avgKeyMoney: 140_000_000, avgMonthlySales: 42_000_000, sampleCount: 25 },
+    { subRegion: "용산구", businessType: "CAFE_BAKERY", avgDeposit: 35_000_000, avgMonthlyRent: 2_800_000, avgKeyMoney: 90_000_000, avgMonthlySales: 22_000_000, sampleCount: 20 },
+    { subRegion: "용산구", businessType: "WESTERN_FOOD", avgDeposit: 50_000_000, avgMonthlyRent: 4_000_000, avgKeyMoney: 130_000_000, avgMonthlySales: 35_000_000, sampleCount: 10 },
+    // 성동구
+    { subRegion: "성동구", businessType: "CAFE_BAKERY", avgDeposit: 25_000_000, avgMonthlyRent: 1_800_000, avgKeyMoney: 60_000_000, avgMonthlySales: 18_000_000, sampleCount: 28 },
+    { subRegion: "성동구", businessType: "RETAIL", avgDeposit: 30_000_000, avgMonthlyRent: 1_800_000, avgKeyMoney: 40_000_000, avgMonthlySales: 45_000_000, sampleCount: 15 },
+    { subRegion: "성동구", businessType: "CHICKEN", avgDeposit: 20_000_000, avgMonthlyRent: 1_500_000, avgKeyMoney: 50_000_000, avgMonthlySales: 25_000_000, sampleCount: 12 },
+    // 광진구
+    { subRegion: "광진구", businessType: "CAFE_BAKERY", avgDeposit: 30_000_000, avgMonthlyRent: 2_000_000, avgKeyMoney: 70_000_000, avgMonthlySales: 19_000_000, sampleCount: 22 },
+    { subRegion: "광진구", businessType: "CHICKEN", avgDeposit: 22_000_000, avgMonthlyRent: 1_800_000, avgKeyMoney: 55_000_000, avgMonthlySales: 27_000_000, sampleCount: 14 },
+    { subRegion: "광진구", businessType: "KOREAN_FOOD", avgDeposit: 45_000_000, avgMonthlyRent: 3_000_000, avgKeyMoney: 120_000_000, avgMonthlySales: 38_000_000, sampleCount: 11 },
+    // 강서구
+    { subRegion: "강서구", businessType: "PIZZA", avgDeposit: 20_000_000, avgMonthlyRent: 1_500_000, avgKeyMoney: 50_000_000, avgMonthlySales: 30_000_000, sampleCount: 16 },
+    { subRegion: "강서구", businessType: "CAFE_BAKERY", avgDeposit: 22_000_000, avgMonthlyRent: 1_600_000, avgKeyMoney: 55_000_000, avgMonthlySales: 16_000_000, sampleCount: 19 },
+    { subRegion: "강서구", businessType: "CHICKEN", avgDeposit: 18_000_000, avgMonthlyRent: 1_300_000, avgKeyMoney: 45_000_000, avgMonthlySales: 26_000_000, sampleCount: 20 },
+    // 노원구
+    { subRegion: "노원구", businessType: "ENTERTAINMENT", avgDeposit: 50_000_000, avgMonthlyRent: 4_500_000, avgKeyMoney: 180_000_000, avgMonthlySales: 35_000_000, sampleCount: 7 },
+    { subRegion: "노원구", businessType: "CAFE_BAKERY", avgDeposit: 18_000_000, avgMonthlyRent: 1_200_000, avgKeyMoney: 40_000_000, avgMonthlySales: 14_000_000, sampleCount: 25 },
+    { subRegion: "노원구", businessType: "CHICKEN", avgDeposit: 15_000_000, avgMonthlyRent: 1_100_000, avgKeyMoney: 35_000_000, avgMonthlySales: 22_000_000, sampleCount: 18 },
+    // 영등포구
+    { subRegion: "영등포구", businessType: "CAFE_BAKERY", avgDeposit: 35_000_000, avgMonthlyRent: 2_500_000, avgKeyMoney: 85_000_000, avgMonthlySales: 21_000_000, sampleCount: 27 },
+    { subRegion: "영등포구", businessType: "KOREAN_FOOD", avgDeposit: 55_000_000, avgMonthlyRent: 4_000_000, avgKeyMoney: 140_000_000, avgMonthlySales: 40_000_000, sampleCount: 14 },
+    // 중구
+    { subRegion: "중구", businessType: "CAFE_BAKERY", avgDeposit: 40_000_000, avgMonthlyRent: 3_000_000, avgKeyMoney: 95_000_000, avgMonthlySales: 24_000_000, sampleCount: 20 },
+    { subRegion: "중구", businessType: "KOREAN_FOOD", avgDeposit: 70_000_000, avgMonthlyRent: 5_000_000, avgKeyMoney: 170_000_000, avgMonthlySales: 50_000_000, sampleCount: 13 },
+    // 종로구
+    { subRegion: "종로구", businessType: "CAFE_BAKERY", avgDeposit: 38_000_000, avgMonthlyRent: 2_800_000, avgKeyMoney: 88_000_000, avgMonthlySales: 22_000_000, sampleCount: 18 },
+    { subRegion: "종로구", businessType: "KOREAN_FOOD", avgDeposit: 65_000_000, avgMonthlyRent: 4_500_000, avgKeyMoney: 160_000_000, avgMonthlySales: 46_000_000, sampleCount: 10 },
+    // 동작구
+    { subRegion: "동작구", businessType: "CAFE_BAKERY", avgDeposit: 22_000_000, avgMonthlyRent: 1_500_000, avgKeyMoney: 50_000_000, avgMonthlySales: 15_000_000, sampleCount: 16 },
+    { subRegion: "동작구", businessType: "EDUCATION", avgDeposit: 30_000_000, avgMonthlyRent: 2_000_000, avgKeyMoney: 60_000_000, avgMonthlySales: 20_000_000, sampleCount: 9 },
+  ];
+
+  let mpCount = 0;
+  for (const mp of marketPriceData) {
+    const id = `seed-mp-${mp.subRegion}-${mp.businessType}`.toLowerCase();
+    await prisma.marketPrice.upsert({
+      where: { id },
+      update: {},
+      create: {
+        id,
+        region: "서울특별시",
+        subRegion: mp.subRegion,
+        businessType: mp.businessType as "CAFE_BAKERY" | "KOREAN_FOOD" | "CHICKEN" | "SERVICE" | "BAR_PUB" | "RETAIL" | "WESTERN_FOOD" | "PIZZA" | "ENTERTAINMENT" | "EDUCATION",
+        avgDeposit: BigInt(mp.avgDeposit),
+        avgMonthlyRent: BigInt(mp.avgMonthlyRent),
+        avgKeyMoney: BigInt(mp.avgKeyMoney),
+        avgMonthlySales: BigInt(mp.avgMonthlySales),
+        sampleCount: mp.sampleCount,
+      },
+    });
+    mpCount++;
+  }
+  console.log(`  Market prices: ${mpCount}`);
+
+  // Update seller to PRO membership for testing
+  await prisma.user.update({
+    where: { email: "seller@test.com" },
+    data: { subscriptionTier: "BASIC" },
+  });
+  console.log("  seller@test.com → BASIC (PRO member)");
+
   console.log("\nSeeding complete!");
   console.log("─────────────────────────────────");
   console.log("  admin@kwonrishop.com / test1234!");

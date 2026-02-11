@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Calendar, Eye, Building, Layers, Phone, Mail } from "lucide-react";
+import { MapPin, Calendar, Eye, Building, Layers, Phone, Mail, FileSearch, TrendingUp, Lock } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { InquiryForm } from "@/components/listings/inquiry-form";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
@@ -44,7 +44,7 @@ export default async function ListingDetailPage({
     notFound();
   }
 
-  const [images, seller] = await Promise.all([
+  const [images, seller, marketPrice] = await Promise.all([
     prisma.listingImage.findMany({
       where: { listingId: id },
       orderBy: { sortOrder: "asc" },
@@ -52,6 +52,12 @@ export default async function ListingDetailPage({
     prisma.user.findUnique({
       where: { id: listingData.sellerId },
       select: { id: true, name: true, image: true },
+    }),
+    prisma.marketPrice.findFirst({
+      where: {
+        subRegion: listingData.district,
+        businessType: listingData.businessCategory,
+      },
     }),
   ]);
 
@@ -191,6 +197,27 @@ export default async function ListingDetailPage({
             );
           })()}
 
+          {/* 권리분석 리포트 CTA Banner */}
+          <div className="mt-6 overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50">
+            <div className="flex items-center justify-between px-6 py-5">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+                  <FileSearch className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-blue-900">더 자세한 분석이 필요하신가요?</p>
+                  <p className="mt-0.5 text-sm text-gray-600">권리금 적정성 + 위험요소 분석 리포트를 받아보세요</p>
+                </div>
+              </div>
+              <Link
+                href={`/reports/request/${listing.id}`}
+                className="shrink-0 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+              >
+                권리분석 리포트 신청
+              </Link>
+            </div>
+          </div>
+
           {/* Store Details */}
           <div className="mt-8">
             <h2 className="text-xl font-bold text-navy">매물 정보</h2>
@@ -244,6 +271,70 @@ export default async function ListingDetailPage({
               {listing.description}
             </div>
           </div>
+
+          {/* 시세 비교 미니 위젯 */}
+          {marketPrice && (
+            <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="flex items-center gap-2 border-b border-gray-100 bg-gradient-to-r from-mint/5 to-white px-5 py-3">
+                <TrendingUp className="h-4 w-4 text-mint" />
+                <h3 className="text-sm font-bold text-navy">이 지역 시세</h3>
+                <span className="text-xs text-gray-500">
+                  {listing.district} · {BUSINESS_CATEGORY_LABELS[listing.businessCategory]}
+                </span>
+              </div>
+              <div className="px-5 py-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">지역 평균 권리금</span>
+                  <span className="font-bold text-gray-800">{formatKRW(marketPrice.avgKeyMoney)}</span>
+                </div>
+                {listing.premiumFee && Number(listing.premiumFee) > 0 && (() => {
+                  const myFee = Number(listing.premiumFee);
+                  const avgFee = Number(marketPrice.avgKeyMoney);
+                  const ratio = avgFee > 0 ? myFee / avgFee : 1;
+                  const verdict = ratio <= 0.8 ? "저가" : ratio >= 1.2 ? "고가" : "적정";
+                  const barMax = Math.max(myFee, avgFee) * 1.3;
+                  return (
+                    <div className="mt-3">
+                      <div className="space-y-1.5">
+                        <div>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>이 매물</span>
+                            <span>{formatKRW(myFee)}</span>
+                          </div>
+                          <div className="mt-0.5 h-2.5 overflow-hidden rounded-full bg-gray-100">
+                            <div className="h-full rounded-full bg-mint" style={{ width: `${(myFee / barMax) * 100}%` }} />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>지역 평균</span>
+                            <span>{formatKRW(avgFee)}</span>
+                          </div>
+                          <div className="mt-0.5 h-2.5 overflow-hidden rounded-full bg-gray-100">
+                            <div className="h-full rounded-full bg-orange-400" style={{ width: `${(avgFee / barMax) * 100}%` }} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${
+                          verdict === "적정" ? "bg-green-100 text-green-700" : verdict === "저가" ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700"
+                        }`}>
+                          {verdict}
+                        </span>
+                        <Link
+                          href={`/market-price?subRegion=${listing.district}&businessType=${listing.businessCategory}`}
+                          className="flex items-center gap-1 text-xs text-mint hover:underline"
+                        >
+                          자세히 보기
+                          <Lock className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
 
           {/* Share Buttons */}
           <div className="mt-8">

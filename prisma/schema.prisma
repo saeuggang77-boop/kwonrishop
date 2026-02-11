@@ -188,6 +188,17 @@ enum PremiumAdStatus {
   CANCELLED
 }
 
+enum ReportPlanTier {
+  BASIC
+  PREMIUM
+}
+
+enum ReportPurchaseStatus {
+  PENDING
+  PAID
+  COMPLETED
+}
+
 // ============================================================
 // AUTH (NextAuth.js v5 / Auth.js)
 // ============================================================
@@ -266,8 +277,9 @@ model User {
   events          Event[]
   fraudFlags      FraudViolation[]   @relation("FlaggedUser")
   adminActions    AdminAuditLog[]    @relation("AdminActor")
-  settlements     Settlement[]
-  notifications   Notification[]
+  settlements      Settlement[]
+  notifications    Notification[]
+  reportPurchases  ReportPurchase[]
 
   @@index([role])
   @@index([accountStatus])
@@ -329,7 +341,9 @@ model Listing {
   comparisons     ListingComparison[]
   reports         Report[]
   events          Event[]
-  premiumListings PremiumListing[]
+  premiumListings  PremiumListing[]
+  reportPurchases  ReportPurchase[]
+  reportData       ReportData[]
 
   @@index([sellerId])
   @@index([status])
@@ -861,4 +875,82 @@ model PremiumListing {
   @@index([status])
   @@index([endDate])
   @@map("premium_listings")
+}
+
+// ============================================================
+// REPORT ANALYSIS SYSTEM (권리분석 리포트)
+// ============================================================
+
+model ReportPlan {
+  id          String         @id @default(cuid())
+  name        ReportPlanTier @unique
+  displayName String
+  price       BigInt
+  features    Json
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  purchases ReportPurchase[]
+  @@map("report_plans")
+}
+
+model ReportPurchase {
+  id            String               @id @default(cuid())
+  userId        String
+  listingId     String
+  planId        String
+  status        ReportPurchaseStatus @default(PENDING)
+  paymentMethod String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id])
+  listing Listing        @relation(fields: [listingId], references: [id])
+  plan    ReportPlan     @relation(fields: [planId], references: [id])
+  data    ReportData?
+
+  @@index([userId])
+  @@index([listingId])
+  @@index([status])
+  @@map("report_purchases")
+}
+
+model ReportData {
+  id             String   @id @default(cuid())
+  purchaseId     String   @unique
+  listingId      String
+  inputData      Json
+  analysisResult Json
+  pdfUrl         String?
+  createdAt      DateTime @default(now())
+
+  purchase ReportPurchase @relation(fields: [purchaseId], references: [id])
+  listing  Listing        @relation(fields: [listingId], references: [id])
+
+  @@index([listingId])
+  @@map("report_data")
+}
+
+// ============================================================
+// MARKET PRICE (시세 비교)
+// ============================================================
+
+model MarketPrice {
+  id              String           @id @default(cuid())
+  region          String           // 시/도 (서울특별시)
+  subRegion       String           // 구/군 (강남구)
+  businessType    BusinessCategory
+  avgDeposit      BigInt           // 평균 보증금
+  avgMonthlyRent  BigInt           // 평균 월세
+  avgKeyMoney     BigInt           // 평균 권리금
+  avgMonthlySales BigInt           // 평균 월매출
+  sampleCount     Int              @default(0)
+  updatedAt       DateTime         @updatedAt
+  createdAt       DateTime         @default(now())
+
+  @@unique([region, subRegion, businessType])
+  @@index([region, subRegion])
+  @@index([businessType])
+  @@map("market_prices")
 }
