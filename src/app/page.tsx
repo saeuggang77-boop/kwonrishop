@@ -8,7 +8,7 @@ import {
   Paintbrush, Trash2, Sparkles, Signpost, MapPin, ChevronRight,
   ChevronLeft, Home, User, Users, Calculator, Check, Scale, Hammer,
   ArrowRight, ShieldCheck, FileText, ClipboardList, BarChart3,
-  Receipt, Target, Calendar, Crown, ChevronDown, MessageCircle, Eye,
+  Receipt, Target, Calendar, ChevronDown, MessageCircle, Eye,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
 import { formatKRW } from "@/lib/utils/format";

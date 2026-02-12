@@ -8,10 +8,8 @@ import { useSession } from "next-auth/react";
 import {
   Star,
   MapPin,
-  Shield,
   User,
   MessageSquare,
-  Briefcase,
   CheckCircle,
   X,
   ChevronLeft,

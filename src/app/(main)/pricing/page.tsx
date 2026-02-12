@@ -285,12 +285,12 @@ export default function PricingPage() {
               </li>
             </ul>
             <div className="mt-8 text-center">
-              <a
+              <Link
                 href="/listings"
                 className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
               >
                 내 매물 권리진단서 발급받기
-              </a>
+              </Link>
             </div>
           </div>
         </div>

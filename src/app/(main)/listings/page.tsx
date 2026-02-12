@@ -12,7 +12,6 @@ import { CompareButton } from "@/components/listings/compare-button";
 import {
   BUSINESS_CATEGORY_LABELS,
   BUSINESS_CATEGORY_GROUPS,
-  REGIONS,
   FLOOR_OPTIONS,
   AREA_OPTIONS,
   SAFETY_GRADE_CONFIG,
@@ -117,8 +116,6 @@ export default function ListingsPage() {
     sortBy: "createdAt",
     sortOrder: "desc",
   });
-
-  const districts = filters.city ? REGIONS[filters.city] ?? [] : [];
 
   /* ---- Fetch ---- */
   const fetchListings = useCallback(

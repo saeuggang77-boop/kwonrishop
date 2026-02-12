@@ -4,7 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft, ArrowRight, MapPin, Store, Clock, Building, Layers,
+  ArrowLeft, ArrowRight, MapPin, Store, Building, Layers,
   Wallet, PaintBucket, Users, TrendingUp, FileText, Check, Crown, Star,
 } from "lucide-react";
 import { BUSINESS_CATEGORY_LABELS } from "@/lib/utils/constants";
