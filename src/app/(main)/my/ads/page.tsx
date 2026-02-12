@@ -159,7 +159,7 @@ export default function AdsPage() {
                     {ad.tier === "VIP" ? (
                       <Crown className="h-5 w-5 text-amber-500" />
                     ) : (
-                      <Star className="h-5 w-5 text-green-600" />
+                      <Star className="h-5 w-5 text-blue-600" />
                     )}
                     <h3 className="text-base font-bold text-navy">
                       {ad.listingTitle}
@@ -224,7 +224,7 @@ export default function AdsPage() {
                     <div
                       className={cn(
                         "h-full rounded-full transition-all",
-                        ad.tier === "VIP" ? "bg-amber-400" : "bg-green-500"
+                        ad.tier === "VIP" ? "bg-amber-400" : "bg-blue-500"
                       )}
                       style={{ width: `${progressPercent}%` }}
                     />

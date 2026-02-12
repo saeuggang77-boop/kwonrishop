@@ -30,8 +30,8 @@ interface ProfileData {
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  BUYER: "매수자",
-  SELLER: "매도자",
+  BUYER: "양수인",
+  SELLER: "양도인",
   ADMIN: "관리자",
 };
 

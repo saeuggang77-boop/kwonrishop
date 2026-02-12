@@ -189,14 +189,14 @@ export default async function ListingDetailPage({
             </span>
           )}
           {listing.seller?.isTrustedSeller && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
               <ShieldCheck className="h-3.5 w-3.5" />
               안심거래
             </span>
           )}
           {listing.hasDiagnosisBadge && (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium ${DIAGNOSIS_BADGE_CONFIG.bg} ${DIAGNOSIS_BADGE_CONFIG.color} border ${DIAGNOSIS_BADGE_CONFIG.border}`}>
-              {DIAGNOSIS_BADGE_CONFIG.label}
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-300">
+              권리진단 완료
             </span>
           )}
         </div>
@@ -361,18 +361,9 @@ export default async function ListingDetailPage({
 
             {/* Diagnosis promotion banner for listings without badge */}
             {!listing.hasDiagnosisBadge && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-blue-800">이 매물의 권리진단서를 발급받아보세요</p>
-                    <p className="text-xs text-blue-600 mt-1">권리진단서 발급 시 &quot;권리진단 완료&quot; 배지가 자동 부여됩니다</p>
-                  </div>
-                </div>
+              <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+                <p className="text-sm font-semibold text-emerald-800">이 매물의 권리진단서를 발급받으세요</p>
+                <p className="text-xs text-emerald-600 mt-1">권리진단서를 발급받으면 &ldquo;권리진단 완료&rdquo; 배지가 자동으로 부여됩니다.</p>
               </div>
             )}
 
@@ -969,7 +960,7 @@ export default async function ListingDetailPage({
                     {listing.seller?.name ?? "미인증"}
                   </p>
                   {listing.seller?.isTrustedSeller ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-700">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-blue-700">
                       <ShieldCheck className="h-3 w-3" />
                       안심거래 판매자
                     </span>

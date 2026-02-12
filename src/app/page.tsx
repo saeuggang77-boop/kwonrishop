@@ -15,7 +15,6 @@ import { formatKRW } from "@/lib/utils/format";
 import {
   BUSINESS_CATEGORY_LABELS,
   SAFETY_GRADE_CONFIG, PREMIUM_AD_CONFIG,
-  DIAGNOSIS_BADGE_CONFIG,
 } from "@/lib/utils/constants";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 
@@ -250,7 +249,7 @@ export default function HomePage() {
           <div className="flex items-center gap-1">
             <h3 className="truncate text-[13px] font-bold text-navy">{item.title}</h3>
             {item.seller?.isTrustedSeller && (
-              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-700">
+              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
                 <ShieldCheck className="h-2.5 w-2.5" />
                 안심
               </span>
@@ -418,8 +417,8 @@ export default function HomePage() {
                       </div>
                       <div className="mt-1.5 flex flex-wrap items-center gap-1">
                         {item.hasDiagnosisBadge && (
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${DIAGNOSIS_BADGE_CONFIG.bg} ${DIAGNOSIS_BADGE_CONFIG.color} border ${DIAGNOSIS_BADGE_CONFIG.border}`}>
-                            {DIAGNOSIS_BADGE_CONFIG.label}
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-300">
+                            권리진단 완료
                           </span>
                         )}
                       </div>
@@ -740,13 +739,13 @@ export default function HomePage() {
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
                   <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-green-50 px-2 py-0.5 text-xs font-bold text-green-700 border border-green-200">프리미엄</span>
+                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">프리미엄</span>
                     <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
                   </div>
                   <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500" />매물 목록 상위 노출</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500" />프리미엄 배지 표시</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500" />기본 조회수 통계</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />매물 목록 상위 노출</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />프리미엄 배지 표시</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />기본 조회수 통계</li>
                   </ul>
                   <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
                 </div>

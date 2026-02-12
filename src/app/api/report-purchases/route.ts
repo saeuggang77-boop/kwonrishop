@@ -76,8 +76,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Auto-set diagnosis badge on the listing
-    if (listing?.id) {
+    // Auto-set diagnosis badge if the purchaser is the listing seller
+    if (listing?.id && session.user.id === listing.sellerId) {
       await prisma.listing.update({
         where: { id: listing.id },
         data: { hasDiagnosisBadge: true },

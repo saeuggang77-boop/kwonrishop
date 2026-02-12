@@ -202,7 +202,7 @@ export default function RegisterPage() {
                   : "border-gray-300 text-gray-500 hover:border-gray-400"
               }`}
             >
-              임차인
+              양수인
             </button>
             <button
               type="button"
@@ -213,7 +213,7 @@ export default function RegisterPage() {
                   : "border-gray-300 text-gray-500 hover:border-gray-400"
               }`}
             >
-              임대인
+              양도인
             </button>
           </div>
         </div>

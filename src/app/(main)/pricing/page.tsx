@@ -14,7 +14,7 @@ import {
   Megaphone,
 } from "lucide-react";
 import { formatNumber } from "@/lib/utils/format";
-import { SELLER_AD_PLANS, REPORT_PLANS, DIAGNOSIS_BADGE_CONFIG } from "@/lib/utils/constants";
+import { SELLER_AD_PLANS, REPORT_PLANS } from "@/lib/utils/constants";
 
 const BUYER_FREE_FEATURES = [
   { icon: Search, label: "매물 검색 & 조회" },
@@ -41,7 +41,7 @@ export default function PricingPage() {
       {/* ── Section 1: 매도자 광고 ── */}
       <section className="mt-16">
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-1.5 text-sm font-medium text-green-700">
+          <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700">
             <Megaphone className="h-4 w-4" />
             매도자 광고
           </div>
@@ -63,7 +63,7 @@ export default function PricingPage() {
                 className={
                   isVip
                     ? "relative flex flex-col rounded-2xl border-2 border-amber-300 bg-white p-6 shadow-lg"
-                    : "relative flex flex-col rounded-2xl border border-green-200 bg-white p-6 shadow-sm"
+                    : "relative flex flex-col rounded-2xl border border-blue-200 bg-white p-6 shadow-sm"
                 }
               >
                 {/* VIP 추천 badge */}
@@ -78,13 +78,13 @@ export default function PricingPage() {
                   {isVip ? (
                     <Crown className="h-5 w-5 text-amber-500" />
                   ) : (
-                    <Star className="h-5 w-5 text-green-600" />
+                    <Star className="h-5 w-5 text-blue-600" />
                   )}
                   <span
                     className={
                       isVip
                         ? "rounded-md bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-700"
-                        : "rounded-md bg-green-100 px-2.5 py-0.5 text-xs font-bold text-green-700"
+                        : "rounded-md bg-blue-100 px-2.5 py-0.5 text-xs font-bold text-blue-700"
                     }
                   >
                     {plan.label}
@@ -97,7 +97,7 @@ export default function PricingPage() {
                     className={
                       isVip
                         ? "text-3xl font-bold text-amber-600"
-                        : "text-3xl font-bold text-green-700"
+                        : "text-3xl font-bold text-blue-700"
                     }
                   >
                     ₩{formatNumber(plan.price)}
@@ -116,7 +116,7 @@ export default function PricingPage() {
                         className={
                           isVip
                             ? "mt-0.5 h-4 w-4 shrink-0 text-amber-500"
-                            : "mt-0.5 h-4 w-4 shrink-0 text-green-600"
+                            : "mt-0.5 h-4 w-4 shrink-0 text-blue-600"
                         }
                       />
                       <span className="text-gray-700">{feature}</span>
@@ -130,7 +130,7 @@ export default function PricingPage() {
                   className={
                     isVip
                       ? "mt-6 block w-full rounded-lg bg-amber-500 px-4 py-3 text-center text-sm font-medium text-white transition-all hover:bg-amber-600 active:scale-[0.97]"
-                      : "mt-6 block w-full rounded-lg border border-green-600 px-4 py-3 text-center text-sm font-medium text-green-700 transition-all hover:bg-green-50 active:scale-[0.97]"
+                      : "mt-6 block w-full rounded-lg border border-blue-600 px-4 py-3 text-center text-sm font-medium text-blue-700 transition-all hover:bg-blue-50 active:scale-[0.97]"
                   }
                 >
                   {isVip ? "VIP 광고 신청하기" : "광고 신청하기"}
@@ -243,52 +243,57 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* 매도자 권리진단 배지 안내 */}
-      <section className="mb-16">
-        <div className="text-center mb-8">
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${DIAGNOSIS_BADGE_CONFIG.bg} ${DIAGNOSIS_BADGE_CONFIG.color} border ${DIAGNOSIS_BADGE_CONFIG.border}`}>
-            {DIAGNOSIS_BADGE_CONFIG.label}
-          </span>
-          <h2 className="text-2xl font-bold text-gray-900 mt-4">
+      {/* ── Section 2.5: 매도자 권리진단 배지 안내 ── */}
+      <section className="mt-20">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-sm font-medium text-emerald-700 border border-emerald-300">
+            <Shield className="h-4 w-4" />
+            권리진단 완료 배지
+          </div>
+          <h2 className="mt-4 text-2xl font-bold text-[#1B3A5C]">
             내 매물에 권리진단 완료 배지를 달아보세요
           </h2>
-          <p className="text-gray-600 mt-2">
+          <p className="mt-2 text-gray-500">
             권리진단 완료 매물은 문의율이 평균 2배 높습니다
           </p>
         </div>
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white border border-blue-200 rounded-2xl p-8 shadow-sm">
+
+        <div className="mt-10 mx-auto max-w-2xl">
+          {/* Badge Sample */}
+          <div className="mb-6 flex justify-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
+              <Shield className="h-4 w-4" />
+              권리진단 완료
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-emerald-200 bg-white p-8 shadow-sm">
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-gray-700">매물 목록에서 <strong className="text-blue-700">권리진단 완료</strong> 배지가 표시됩니다</span>
+              <li className="flex items-start gap-3 text-sm">
+                <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                <span className="text-gray-700">매물 목록에서 &lsquo;권리진단 완료&rsquo; 배지 표시</span>
               </li>
-              <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-gray-700">매수자가 <strong>권리진단 완료 매물만 필터링</strong>할 수 있어 노출이 증가합니다</span>
+              <li className="flex items-start gap-3 text-sm">
+                <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                <span className="text-gray-700">상세 페이지에서 권리진단 인증 마크 노출</span>
               </li>
-              <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-gray-700">매수자에게 <strong>신뢰감</strong>을 주어 문의 전환율이 높아집니다</span>
+              <li className="flex items-start gap-3 text-sm">
+                <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                <span className="text-gray-700">매수자 신뢰도 및 문의율 상승</span>
               </li>
-              <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-gray-700">권리진단서 발급 시 배지가 <strong>자동 부여</strong>됩니다 (추가 비용 없음)</span>
+              <li className="flex items-start gap-3 text-sm">
+                <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                <span className="text-gray-700">검색 필터 &lsquo;권리진단 완료&rsquo;에 매물 노출</span>
               </li>
             </ul>
+
+            {/* CTA */}
             <div className="mt-8 text-center">
               <Link
                 href="/listings"
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-700 active:scale-[0.97]"
               >
+                <Shield className="h-4 w-4" />
                 내 매물 권리진단서 발급받기
               </Link>
             </div>

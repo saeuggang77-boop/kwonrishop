@@ -71,8 +71,8 @@ export default function DashboardPremiumPage() {
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-gray-200 bg-white p-5">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-green-100 p-2">
-              <Star className="h-5 w-5 text-green-600" />
+            <div className="rounded-lg bg-blue-100 p-2">
+              <Star className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <p className="text-xs text-gray-500">활성 광고</p>

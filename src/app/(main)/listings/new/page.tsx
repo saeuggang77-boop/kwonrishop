@@ -382,18 +382,11 @@ export default function NewListingPage() {
       </div>
 
       {/* 권리진단 프로모션 배너 */}
-      <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-blue-800">매물 등록 후 권리진단서를 발급받으면 배지가 자동 부여됩니다</p>
-            <p className="text-xs text-blue-600 mt-1">권리진단 완료 매물은 문의율이 평균 2배 높습니다</p>
-          </div>
-        </div>
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 mt-4">
+        <p className="text-sm font-semibold text-emerald-800">매물 등록 후 권리진단서를 발급받으면 배지가 자동 부여됩니다</p>
+        <p className="text-xs text-emerald-600 mt-1">
+          &ldquo;권리진단 완료&rdquo; 배지가 부여된 매물은 문의율이 평균 2배 높습니다.
+        </p>
       </div>
 
       {/* Navigation Buttons */}

@@ -155,15 +155,15 @@ export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string;
 export const FRANCHISE_CATEGORIES = ["외식", "도소매", "서비스"] as const;
 
 export const PREMIUM_AD_CONFIG: Record<string, { label: string; badge: string; color: string; bg: string; border: string; gradient: string }> = {
-  PREMIUM: { label: "프리미엄", badge: "프리미엄", color: "text-green-800",  bg: "bg-green-50",    border: "border-green-300", gradient: "from-green-100 to-green-50" },
+  PREMIUM: { label: "프리미엄", badge: "프리미엄", color: "text-blue-800",  bg: "bg-blue-50",    border: "border-blue-300", gradient: "from-blue-100 to-blue-50" },
   VIP:     { label: "VIP",     badge: "VIP",     color: "text-amber-800",  bg: "bg-amber-50",    border: "border-amber-400", gradient: "from-amber-200 via-amber-100 to-amber-50" },
 };
 
 export const DIAGNOSIS_BADGE_CONFIG = {
   label: "권리진단 완료",
-  color: "text-blue-700",
-  bg: "bg-blue-50",
-  border: "border-blue-300",
+  color: "text-emerald-700",
+  bg: "bg-emerald-50",
+  border: "border-emerald-300",
 } as const;
 
 export const PREMIUM_AD_PLANS = [

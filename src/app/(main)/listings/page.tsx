@@ -306,25 +306,25 @@ export default function ListingsPage() {
                 ))}
               </select>
 
-              <label className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs font-medium text-green-700 transition-colors hover:bg-green-100">
+              <label className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100">
                 <input
                   type="checkbox"
                   checked={filters.trustedOnly}
                   onChange={(e) => setFilters((f) => ({ ...f, trustedOnly: e.target.checked }))}
-                  className="h-3.5 w-3.5 rounded border-green-300 accent-green-600"
+                  className="h-3.5 w-3.5 rounded border-blue-300 accent-blue-600"
                 />
                 <ShieldCheck className="h-3.5 w-3.5" />
                 안심거래 매물만
               </label>
 
-              <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <label className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-100">
                 <input
                   type="checkbox"
                   checked={diagnosisOnly}
                   onChange={(e) => setDiagnosisOnly(e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="h-3.5 w-3.5 rounded border-emerald-300 accent-emerald-600"
                 />
-                <span>권리진단 완료 매물만</span>
+                권리진단 완료 매물만
               </label>
 
               {hasActiveFilters && (
@@ -726,8 +726,8 @@ function ListingCard({ listing }: { listing: ListingItem }) {
           </span>
         )}
         {listing.hasDiagnosisBadge && (
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${DIAGNOSIS_BADGE_CONFIG.bg} ${DIAGNOSIS_BADGE_CONFIG.color} border ${DIAGNOSIS_BADGE_CONFIG.border} absolute right-2 ${gradeConfig ? "top-8" : "top-2"}`}>
-            {DIAGNOSIS_BADGE_CONFIG.label}
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-300 absolute right-2 ${gradeConfig ? "top-8" : "top-2"}`}>
+            권리진단 완료
           </span>
         )}
         {/* Premium badge */}
@@ -774,7 +774,7 @@ function ListingCard({ listing }: { listing: ListingItem }) {
               {listing.title}
             </h3>
             {isTrusted && (
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
                 <ShieldCheck className="h-3 w-3" />
                 안심거래
               </span>
