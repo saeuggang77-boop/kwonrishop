@@ -1,8 +1,10 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import { useSession } from "next-auth/react";
 
-const MAX_COMPARE = 4;
+const MAX_COMPARE_FREE = 2;
+const MAX_COMPARE_PRO = 4;
 const STORAGE_KEY = "kwonrishop_compare";
 
 export interface CompareItem {
@@ -34,6 +36,7 @@ interface CompareContextValue {
   clear: () => void;
   has: (id: string) => boolean;
   isFull: boolean;
+  maxCompare: number;
 }
 
 const CompareContext = createContext<CompareContextValue | null>(null);
@@ -45,16 +48,21 @@ export function useCompare() {
 }
 
 export function CompareProvider({ children }: { children: ReactNode }) {
+  const { data: session } = useSession();
+  const tier = session?.user?.subscriptionTier ?? "FREE";
+  const maxCompare = (tier === "PRO" || tier === "EXPERT") ? MAX_COMPARE_PRO : MAX_COMPARE_FREE;
+
   const [items, setItems] = useState<CompareItem[]>([]);
   const [loaded, setLoaded] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount — keep all stored items (up to 4)
+  // so that upgrading tier reveals previously added items
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored) as CompareItem[];
-        if (Array.isArray(parsed)) setItems(parsed.slice(0, MAX_COMPARE));
+        if (Array.isArray(parsed)) setItems(parsed.slice(0, MAX_COMPARE_PRO));
       }
     } catch {}
     setLoaded(true);
@@ -68,12 +76,12 @@ export function CompareProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback(
     (item: CompareItem) => {
-      if (items.length >= MAX_COMPARE) return false;
+      if (items.length >= maxCompare) return false;
       if (items.some((i) => i.id === item.id)) return false;
       setItems((prev) => [...prev, item]);
       return true;
     },
-    [items]
+    [items, maxCompare]
   );
 
   const remove = useCallback((id: string) => {
@@ -86,7 +94,7 @@ export function CompareProvider({ children }: { children: ReactNode }) {
 
   return (
     <CompareContext.Provider
-      value={{ items, add, remove, clear, has, isFull: items.length >= MAX_COMPARE }}
+      value={{ items, add, remove, clear, has, isFull: items.length >= maxCompare, maxCompare }}
     >
       {children}
     </CompareContext.Provider>

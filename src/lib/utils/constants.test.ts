@@ -32,8 +32,8 @@ describe("Constants", () => {
 
   it("SUBSCRIPTION_PRICES are correct", () => {
     expect(SUBSCRIPTION_PRICES.FREE).toBe(0);
-    expect(SUBSCRIPTION_PRICES.BASIC).toBe(29_000);
-    expect(SUBSCRIPTION_PRICES.PREMIUM).toBe(79_000);
+    expect(SUBSCRIPTION_PRICES.PRO).toBe(29_900);
+    expect(SUBSCRIPTION_PRICES.EXPERT).toBe(59_900);
   });
 
   it("DEEP_REPORT_PRICE is set", () => {

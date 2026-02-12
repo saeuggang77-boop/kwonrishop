@@ -11,7 +11,7 @@ export const purchaseReportSchema = z.object({
 });
 
 export const createSubscriptionSchema = z.object({
-  tier: z.enum(["BASIC", "PREMIUM"]),
+  tier: z.enum(["PRO", "EXPERT"]),
 });
 
 export const createPaymentSchema = z.object({

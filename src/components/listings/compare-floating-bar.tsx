@@ -4,11 +4,9 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { X, Scale, Trash2 } from "lucide-react";
 import { useCompare } from "@/lib/compare-context";
-import { useSession } from "next-auth/react";
 
 export function CompareFloatingBar() {
-  const { items, remove, clear } = useCompare();
-  const { data: session } = useSession();
+  const { items, remove, clear, maxCompare } = useCompare();
   const router = useRouter();
 
   if (items.length === 0) return null;
@@ -17,8 +15,7 @@ export function CompareFloatingBar() {
     router.push("/listings/compare");
   };
 
-  const userTier = (session?.user as { tier?: string } | undefined)?.tier;
-  const isPro = userTier === "BASIC" || userTier === "PREMIUM" || userTier === "ENTERPRISE";
+  const emptySlots = Math.max(0, maxCompare - items.length);
 
   return (
     <div className="fixed bottom-16 left-0 right-0 z-50 md:bottom-0">
@@ -26,7 +23,7 @@ export function CompareFloatingBar() {
         <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-xl">
           {/* Items */}
           <div className="flex flex-1 items-center gap-2 overflow-x-auto">
-            {items.map((item) => (
+            {items.slice(0, maxCompare).map((item) => (
               <div
                 key={item.id}
                 className="relative shrink-0"
@@ -55,7 +52,7 @@ export function CompareFloatingBar() {
               </div>
             ))}
             {/* Empty slots */}
-            {Array.from({ length: 4 - items.length }).map((_, i) => (
+            {Array.from({ length: emptySlots }).map((_, i) => (
               <div
                 key={`empty-${i}`}
                 className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 sm:flex"
@@ -67,6 +64,9 @@ export function CompareFloatingBar() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <span className="hidden text-xs text-gray-400 sm:inline">
+              {items.length}/{maxCompare}
+            </span>
             <button
               onClick={clear}
               className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
@@ -82,9 +82,6 @@ export function CompareFloatingBar() {
               <Scale className="h-4 w-4" />
               <span className="hidden sm:inline">비교하기</span>
               <span className="sm:hidden">비교</span>
-              {!isPro && (
-                <span className="rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-bold">PRO</span>
-              )}
             </button>
           </div>
         </div>

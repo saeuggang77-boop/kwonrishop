@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     if (payment.paymentType === "PREMIUM_SUBSCRIPTION") {
       // Activate subscription
       const meta = payment.metadata as Record<string, string> | null;
-      const tier = meta?.tier ?? "PREMIUM";
+      const tier = meta?.tier ?? "PRO";
       const now = new Date();
       const periodEnd = new Date(now);
       periodEnd.setMonth(periodEnd.getMonth() + 1);
@@ -71,13 +71,13 @@ export async function POST(req: NextRequest) {
         where: { userId: session.user.id },
         create: {
           userId: session.user.id,
-          tier: tier as "BASIC" | "PREMIUM",
+          tier: tier as "PRO" | "EXPERT",
           status: "ACTIVE",
           currentPeriodStart: now,
           currentPeriodEnd: periodEnd,
         },
         update: {
-          tier: tier as "BASIC" | "PREMIUM",
+          tier: tier as "PRO" | "EXPERT",
           status: "ACTIVE",
           currentPeriodStart: now,
           currentPeriodEnd: periodEnd,

@@ -172,9 +172,9 @@ export default function SimulatorPage() {
   const [state, setState] = useState<SimulatorState>(INITIAL_STATE);
   const [showResults, setShowResults] = useState(false);
 
-  const isPro =
-    session?.user?.subscriptionTier === "PREMIUM" ||
-    session?.user?.subscriptionTier === "ENTERPRISE";
+  const tier = session?.user?.subscriptionTier;
+  const isPro = tier === "PRO" || tier === "EXPERT";
+  const isExpert = tier === "EXPERT";
 
   // ── State updater ────────────────────────────────────────────────────
   function update<K extends keyof SimulatorState>(key: K, value: SimulatorState[K]) {
@@ -309,8 +309,8 @@ export default function SimulatorPage() {
   }
 
   function handlePdfDownload() {
-    if (!isPro) {
-      toast("info", "PDF 다운로드는 프로회원 전용 기능입니다.");
+    if (!isExpert) {
+      toast("info", "PDF 다운로드는 EXPERT 플랜에서 이용 가능합니다.");
       return;
     }
     toast("info", "PDF 다운로드 기능은 준비 중입니다.");
@@ -673,25 +673,17 @@ export default function SimulatorPage() {
           {/* Pro gate */}
           <div className="relative">
             {!isPro && (
-              <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-md">
-                <div className="text-center">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-navy/10">
-                    <Lock className="h-8 w-8 text-navy" />
-                  </div>
-                  <h3 className="mt-4 text-xl font-bold text-navy">
-                    프로회원 전용 기능
-                  </h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    시뮬레이션 상세 결과는 프로회원만 열람할 수 있습니다
-                  </p>
-                  <Link
-                    href="/premium/checkout"
-                    className="mt-6 inline-flex items-center gap-2 rounded-lg bg-navy px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-navy/90"
-                  >
-                    <Lock className="h-4 w-4" />
-                    프로회원 가입하기
-                  </Link>
-                </div>
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm">
+                <Lock className="h-8 w-8 text-gray-400" />
+                <p className="mt-2 text-sm font-medium text-gray-600">
+                  PRO 이상 플랜에서 이용 가능합니다
+                </p>
+                <Link
+                  href="/pricing"
+                  className="mt-3 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint/90"
+                >
+                  업그레이드
+                </Link>
               </div>
             )}
 
@@ -955,18 +947,31 @@ export default function SimulatorPage() {
                   <Save className="h-4 w-4" />
                   시뮬레이션 저장
                 </button>
-                <button
-                  type="button"
-                  onClick={handlePdfDownload}
-                  className="flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-                >
-                  {isPro ? (
-                    <FileDown className="h-4 w-4" />
-                  ) : (
-                    <Lock className="h-4 w-4" />
+                <div className="relative group">
+                  <button
+                    type="button"
+                    onClick={handlePdfDownload}
+                    disabled={!isExpert}
+                    className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors ${
+                      isExpert
+                        ? "border-gray-300 text-gray-600 hover:bg-gray-50"
+                        : "cursor-not-allowed border-gray-200 text-gray-400"
+                    }`}
+                  >
+                    {isExpert ? (
+                      <FileDown className="h-4 w-4" />
+                    ) : (
+                      <Lock className="h-4 w-4" />
+                    )}
+                    PDF 다운로드
+                  </button>
+                  {!isExpert && (
+                    <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-gray-800 px-3 py-1.5 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                      EXPERT 플랜에서 이용 가능
+                      <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
+                    </div>
                   )}
-                  PDF 다운로드
-                </button>
+                </div>
                 <button
                   type="button"
                   onClick={handleReset}

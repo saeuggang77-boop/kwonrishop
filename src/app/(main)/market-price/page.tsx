@@ -7,7 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend,
 } from "recharts";
-import { Search, Lock, TrendingUp, Wallet, Building, DollarSign, BarChart3, Crown } from "lucide-react";
+import { Search, Lock, TrendingUp, Wallet, Building, DollarSign, BarChart3 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { BUSINESS_CATEGORY_LABELS, REGIONS } from "@/lib/utils/constants";
 
@@ -201,23 +201,17 @@ export default function MarketPricePage() {
       <div className="relative">
         {/* Blur overlay for non-pro */}
         {!isPro && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-md">
-            <div className="text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-navy/10">
-                <Lock className="h-8 w-8 text-navy" />
-              </div>
-              <h3 className="mt-4 text-xl font-bold text-navy">프로회원 전용 기능</h3>
-              <p className="mt-2 text-sm text-gray-600">
-                상세 시세 정보는 프로회원만 열람할 수 있습니다
-              </p>
-              <Link
-                href="/premium/checkout"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-navy px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-navy/90"
-              >
-                <Crown className="h-4 w-4" />
-                프로회원 가입하기
-              </Link>
-            </div>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm">
+            <Lock className="h-8 w-8 text-gray-400" />
+            <p className="mt-2 text-sm font-medium text-gray-600">
+              시세 비교 위젯은 PRO 이상 플랜에서 이용 가능합니다
+            </p>
+            <Link
+              href="/pricing"
+              className="mt-3 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint/90"
+            >
+              업그레이드
+            </Link>
           </div>
         )}
 

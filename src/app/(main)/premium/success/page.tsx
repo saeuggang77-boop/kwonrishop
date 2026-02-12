@@ -30,7 +30,7 @@ function PremiumSuccessContent() {
             paymentKey,
             orderId,
             amount: Number(amount),
-            tier: tier ?? "BASIC",
+            tier: tier ?? "PRO",
           }),
         });
 
