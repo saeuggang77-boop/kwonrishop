@@ -58,6 +58,8 @@ const SORT_OPTIONS = [
   { value: "createdAt-desc", label: "최신등록순" },
   { value: "premiumFee-asc", label: "권리금낮은순" },
   { value: "premiumFee-desc", label: "권리금높은순" },
+  { value: "monthlyProfit-desc", label: "월순익높은순" },
+  { value: "monthlyRevenue-desc", label: "월매출높은순" },
   { value: "areaPyeong-desc", label: "면적순" },
 ] as const;
 
