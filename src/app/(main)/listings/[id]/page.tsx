@@ -1,6 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Calendar, Eye, Building, Layers, Phone, Mail, FileSearch, TrendingUp, Lock, Calculator, Star, Users, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import {
+  MapPin, Calendar, Eye, Building, Layers, Phone, Mail,
+  FileSearch, TrendingUp, Lock, Calculator, Star, Users,
+  ArrowRight, MapPinned, Footprints, Store, Shield,
+} from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { InquiryForm } from "@/components/listings/inquiry-form";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
@@ -16,17 +21,22 @@ import { m2ToPyeong } from "@/lib/utils/area";
 import { ImageGallery } from "./image-gallery";
 import { ShareButtons } from "./share-buttons";
 import { CompareSection } from "./compare-section";
+import { DetailTabs } from "./detail-tabs";
+import { RevenueLineChart, CostPieChart } from "./revenue-charts";
+import { MarketBarChart } from "./market-charts";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
   const id = decodeURIComponent(rawId);
   const listing = await prisma.listing.findUnique({
     where: { id },
-    select: { title: true, city: true, district: true },
+    select: { title: true, city: true, district: true, businessCategory: true },
   });
   if (!listing) return { title: "매물을 찾을 수 없습니다" };
+  const category = BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory;
   return {
     title: `${listing.title} - ${listing.city} ${listing.district}`,
+    description: `${listing.city} ${listing.district} ${category} 매물 상세정보 - 권리샵`,
   };
 }
 
@@ -46,30 +56,47 @@ export default async function ListingDetailPage({
     notFound();
   }
 
-  const [images, seller, marketPrice, recommendedExperts] = await Promise.all([
-    prisma.listingImage.findMany({
-      where: { listingId: id },
-      orderBy: { sortOrder: "asc" },
-    }),
-    prisma.user.findUnique({
-      where: { id: listingData.sellerId },
-      select: { id: true, name: true, image: true },
-    }),
-    prisma.marketPrice.findFirst({
-      where: {
-        subRegion: listingData.district,
-        businessType: listingData.businessCategory,
-      },
-    }),
-    prisma.expert.findMany({
-      where: {
-        isActive: true,
-        region: listingData.city,
-      },
-      orderBy: [{ isVerified: "desc" }, { rating: "desc" }, { consultCount: "desc" }],
-      take: 3,
-    }),
-  ]);
+  const [images, seller, marketPrice, recommendedExperts, similarListings] =
+    await Promise.all([
+      prisma.listingImage.findMany({
+        where: { listingId: id },
+        orderBy: { sortOrder: "asc" },
+      }),
+      prisma.user.findUnique({
+        where: { id: listingData.sellerId },
+        select: { id: true, name: true, image: true },
+      }),
+      prisma.marketPrice.findFirst({
+        where: {
+          subRegion: listingData.district,
+          businessType: listingData.businessCategory,
+        },
+      }),
+      prisma.expert.findMany({
+        where: { isActive: true, region: listingData.city },
+        orderBy: [
+          { isVerified: "desc" },
+          { rating: "desc" },
+          { consultCount: "desc" },
+        ],
+        take: 3,
+      }),
+      prisma.listing.findMany({
+        where: {
+          id: { not: id },
+          status: "ACTIVE",
+          OR: [
+            { district: listingData.district },
+            { businessCategory: listingData.businessCategory },
+          ],
+        },
+        include: {
+          images: { take: 1, orderBy: { sortOrder: "asc" } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 4,
+      }),
+    ]);
 
   const listing = { ...listingData, images, seller };
 
@@ -80,8 +107,33 @@ export default async function ListingDetailPage({
 
   const areaPyeong = listing.areaM2 ? m2ToPyeong(listing.areaM2) : null;
 
-  const premiumTierKey = listing.premiumRank === 3 ? "VIP" : listing.premiumRank === 2 ? "PREMIUM" : listing.premiumRank === 1 ? "BASIC" : null;
-  const premiumTierConfig = premiumTierKey ? PREMIUM_AD_CONFIG[premiumTierKey] : null;
+  const premiumTierKey =
+    listing.premiumRank === 3
+      ? "VIP"
+      : listing.premiumRank === 2
+        ? "PREMIUM"
+        : listing.premiumRank === 1
+          ? "BASIC"
+          : null;
+  const premiumTierConfig = premiumTierKey
+    ? PREMIUM_AD_CONFIG[premiumTierKey]
+    : null;
+
+  // Numeric values for charts
+  const numPremiumFee = Number(listing.premiumFee ?? 0);
+  const numMonthlyRevenue = Number(listing.monthlyRevenue ?? 0);
+  const numMonthlyProfit = Number(listing.monthlyProfit ?? 0);
+  const numMonthlyRent = Number(listing.monthlyRent ?? 0);
+  const numManagementFee = Number(listing.managementFee ?? 0);
+  const numDeposit = Number(listing.price);
+  const avgPremium = marketPrice ? Number(marketPrice.avgKeyMoney) : 0;
+
+  // ROI calculation
+  const totalInvestment = numDeposit + numPremiumFee;
+  const roiMonths =
+    numMonthlyProfit > 0
+      ? Math.round(totalInvestment / numMonthlyProfit)
+      : 0;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -89,8 +141,12 @@ export default async function ListingDetailPage({
       {premiumTierKey === "VIP" && (
         <div className="mb-6 overflow-hidden rounded-xl bg-gradient-to-r from-yellow-200 via-amber-100 to-yellow-50 px-6 py-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <span className="rounded-lg bg-yellow-400 px-3 py-1 text-sm font-bold text-yellow-900">VIP</span>
-            <span className="text-lg font-bold text-yellow-900">VIP 프리미엄 매물</span>
+            <span className="rounded-lg bg-yellow-400 px-3 py-1 text-sm font-bold text-yellow-900">
+              VIP
+            </span>
+            <span className="text-lg font-bold text-yellow-900">
+              VIP 프리미엄 매물
+            </span>
           </div>
         </div>
       )}
@@ -98,344 +154,779 @@ export default async function ListingDetailPage({
       {/* Image Gallery */}
       <ImageGallery images={listing.images} title={listing.title} />
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-3">
-        {/* Main Content - 2 columns */}
-        <div className="lg:col-span-2">
-          {/* Badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-navy px-3 py-1.5 text-sm font-medium text-white">
-              {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ??
-                listing.businessCategory}
-            </span>
-            <span className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700">
-              {STORE_TYPE_LABELS[listing.storeType] ?? listing.storeType}
-            </span>
+      {/* Header: Badges + Title + Address */}
+      <div className="mt-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-md bg-navy px-3 py-1.5 text-sm font-medium text-white">
+            {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ??
+              listing.businessCategory}
+          </span>
+          <span className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700">
+            {STORE_TYPE_LABELS[listing.storeType] ?? listing.storeType}
+          </span>
+          <span
+            className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+              listing.status === "ACTIVE"
+                ? "bg-green-50 text-green-700"
+                : "bg-yellow-50 text-yellow-700"
+            }`}
+          >
+            {LISTING_STATUS_LABELS[listing.status] ?? listing.status}
+          </span>
+          {listing.safetyGrade && SAFETY_GRADE_CONFIG[listing.safetyGrade] && (
             <span
-              className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-                listing.status === "ACTIVE"
-                  ? "bg-green-50 text-green-700"
-                  : "bg-yellow-50 text-yellow-700"
-              }`}
+              className={`rounded-md border px-3 py-1.5 text-sm font-bold ${SAFETY_GRADE_CONFIG[listing.safetyGrade].bg} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].color} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].border}`}
             >
-              {LISTING_STATUS_LABELS[listing.status] ?? listing.status}
+              안전 {SAFETY_GRADE_CONFIG[listing.safetyGrade].label}
             </span>
-            {listing.safetyGrade && SAFETY_GRADE_CONFIG[listing.safetyGrade] && (
-              <span className={`rounded-md px-3 py-1.5 text-sm font-bold border ${SAFETY_GRADE_CONFIG[listing.safetyGrade].bg} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].color} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].border}`}>
-                안전 {SAFETY_GRADE_CONFIG[listing.safetyGrade].label}
-              </span>
-            )}
-            {premiumTierConfig && (
-              <span className={`rounded-md px-3 py-1.5 text-sm font-bold border ${premiumTierConfig.bg} ${premiumTierConfig.color} ${premiumTierConfig.border}`}>
-                {premiumTierConfig.badge}
-              </span>
-            )}
-          </div>
+          )}
+          {premiumTierConfig && (
+            <span
+              className={`rounded-md border px-3 py-1.5 text-sm font-bold ${premiumTierConfig.bg} ${premiumTierConfig.color} ${premiumTierConfig.border}`}
+            >
+              {premiumTierConfig.badge}
+            </span>
+          )}
+        </div>
 
-          {/* Title */}
-          <h1 className="mt-4 text-3xl font-bold text-navy">{listing.title}</h1>
+        <h1 className="mt-4 text-3xl font-bold text-navy">{listing.title}</h1>
 
-          {/* Address */}
-          <p className="mt-2 flex items-center gap-2 text-gray-600">
-            <MapPin className="h-5 w-5" />
-            {listing.address}
-            {listing.addressDetail ? ` ${listing.addressDetail}` : ""}
-          </p>
+        <p className="mt-2 flex items-center gap-2 text-gray-600">
+          <MapPin className="h-5 w-5" />
+          {listing.address}
+          {listing.addressDetail ? ` ${listing.addressDetail}` : ""}
+        </p>
+      </div>
 
-          {/* Price Info Card */}
-          <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
-            <div className="bg-gradient-to-r from-mint/5 to-navy/5 px-6 py-4">
-              <h2 className="text-lg font-bold text-navy">가격 정보</h2>
+      {/* Sticky Tab Navigation */}
+      <div className="mt-6">
+        <DetailTabs />
+      </div>
+
+      {/* Main Content Grid: 70/30 */}
+      <div className="mt-8 grid gap-8 lg:grid-cols-10">
+        {/* Main Content - 7 columns */}
+        <div className="lg:col-span-7">
+          {/* ===== TAB 1: 매물정보 ===== */}
+          <section id="listing-info">
+            {/* Price Info Card */}
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="bg-gradient-to-r from-mint/5 to-navy/5 px-6 py-4">
+                <h2 className="text-lg font-bold text-navy">가격 정보</h2>
+              </div>
+              <div className="divide-y divide-gray-100">
+                <PriceRow label="보증금" value={formatKRW(listing.price)} />
+                {listing.monthlyRent && Number(listing.monthlyRent) > 0 && (
+                  <PriceRow
+                    label="월세"
+                    value={formatKRW(listing.monthlyRent)}
+                  />
+                )}
+                {listing.premiumFee && Number(listing.premiumFee) > 0 ? (
+                  <PriceRow
+                    label="권리금"
+                    value={formatKRW(listing.premiumFee)}
+                    highlight="orange"
+                  />
+                ) : (
+                  <PriceRow label="권리금" value="무권리" highlight="mint" />
+                )}
+                {listing.managementFee &&
+                  Number(listing.managementFee) > 0 && (
+                    <PriceRow
+                      label="관리비"
+                      value={formatKRW(listing.managementFee)}
+                      secondary
+                    />
+                  )}
+                {listing.monthlyRevenue &&
+                  Number(listing.monthlyRevenue) > 0 && (
+                    <PriceRow
+                      label="월매출"
+                      value={formatKRW(listing.monthlyRevenue)}
+                      highlight="mint"
+                    />
+                  )}
+                {listing.monthlyProfit &&
+                  Number(listing.monthlyProfit) > 0 && (
+                    <PriceRow
+                      label="월수익"
+                      value={formatKRW(listing.monthlyProfit)}
+                      highlight="green"
+                    />
+                  )}
+              </div>
             </div>
-            <div className="divide-y divide-gray-100">
-              <PriceRow label="보증금" value={formatKRW(listing.price)} />
-              {listing.monthlyRent && Number(listing.monthlyRent) > 0 && (
-                <PriceRow label="월세" value={formatKRW(listing.monthlyRent)} />
-              )}
-              {listing.premiumFee && Number(listing.premiumFee) > 0 ? (
-                <PriceRow
-                  label="권리금"
-                  value={formatKRW(listing.premiumFee)}
-                  highlight="orange"
-                />
-              ) : (
-                <PriceRow label="권리금" value="무권리" highlight="mint" />
-              )}
-              {listing.managementFee && Number(listing.managementFee) > 0 && (
-                <PriceRow
-                  label="관리비"
-                  value={formatKRW(listing.managementFee)}
-                  secondary
-                />
-              )}
-              {listing.monthlyRevenue && Number(listing.monthlyRevenue) > 0 && (
-                <PriceRow
-                  label="월매출"
-                  value={formatKRW(listing.monthlyRevenue)}
-                  highlight="mint"
-                />
-              )}
-              {listing.monthlyProfit && Number(listing.monthlyProfit) > 0 && (
-                <PriceRow
-                  label="월수익"
-                  value={formatKRW(listing.monthlyProfit)}
-                  highlight="green"
-                />
-              )}
-            </div>
-          </div>
 
-          {/* 권리 안전도 분석 */}
-          {listing.safetyGrade && SAFETY_GRADE_CONFIG[listing.safetyGrade] && (() => {
-            const gradeConfig = SAFETY_GRADE_CONFIG[listing.safetyGrade!];
-            return (
-              <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
-                <div className={`flex items-center gap-3 px-6 py-4 ${gradeConfig.bg}`}>
-                  <span className={`rounded-lg px-3 py-1.5 text-lg font-bold border ${gradeConfig.bg} ${gradeConfig.color} ${gradeConfig.border}`}>
-                    {gradeConfig.label}
-                  </span>
-                  <div>
-                    <h2 className="text-lg font-bold text-navy">권리 안전도</h2>
-                    <p className="text-sm text-gray-600">{gradeConfig.description}</p>
-                  </div>
-                </div>
-                {listing.safetyComment && (
-                  <div className="px-6 py-4">
-                    <p className="text-sm text-gray-700">{listing.safetyComment}</p>
-                  </div>
+            {/* Store Details */}
+            <div className="mt-8">
+              <h2 className="text-xl font-bold text-navy">매물 정보</h2>
+              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <DetailItem
+                  label="업종"
+                  value={
+                    BUSINESS_CATEGORY_LABELS[listing.businessCategory] ??
+                    listing.businessCategory
+                  }
+                />
+                {listing.businessSubtype && (
+                  <DetailItem label="세부업종" value={listing.businessSubtype} />
+                )}
+                {listing.areaM2 && (
+                  <DetailItem
+                    icon={<Layers className="h-4 w-4" />}
+                    label="면적"
+                    value={`${listing.areaM2}m² (${areaPyeong?.toFixed(1)}평)`}
+                  />
+                )}
+                {listing.floor != null && (
+                  <DetailItem
+                    icon={<Building className="h-4 w-4" />}
+                    label="층수"
+                    value={`${listing.floor}층${listing.totalFloors ? ` / ${listing.totalFloors}층` : ""}`}
+                  />
+                )}
+                {listing.operatingYears != null && (
+                  <DetailItem
+                    label="영업기간"
+                    value={`${listing.operatingYears}년`}
+                  />
+                )}
+                {listing.expiresAt && (
+                  <DetailItem
+                    icon={<Calendar className="h-4 w-4" />}
+                    label="만료일"
+                    value={formatDateKR(listing.expiresAt)}
+                  />
                 )}
               </div>
-            );
-          })()}
-
-          {/* 권리분석 리포트 CTA Banner */}
-          <div className="mt-6 overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50">
-            <div className="flex items-center justify-between px-6 py-5">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                  <FileSearch className="h-6 w-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="font-bold text-blue-900">더 자세한 분석이 필요하신가요?</p>
-                  <p className="mt-0.5 text-sm text-gray-600">권리금 적정성 + 위험요소 분석 리포트를 받아보세요</p>
-                </div>
-              </div>
-              <Link
-                href={`/reports/request/${listing.id}`}
-                className="shrink-0 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-              >
-                권리분석 리포트 신청
-              </Link>
             </div>
-          </div>
 
-          {/* Store Details */}
-          <div className="mt-8">
-            <h2 className="text-xl font-bold text-navy">매물 정보</h2>
-            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-              <DetailItem
-                label="업종"
-                value={
-                  BUSINESS_CATEGORY_LABELS[listing.businessCategory] ??
-                  listing.businessCategory
-                }
-              />
-              {listing.businessSubtype && (
-                <DetailItem label="세부업종" value={listing.businessSubtype} />
-              )}
-              {listing.areaM2 && (
-                <DetailItem
-                  icon={<Layers className="h-4 w-4" />}
-                  label="면적"
-                  value={`${listing.areaM2}m² (${areaPyeong?.toFixed(1)}평)`}
-                />
-              )}
-              {listing.floor != null && (
-                <DetailItem
-                  icon={<Building className="h-4 w-4" />}
-                  label="층수"
-                  value={`${listing.floor}층${
-                    listing.totalFloors ? ` / ${listing.totalFloors}층` : ""
-                  }`}
-                />
-              )}
-              {listing.operatingYears != null && (
-                <DetailItem
-                  label="영업기간"
-                  value={`${listing.operatingYears}년`}
-                />
-              )}
-              {listing.expiresAt && (
-                <DetailItem
-                  icon={<Calendar className="h-4 w-4" />}
-                  label="만료일"
-                  value={formatDateKR(listing.expiresAt)}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="mt-8">
-            <h2 className="text-xl font-bold text-navy">상세 설명</h2>
-            <div className="mt-4 whitespace-pre-wrap rounded-lg bg-gray-50 p-6 leading-relaxed text-gray-700">
-              {listing.description}
-            </div>
-          </div>
-
-          {/* 시세 비교 미니 위젯 */}
-          {marketPrice && (
-            <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <div className="flex items-center gap-2 border-b border-gray-100 bg-gradient-to-r from-mint/5 to-white px-5 py-3">
-                <TrendingUp className="h-4 w-4 text-mint" />
-                <h3 className="text-sm font-bold text-navy">이 지역 시세</h3>
-                <span className="text-xs text-gray-500">
-                  {listing.district} · {BUSINESS_CATEGORY_LABELS[listing.businessCategory]}
-                </span>
-              </div>
-              <div className="px-5 py-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">지역 평균 권리금</span>
-                  <span className="font-bold text-gray-800">{formatKRW(marketPrice.avgKeyMoney)}</span>
-                </div>
-                {listing.premiumFee && Number(listing.premiumFee) > 0 && (() => {
-                  const myFee = Number(listing.premiumFee);
-                  const avgFee = Number(marketPrice.avgKeyMoney);
-                  const ratio = avgFee > 0 ? myFee / avgFee : 1;
-                  const verdict = ratio <= 0.8 ? "저가" : ratio >= 1.2 ? "고가" : "적정";
-                  const barMax = Math.max(myFee, avgFee) * 1.3;
-                  return (
-                    <div className="mt-3">
-                      <div className="space-y-1.5">
-                        <div>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span>이 매물</span>
-                            <span>{formatKRW(myFee)}</span>
-                          </div>
-                          <div className="mt-0.5 h-2.5 overflow-hidden rounded-full bg-gray-100">
-                            <div className="h-full rounded-full bg-mint" style={{ width: `${(myFee / barMax) * 100}%` }} />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span>지역 평균</span>
-                            <span>{formatKRW(avgFee)}</span>
-                          </div>
-                          <div className="mt-0.5 h-2.5 overflow-hidden rounded-full bg-gray-100">
-                            <div className="h-full rounded-full bg-orange-400" style={{ width: `${(avgFee / barMax) * 100}%` }} />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${
-                          verdict === "적정" ? "bg-green-100 text-green-700" : verdict === "저가" ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700"
-                        }`}>
-                          {verdict}
-                        </span>
-                        <Link
-                          href={`/market-price?subRegion=${listing.district}&businessType=${listing.businessCategory}`}
-                          className="flex items-center gap-1 text-xs text-mint hover:underline"
-                        >
-                          자세히 보기
-                          <Lock className="h-3 w-3" />
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                })()}
+            {/* Description */}
+            <div className="mt-8">
+              <h2 className="text-xl font-bold text-navy">상세 설명</h2>
+              <div className="mt-4 whitespace-pre-wrap rounded-lg bg-gray-50 p-6 leading-relaxed text-gray-700">
+                {listing.description}
               </div>
             </div>
-          )}
 
-          {/* Share Buttons */}
-          <div className="mt-8">
-            <h3 className="mb-3 text-sm font-medium text-gray-700">공유하기</h3>
-            <ShareButtons listingId={listing.id} title={listing.title} />
-          </div>
-
-          {/* Stats */}
-          <div className="mt-8 flex items-center gap-6 border-t border-gray-200 pt-6 text-sm text-gray-500">
-            <span className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              조회 {formatNumber(listing.viewCount)}
-            </span>
-            <span className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              등록 {formatDateKR(listing.createdAt)}
-            </span>
-          </div>
-
-          {/* Expert Consultation CTA */}
-          <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
-            <div className="bg-gradient-to-r from-mint/5 to-navy/5 px-6 py-4">
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-mint" />
-                <h2 className="text-lg font-bold text-navy">전문가에게 물어보세요</h2>
-              </div>
-              <p className="mt-1 text-sm text-gray-600">이 매물에 대해 전문가의 의견을 들어보세요</p>
-            </div>
-
-            {recommendedExperts.length > 0 ? (
-              <>
-                <div className="divide-y divide-gray-100">
-                  {recommendedExperts.map((expert: { id: string; name: string; title: string; rating: number; category: string }) => (
-                    <div key={expert.id} className="flex items-center justify-between px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-mint/10 text-sm font-bold text-mint">
-                          {expert.name.charAt(0)}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-gray-900">{expert.name}</p>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <span>{expert.title}</span>
-                            {expert.rating > 0 && (
-                              <span className="flex items-center gap-0.5">
-                                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                {expert.rating.toFixed(1)}
-                              </span>
-                            )}
-                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
-                              {EXPERT_CATEGORY_LABELS[expert.category] ?? expert.category}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <Link
-                        href={`/experts/${expert.id}?listingId=${listing.id}`}
-                        className="rounded-lg bg-mint px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-mint/90"
+            {/* 권리 안전도 분석 */}
+            {listing.safetyGrade &&
+              SAFETY_GRADE_CONFIG[listing.safetyGrade] &&
+              (() => {
+                const gradeConfig =
+                  SAFETY_GRADE_CONFIG[listing.safetyGrade!];
+                return (
+                  <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                    <div
+                      className={`flex items-center gap-3 px-6 py-4 ${gradeConfig.bg}`}
+                    >
+                      <Shield className="h-5 w-5 text-navy" />
+                      <span
+                        className={`rounded-lg border px-3 py-1.5 text-lg font-bold ${gradeConfig.bg} ${gradeConfig.color} ${gradeConfig.border}`}
                       >
-                        상담 신청
-                      </Link>
+                        {gradeConfig.label}
+                      </span>
+                      <div>
+                        <h2 className="text-lg font-bold text-navy">
+                          권리 안전도
+                        </h2>
+                        <p className="text-sm text-gray-600">
+                          {gradeConfig.description}
+                        </p>
+                      </div>
                     </div>
-                  ))}
+                    {listing.safetyComment && (
+                      <div className="px-6 py-4">
+                        <p className="text-sm text-gray-700">
+                          {listing.safetyComment}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+            {/* 권리분석 리포트 CTA Banner */}
+            <div className="mt-8 overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50">
+              <div className="flex items-center justify-between px-6 py-5">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+                    <FileSearch className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-blue-900">
+                      더 자세한 분석이 필요하신가요?
+                    </p>
+                    <p className="mt-0.5 text-sm text-gray-600">
+                      권리금 적정성 + 위험요소 분석 리포트를 받아보세요
+                    </p>
+                  </div>
                 </div>
-                <div className="border-t border-gray-100 px-6 py-3">
-                  <Link
-                    href="/experts"
-                    className="flex items-center gap-1 text-sm font-medium text-mint hover:underline"
-                  >
-                    전문가 더 보기
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
+                <Link
+                  href={`/reports/request/${listing.id}`}
+                  className="shrink-0 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                >
+                  권리분석 리포트 신청
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* ===== TAB 2: 수익분석 ===== */}
+          <section id="revenue-analysis" className="mt-12">
+            <h2 className="text-xl font-bold text-navy">수익 분석</h2>
+
+            {/* Revenue/Profit Summary Cards */}
+            {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) ? (
+              <>
+                <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                  <SummaryCard
+                    label="월매출"
+                    value={formatKRW(numMonthlyRevenue)}
+                    color="mint"
+                  />
+                  <SummaryCard
+                    label="월순이익"
+                    value={formatKRW(numMonthlyProfit)}
+                    color="green"
+                  />
+                  <SummaryCard
+                    label="총 투자금"
+                    value={formatKRW(totalInvestment)}
+                    color="navy"
+                  />
+                  <SummaryCard
+                    label="투자회수기간"
+                    value={roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}
+                    color="orange"
+                  />
+                </div>
+
+                {/* Monthly Revenue/Profit Trend Chart */}
+                <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
+                  <h3 className="mb-4 text-base font-semibold text-navy">
+                    월별 매출/순이익 추이 (예상)
+                  </h3>
+                  <RevenueLineChart
+                    monthlyRevenue={numMonthlyRevenue}
+                    monthlyProfit={numMonthlyProfit}
+                  />
+                  <p className="mt-2 text-xs text-gray-400">
+                    * 현재 매출/순이익 기준 예상 추이이며 실제와 다를 수 있습니다
+                  </p>
+                </div>
+
+                {/* Cost Structure */}
+                <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                  {/* Cost Table */}
+                  <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+                    <div className="border-b border-gray-100 px-6 py-4">
+                      <h3 className="text-base font-semibold text-navy">
+                        비용 구조
+                      </h3>
+                    </div>
+                    <div className="divide-y divide-gray-100">
+                      <CostRow label="월세" value={numMonthlyRent} />
+                      <CostRow label="관리비" value={numManagementFee} />
+                      <CostRow
+                        label="기타비용 (추정)"
+                        value={Math.max(
+                          0,
+                          numMonthlyRevenue -
+                            numMonthlyProfit -
+                            numMonthlyRent -
+                            numManagementFee,
+                        )}
+                      />
+                      <div className="flex items-center justify-between bg-mint/5 px-6 py-3">
+                        <span className="text-sm font-bold text-navy">
+                          월 순이익
+                        </span>
+                        <span className="text-base font-bold text-mint">
+                          {formatKRW(numMonthlyProfit)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cost Pie Chart */}
+                  <div className="overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
+                    <h3 className="mb-2 text-base font-semibold text-navy">
+                      매출 구성
+                    </h3>
+                    <CostPieChart
+                      monthlyRent={numMonthlyRent}
+                      managementFee={numManagementFee}
+                      monthlyRevenue={numMonthlyRevenue}
+                      monthlyProfit={numMonthlyProfit}
+                    />
+                  </div>
+                </div>
+
+                {/* ROI Summary */}
+                <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-r from-navy/5 to-mint/5">
+                  <div className="px-6 py-5">
+                    <h3 className="text-base font-semibold text-navy">
+                      투자 수익률 (ROI)
+                    </h3>
+                    <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-xs text-gray-500">보증금</p>
+                        <p className="mt-1 text-sm font-bold text-navy">
+                          {formatKRW(numDeposit)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">권리금</p>
+                        <p className="mt-1 text-sm font-bold text-orange-600">
+                          {numPremiumFee > 0
+                            ? formatKRW(numPremiumFee)
+                            : "무권리"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">투자회수</p>
+                        <p className="mt-1 text-sm font-bold text-mint">
+                          {roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}
+                        </p>
+                      </div>
+                    </div>
+                    {roiMonths > 0 && (
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>0개월</span>
+                          <span>{roiMonths}개월</span>
+                        </div>
+                        <div className="mt-1 h-3 overflow-hidden rounded-full bg-gray-200">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-mint to-navy transition-all"
+                            style={{
+                              width: `${Math.min(100, (12 / roiMonths) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                        <p className="mt-1 text-xs text-gray-500">
+                          1년 기준 회수율:{" "}
+                          <span className="font-semibold text-mint">
+                            {((12 / roiMonths) * 100).toFixed(1)}%
+                          </span>
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </>
             ) : (
-              <div className="px-6 py-6 text-center">
-                <p className="text-sm text-gray-500">전문가 상담이 필요하신가요?</p>
-                <Link
-                  href="/experts"
-                  className="mt-3 inline-flex items-center gap-1 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-mint/90"
-                >
-                  전문가 찾기
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+              <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-6 py-12 text-center">
+                <TrendingUp className="mx-auto h-10 w-10 text-gray-300" />
+                <p className="mt-3 text-sm text-gray-500">
+                  매출/수익 정보가 등록되지 않은 매물입니다
+                </p>
               </div>
             )}
+          </section>
+
+          {/* ===== TAB 3: 주변시세 ===== */}
+          <section id="market-comparison" className="mt-12">
+            <h2 className="text-xl font-bold text-navy">주변 시세</h2>
+
+            {marketPrice ? (
+              <>
+                {/* Market Price Chart */}
+                {numPremiumFee > 0 && (
+                  <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
+                    <div className="mb-4 flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-mint" />
+                      <h3 className="text-base font-semibold text-navy">
+                        권리금 시세 비교
+                      </h3>
+                      <span className="text-xs text-gray-500">
+                        {listing.district} ·{" "}
+                        {BUSINESS_CATEGORY_LABELS[listing.businessCategory]}
+                      </span>
+                    </div>
+                    <MarketBarChart
+                      currentPremium={numPremiumFee}
+                      avgPremium={avgPremium}
+                      district={listing.district}
+                    />
+                    {(() => {
+                      const ratio =
+                        avgPremium > 0 ? numPremiumFee / avgPremium : 1;
+                      const verdict =
+                        ratio <= 0.8
+                          ? "저가"
+                          : ratio >= 1.2
+                            ? "고가"
+                            : "적정";
+                      return (
+                        <div className="mt-4 flex items-center justify-between">
+                          <span
+                            className={`rounded-md px-3 py-1 text-sm font-bold ${
+                              verdict === "적정"
+                                ? "bg-green-100 text-green-700"
+                                : verdict === "저가"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            지역 평균 대비{" "}
+                            {verdict === "적정"
+                              ? "적정 수준"
+                              : verdict === "저가"
+                                ? "저렴한 편"
+                                : "높은 편"}
+                          </span>
+                          <Link
+                            href={`/market-price?subRegion=${listing.district}&businessType=${listing.businessCategory}`}
+                            className="flex items-center gap-1 text-sm text-mint hover:underline"
+                          >
+                            상세 시세 보기
+                            <Lock className="h-3.5 w-3.5" />
+                          </Link>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* Market Price Stats */}
+                <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                  <div className="border-b border-gray-100 px-6 py-4">
+                    <h3 className="text-base font-semibold text-navy">
+                      {listing.district} 시세 요약
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+                    <MarketStat
+                      label="평균 권리금"
+                      value={formatKRW(marketPrice.avgKeyMoney)}
+                    />
+                    <MarketStat
+                      label="평균 보증금"
+                      value={formatKRW(marketPrice.avgDeposit)}
+                    />
+                    <MarketStat
+                      label="평균 월세"
+                      value={formatKRW(marketPrice.avgMonthlyRent)}
+                    />
+                    <MarketStat
+                      label="샘플 수"
+                      value={`${marketPrice.sampleCount}건`}
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-6 py-12 text-center">
+                <TrendingUp className="mx-auto h-10 w-10 text-gray-300" />
+                <p className="mt-3 text-sm text-gray-500">
+                  해당 지역의 시세 데이터가 아직 충분하지 않습니다
+                </p>
+              </div>
+            )}
+
+            {/* Nearby Listings Table */}
+            {similarListings.length > 0 && (
+              <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                <div className="border-b border-gray-100 px-6 py-4">
+                  <h3 className="text-base font-semibold text-navy">
+                    인근 매물 비교
+                  </h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-100 bg-gray-50 text-left text-xs text-gray-500">
+                        <th className="px-4 py-3 font-medium">매물명</th>
+                        <th className="px-4 py-3 font-medium">업종</th>
+                        <th className="px-4 py-3 font-medium text-right">
+                          보증금
+                        </th>
+                        <th className="px-4 py-3 font-medium text-right">
+                          권리금
+                        </th>
+                        <th className="px-4 py-3 font-medium text-right">
+                          월세
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {/* Current listing row */}
+                      <tr className="bg-mint/5">
+                        <td className="px-4 py-3 font-semibold text-navy">
+                          {listing.title}
+                          <span className="ml-1.5 text-[10px] font-bold text-mint">
+                            현재
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-600">
+                          {BUSINESS_CATEGORY_LABELS[
+                            listing.businessCategory
+                          ] ?? listing.businessCategory}
+                        </td>
+                        <td className="px-4 py-3 text-right font-medium text-navy">
+                          {formatKRW(listing.price)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-medium text-orange-600">
+                          {numPremiumFee > 0
+                            ? formatKRW(numPremiumFee)
+                            : "무권리"}
+                        </td>
+                        <td className="px-4 py-3 text-right text-gray-600">
+                          {numMonthlyRent > 0
+                            ? formatKRW(numMonthlyRent)
+                            : "-"}
+                        </td>
+                      </tr>
+                      {similarListings.slice(0, 3).map((sl) => (
+                        <tr key={sl.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            <Link
+                              href={`/listings/${sl.id}`}
+                              className="font-medium text-gray-800 hover:text-mint"
+                            >
+                              {sl.title}
+                            </Link>
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ??
+                              sl.businessCategory}
+                          </td>
+                          <td className="px-4 py-3 text-right font-medium text-navy">
+                            {formatKRW(sl.price)}
+                          </td>
+                          <td className="px-4 py-3 text-right font-medium text-orange-600">
+                            {sl.premiumFee && Number(sl.premiumFee) > 0
+                              ? formatKRW(sl.premiumFee)
+                              : "무권리"}
+                          </td>
+                          <td className="px-4 py-3 text-right text-gray-600">
+                            {sl.monthlyRent && Number(sl.monthlyRent) > 0
+                              ? formatKRW(sl.monthlyRent)
+                              : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* ===== TAB 4: 위치정보 ===== */}
+          <section id="location-info" className="mt-12">
+            <h2 className="text-xl font-bold text-navy">위치 정보</h2>
+
+            {/* Map Placeholder */}
+            <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
+              <div className="flex aspect-[16/9] items-center justify-center">
+                <div className="text-center text-gray-400">
+                  <MapPinned className="mx-auto h-12 w-12" />
+                  <p className="mt-2 text-sm">
+                    {listing.address}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    지도 서비스 준비중
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Location Details Grid */}
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {/* Nearby Facilities */}
+              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+                <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
+                  <Store className="h-4 w-4 text-mint" />
+                  <h3 className="text-sm font-semibold text-navy">
+                    주변 시설
+                  </h3>
+                </div>
+                <div className="divide-y divide-gray-50 px-5 py-2">
+                  <FacilityRow emoji="🚇" name="지하철역" distance="도보 5분" />
+                  <FacilityRow emoji="🚌" name="버스정류장" distance="도보 2분" />
+                  <FacilityRow emoji="🏦" name="은행/ATM" distance="도보 3분" />
+                  <FacilityRow emoji="🅿️" name="주차장" distance="도보 4분" />
+                  <FacilityRow emoji="🏥" name="병원/약국" distance="도보 6분" />
+                </div>
+                <div className="border-t border-gray-100 px-5 py-3">
+                  <p className="text-[11px] text-gray-400">
+                    * 예상 거리이며 실제와 다를 수 있습니다
+                  </p>
+                </div>
+              </div>
+
+              {/* Foot Traffic */}
+              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+                <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
+                  <Footprints className="h-4 w-4 text-mint" />
+                  <h3 className="text-sm font-semibold text-navy">
+                    유동인구 (추정)
+                  </h3>
+                </div>
+                <div className="px-5 py-4">
+                  <div className="space-y-3">
+                    <TrafficRow time="오전 (6-12시)" level={60} label="보통" />
+                    <TrafficRow time="점심 (12-14시)" level={90} label="매우 많음" />
+                    <TrafficRow time="오후 (14-18시)" level={70} label="많음" />
+                    <TrafficRow time="저녁 (18-22시)" level={85} label="많음" />
+                    <TrafficRow time="야간 (22-6시)" level={30} label="적음" />
+                  </div>
+                </div>
+                <div className="border-t border-gray-100 px-5 py-3">
+                  <p className="text-[11px] text-gray-400">
+                    * 예상 데이터이며 실제와 다를 수 있습니다
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Address Summary */}
+            <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="divide-y divide-gray-100">
+                <div className="flex items-center justify-between px-6 py-4">
+                  <span className="text-sm text-gray-500">주소</span>
+                  <span className="text-sm font-medium text-gray-800">
+                    {listing.address}
+                    {listing.addressDetail
+                      ? ` ${listing.addressDetail}`
+                      : ""}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-6 py-4">
+                  <span className="text-sm text-gray-500">행정구역</span>
+                  <span className="text-sm font-medium text-gray-800">
+                    {listing.city} {listing.district}
+                    {listing.neighborhood
+                      ? ` ${listing.neighborhood}`
+                      : ""}
+                  </span>
+                </div>
+                {listing.postalCode && (
+                  <div className="flex items-center justify-between px-6 py-4">
+                    <span className="text-sm text-gray-500">우편번호</span>
+                    <span className="text-sm font-medium text-gray-800">
+                      {listing.postalCode}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* ===== Bottom Section ===== */}
+          <div className="mt-12 border-t border-gray-200 pt-8">
+            {/* Share + Stats */}
+            <div className="flex items-center justify-between">
+              <ShareButtons listingId={listing.id} title={listing.title} />
+              <div className="flex items-center gap-6 text-sm text-gray-500">
+                <span className="flex items-center gap-2">
+                  <Eye className="h-4 w-4" />
+                  조회 {formatNumber(listing.viewCount)}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  등록 {formatDateKR(listing.createdAt)}
+                </span>
+              </div>
+            </div>
+
+            {/* Expert Consultation CTA */}
+            <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="bg-gradient-to-r from-mint/5 to-navy/5 px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-mint" />
+                  <h2 className="text-lg font-bold text-navy">
+                    전문가에게 물어보세요
+                  </h2>
+                </div>
+                <p className="mt-1 text-sm text-gray-600">
+                  이 매물에 대해 전문가의 의견을 들어보세요
+                </p>
+              </div>
+
+              {recommendedExperts.length > 0 ? (
+                <>
+                  <div className="divide-y divide-gray-100">
+                    {recommendedExperts.map(
+                      (expert: {
+                        id: string;
+                        name: string;
+                        title: string;
+                        rating: number;
+                        category: string;
+                      }) => (
+                        <div
+                          key={expert.id}
+                          className="flex items-center justify-between px-6 py-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-mint/10 text-sm font-bold text-mint">
+                              {expert.name.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {expert.name}
+                              </p>
+                              <div className="flex items-center gap-2 text-xs text-gray-500">
+                                <span>{expert.title}</span>
+                                {expert.rating > 0 && (
+                                  <span className="flex items-center gap-0.5">
+                                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                    {expert.rating.toFixed(1)}
+                                  </span>
+                                )}
+                                <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+                                  {EXPERT_CATEGORY_LABELS[expert.category] ??
+                                    expert.category}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <Link
+                            href={`/experts/${expert.id}?listingId=${listing.id}`}
+                            className="rounded-lg bg-mint px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-mint/90"
+                          >
+                            상담 신청
+                          </Link>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                  <div className="border-t border-gray-100 px-6 py-3">
+                    <Link
+                      href="/experts"
+                      className="flex items-center gap-1 text-sm font-medium text-mint hover:underline"
+                    >
+                      전문가 더 보기
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <div className="px-6 py-6 text-center">
+                  <p className="text-sm text-gray-500">
+                    전문가 상담이 필요하신가요?
+                  </p>
+                  <Link
+                    href="/experts"
+                    className="mt-3 inline-flex items-center gap-1 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-mint/90"
+                  >
+                    전문가 찾기
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Sidebar - 1 column */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-20 space-y-4">
+        {/* ===== Sidebar - 3 columns ===== */}
+        <div className="lg:col-span-3">
+          <div className="sticky top-28 space-y-4">
             {/* Seller Info Card */}
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
@@ -482,7 +973,10 @@ export default async function ListingDetailPage({
             </div>
 
             {/* Inquiry Form */}
-            <InquiryForm listingId={listing.id} sellerId={listing.sellerId} />
+            <InquiryForm
+              listingId={listing.id}
+              sellerId={listing.sellerId}
+            />
 
             {/* Compare Button */}
             <CompareSection
@@ -492,15 +986,30 @@ export default async function ListingDetailPage({
                 businessCategory: listing.businessCategory,
                 city: listing.city,
                 district: listing.district,
-                thumbnail: images[0]?.thumbnailUrl ?? images[0]?.url ?? null,
+                thumbnail:
+                  images[0]?.thumbnailUrl ?? images[0]?.url ?? null,
                 price: String(listing.price),
-                monthlyRent: listing.monthlyRent ? String(listing.monthlyRent) : null,
-                premiumFee: listing.premiumFee ? String(listing.premiumFee) : null,
-                managementFee: listing.managementFee ? String(listing.managementFee) : null,
-                monthlyRevenue: listing.monthlyRevenue ? String(listing.monthlyRevenue) : null,
-                monthlyProfit: listing.monthlyProfit ? String(listing.monthlyProfit) : null,
+                monthlyRent: listing.monthlyRent
+                  ? String(listing.monthlyRent)
+                  : null,
+                premiumFee: listing.premiumFee
+                  ? String(listing.premiumFee)
+                  : null,
+                managementFee: listing.managementFee
+                  ? String(listing.managementFee)
+                  : null,
+                monthlyRevenue: listing.monthlyRevenue
+                  ? String(listing.monthlyRevenue)
+                  : null,
+                monthlyProfit: listing.monthlyProfit
+                  ? String(listing.monthlyProfit)
+                  : null,
                 areaM2: listing.areaM2,
-                areaPyeong: listing.areaPyeong ?? (listing.areaM2 ? Math.round(listing.areaM2 / 3.3058) : null),
+                areaPyeong:
+                  listing.areaPyeong ??
+                  (listing.areaM2
+                    ? Math.round(listing.areaM2 / 3.3058)
+                    : null),
                 floor: listing.floor,
                 safetyGrade: listing.safetyGrade,
                 isPremium: listing.isPremium,
@@ -514,8 +1023,7 @@ export default async function ListingDetailPage({
               href={`/simulator?listingId=${listing.id}&keyMoney=${Math.round(Number(listing.premiumFee || 0) / 10000)}&deposit=${Math.round(Number(listing.price || 0) / 10000)}&monthlyRent=${Math.round(Number(listing.monthlyRent || 0) / 10000)}&businessType=${encodeURIComponent(BUSINESS_CATEGORY_LABELS[listing.businessCategory] || "기타")}`}
               className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-mint bg-mint/5 px-4 py-3 text-sm font-bold text-mint transition-colors hover:bg-mint/10"
             >
-              <Calculator className="h-4 w-4" />
-              이 매물로 창업 시뮬레이션
+              <Calculator className="h-4 w-4" />이 매물로 창업 시뮬레이션
             </Link>
 
             {/* Disclaimer */}
@@ -536,9 +1044,78 @@ export default async function ListingDetailPage({
           </div>
         </div>
       </div>
+
+      {/* ===== Similar Listings Section ===== */}
+      {similarListings.length > 0 && (
+        <div className="mt-16 border-t border-gray-200 pt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-navy">비슷한 매물 추천</h2>
+            <Link
+              href={`/listings?businessCategory=${listing.businessCategory}&city=${listing.city}`}
+              className="flex items-center gap-1 text-sm font-medium text-mint hover:underline"
+            >
+              더보기
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {similarListings.map((sl) => {
+              const slThumb =
+                sl.images[0]?.thumbnailUrl ?? sl.images[0]?.url ?? null;
+              return (
+                <Link
+                  key={sl.id}
+                  href={`/listings/${sl.id}`}
+                  className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md"
+                >
+                  <div className="relative aspect-[4/3] bg-gray-100">
+                    {slThumb ? (
+                      <Image
+                        src={slThumb}
+                        alt={sl.title}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-gray-300">
+                        <Store className="h-8 w-8" />
+                      </div>
+                    )}
+                    <span className="absolute left-2 top-2 rounded bg-navy/80 px-2 py-0.5 text-[11px] font-medium text-white">
+                      {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ??
+                        sl.businessCategory}
+                    </span>
+                  </div>
+                  <div className="p-4">
+                    <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-mint">
+                      {sl.title}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500">
+                      {sl.city} {sl.district}
+                    </p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-sm font-bold text-orange-600">
+                        {sl.premiumFee && Number(sl.premiumFee) > 0
+                          ? formatKRW(sl.premiumFee)
+                          : "무권리"}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        보증금 {formatKRW(sl.price)}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+/* ===== Helper Components ===== */
 
 function PriceRow({
   label,
@@ -555,11 +1132,11 @@ function PriceRow({
     ? highlight === "orange"
       ? "text-orange-600 font-bold"
       : highlight === "mint"
-      ? "text-mint font-bold"
-      : "text-green-600 font-bold"
+        ? "text-mint font-bold"
+        : "text-green-600 font-bold"
     : secondary
-    ? "text-gray-600"
-    : "text-navy font-semibold";
+      ? "text-gray-600"
+      : "text-navy font-semibold";
 
   return (
     <div className="flex items-center justify-between px-6 py-4">
@@ -584,6 +1161,101 @@ function DetailItem({
         {icon} {label}
       </p>
       <p className="mt-2 font-semibold text-navy">{value}</p>
+    </div>
+  );
+}
+
+function SummaryCard({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: "mint" | "green" | "navy" | "orange";
+}) {
+  const colorMap = {
+    mint: "border-mint/30 bg-mint/5",
+    green: "border-green-200 bg-green-50",
+    navy: "border-navy/20 bg-navy/5",
+    orange: "border-orange-200 bg-orange-50",
+  };
+  const textMap = {
+    mint: "text-mint",
+    green: "text-green-700",
+    navy: "text-navy",
+    orange: "text-orange-600",
+  };
+
+  return (
+    <div className={`rounded-xl border p-4 ${colorMap[color]}`}>
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className={`mt-1 text-base font-bold ${textMap[color]}`}>{value}</p>
+    </div>
+  );
+}
+
+function CostRow({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex items-center justify-between px-6 py-3">
+      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-sm font-medium text-gray-800">
+        {value > 0 ? formatKRW(value) : "-"}
+      </span>
+    </div>
+  );
+}
+
+function MarketStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="px-4 py-4 text-center">
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="mt-1 text-sm font-bold text-navy">{value}</p>
+    </div>
+  );
+}
+
+function FacilityRow({
+  emoji,
+  name,
+  distance,
+}: {
+  emoji: string;
+  name: string;
+  distance: string;
+}) {
+  return (
+    <div className="flex items-center justify-between py-2.5">
+      <span className="flex items-center gap-2 text-sm text-gray-700">
+        <span>{emoji}</span>
+        {name}
+      </span>
+      <span className="text-xs text-gray-500">{distance}</span>
+    </div>
+  );
+}
+
+function TrafficRow({
+  time,
+  level,
+  label,
+}: {
+  time: string;
+  level: number;
+  label: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-gray-600">{time}</span>
+        <span className="font-medium text-gray-700">{label}</span>
+      </div>
+      <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100">
+        <div
+          className="h-full rounded-full bg-mint transition-all"
+          style={{ width: `${level}%` }}
+        />
+      </div>
     </div>
   );
 }
