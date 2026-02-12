@@ -938,7 +938,7 @@ model ReportPlan {
 model ReportPurchase {
   id            String               @id @default(cuid())
   userId        String
-  listingId     String
+  listingId     String?
   planId        String
   status        ReportPurchaseStatus @default(PENDING)
   paymentMethod String?
@@ -946,7 +946,7 @@ model ReportPurchase {
   updatedAt     DateTime             @updatedAt
 
   user    User           @relation(fields: [userId], references: [id])
-  listing Listing        @relation(fields: [listingId], references: [id])
+  listing Listing?       @relation(fields: [listingId], references: [id])
   plan    ReportPlan     @relation(fields: [planId], references: [id])
   data    ReportData?
 
@@ -959,14 +959,14 @@ model ReportPurchase {
 model ReportData {
   id             String   @id @default(cuid())
   purchaseId     String   @unique
-  listingId      String
+  listingId      String?
   inputData      Json
   analysisResult Json
   pdfUrl         String?
   createdAt      DateTime @default(now())
 
   purchase ReportPurchase @relation(fields: [purchaseId], references: [id])
-  listing  Listing        @relation(fields: [listingId], references: [id])
+  listing  Listing?       @relation(fields: [listingId], references: [id])
 
   @@index([listingId])
   @@map("report_data")

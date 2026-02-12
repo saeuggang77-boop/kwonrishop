@@ -42,19 +42,20 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { listingId, planId, paymentMethod, inputData } = body;
 
-    const [listing, plan] = await Promise.all([
-      prisma.listing.findUnique({ where: { id: listingId }, select: { id: true, title: true } }),
-      prisma.reportPlan.findUnique({ where: { id: planId } }),
-    ]);
+    // listingId가 있으면 listing 조회 검증
+    if (listingId) {
+      const listing = await prisma.listing.findUnique({ where: { id: listingId }, select: { id: true } });
+      if (!listing) throw new NotFoundError("매물을 찾을 수 없습니다.");
+    }
 
-    if (!listing) throw new NotFoundError("매물을 찾을 수 없습니다.");
+    const plan = await prisma.reportPlan.findUnique({ where: { id: planId } });
     if (!plan) throw new NotFoundError("플랜을 찾을 수 없습니다.");
 
     // 구매 생성 및 분석 데이터 생성
     const purchase = await prisma.reportPurchase.create({
       data: {
         userId: session.user.id,
-        listingId,
+        listingId: listingId ?? null,
         planId,
         paymentMethod,
         status: "PENDING",
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
     await prisma.reportData.create({
       data: {
         purchaseId: purchase.id,
-        listingId,
+        listingId: listingId ?? null,
         inputData: (inputData ?? {}) as Prisma.InputJsonValue,
         analysisResult: analysisResult as unknown as Prisma.InputJsonValue,
         pdfUrl: plan.name === "PREMIUM" ? `/reports/${purchase.id}/pdf` : null,

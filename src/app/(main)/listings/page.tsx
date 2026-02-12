@@ -4,28 +4,36 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, MapPin, X, Filter } from "lucide-react";
+import {
+  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck,
+} from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { CompareButton } from "@/components/listings/compare-button";
 import {
   BUSINESS_CATEGORY_LABELS,
   BUSINESS_CATEGORY_GROUPS,
-  SORT_OPTIONS,
   REGIONS,
   FLOOR_OPTIONS,
   AREA_OPTIONS,
   SAFETY_GRADE_CONFIG,
   PREMIUM_AD_CONFIG,
+  STORE_FEATURES,
 } from "@/lib/utils/constants";
+
+/* ================================================================
+   Types
+   ================================================================ */
 
 interface ListingItem {
   id: string;
   title: string;
   businessCategory: string;
+  businessSubtype: string | null;
   storeType: string;
   price: string;
   monthlyRent: string | null;
   premiumFee: string | null;
+  managementFee: string | null;
   monthlyRevenue: string | null;
   monthlyProfit: string | null;
   city: string;
@@ -43,19 +51,34 @@ interface ListingItem {
   premiumRank: number;
 }
 
-interface ThemeChip {
-  label: string;
-  key: string;
-}
+type TabType = "direct" | "franchise";
+type FilterKey = "category" | "revenue" | "theme" | "price" | "floor" | "area";
 
-const THEME_CHIPS: ThemeChip[] = [
-  { label: "전체", key: "all" },
-  { label: "무권리", key: "noPremium" },
-  { label: "급매", key: "urgent" },
-  { label: "프랜차이즈", key: "franchise" },
-  { label: "사무실", key: "office" },
-  { label: "공실", key: "vacant" },
+const SORT_OPTIONS = [
+  { value: "createdAt-desc", label: "최신등록순" },
+  { value: "premiumFee-asc", label: "권리금낮은순" },
+  { value: "premiumFee-desc", label: "권리금높은순" },
+  { value: "areaPyeong-desc", label: "면적순" },
+] as const;
+
+const PREMIUM_FEE_OPTIONS = [
+  { label: "전체", min: "", max: "" },
+  { label: "무권리", min: "", max: "0" },
+  { label: "5천만 이하", min: "", max: "500000000" },
+  { label: "5천~1억", min: "500000000", max: "1000000000" },
+  { label: "1억~2억", min: "1000000000", max: "2000000000" },
+  { label: "2억 이상", min: "2000000000", max: "" },
 ];
+
+const THEME_OPTIONS = [
+  { label: "무권리", storeType: "", premiumMax: "0" },
+  { label: "프랜차이즈", storeType: "FRANCHISE", premiumMax: "" },
+  { label: "사무실", storeType: "OFFICE", premiumMax: "" },
+];
+
+/* ================================================================
+   Main Page
+   ================================================================ */
 
 export default function ListingsPage() {
   const searchParams = useSearchParams();
@@ -65,10 +88,10 @@ export default function ListingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | undefined>();
-  const [activeTheme, setActiveTheme] = useState("all");
-  const [showFilters, setShowFilters] = useState(true);
-  const [activeCategoryGroup, setActiveCategoryGroup] = useState<string>("");
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const [activeTab, setActiveTab] = useState<TabType>("direct");
+  const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
 
   const [filters, setFilters] = useState({
     query: searchParams.get("query") ?? "",
@@ -76,39 +99,43 @@ export default function ListingsPage() {
     storeType: searchParams.get("storeType") ?? "",
     city: "",
     district: "",
+    premiumFeeMin: "",
     premiumFeeMax: "",
     floor: "",
     areaMin: "",
     areaMax: "",
+    theme: "",
+    revenueVerified: false,
     sortBy: "createdAt",
     sortOrder: "desc",
   });
 
   const districts = filters.city ? REGIONS[filters.city] ?? [] : [];
 
+  /* ---- Fetch ---- */
   const fetchListings = useCallback(
     async (reset = false) => {
       setIsLoading(true);
       const params = new URLSearchParams();
       if (filters.query) params.set("query", filters.query);
-      if (filters.businessCategory)
-        params.set("businessCategory", filters.businessCategory);
+      if (filters.businessCategory) params.set("businessCategory", filters.businessCategory);
       if (filters.storeType) params.set("storeType", filters.storeType);
       if (filters.city) params.set("city", filters.city);
       if (filters.district) params.set("district", filters.district);
-      if (filters.premiumFeeMax)
-        params.set("premiumFeeMax", filters.premiumFeeMax);
+      if (filters.premiumFeeMin) params.set("priceMin", filters.premiumFeeMin);
+      if (filters.premiumFeeMax) params.set("priceMax", filters.premiumFeeMax);
       if (filters.floor) params.set("floor", filters.floor);
       if (filters.areaMin) params.set("areaMin", filters.areaMin);
       if (filters.areaMax) params.set("areaMax", filters.areaMax);
+      if (activeTab === "franchise") params.set("storeType", "FRANCHISE");
       params.set("sortBy", filters.sortBy);
       params.set("sortOrder", filters.sortOrder);
+      params.set("limit", "12");
       if (!reset && cursor) params.set("cursor", cursor);
 
       try {
         const res = await fetch(`/api/listings?${params}`);
         const json = await res.json();
-
         if (reset) {
           setListings(json.data ?? []);
         } else {
@@ -123,7 +150,7 @@ export default function ListingsPage() {
         setIsLoading(false);
       }
     },
-    [filters, cursor]
+    [filters, cursor, activeTab]
   );
 
   useEffect(() => {
@@ -131,31 +158,19 @@ export default function ListingsPage() {
     fetchListings(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    filters.businessCategory,
-    filters.storeType,
-    filters.city,
-    filters.district,
-    filters.premiumFeeMax,
-    filters.floor,
-    filters.areaMin,
-    filters.areaMax,
-    filters.sortBy,
-    filters.sortOrder,
+    filters.businessCategory, filters.storeType, filters.city, filters.district,
+    filters.premiumFeeMin, filters.premiumFeeMax, filters.floor,
+    filters.areaMin, filters.areaMax, filters.sortBy, filters.sortOrder,
+    filters.revenueVerified, activeTab,
   ]);
 
-  // Infinite scroll using IntersectionObserver
+  // Infinite scroll
   useEffect(() => {
     if (!sentinelRef.current || !hasMore || isLoading) return;
-
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchListings(false);
-        }
-      },
+      (entries) => { if (entries[0].isIntersecting) fetchListings(false); },
       { threshold: 0.1 }
     );
-
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
   }, [hasMore, isLoading, fetchListings]);
@@ -166,491 +181,523 @@ export default function ListingsPage() {
     fetchListings(true);
   };
 
-  const handleCityChange = (city: string) => {
-    setFilters((f) => ({ ...f, city, district: "" }));
-  };
-
-  const handleThemeClick = (chip: ThemeChip) => {
-    setActiveTheme(chip.key);
-    setActiveCategoryGroup("");
-
-    switch (chip.key) {
-      case "all":
-        setFilters((f) => ({
-          ...f,
-          businessCategory: "",
-          storeType: "",
-          premiumFeeMax: "",
-        }));
-        break;
-      case "noPremium":
-        setFilters((f) => ({
-          ...f,
-          businessCategory: "",
-          storeType: "",
-          premiumFeeMax: "0",
-        }));
-        break;
-      case "urgent":
-        setFilters((f) => ({
-          ...f,
-          businessCategory: "",
-          storeType: "",
-          premiumFeeMax: "",
-        }));
-        break;
-      case "franchise":
-        setFilters((f) => ({
-          ...f,
-          businessCategory: "",
-          storeType: "FRANCHISE",
-          premiumFeeMax: "",
-        }));
-        break;
-      case "office":
-        setFilters((f) => ({
-          ...f,
-          businessCategory: "",
-          storeType: "OFFICE",
-          premiumFeeMax: "",
-        }));
-        break;
-      case "vacant":
-        setFilters((f) => ({
-          ...f,
-          businessCategory: "",
-          storeType: "",
-          premiumFeeMax: "",
-        }));
-        break;
-    }
-  };
-
-  const handleCategoryGroupClick = (group: string) => {
-    setActiveCategoryGroup(group);
-    setActiveTheme("");
-  };
-
-  const handleCategoryClick = (category: string) => {
-    setFilters((f) => ({ ...f, businessCategory: category }));
-  };
-
-  const handleFloorClick = (floorValue: string) => {
-    setFilters((f) => ({
-      ...f,
-      floor: f.floor === floorValue ? "" : floorValue,
-    }));
-  };
-
-  const handleAreaClick = (min: number, max: number) => {
-    setFilters((f) => {
-      const isSame = f.areaMin === String(min) && f.areaMax === String(max);
-      return {
-        ...f,
-        areaMin: isSame ? "" : String(min),
-        areaMax: isSame ? "" : String(max),
-      };
-    });
-  };
-
   const handleReset = () => {
     setFilters({
-      query: "",
-      businessCategory: "",
-      storeType: "",
-      city: "",
-      district: "",
-      premiumFeeMax: "",
-      floor: "",
-      areaMin: "",
-      areaMax: "",
-      sortBy: "createdAt",
-      sortOrder: "desc",
+      query: "", businessCategory: "", storeType: "",
+      city: "", district: "", premiumFeeMin: "", premiumFeeMax: "",
+      floor: "", areaMin: "", areaMax: "", theme: "",
+      revenueVerified: false, sortBy: "createdAt", sortOrder: "desc",
     });
-    setActiveTheme("all");
-    setActiveCategoryGroup("");
+    setOpenFilter(null);
   };
 
-  const hasActiveFilters =
-    filters.city ||
-    filters.district ||
-    filters.businessCategory ||
-    filters.floor ||
-    filters.areaMin ||
-    activeTheme !== "all";
+  const toggleFilter = (key: FilterKey) => {
+    setOpenFilter((prev) => (prev === key ? null : key));
+  };
 
-  // Count active filters
-  const activeFilterCount = [
-    filters.query,
-    filters.businessCategory,
-    filters.city,
-    filters.district,
-    filters.premiumFeeMax,
-    filters.floor,
-    filters.areaMin,
-  ].filter(Boolean).length;
+  // Close dropdown when clicking outside (ref-based, mousedown for reliable timing)
+  const filterAreaRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!openFilter) return;
+    const handler = (e: MouseEvent) => {
+      if (filterAreaRef.current && !filterAreaRef.current.contains(e.target as Node)) {
+        setOpenFilter(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [openFilter]);
+
+  /* ---- Filter badge counts ---- */
+  const categoryCount = filters.businessCategory ? 1 : 0;
+  const revenueCount = filters.revenueVerified ? 1 : 0;
+  const themeCount = filters.theme ? 1 : 0;
+  const priceCount = filters.premiumFeeMin || filters.premiumFeeMax ? 1 : 0;
+  const floorCount = filters.floor ? 1 : 0;
+  const areaCount = filters.areaMin || filters.areaMax ? 1 : 0;
+  const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + floorCount + areaCount > 0 || filters.city;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-20 pt-4 md:pb-8 md:pt-8">
-      {/* Sticky Filter Bar */}
-      <div className="sticky top-14 z-30 -mx-4 bg-white px-4 pb-3 pt-3 shadow-sm md:static md:mx-0 md:px-0 md:shadow-none">
-        {/* Search Row */}
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-            <input
-              type="text"
-              aria-label="매물 검색"
-              placeholder="매물 검색 (지역, 업종, 키워드)"
-              value={filters.query}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, query: e.target.value }))
-              }
-              className="w-full rounded-lg border border-gray-300 py-2.5 pl-9 pr-4 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
-            />
-          </div>
+    <div className="flex h-[calc(100vh-56px)] flex-col overflow-hidden md:h-[calc(100vh-64px)]">
+      {/* ======== Top Bar ======== */}
+      <div className="shrink-0 border-b border-gray-200 bg-white">
+        {/* Tabs */}
+        <div className="mx-auto flex max-w-screen-2xl border-b border-gray-100 px-4">
           <button
-            type="submit"
-            className="shrink-0 rounded-lg bg-mint px-5 py-2.5 text-sm font-medium text-white hover:bg-mint-dark transition-colors"
+            onClick={() => setActiveTab("direct")}
+            className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
+              activeTab === "direct" ? "text-[#0B3B57]" : "text-gray-400 hover:text-gray-600"
+            }`}
           >
-            검색
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowFilters(!showFilters)}
-            className="relative shrink-0 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 md:hidden"
-          >
-            <Filter className="h-4 w-4" />
-            {activeFilterCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-purple-600 px-1.5 text-[10px] font-bold text-white">
-                {activeFilterCount}개
-              </span>
+            직거래 매물 보기
+            {activeTab === "direct" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2EC4B6]" />
             )}
           </button>
-        </form>
-
-        {/* Collapsible Filter Panel */}
-        <div
-          className={`transition-all duration-300 ${
-            showFilters
-              ? "max-h-[800px] opacity-100"
-              : "max-h-0 opacity-0 overflow-hidden md:max-h-[800px] md:opacity-100"
-          }`}
-        >
-          {/* Location & Sort Row */}
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <select
-              value={filters.city}
-              onChange={(e) => handleCityChange(e.target.value)}
-              aria-label="시/도 선택"
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 outline-none focus:border-mint"
-            >
-              <option value="">시/도 전체</option>
-              {Object.keys(REGIONS).map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={filters.district}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, district: e.target.value }))
-              }
-              disabled={!filters.city}
-              aria-label="구/군 선택"
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 outline-none focus:border-mint disabled:bg-gray-50 disabled:text-gray-400"
-            >
-              <option value="">구/군 전체</option>
-              {districts.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={`${filters.sortBy}-${filters.sortOrder}`}
-              onChange={(e) => {
-                const [sortBy, sortOrder] = e.target.value.split("-");
-                setFilters((f) => ({ ...f, sortBy, sortOrder }));
-              }}
-              aria-label="정렬 기준"
-              className="ml-auto rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 outline-none focus:border-mint"
-            >
-              {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-
-            {hasActiveFilters && (
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-              >
-                <X className="h-3.5 w-3.5" />
-                초기화
-              </button>
+          <button
+            onClick={() => setActiveTab("franchise")}
+            className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
+              activeTab === "franchise" ? "text-[#0B3B57]" : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            프랜차이즈 매물
+            {activeTab === "franchise" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2EC4B6]" />
             )}
-          </div>
+          </button>
+        </div>
 
-          {/* Category Group Tabs */}
-          <div className="mt-3 border-b border-gray-200">
-            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-              {Object.keys(BUSINESS_CATEGORY_GROUPS).map((group) => (
-                <button
-                  key={group}
-                  type="button"
-                  onClick={() => handleCategoryGroupClick(group)}
-                  className={`shrink-0 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                    activeCategoryGroup === group
-                      ? "border-mint text-mint"
-                      : "border-transparent text-gray-600 hover:text-mint"
-                  }`}
-                >
-                  {group}
-                </button>
-              ))}
+        {/* Search + Filters */}
+        <div className="mx-auto max-w-screen-2xl px-4 py-3">
+          {/* Search row */}
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                aria-label="매물 검색"
+                placeholder="지역, 상호명을 입력해 주세요"
+                value={filters.query}
+                onChange={(e) => setFilters((f) => ({ ...f, query: e.target.value }))}
+                className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+              />
             </div>
-          </div>
+            <button
+              type="submit"
+              className="shrink-0 rounded-lg bg-[#2EC4B6] px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#28b0a3]"
+            >
+              검색
+            </button>
+          </form>
 
-          {/* Category Buttons (shown when group is selected) */}
-          {activeCategoryGroup && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                onClick={() => {
-                  setFilters((f) => ({ ...f, businessCategory: "" }));
+          {/* Filter buttons row + dropdown */}
+          <div ref={filterAreaRef}>
+            <div className="mt-2.5 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              <FilterButton label="업종" count={categoryCount} isOpen={openFilter === "category"} onClick={() => toggleFilter("category")} />
+              <FilterButton label="매출증빙" count={revenueCount} isOpen={openFilter === "revenue"} onClick={() => toggleFilter("revenue")} />
+              <FilterButton label="테마" count={themeCount} isOpen={openFilter === "theme"} onClick={() => toggleFilter("theme")} />
+              <FilterButton label="금액" count={priceCount} isOpen={openFilter === "price"} onClick={() => toggleFilter("price")} />
+              <FilterButton label="층수" count={floorCount} isOpen={openFilter === "floor"} onClick={() => toggleFilter("floor")} />
+              <FilterButton label="면적" count={areaCount} isOpen={openFilter === "area"} onClick={() => toggleFilter("area")} />
+
+              <div className="mx-1 h-5 w-px bg-gray-200" />
+
+              {/* Sort */}
+              <select
+                value={`${filters.sortBy}-${filters.sortOrder}`}
+                onChange={(e) => {
+                  const [sortBy, sortOrder] = e.target.value.split("-");
+                  setFilters((f) => ({ ...f, sortBy, sortOrder }));
                 }}
-                className={`shrink-0 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
-                  !filters.businessCategory
-                    ? "border-mint bg-mint text-white"
-                    : "border-gray-300 bg-white text-gray-600 hover:border-mint hover:text-mint"
-                }`}
+                aria-label="정렬 기준"
+                className="shrink-0 appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-xs font-medium text-gray-600 outline-none focus:border-[#2EC4B6]"
               >
-                전체
-              </button>
-              {BUSINESS_CATEGORY_GROUPS[activeCategoryGroup].map((cat) => (
+                {SORT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+
+              {hasActiveFilters && (
                 <button
-                  key={cat}
-                  onClick={() => handleCategoryClick(cat)}
-                  className={`shrink-0 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
-                    filters.businessCategory === cat
-                      ? "border-mint bg-mint text-white"
-                      : "border-gray-300 bg-white text-gray-600 hover:border-mint hover:text-mint"
-                  }`}
+                  onClick={handleReset}
+                  className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100"
                 >
-                  {BUSINESS_CATEGORY_LABELS[cat]}
+                  <X className="h-3 w-3" />
+                  초기화
                 </button>
-              ))}
+              )}
+            </div>
+
+            {/* Filter dropdowns */}
+            {openFilter && (
+              <div className="relative mt-2">
+                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
+                {openFilter === "category" && (
+                  <CategoryFilterDropdown
+                    value={filters.businessCategory}
+                    onChange={(v) => setFilters((f) => ({ ...f, businessCategory: v }))}
+                  />
+                )}
+                {openFilter === "revenue" && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700">매출증빙 여부</p>
+                    <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
+                      <input
+                        type="checkbox"
+                        checked={filters.revenueVerified}
+                        onChange={(e) => setFilters((f) => ({ ...f, revenueVerified: e.target.checked }))}
+                        className="h-4 w-4 rounded border-gray-300 accent-[#2EC4B6]"
+                      />
+                      매출증빙 완료 매물만 보기 (안전등급 A)
+                    </label>
+                  </div>
+                )}
+                {openFilter === "theme" && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700">테마</p>
+                    <div className="flex flex-wrap gap-2">
+                      {THEME_OPTIONS.map((t) => (
+                        <button
+                          key={t.label}
+                          onClick={() => {
+                            const isActive = filters.theme === t.label;
+                            setFilters((f) => ({
+                              ...f,
+                              theme: isActive ? "" : t.label,
+                              storeType: isActive ? "" : t.storeType,
+                              premiumFeeMax: isActive ? "" : t.premiumMax,
+                            }));
+                          }}
+                          className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                            filters.theme === t.label
+                              ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                              : "border-gray-200 text-gray-600 hover:border-gray-300"
+                          }`}
+                        >
+                          {t.label}
+                        </button>
+                      ))}
+                      {STORE_FEATURES.map((feat) => (
+                        <button
+                          key={feat}
+                          onClick={() => {
+                            setFilters((f) => ({ ...f, theme: f.theme === feat ? "" : feat }));
+                          }}
+                          className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                            filters.theme === feat
+                              ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                              : "border-gray-200 text-gray-600 hover:border-gray-300"
+                          }`}
+                        >
+                          {feat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {openFilter === "price" && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700">권리금</p>
+                    <div className="flex flex-wrap gap-2">
+                      {PREMIUM_FEE_OPTIONS.map((opt) => {
+                        const isActive = filters.premiumFeeMin === opt.min && filters.premiumFeeMax === opt.max;
+                        return (
+                          <button
+                            key={opt.label}
+                            onClick={() => setFilters((f) => ({
+                              ...f,
+                              premiumFeeMin: isActive ? "" : opt.min,
+                              premiumFeeMax: isActive ? "" : opt.max,
+                            }))}
+                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                              isActive
+                                ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                                : "border-gray-200 text-gray-600 hover:border-gray-300"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                {openFilter === "floor" && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700">층수</p>
+                    <div className="flex flex-wrap gap-2">
+                      {FLOOR_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => setFilters((f) => ({ ...f, floor: f.floor === opt.value ? "" : opt.value }))}
+                          className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                            filters.floor === opt.value
+                              ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                              : "border-gray-200 text-gray-600 hover:border-gray-300"
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {openFilter === "area" && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700">면적</p>
+                    <div className="flex flex-wrap gap-2">
+                      {AREA_OPTIONS.map((opt) => {
+                        const isActive = filters.areaMin === String(opt.min) && filters.areaMax === String(opt.max);
+                        return (
+                          <button
+                            key={opt.label}
+                            onClick={() => setFilters((f) => ({
+                              ...f,
+                              areaMin: isActive ? "" : String(opt.min),
+                              areaMax: isActive ? "" : String(opt.max),
+                            }))}
+                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                              isActive
+                                ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                                : "border-gray-200 text-gray-600 hover:border-gray-300"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
-
-          {/* Theme Chips */}
-          <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide">
-            {THEME_CHIPS.map((chip) => (
-              <button
-                key={chip.key}
-                type="button"
-                onClick={() => handleThemeClick(chip)}
-                className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
-                  activeTheme === chip.key
-                    ? "border-mint bg-mint text-white"
-                    : "border-gray-300 bg-white text-gray-600 hover:border-mint hover:text-mint"
-                }`}
-              >
-                {chip.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Floor Filter */}
-          <div className="mt-3">
-            <p className="mb-2 text-xs font-medium text-gray-500">층수</p>
-            <div className="flex flex-wrap gap-2">
-              {FLOOR_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => handleFloorClick(opt.value)}
-                  className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                    filters.floor === opt.value
-                      ? "border-mint bg-mint text-white"
-                      : "border-gray-300 bg-white text-gray-600 hover:border-mint hover:text-mint"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Area Filter */}
-          <div className="mt-3">
-            <p className="mb-2 text-xs font-medium text-gray-500">면적</p>
-            <div className="flex flex-wrap gap-2">
-              {AREA_OPTIONS.map((opt) => {
-                const isActive =
-                  filters.areaMin === String(opt.min) &&
-                  filters.areaMax === String(opt.max);
-                return (
-                  <button
-                    key={opt.label}
-                    onClick={() => handleAreaClick(opt.min, opt.max)}
-                    className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "border-mint bg-mint text-white"
-                        : "border-gray-300 bg-white text-gray-600 hover:border-mint hover:text-mint"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Results */}
-      <div className="mt-6">
-        {isLoading && listings.length === 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-xl border border-gray-200 bg-white"
-                style={{ animationDelay: `${i * 75}ms` }}
-              >
-                <div className="aspect-[4/3] animate-pulse bg-gray-200" />
-                <div className="space-y-2 p-4">
-                  <div className="h-5 w-3/4 animate-pulse rounded bg-gray-200" />
-                  <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200" />
-                  <div className="h-4 w-2/3 animate-pulse rounded bg-gray-200" />
-                  <div className="h-3 w-1/3 animate-pulse rounded bg-gray-200" />
-                </div>
+      {/* ======== Main content: List + Map ======== */}
+      <div className="flex min-h-0 flex-1">
+        {/* Left: Listing list */}
+        <div className="flex-1 overflow-y-auto md:w-[60%] md:flex-none">
+          <div className="px-4 py-3">
+            {/* Count */}
+            <p className="mb-3 text-sm text-gray-500">
+              총 <span className="font-semibold text-[#0B3B57]">{totalCount > 0 ? totalCount : listings.length}</span>건
+            </p>
+
+            {/* Loading skeleton */}
+            {isLoading && listings.length === 0 ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="flex gap-4 rounded-xl border border-gray-100 bg-white p-4">
+                    <div className="h-36 w-36 shrink-0 animate-pulse rounded-lg bg-gray-200 sm:h-44 sm:w-44" />
+                    <div className="flex-1 space-y-3 py-1">
+                      <div className="h-5 w-24 animate-pulse rounded bg-gray-200" />
+                      <div className="h-5 w-3/4 animate-pulse rounded bg-gray-200" />
+                      <div className="h-5 w-1/2 animate-pulse rounded bg-gray-200" />
+                      <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : listings.length === 0 ? (
-          <div className="py-20 text-center">
-            <MapPin className="mx-auto h-12 w-12 text-gray-300" />
-            <p className="mt-4 text-lg font-medium text-gray-500">
-              매물이 없습니다
-            </p>
-            <p className="mt-1 text-sm text-gray-500">
-              검색 조건을 변경해보세요.
-            </p>
-          </div>
-        ) : (
-          <>
-            <p className="mb-4 text-sm font-medium text-gray-600">
-              총{" "}
-              <span className="text-mint">
-                {totalCount > 0 ? totalCount : listings.length}
-              </span>
-              건
-            </p>
-            {(() => {
-              const premium = listings.filter((l) => l.isPremium && l.premiumRank > 0);
-              const normal = listings.filter((l) => !l.isPremium || l.premiumRank === 0);
-              return (
-                <>
-                  {premium.length > 0 && (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {premium.map((listing) => (
-                        <ListingCard key={listing.id} listing={listing} />
-                      ))}
-                    </div>
-                  )}
-                  {premium.length > 0 && normal.length > 0 && (
-                    <div className="my-6 flex items-center gap-3">
-                      <div className="h-px flex-1 bg-gray-200" />
-                      <span className="text-xs text-gray-400">일반 매물</span>
-                      <div className="h-px flex-1 bg-gray-200" />
-                    </div>
-                  )}
-                  {normal.length > 0 && (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {normal.map((listing) => (
-                        <ListingCard key={listing.id} listing={listing} />
-                      ))}
-                    </div>
-                  )}
-                </>
-              );
-            })()}
-            {hasMore && (
-              <div ref={sentinelRef} className="mt-8 text-center py-4">
-                {isLoading && (
-                  <div className="text-sm text-gray-500">로딩 중...</div>
+            ) : listings.length === 0 ? (
+              <div className="py-20 text-center">
+                <Store className="mx-auto h-12 w-12 text-gray-300" />
+                <p className="mt-4 text-lg font-medium text-gray-500">매물이 없습니다</p>
+                <p className="mt-1 text-sm text-gray-400">검색 조건을 변경해보세요.</p>
+              </div>
+            ) : (
+              <>
+                {/* Premium listings */}
+                {(() => {
+                  const premium = listings.filter((l) => l.isPremium && l.premiumRank > 0);
+                  const normal = listings.filter((l) => !l.isPremium || l.premiumRank === 0);
+                  return (
+                    <>
+                      {premium.length > 0 && (
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          {premium.map((listing) => (
+                            <ListingCard key={listing.id} listing={listing} />
+                          ))}
+                        </div>
+                      )}
+                      {premium.length > 0 && normal.length > 0 && (
+                        <div className="my-4 flex items-center gap-3">
+                          <div className="h-px flex-1 bg-gray-200" />
+                          <span className="text-xs text-gray-400">일반 매물</span>
+                          <div className="h-px flex-1 bg-gray-200" />
+                        </div>
+                      )}
+                      {normal.length > 0 && (
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          {normal.map((listing) => (
+                            <ListingCard key={listing.id} listing={listing} />
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+                {hasMore && (
+                  <div ref={sentinelRef} className="py-6 text-center">
+                    {isLoading && <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#2EC4B6]" />}
+                  </div>
                 )}
-              </div>
+              </>
             )}
-          </>
-        )}
+          </div>
+        </div>
+
+        {/* Right: Map placeholder (desktop only) */}
+        <div className="hidden border-l border-gray-200 bg-gray-50 md:block md:w-[40%]">
+          <div id="map" className="flex h-full flex-col items-center justify-center text-gray-400">
+            <Map className="h-16 w-16 text-gray-300" />
+            <p className="mt-3 text-sm font-medium text-gray-400">지도 준비중</p>
+            <p className="mt-1 text-xs text-gray-300">카카오맵 연동 예정</p>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
+/* ================================================================
+   Filter Button
+   ================================================================ */
+
+function FilterButton({
+  label,
+  count,
+  isOpen,
+  onClick,
+}: {
+  label: string;
+  count: number;
+  isOpen: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex shrink-0 items-center gap-1 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+        isOpen || count > 0
+          ? "border-[#2EC4B6] bg-[#2EC4B6]/5 text-[#0B3B57]"
+          : "border-gray-200 text-gray-600 hover:border-gray-300"
+      }`}
+    >
+      {label}
+      {count > 0 && (
+        <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#2EC4B6] px-1 text-[10px] font-bold text-white">
+          {count}
+        </span>
+      )}
+      <ChevronDown className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+    </button>
+  );
+}
+
+/* ================================================================
+   Category Filter Dropdown
+   ================================================================ */
+
+function CategoryFilterDropdown({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [activeGroup, setActiveGroup] = useState<string>("");
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm font-medium text-gray-700">업종</p>
+      {/* Group tabs */}
+      <div className="flex flex-wrap gap-1.5">
+        {Object.keys(BUSINESS_CATEGORY_GROUPS).map((group) => (
+          <button
+            key={group}
+            onClick={() => setActiveGroup(activeGroup === group ? "" : group)}
+            className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
+              activeGroup === group
+                ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                : "border-gray-200 text-gray-500 hover:border-gray-300"
+            }`}
+          >
+            {group}
+          </button>
+        ))}
+      </div>
+      {/* Sub-categories */}
+      {activeGroup && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => onChange("")}
+            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+              !value
+                ? "border-[#2EC4B6] bg-[#2EC4B6] text-white"
+                : "border-gray-200 text-gray-600 hover:border-gray-300"
+            }`}
+          >
+            전체
+          </button>
+          {BUSINESS_CATEGORY_GROUPS[activeGroup].map((cat) => (
+            <button
+              key={cat}
+              onClick={() => onChange(value === cat ? "" : cat)}
+              className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                value === cat
+                  ? "border-[#2EC4B6] bg-[#2EC4B6] text-white"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+              }`}
+            >
+              {BUSINESS_CATEGORY_LABELS[cat]}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ================================================================
+   Listing Card (horizontal, 2-col grid)
+   ================================================================ */
+
 function ListingCard({ listing }: { listing: ListingItem }) {
-  const thumbnail =
-    listing.images[0]?.thumbnailUrl ?? listing.images[0]?.url;
+  const thumbnail = listing.images[0]?.thumbnailUrl ?? listing.images[0]?.url;
+  const categoryLabel = BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory;
 
-  const categoryLabel =
-    BUSINESS_CATEGORY_LABELS[listing.businessCategory] ??
-    listing.businessCategory;
-
-  const hasFloorOrArea = listing.floor != null || listing.areaPyeong != null;
   const floorAreaParts: string[] = [];
   if (listing.floor != null) floorAreaParts.push(`${listing.floor}층`);
-  if (listing.areaPyeong != null)
-    floorAreaParts.push(`${listing.areaPyeong}평`);
+  if (listing.areaPyeong != null) floorAreaParts.push(`${listing.areaPyeong}평`);
 
-  const hasPremiumFee =
-    listing.premiumFee != null && Number(listing.premiumFee) > 0;
-  const hasRevenue =
-    listing.monthlyRevenue != null && Number(listing.monthlyRevenue) > 0;
-  const hasProfit =
-    listing.monthlyProfit != null && Number(listing.monthlyProfit) > 0;
+  const hasPremiumFee = listing.premiumFee != null && Number(listing.premiumFee) > 0;
+  const hasRevenue = listing.monthlyRevenue != null && Number(listing.monthlyRevenue) > 0;
+  const hasProfit = listing.monthlyProfit != null && Number(listing.monthlyProfit) > 0;
 
   const tierKey = listing.premiumRank === 3 ? "VIP" : listing.premiumRank === 2 ? "PREMIUM" : listing.premiumRank === 1 ? "BASIC" : null;
   const tierConfig = tierKey ? PREMIUM_AD_CONFIG[tierKey] : null;
+  const gradeConfig = listing.safetyGrade ? SAFETY_GRADE_CONFIG[listing.safetyGrade] : null;
 
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className={`group overflow-hidden rounded-xl border bg-white transition-shadow hover:shadow-lg ${tierConfig ? `border-2 ${tierConfig.border}` : "border-gray-200"}`}
+      className={`group flex gap-4 overflow-hidden rounded-xl border bg-white p-4 transition-shadow hover:shadow-md ${
+        tierConfig ? `border-2 ${tierConfig.border}` : "border-gray-100"
+      }`}
     >
-      {tierConfig && <div className={`h-1 bg-gradient-to-r ${tierConfig.gradient}`} />}
-      {/* Thumbnail */}
-      <div className="relative aspect-[4/3] bg-gray-100">
+      {/* Left: Thumbnail */}
+      <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:h-44 sm:w-44">
         {thumbnail ? (
           <Image
             src={thumbnail}
             alt={listing.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="176px"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-gray-300">
-            <MapPin className="h-10 w-10" />
+            <Store className="h-10 w-10" />
           </div>
         )}
-        {/* Category badge */}
-        <span className="absolute left-3 top-3 rounded-md bg-navy/80 px-2 py-1 text-xs font-medium text-white">
+        {/* Category tag top-left */}
+        <span className="absolute left-2 top-2 rounded bg-[#0B3B57]/80 px-2 py-0.5 text-[11px] font-medium leading-tight text-white">
           {categoryLabel}
+          {listing.businessSubtype ? ` | ${listing.businessSubtype}` : ""}
         </span>
-        {listing.safetyGrade && SAFETY_GRADE_CONFIG[listing.safetyGrade] && (
-          <span className={`absolute right-3 top-3 rounded px-1.5 py-0.5 text-[11px] font-bold backdrop-blur-sm border ${SAFETY_GRADE_CONFIG[listing.safetyGrade].bg} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].color} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].border}`}>
-            안전 {SAFETY_GRADE_CONFIG[listing.safetyGrade].label}
+        {/* Safety grade top-right */}
+        {gradeConfig && (
+          <span className={`absolute right-2 top-2 rounded px-2 py-0.5 text-[11px] font-bold leading-tight border ${gradeConfig.bg} ${gradeConfig.color} ${gradeConfig.border}`}>
+            {gradeConfig.label}
           </span>
         )}
+        {/* Premium badge */}
         {tierConfig && (
-          <span className={`absolute left-1/2 -translate-x-1/2 bottom-3 rounded px-2 py-0.5 text-[11px] font-bold border ${tierConfig.bg} ${tierConfig.color} ${tierConfig.border}`}>
+          <span className={`absolute bottom-2 left-2 rounded px-2 py-0.5 text-[11px] font-bold leading-tight border ${tierConfig.bg} ${tierConfig.color} ${tierConfig.border}`}>
             {tierConfig.badge}
           </span>
         )}
@@ -679,69 +726,46 @@ function ListingCard({ listing }: { listing: ListingItem }) {
         />
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        {/* Title */}
-        <h3 className="truncate font-bold text-navy group-hover:text-mint transition-colors" title={listing.title}>
-          {listing.title}
-        </h3>
-
-        {/* Floor / area */}
-        {hasFloorOrArea && (
-          <p className="mt-0.5 text-sm text-gray-500">
-            {floorAreaParts.join(" · ")}
+      {/* Right: Info */}
+      <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
+        <div>
+          {/* Floor / area - top right */}
+          {floorAreaParts.length > 0 && (
+            <p className="text-right text-sm text-gray-500">{floorAreaParts.join(" · ")}</p>
+          )}
+          {/* Title */}
+          <h3 className="truncate text-base font-bold text-[#0B3B57] transition-colors group-hover:text-[#2EC4B6]">
+            {listing.title}
+          </h3>
+          {/* Deposit / Monthly rent */}
+          <p className="mt-1.5 text-sm font-semibold text-[#0B3B57]">
+            보증금 {formatKRW(Number(listing.price))} / 월세{" "}
+            {listing.monthlyRent && Number(listing.monthlyRent) > 0
+              ? formatKRW(Number(listing.monthlyRent))
+              : "0원"}
           </p>
-        )}
-
-        {/* Price rows */}
-        <div className="mt-2 space-y-0.5">
-          <div className="flex items-baseline gap-2">
-            <span className="shrink-0 text-xs text-gray-500">보증금/월세</span>
-            <span className="text-sm font-semibold text-navy">
-              {formatKRW(Number(listing.price))} /{" "}
-              {listing.monthlyRent && Number(listing.monthlyRent) > 0
-                ? formatKRW(Number(listing.monthlyRent))
-                : "0원"}
-            </span>
-          </div>
-
+          {/* Premium fee */}
           {hasPremiumFee ? (
-            <div className="flex items-baseline gap-2">
-              <span className="shrink-0 text-xs text-gray-500">권리금</span>
-              <span className="text-sm font-bold text-orange-600">
-                {formatKRW(Number(listing.premiumFee))}
-              </span>
-            </div>
+            <p className="mt-1 text-[15px] font-bold text-red-500">
+              권리금 {formatKRW(Number(listing.premiumFee))}
+            </p>
           ) : (
-            <div className="flex items-baseline gap-2">
-              <span className="shrink-0 text-xs text-gray-500">권리금</span>
-              <span className="text-sm font-bold text-mint">무권리</span>
-            </div>
+            <p className="mt-1 text-[15px] font-bold text-[#2EC4B6]">무권리</p>
+          )}
+          {/* Revenue / Profit */}
+          {(hasRevenue || hasProfit) && (
+            <p className="mt-1 text-sm font-medium text-[#2EC4B6]">
+              {hasRevenue && <>월매출 {formatKRW(Number(listing.monthlyRevenue))}</>}
+              {hasRevenue && hasProfit && <span className="mx-1.5 text-gray-300">|</span>}
+              {hasProfit && <>월수익 {formatKRW(Number(listing.monthlyProfit))}</>}
+            </p>
           )}
         </div>
-
-        {/* Revenue / Profit row */}
-        {(hasRevenue || hasProfit) && (
-          <div className="mt-1.5 flex items-center gap-2 text-xs text-gray-500">
-            {hasRevenue && (
-              <span>월매출 {formatKRW(Number(listing.monthlyRevenue))}</span>
-            )}
-            {hasRevenue && hasProfit && (
-              <span className="text-gray-300">|</span>
-            )}
-            {hasProfit && (
-              <span>월수익 {formatKRW(Number(listing.monthlyProfit))}</span>
-            )}
-          </div>
-        )}
-
         {/* Location */}
-        <p className="mt-2 flex items-center gap-1 text-sm text-gray-500">
+        <p className="mt-1.5 flex items-center gap-1 truncate text-sm text-gray-400">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
-          <span className="truncate">
-            {listing.district}
-            {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
-          </span>
+          {listing.city} {listing.district}
+          {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
         </p>
       </div>
     </Link>
