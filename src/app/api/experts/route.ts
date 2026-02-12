@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
       case "rating":
         orderBy = [{ rating: "desc" }, { reviewCount: "desc" }];
         break;
+      case "consultations":
       case "consultCount":
         orderBy = [{ consultCount: "desc" }];
         break;
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
         break;
     }
 
-    const [experts, total] = await Promise.all([
+    const [rows, total] = await Promise.all([
       prisma.expert.findMany({
         where,
         orderBy,
@@ -47,14 +48,28 @@ export async function GET(req: NextRequest) {
       prisma.expert.count({ where }),
     ]);
 
+    const experts = rows.map((e) => ({
+      id: e.id,
+      name: e.name,
+      title: e.title,
+      company: e.company,
+      category: e.category,
+      region: e.region,
+      profileImage: e.profileImage,
+      specialties: e.specialties as string[],
+      rating: e.rating,
+      reviewCount: e.reviewCount,
+      consultationCount: e.consultCount,
+      experienceYears: e.career,
+      isVerified: e.isVerified,
+    }));
+
     return Response.json({
-      data: experts,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      experts,
+      total,
+      page,
+      limit,
+      hasMore: skip + rows.length < total,
     });
   } catch (error) {
     return errorToResponse(error);

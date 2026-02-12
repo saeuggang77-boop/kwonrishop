@@ -60,7 +60,7 @@ export default async function DashboardPage() {
         </div>
         <Link
           href="/listings/new"
-          className="flex items-center gap-2 rounded-lg bg-mint px-5 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-mint-dark active:scale-[0.97]"
+          className="flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-accent-dark active:scale-[0.97]"
         >
           <Plus className="h-4 w-4" /> 매물 등록
         </Link>

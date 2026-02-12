@@ -42,7 +42,7 @@ export default function ReportRequestIndexPage() {
     <div className="mx-auto max-w-3xl px-4 py-8">
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="font-heading text-2xl font-bold text-[#0B3B57]">
+        <h1 className="font-heading text-2xl font-bold text-[#1B3A5C]">
           권리분석 리포트 신청
         </h1>
         <p className="mt-2 text-sm text-gray-500">
@@ -56,7 +56,7 @@ export default function ReportRequestIndexPage() {
           onClick={() => setTab("search")}
           className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all ${
             tab === "search"
-              ? "bg-white text-[#0B3B57] shadow-sm"
+              ? "bg-white text-[#1B3A5C] shadow-sm"
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
@@ -67,7 +67,7 @@ export default function ReportRequestIndexPage() {
           onClick={() => setTab("direct")}
           className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all ${
             tab === "direct"
-              ? "bg-white text-[#0B3B57] shadow-sm"
+              ? "bg-white text-[#1B3A5C] shadow-sm"
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
@@ -136,14 +136,14 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="상호명 또는 주소로 검색"
-            className="w-full rounded-xl border border-gray-200 py-3 pl-10 pr-4 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+            className="w-full rounded-xl border border-gray-200 py-3 pl-10 pr-4 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
           />
         </div>
         <button
           onClick={() => setShowFilter(!showFilter)}
           className={`flex items-center gap-1 rounded-xl border px-4 text-sm font-medium transition-colors ${
             showFilter || category
-              ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
               : "border-gray-200 text-gray-600 hover:border-gray-300"
           }`}
         >
@@ -152,7 +152,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
         </button>
         <button
           onClick={handleSearch}
-          className="rounded-xl bg-[#2EC4B6] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#28b0a3]"
+          className="rounded-xl bg-[#1B3A5C] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#152e49]"
         >
           검색
         </button>
@@ -166,7 +166,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
             >
               <option value="">전체 업종</option>
               {Object.entries(BUSINESS_CATEGORY_LABELS).map(([key, label]) => (
@@ -184,7 +184,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
           <button
             key={listing.id}
             onClick={() => router.push(`/reports/request/${listing.id}`)}
-            className="group rounded-xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all hover:border-[#2EC4B6] hover:shadow-md"
+            className="group rounded-xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all hover:border-[#1B3A5C] hover:shadow-md"
           >
             {/* Thumbnail */}
             <div className="mb-3 aspect-[16/10] overflow-hidden rounded-lg bg-gray-100">
@@ -205,7 +205,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
             {/* Info */}
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-[#2EC4B6]/10 px-2 py-0.5 text-xs font-medium text-[#0B3B57]">
+                <span className="rounded-full bg-[#1B3A5C]/10 px-2 py-0.5 text-xs font-medium text-[#1B3A5C]">
                   {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}
                 </span>
               </div>
@@ -232,7 +232,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
       {/* Loading */}
       {loading && (
         <div className="mt-8 flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#2EC4B6]" />
+          <Loader2 className="h-6 w-6 animate-spin text-[#1B3A5C]" />
         </div>
       )}
 
@@ -349,7 +349,7 @@ function DirectInputTab({
               <select
                 value={businessCategory}
                 onChange={(e) => setBusinessCategory(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+                className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
               >
                 <option value="">업종 선택</option>
                 {Object.entries(BUSINESS_CATEGORY_LABELS).map(([key, label]) => (
@@ -366,7 +366,7 @@ function DirectInputTab({
               value={businessSubtype}
               onChange={(e) => setBusinessSubtype(e.target.value)}
               placeholder="예: 카페, 삼겹살 전문점"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -376,7 +376,7 @@ function DirectInputTab({
                 <select
                   value={city}
                   onChange={(e) => { setCity(e.target.value); setDistrict(""); }}
-                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
                 >
                   <option value="">시/도 선택</option>
                   {Object.keys(REGIONS).map((r) => (
@@ -393,7 +393,7 @@ function DirectInputTab({
                   value={district}
                   onChange={(e) => setDistrict(e.target.value)}
                   disabled={!city}
-                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6] disabled:bg-gray-100 disabled:text-gray-400"
+                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C] disabled:bg-gray-100 disabled:text-gray-400"
                 >
                   <option value="">구/군 선택</option>
                   {(REGIONS[city] ?? []).map((d) => (
@@ -412,7 +412,7 @@ function DirectInputTab({
                   type="number"
                   value={floor}
                   onChange={(e) => setFloor(parseInt(e.target.value) || 1)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
                 />
                 <span className="shrink-0 text-sm text-gray-600">층</span>
               </div>
@@ -425,7 +425,7 @@ function DirectInputTab({
                   value={areaPyeong}
                   onChange={(e) => setAreaPyeong(parseInt(e.target.value) || 0)}
                   min={0}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
                 />
                 <span className="shrink-0 text-sm text-gray-600">평</span>
               </div>
@@ -465,28 +465,28 @@ function DirectInputTab({
                 onClick={() => setSelectedPlanId(plan.id)}
                 className={`relative cursor-pointer rounded-xl border-2 p-5 transition-all ${
                   isSelected
-                    ? "border-[#2EC4B6] bg-[#2EC4B6]/5 shadow-lg"
+                    ? "border-[#1B3A5C] bg-[#1B3A5C]/5 shadow-lg"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 {isPremium && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#2EC4B6] px-3 py-0.5 text-xs font-bold text-white">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#F59E0B] px-3 py-0.5 text-xs font-bold text-white">
                     추천
                   </span>
                 )}
                 <div className="flex items-center gap-2">
-                  <div className={`rounded-lg p-2 ${isPremium ? "bg-[#2EC4B6]/10 text-[#0B3B57]" : "bg-gray-100 text-gray-700"}`}>
+                  <div className={`rounded-lg p-2 ${isPremium ? "bg-[#1B3A5C]/10 text-[#1B3A5C]" : "bg-gray-100 text-gray-700"}`}>
                     {isPremium ? <Star className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
                   </div>
-                  <h3 className="text-lg font-bold text-[#0B3B57]">{plan.displayName}</h3>
+                  <h3 className="text-lg font-bold text-[#1B3A5C]">{plan.displayName}</h3>
                 </div>
-                <p className="mt-3 text-2xl font-bold text-[#0B3B57]">
+                <p className="mt-3 text-2xl font-bold text-[#1B3A5C]">
                   {formatKRW(plan.price)}
                 </p>
                 <ul className="mt-4 space-y-2">
                   {(plan.features as string[]).map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#2EC4B6]" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1B3A5C]" />
                       {f}
                     </li>
                   ))}
@@ -500,7 +500,7 @@ function DirectInputTab({
           <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">결제 금액</span>
-              <span className="text-xl font-bold text-[#0B3B57]">{formatKRW(selectedPlan.price)}</span>
+              <span className="text-xl font-bold text-[#1B3A5C]">{formatKRW(selectedPlan.price)}</span>
             </div>
           </div>
         )}
@@ -510,7 +510,7 @@ function DirectInputTab({
       <button
         onClick={handleSubmit}
         disabled={!businessCategory || !selectedPlanId || submitting}
-        className="w-full rounded-xl bg-[#2EC4B6] py-4 text-lg font-medium text-white transition-colors hover:bg-[#28b0a3] disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-xl bg-accent py-4 text-lg font-medium text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? (
           <span className="flex items-center justify-center gap-2">
@@ -542,10 +542,10 @@ function Section({
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <div className="mb-5 flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2EC4B6]/10 text-[#0B3B57]">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1B3A5C]/10 text-[#1B3A5C]">
           {icon}
         </div>
-        <h2 className="text-lg font-bold text-[#0B3B57]">{title}</h2>
+        <h2 className="text-lg font-bold text-[#1B3A5C]">{title}</h2>
       </div>
       {children}
     </div>
@@ -570,7 +570,7 @@ function WonField({
           value={value}
           onChange={(e) => onChange(parseInt(e.target.value) || 0)}
           min={0}
-          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
         />
         <span className="shrink-0 text-sm text-gray-600">만원</span>
       </div>

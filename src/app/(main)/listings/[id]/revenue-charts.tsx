@@ -56,14 +56,14 @@ export function RevenueLineChart({
         <Line
           type="monotone"
           dataKey="매출"
-          stroke="#2EC4B6"
+          stroke="#1B3A5C"
           strokeWidth={2}
           dot={{ r: 3 }}
         />
         <Line
           type="monotone"
           dataKey="순이익"
-          stroke="#0B3B57"
+          stroke="#2D5F8A"
           strokeWidth={2}
           dot={{ r: 3 }}
         />
@@ -79,7 +79,7 @@ interface CostPieProps {
   monthlyProfit: number;
 }
 
-const PIE_COLORS = ["#FF6B6B", "#FFA94D", "#868E96", "#2EC4B6"];
+const PIE_COLORS = ["#FF6B6B", "#FFA94D", "#868E96", "#1B3A5C"];
 
 export function CostPieChart({
   monthlyRent,

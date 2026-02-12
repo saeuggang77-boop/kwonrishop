@@ -77,7 +77,7 @@ export function CompareFloatingBar() {
             <button
               onClick={handleCompare}
               disabled={items.length < 2}
-              className="flex items-center gap-2 rounded-xl bg-mint px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-mint-dark disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Scale className="h-4 w-4" />
               <span className="hidden sm:inline">비교하기</span>

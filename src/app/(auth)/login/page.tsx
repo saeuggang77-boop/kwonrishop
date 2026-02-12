@@ -113,14 +113,14 @@ function LoginForm() {
           placeholder="비밀번호 입력"
         />
 
-        <Button type="submit" loading={isLoading} size="lg" className="w-full">
+        <Button type="submit" loading={isLoading} size="lg" className="w-full bg-accent hover:bg-accent-dark">
           이메일로 로그인
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-500">
         아직 계정이 없으신가요?{" "}
-        <Link href="/register" className="font-medium text-mint hover:underline">
+        <Link href="/register" className="font-medium text-navy hover:underline">
           회원가입
         </Link>
       </p>

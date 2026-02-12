@@ -133,7 +133,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                   e.stopPropagation();
                   handlePrevious();
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/50"
+                className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy/50"
                 aria-label="이전 이미지"
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -143,7 +143,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                   e.stopPropagation();
                   handleNext();
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/50"
+                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy/50"
                 aria-label="다음 이미지"
               >
                 <ChevronRight className="h-6 w-6" />
@@ -171,7 +171,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                 }}
                 className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 ${
                   index === currentIndex
-                    ? "scale-105 border-mint"
+                    ? "scale-105 border-navy"
                     : "border-transparent opacity-60 hover:opacity-100"
                 }`}
                 aria-label={`이미지 ${index + 1}번 보기`}
@@ -264,7 +264,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                   }}
                   className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-all ${
                     index === currentIndex
-                      ? "border-mint"
+                      ? "border-navy"
                       : "border-transparent opacity-50 hover:opacity-100"
                   }`}
                 >

@@ -32,6 +32,40 @@ export async function GET(req: NextRequest) {
       if (parsed.priceMin) (where.price as Record<string, unknown>).gte = BigInt(parsed.priceMin);
       if (parsed.priceMax) (where.price as Record<string, unknown>).lte = BigInt(parsed.priceMax);
     }
+    if (parsed.premiumFeeMin !== undefined || parsed.premiumFeeMax !== undefined) {
+      if (parsed.premiumFeeMax === 0) {
+        // 무권리: premiumFee is null or 0
+        if (!where.AND) where.AND = [];
+        (where.AND as unknown[]).push({
+          OR: [{ premiumFee: null }, { premiumFee: BigInt(0) }],
+        });
+      } else {
+        where.premiumFee = {};
+        if (parsed.premiumFeeMin !== undefined) (where.premiumFee as Record<string, unknown>).gte = BigInt(parsed.premiumFeeMin);
+        if (parsed.premiumFeeMax !== undefined) (where.premiumFee as Record<string, unknown>).lte = BigInt(parsed.premiumFeeMax);
+      }
+    }
+    if (parsed.totalCostMin !== undefined || parsed.totalCostMax !== undefined) {
+      const conditions: string[] = ['"status" = \'ACTIVE\''];
+      const params: unknown[] = [];
+      let idx = 1;
+      if (parsed.totalCostMin !== undefined) {
+        conditions.push(`("price" + COALESCE("premiumFee", 0)) >= $${idx}`);
+        params.push(BigInt(parsed.totalCostMin));
+        idx++;
+      }
+      if (parsed.totalCostMax !== undefined) {
+        conditions.push(`("price" + COALESCE("premiumFee", 0)) <= $${idx}`);
+        params.push(BigInt(parsed.totalCostMax));
+        idx++;
+      }
+      const rows = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
+        `SELECT "id" FROM "Listing" WHERE ${conditions.join(" AND ")}`,
+        ...params,
+      );
+      if (!where.AND) where.AND = [];
+      (where.AND as unknown[]).push({ id: { in: rows.map((r) => r.id) } });
+    }
     if (parsed.premiumOnly) {
       where.isPremium = true;
     }

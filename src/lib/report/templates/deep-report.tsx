@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 30,
-    borderBottom: "2px solid #2EC4B6",
+    borderBottom: "2px solid #1B3A5C",
     paddingBottom: 15,
   },
   brandName: {
     fontFamily: "NotoSansKR-Bold",
     fontSize: 20,
-    color: "#0B3B57",
+    color: "#1B3A5C",
   },
   date: {
     fontSize: 9,
@@ -38,13 +38,13 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "NotoSansKR-Bold",
     fontSize: 16,
-    color: "#0B3B57",
+    color: "#1B3A5C",
     marginBottom: 8,
   },
   sectionTitle: {
     fontFamily: "NotoSansKR-Bold",
     fontSize: 12,
-    color: "#0B3B57",
+    color: "#1B3A5C",
     marginTop: 20,
     marginBottom: 10,
     borderBottom: "1px solid #E5E7EB",
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   priceBox: {
-    backgroundColor: "#F0FDFA",
+    backgroundColor: "#EFF4F9",
     borderRadius: 6,
     padding: 15,
     marginVertical: 10,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   priceValue: {
     fontFamily: "NotoSansKR-Bold",
     fontSize: 22,
-    color: "#0B3B57",
+    color: "#1B3A5C",
     marginTop: 4,
   },
   table: {

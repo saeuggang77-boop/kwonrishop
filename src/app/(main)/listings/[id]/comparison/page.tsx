@@ -52,7 +52,7 @@ export default async function ComparisonPage({
             return (
               <div key={c.id} className="rounded-xl border border-gray-200 bg-white p-6">
                 <div className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-mint" />
+                  <BarChart3 className="h-5 w-5 text-navy" />
                   <h3 className="font-bold text-navy">반경 {c.radiusKm}km 이내</h3>
                   <span className="text-sm text-gray-500">({formatNumber(c.comparableCount)}건 비교)</span>
                 </div>

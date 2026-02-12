@@ -88,7 +88,7 @@ export function DashboardSidebar({ role }: { role: string }) {
       <div className="sticky top-20 space-y-4">
         {/* Upgrade Banner for FREE users */}
         {isFree && !bannerDismissed && (
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#2EC4B6] to-[#0B3B57] p-4 text-white shadow-lg">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#1B3A5C] to-[#0F2440] p-4 text-white shadow-lg">
             <button
               onClick={handleDismissBanner}
               className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white/80 transition-colors hover:bg-white/30 hover:text-white"
@@ -103,7 +103,7 @@ export function DashboardSidebar({ role }: { role: string }) {
             </p>
             <Link
               href="/pricing"
-              className="mt-3 inline-flex items-center rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-[#0B3B57] transition-colors hover:bg-white/90"
+              className="mt-3 inline-flex items-center rounded-lg bg-[#F59E0B] px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-[#D97706]"
             >
               업그레이드
             </Link>

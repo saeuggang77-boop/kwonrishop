@@ -55,7 +55,7 @@ function BarChart({ items, getter, label }: { items: CompareItem[]; getter: (i: 
               <div className="flex-1">
                 <div className="h-5 overflow-hidden rounded bg-gray-100">
                   <div
-                    className="flex h-full items-center rounded bg-mint/80 px-2 text-[10px] font-bold text-white transition-all"
+                    className="flex h-full items-center rounded bg-navy/80 px-2 text-[10px] font-bold text-white transition-all"
                     style={{ width: `${Math.max(pct, val > 0 ? 8 : 0)}%` }}
                   >
                     {val > 0 ? formatKRW(val) : ""}
@@ -89,7 +89,7 @@ export default function ComparePage() {
         <p className="mt-2 text-gray-500">매물 목록에서 비교 담기 버튼을 눌러주세요</p>
         <Link
           href="/listings"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-navy px-6 py-3 text-sm font-medium text-white hover:bg-navy/90"
         >
           <ArrowLeft className="h-4 w-4" />
           매물 둘러보기
@@ -106,7 +106,7 @@ export default function ComparePage() {
         <p className="mt-2 text-gray-500">최소 2개 이상의 매물이 필요합니다 (현재 {items.length}개)</p>
         <Link
           href="/listings"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-navy px-6 py-3 text-sm font-medium text-white hover:bg-navy/90"
         >
           <ArrowLeft className="h-4 w-4" />
           매물 더 담기
@@ -158,7 +158,7 @@ export default function ComparePage() {
           <Info className="h-5 w-5 shrink-0 text-amber-600" />
           <p className="text-sm text-amber-800">
             FREE 플랜에서는 최대 2개까지 비교할 수 있습니다.{" "}
-            <Link href="/pricing" className="font-medium text-mint underline hover:text-mint/80">
+            <Link href="/pricing" className="font-medium text-navy underline hover:text-navy/80">
               PRO 플랜에서 최대 4개까지 비교 가능
             </Link>
           </p>
@@ -197,7 +197,7 @@ export default function ComparePage() {
                       </div>
                     )}
                   </div>
-                  <h3 className="mt-2 text-center text-sm font-bold text-navy hover:text-mint">
+                  <h3 className="mt-2 text-center text-sm font-bold text-navy hover:text-navy/70">
                     {item.title}
                   </h3>
                 </Link>

@@ -247,7 +247,7 @@ export default function MarketPricePage() {
                       <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                       <YAxis tick={{ fontSize: 11 }} />
                       <Tooltip formatter={(v?: number) => `${(v ?? 0).toLocaleString()}만원`} />
-                      <Bar dataKey="평균권리금" fill="#2EC4B6" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="평균권리금" fill="#1B3A5C" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

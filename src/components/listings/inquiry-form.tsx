@@ -29,7 +29,7 @@ export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
         </p>
         <Link
           href="/login"
-          className="mt-3 inline-block rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint-dark"
+          className="mt-3 inline-block rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-dark"
         >
           로그인
         </Link>
@@ -106,7 +106,7 @@ export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
         <button
           type="submit"
           disabled={status === "sending" || !message.trim() || !privacyConsent}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-navy px-4 py-3 text-sm font-medium text-white hover:bg-navy/90 disabled:opacity-50"
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-medium text-white hover:bg-accent-dark disabled:opacity-50"
         >
           <Send className="h-4 w-4" />
           {status === "sending" ? "전송 중..." : "문의 보내기"}

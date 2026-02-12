@@ -55,7 +55,7 @@ export default function MySimulationsPage() {
         <Calculator className="mx-auto h-12 w-12 text-gray-300" />
         <h2 className="mt-4 text-xl font-bold text-navy">로그인이 필요합니다</h2>
         <p className="mt-2 text-sm text-gray-500">시뮬레이션을 저장하려면 로그인해주세요.</p>
-        <Link href="/login" className="mt-4 inline-block rounded-lg bg-mint px-6 py-2.5 text-sm font-medium text-white hover:bg-mint/90">
+        <Link href="/login" className="mt-4 inline-block rounded-lg bg-accent px-6 py-2.5 text-sm font-medium text-white hover:bg-accent-dark">
           로그인
         </Link>
       </div>
@@ -69,7 +69,7 @@ export default function MySimulationsPage() {
           <h1 className="text-2xl font-bold text-navy">내 시뮬레이션</h1>
           <p className="mt-1 text-sm text-gray-500">저장된 창업 시뮬레이션 결과를 확인하세요</p>
         </div>
-        <Link href="/simulator" className="rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint/90">
+        <Link href="/simulator" className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-dark">
           새 시뮬레이션
         </Link>
       </div>
@@ -85,7 +85,7 @@ export default function MySimulationsPage() {
           <div className="py-20 text-center">
             <Calculator className="mx-auto h-12 w-12 text-gray-300" />
             <p className="mt-4 text-gray-500">저장된 시뮬레이션이 없습니다</p>
-            <Link href="/simulator" className="mt-4 inline-block rounded-lg bg-mint px-6 py-2.5 text-sm font-medium text-white hover:bg-mint/90">
+            <Link href="/simulator" className="mt-4 inline-block rounded-lg bg-accent px-6 py-2.5 text-sm font-medium text-white hover:bg-accent-dark">
               시뮬레이션 시작
             </Link>
           </div>

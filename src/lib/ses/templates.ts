@@ -6,14 +6,14 @@ export function welcomeEmail(params: {
     subject: "[권리샵] 이메일 인증을 완료해주세요",
     html: `
       <div style="font-family: 'Noto Sans KR', sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #0B3B57; padding: 20px; text-align: center;">
-          <h1 style="color: #2EC4B6; margin: 0;">권리샵</h1>
+        <div style="background: #1B3A5C; padding: 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0;">권리샵</h1>
         </div>
         <div style="padding: 30px; background: #fff;">
           <p>${params.name}님, 권리샵에 가입해주셔서 감사합니다!</p>
           <p>아래 버튼을 클릭하여 이메일 인증을 완료해주세요.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${params.verifyUrl}" style="background: #2EC4B6; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 700;">이메일 인증하기</a>
+            <a href="${params.verifyUrl}" style="background: #F59E0B; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 700;">이메일 인증하기</a>
           </div>
           <p style="color: #6B7280; font-size: 13px;">인증 링크는 24시간 동안 유효합니다. 본인이 가입하지 않으셨다면 이 메일을 무시하세요.</p>
         </div>
@@ -35,8 +35,8 @@ export function fraudAlertEmail(params: {
     subject: `[권리샵] 매물 검증 알림 - "${params.listingTitle}"`,
     html: `
       <div style="font-family: 'Noto Sans KR', sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #0B3B57; padding: 20px; text-align: center;">
-          <h1 style="color: #2EC4B6; margin: 0;">권리샵</h1>
+        <div style="background: #1B3A5C; padding: 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0;">권리샵</h1>
         </div>
         <div style="padding: 30px; background: #fff;">
           <p>${params.sellerName}님, 안녕하세요.</p>
@@ -64,14 +64,14 @@ export function reportReadyEmail(params: {
     subject: `[권리샵] 권리 분석 리포트가 준비되었습니다`,
     html: `
       <div style="font-family: 'Noto Sans KR', sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #0B3B57; padding: 20px; text-align: center;">
-          <h1 style="color: #2EC4B6; margin: 0;">권리샵</h1>
+        <div style="background: #1B3A5C; padding: 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0;">권리샵</h1>
         </div>
         <div style="padding: 30px; background: #fff;">
           <p>${params.userName}님, 안녕하세요.</p>
           <p><strong>"${params.listingTitle}"</strong>에 대한 권리 분석 리포트가 준비되었습니다.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${params.downloadUrl}" style="background: #2EC4B6; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 700;">리포트 다운로드</a>
+            <a href="${params.downloadUrl}" style="background: #F59E0B; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 700;">리포트 다운로드</a>
           </div>
           <p style="color: #6B7280; font-size: 13px;">다운로드 링크는 72시간 동안 유효합니다.</p>
         </div>
@@ -95,8 +95,8 @@ export function settlementReportEmail(params: {
     subject: `[권리샵] ${params.periodStart}~${params.periodEnd} 정산 안내`,
     html: `
       <div style="font-family: 'Noto Sans KR', sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #0B3B57; padding: 20px; text-align: center;">
-          <h1 style="color: #2EC4B6; margin: 0;">권리샵</h1>
+        <div style="background: #1B3A5C; padding: 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0;">권리샵</h1>
         </div>
         <div style="padding: 30px; background: #fff;">
           <p>${params.sellerName}님, 안녕하세요.</p>
@@ -110,9 +110,9 @@ export function settlementReportEmail(params: {
               <td style="padding: 10px;">플랫폼 수수료</td>
               <td style="padding: 10px; text-align: right; color: #EF4444;">-${params.feeAmount}</td>
             </tr>
-            <tr style="background: #F0FDFA;">
+            <tr style="background: #EFF4F9;">
               <td style="padding: 10px; font-weight: 700;">정산 금액</td>
-              <td style="padding: 10px; text-align: right; font-weight: 700; color: #2EC4B6;">${params.netAmount}</td>
+              <td style="padding: 10px; text-align: right; font-weight: 700; color: #1B3A5C;">${params.netAmount}</td>
             </tr>
           </table>
           <p style="color: #6B7280; font-size: 13px;">세금계산서는 별도로 발행됩니다.</p>

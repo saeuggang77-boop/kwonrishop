@@ -38,13 +38,13 @@ export function MobileTabBar() {
           >
             {/* Active indicator dot */}
             {active && (
-              <div className="absolute top-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-mint" />
+              <div className="absolute top-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-navy" />
             )}
 
             <item.icon
-              className={`h-5 w-5 ${active ? "text-mint" : "text-gray-500"}`}
+              className={`h-5 w-5 ${active ? "text-navy" : "text-gray-500"}`}
             />
-            <span className={active ? "text-mint font-medium" : "text-gray-500"}>
+            <span className={active ? "text-navy font-medium" : "text-gray-500"}>
               {item.label}
             </span>
           </Link>

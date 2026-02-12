@@ -63,19 +63,20 @@ const SORT_OPTIONS = [
   { value: "areaPyeong-desc", label: "면적순" },
 ] as const;
 
-const PREMIUM_FEE_OPTIONS = [
+const TOTAL_COST_OPTIONS = [
   { label: "전체", min: "", max: "" },
-  { label: "무권리", min: "", max: "0" },
-  { label: "5천만 이하", min: "", max: "500000000" },
+  { label: "3천만 이하", min: "", max: "300000000" },
+  { label: "3천~5천만", min: "300000000", max: "500000000" },
   { label: "5천~1억", min: "500000000", max: "1000000000" },
   { label: "1억~2억", min: "1000000000", max: "2000000000" },
-  { label: "2억 이상", min: "2000000000", max: "" },
+  { label: "2억~3억", min: "2000000000", max: "3000000000" },
+  { label: "3억 이상", min: "3000000000", max: "" },
 ];
 
 const THEME_OPTIONS = [
-  { label: "무권리", storeType: "", premiumMax: "0" },
-  { label: "프랜차이즈", storeType: "FRANCHISE", premiumMax: "" },
-  { label: "사무실", storeType: "OFFICE", premiumMax: "" },
+  { label: "무권리", storeType: "" },
+  { label: "프랜차이즈", storeType: "FRANCHISE" },
+  { label: "사무실", storeType: "OFFICE" },
 ];
 
 /* ================================================================
@@ -101,8 +102,8 @@ export default function ListingsPage() {
     storeType: searchParams.get("storeType") ?? "",
     city: "",
     district: "",
-    premiumFeeMin: "",
-    premiumFeeMax: "",
+    totalCostMin: "",
+    totalCostMax: "",
     floor: "",
     areaMin: "",
     areaMax: "",
@@ -124,8 +125,9 @@ export default function ListingsPage() {
       if (filters.storeType) params.set("storeType", filters.storeType);
       if (filters.city) params.set("city", filters.city);
       if (filters.district) params.set("district", filters.district);
-      if (filters.premiumFeeMin) params.set("priceMin", filters.premiumFeeMin);
-      if (filters.premiumFeeMax) params.set("priceMax", filters.premiumFeeMax);
+      if (filters.totalCostMin) params.set("totalCostMin", filters.totalCostMin);
+      if (filters.totalCostMax) params.set("totalCostMax", filters.totalCostMax);
+      if (filters.theme === "무권리") params.set("premiumFeeMax", "0");
       if (filters.floor) params.set("floor", filters.floor);
       if (filters.areaMin) params.set("areaMin", filters.areaMin);
       if (filters.areaMax) params.set("areaMax", filters.areaMax);
@@ -161,7 +163,7 @@ export default function ListingsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filters.businessCategory, filters.storeType, filters.city, filters.district,
-    filters.premiumFeeMin, filters.premiumFeeMax, filters.floor,
+    filters.totalCostMin, filters.totalCostMax, filters.floor,
     filters.areaMin, filters.areaMax, filters.sortBy, filters.sortOrder,
     filters.revenueVerified, activeTab,
   ]);
@@ -186,7 +188,7 @@ export default function ListingsPage() {
   const handleReset = () => {
     setFilters({
       query: "", businessCategory: "", storeType: "",
-      city: "", district: "", premiumFeeMin: "", premiumFeeMax: "",
+      city: "", district: "", totalCostMin: "", totalCostMax: "",
       floor: "", areaMin: "", areaMax: "", theme: "",
       revenueVerified: false, sortBy: "createdAt", sortOrder: "desc",
     });
@@ -214,7 +216,7 @@ export default function ListingsPage() {
   const categoryCount = filters.businessCategory ? 1 : 0;
   const revenueCount = filters.revenueVerified ? 1 : 0;
   const themeCount = filters.theme ? 1 : 0;
-  const priceCount = filters.premiumFeeMin || filters.premiumFeeMax ? 1 : 0;
+  const priceCount = filters.totalCostMin || filters.totalCostMax ? 1 : 0;
   const floorCount = filters.floor ? 1 : 0;
   const areaCount = filters.areaMin || filters.areaMax ? 1 : 0;
   const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + floorCount + areaCount > 0 || filters.city;
@@ -228,23 +230,23 @@ export default function ListingsPage() {
           <button
             onClick={() => setActiveTab("direct")}
             className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
-              activeTab === "direct" ? "text-[#0B3B57]" : "text-gray-400 hover:text-gray-600"
+              activeTab === "direct" ? "text-[#1B3A5C]" : "text-gray-400 hover:text-gray-600"
             }`}
           >
             직거래 매물 보기
             {activeTab === "direct" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2EC4B6]" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1B3A5C]" />
             )}
           </button>
           <button
             onClick={() => setActiveTab("franchise")}
             className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
-              activeTab === "franchise" ? "text-[#0B3B57]" : "text-gray-400 hover:text-gray-600"
+              activeTab === "franchise" ? "text-[#1B3A5C]" : "text-gray-400 hover:text-gray-600"
             }`}
           >
             프랜차이즈 매물
             {activeTab === "franchise" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2EC4B6]" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1B3A5C]" />
             )}
           </button>
         </div>
@@ -261,12 +263,12 @@ export default function ListingsPage() {
                 placeholder="지역, 상호명을 입력해 주세요"
                 value={filters.query}
                 onChange={(e) => setFilters((f) => ({ ...f, query: e.target.value }))}
-                className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-[#2EC4B6] focus:ring-1 focus:ring-[#2EC4B6]"
+                className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
               />
             </div>
             <button
               type="submit"
-              className="shrink-0 rounded-lg bg-[#2EC4B6] px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#28b0a3]"
+              className="shrink-0 rounded-lg bg-[#1B3A5C] px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#15304D]"
             >
               검색
             </button>
@@ -292,7 +294,7 @@ export default function ListingsPage() {
                   setFilters((f) => ({ ...f, sortBy, sortOrder }));
                 }}
                 aria-label="정렬 기준"
-                className="shrink-0 appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-xs font-medium text-gray-600 outline-none focus:border-[#2EC4B6]"
+                className="shrink-0 appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-xs font-medium text-gray-600 outline-none focus:border-[#1B3A5C]"
               >
                 {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -328,7 +330,7 @@ export default function ListingsPage() {
                         type="checkbox"
                         checked={filters.revenueVerified}
                         onChange={(e) => setFilters((f) => ({ ...f, revenueVerified: e.target.checked }))}
-                        className="h-4 w-4 rounded border-gray-300 accent-[#2EC4B6]"
+                        className="h-4 w-4 rounded border-gray-300 accent-[#1B3A5C]"
                       />
                       매출증빙 완료 매물만 보기 (안전등급 A)
                     </label>
@@ -347,12 +349,11 @@ export default function ListingsPage() {
                               ...f,
                               theme: isActive ? "" : t.label,
                               storeType: isActive ? "" : t.storeType,
-                              premiumFeeMax: isActive ? "" : t.premiumMax,
                             }));
                           }}
                           className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
                             filters.theme === t.label
-                              ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
                               : "border-gray-200 text-gray-600 hover:border-gray-300"
                           }`}
                         >
@@ -367,7 +368,7 @@ export default function ListingsPage() {
                           }}
                           className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
                             filters.theme === feat
-                              ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
                               : "border-gray-200 text-gray-600 hover:border-gray-300"
                           }`}
                         >
@@ -379,21 +380,21 @@ export default function ListingsPage() {
                 )}
                 {openFilter === "price" && (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">권리금</p>
+                    <p className="text-sm font-medium text-gray-700">총 창업비용(보증금+권리금)</p>
                     <div className="flex flex-wrap gap-2">
-                      {PREMIUM_FEE_OPTIONS.map((opt) => {
-                        const isActive = filters.premiumFeeMin === opt.min && filters.premiumFeeMax === opt.max;
+                      {TOTAL_COST_OPTIONS.map((opt) => {
+                        const isActive = filters.totalCostMin === opt.min && filters.totalCostMax === opt.max;
                         return (
                           <button
                             key={opt.label}
                             onClick={() => setFilters((f) => ({
                               ...f,
-                              premiumFeeMin: isActive ? "" : opt.min,
-                              premiumFeeMax: isActive ? "" : opt.max,
+                              totalCostMin: isActive ? "" : opt.min,
+                              totalCostMax: isActive ? "" : opt.max,
                             }))}
                             className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
                               isActive
-                                ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
                                 : "border-gray-200 text-gray-600 hover:border-gray-300"
                             }`}
                           >
@@ -414,7 +415,7 @@ export default function ListingsPage() {
                           onClick={() => setFilters((f) => ({ ...f, floor: f.floor === opt.value ? "" : opt.value }))}
                           className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
                             filters.floor === opt.value
-                              ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
                               : "border-gray-200 text-gray-600 hover:border-gray-300"
                           }`}
                         >
@@ -440,7 +441,7 @@ export default function ListingsPage() {
                             }))}
                             className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
                               isActive
-                                ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
                                 : "border-gray-200 text-gray-600 hover:border-gray-300"
                             }`}
                           >
@@ -465,7 +466,7 @@ export default function ListingsPage() {
           <div className="px-4 py-3">
             {/* Count */}
             <p className="mb-3 text-sm text-gray-500">
-              총 <span className="font-semibold text-[#0B3B57]">{totalCount > 0 ? totalCount : listings.length}</span>건
+              총 <span className="font-semibold text-[#1B3A5C]">{totalCount > 0 ? totalCount : listings.length}</span>건
             </p>
 
             {/* Loading skeleton */}
@@ -523,7 +524,7 @@ export default function ListingsPage() {
                 })()}
                 {hasMore && (
                   <div ref={sentinelRef} className="py-6 text-center">
-                    {isLoading && <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#2EC4B6]" />}
+                    {isLoading && <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#1B3A5C]" />}
                   </div>
                 )}
               </>
@@ -565,13 +566,13 @@ function FilterButton({
       onClick={onClick}
       className={`flex shrink-0 items-center gap-1 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
         isOpen || count > 0
-          ? "border-[#2EC4B6] bg-[#2EC4B6]/5 text-[#0B3B57]"
+          ? "border-[#1B3A5C] bg-[#1B3A5C]/5 text-[#1B3A5C]"
           : "border-gray-200 text-gray-600 hover:border-gray-300"
       }`}
     >
       {label}
       {count > 0 && (
-        <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#2EC4B6] px-1 text-[10px] font-bold text-white">
+        <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#1B3A5C] px-1 text-[10px] font-bold text-white">
           {count}
         </span>
       )}
@@ -604,7 +605,7 @@ function CategoryFilterDropdown({
             onClick={() => setActiveGroup(activeGroup === group ? "" : group)}
             className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
               activeGroup === group
-                ? "border-[#2EC4B6] bg-[#2EC4B6]/10 text-[#0B3B57]"
+                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
                 : "border-gray-200 text-gray-500 hover:border-gray-300"
             }`}
           >
@@ -619,7 +620,7 @@ function CategoryFilterDropdown({
             onClick={() => onChange("")}
             className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
               !value
-                ? "border-[#2EC4B6] bg-[#2EC4B6] text-white"
+                ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
                 : "border-gray-200 text-gray-600 hover:border-gray-300"
             }`}
           >
@@ -631,7 +632,7 @@ function CategoryFilterDropdown({
               onClick={() => onChange(value === cat ? "" : cat)}
               className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                 value === cat
-                  ? "border-[#2EC4B6] bg-[#2EC4B6] text-white"
+                  ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
                   : "border-gray-200 text-gray-600 hover:border-gray-300"
               }`}
             >
@@ -687,7 +688,7 @@ function ListingCard({ listing }: { listing: ListingItem }) {
           </div>
         )}
         {/* Category tag top-left */}
-        <span className="absolute left-2 top-2 rounded bg-[#0B3B57]/80 px-2 py-0.5 text-[11px] font-medium leading-tight text-white">
+        <span className="absolute left-2 top-2 rounded bg-[#1B3A5C]/80 px-2 py-0.5 text-[11px] font-medium leading-tight text-white">
           {categoryLabel}
           {listing.businessSubtype ? ` | ${listing.businessSubtype}` : ""}
         </span>
@@ -736,11 +737,11 @@ function ListingCard({ listing }: { listing: ListingItem }) {
             <p className="text-right text-sm text-gray-500">{floorAreaParts.join(" · ")}</p>
           )}
           {/* Title */}
-          <h3 className="truncate text-base font-bold text-[#0B3B57] transition-colors group-hover:text-[#2EC4B6]">
+          <h3 className="truncate text-base font-bold text-[#1B3A5C] transition-colors group-hover:text-[#1B3A5C]/70">
             {listing.title}
           </h3>
           {/* Deposit / Monthly rent */}
-          <p className="mt-1.5 text-sm font-semibold text-[#0B3B57]">
+          <p className="mt-1.5 text-sm font-semibold text-[#1B3A5C]">
             보증금 {formatKRW(Number(listing.price))} / 월세{" "}
             {listing.monthlyRent && Number(listing.monthlyRent) > 0
               ? formatKRW(Number(listing.monthlyRent))
@@ -752,11 +753,11 @@ function ListingCard({ listing }: { listing: ListingItem }) {
               권리금 {formatKRW(Number(listing.premiumFee))}
             </p>
           ) : (
-            <p className="mt-1 text-[15px] font-bold text-[#2EC4B6]">무권리</p>
+            <p className="mt-1 text-[15px] font-bold text-[#1B3A5C]">무권리</p>
           )}
           {/* Revenue / Profit */}
           {(hasRevenue || hasProfit) && (
-            <p className="mt-1 text-sm font-medium text-[#2EC4B6]">
+            <p className="mt-1 text-sm font-bold text-purple">
               {hasRevenue && <>월매출 {formatKRW(Number(listing.monthlyRevenue))}</>}
               {hasRevenue && hasProfit && <span className="mx-1.5 text-gray-300">|</span>}
               {hasProfit && <>월수익 {formatKRW(Number(listing.monthlyProfit))}</>}

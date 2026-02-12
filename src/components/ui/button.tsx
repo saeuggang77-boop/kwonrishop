@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils/cn";
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "outline";
+type ButtonVariant = "primary" | "cta" | "secondary" | "danger" | "ghost" | "outline";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,6 +14,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-mint text-white hover:bg-mint-dark",
+  cta: "bg-accent text-white hover:bg-accent-dark",
   secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
   danger: "bg-red-600 text-white hover:bg-red-700",
   ghost: "text-gray-600 hover:bg-gray-100",

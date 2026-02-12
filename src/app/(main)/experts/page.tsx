@@ -243,7 +243,7 @@ function ExpertCard({ expert }: { expert: ExpertItem }) {
             {expert.region}
           </span>
         )}
-        <span className="ml-auto rounded-lg bg-mint px-4 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-mint-dark">
+        <span className="ml-auto rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-accent-dark">
           상담 신청
         </span>
       </div>

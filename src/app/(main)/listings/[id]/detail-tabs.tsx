@@ -50,13 +50,13 @@ export function DetailTabs() {
             onClick={() => handleClick(tab.id)}
             className={`relative px-5 py-3.5 text-sm font-medium transition-colors ${
               activeTab === tab.id
-                ? "text-mint"
+                ? "text-navy"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
             {tab.label}
             {activeTab === tab.id && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-mint" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy" />
             )}
           </button>
         ))}

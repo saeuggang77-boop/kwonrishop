@@ -18,17 +18,17 @@ export function AuthNavItems() {
   }, [status]);
 
   if (status === "loading" && !loadingTimeout) {
-    return <div className="h-9 w-16 animate-pulse rounded-lg bg-gray-100" />;
+    return <div className="h-9 w-16 animate-pulse rounded-lg bg-white/10" />;
   }
 
   if (!session) {
     return (
       <div className="flex items-center gap-4">
         <CompareIcon />
-        <Link href="/login" className="text-sm text-gray-600 hover:text-navy">
+        <Link href="/login" className="text-sm text-white/80 hover:text-accent-light">
           로그인
         </Link>
-        <Link href="/register" className="text-sm font-medium text-mint hover:text-mint-dark">
+        <Link href="/register" className="text-sm font-medium text-white hover:text-accent-light">
           회원가입
         </Link>
       </div>
@@ -42,31 +42,31 @@ export function AuthNavItems() {
       <CompareIcon />
       <NotificationBell />
       {tier === "PRO" && (
-        <span className="rounded-full bg-[#2EC4B6]/10 px-2 py-0.5 text-xs font-bold text-[#2EC4B6]">
+        <span className="rounded-full bg-accent/20 px-2 py-0.5 text-xs font-bold text-accent-light">
           PRO
         </span>
       )}
       {tier === "EXPERT" && (
-        <span className="rounded-full bg-[#0B3B57]/10 px-2 py-0.5 text-xs font-bold text-[#0B3B57]">
+        <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold text-white">
           EXPERT
         </span>
       )}
       {(session.user.role === "SELLER" || session.user.role === "ADMIN") && (
-        <Link href="/listings/new" className="rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint-dark">
+        <Link href="/listings/new" className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-dark">
           점포 등록
         </Link>
       )}
-      <Link href="/dashboard" className="text-sm text-gray-600 hover:text-navy">
+      <Link href="/dashboard" className="text-sm text-white/80 hover:text-accent-light">
         대시보드
       </Link>
       {session.user.role === "ADMIN" && (
-        <Link href="/admin" className="text-sm text-gray-600 hover:text-navy">
+        <Link href="/admin" className="text-sm text-white/80 hover:text-accent-light">
           관리자
         </Link>
       )}
       <button
         onClick={() => signOut({ callbackUrl: "/" })}
-        className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+        className="rounded-lg border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10"
       >
         로그아웃
       </button>

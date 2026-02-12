@@ -377,7 +377,7 @@ function ConsultationModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-lg bg-mint py-3 text-sm font-semibold text-white transition-colors hover:bg-mint-dark disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-lg bg-accent py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -449,7 +449,7 @@ export default function ExpertDetailPage() {
         if (!res.ok) throw new Error("전문가 정보를 불러올 수 없습니다");
         return res.json();
       })
-      .then((data) => setExpert(data))
+      .then((json) => setExpert(json.data))
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));
   }, [id]);
@@ -588,7 +588,7 @@ export default function ExpertDetailPage() {
               {/* Desktop CTA */}
               <button
                 onClick={() => setShowModal(true)}
-                className="mt-4 hidden rounded-lg bg-mint px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-dark sm:inline-block"
+                className="mt-4 hidden rounded-lg bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-dark sm:inline-block"
               >
                 상담 신청하기
               </button>
@@ -724,7 +724,7 @@ export default function ExpertDetailPage() {
       <div className="fixed bottom-16 left-0 right-0 z-30 border-t border-gray-200 bg-white px-4 py-3 md:hidden">
         <button
           onClick={() => setShowModal(true)}
-          className="w-full rounded-lg bg-mint py-3.5 text-base font-semibold text-white transition-colors hover:bg-mint-dark"
+          className="w-full rounded-lg bg-accent py-3.5 text-base font-semibold text-white transition-colors hover:bg-accent-dark"
         >
           상담 신청하기
         </button>

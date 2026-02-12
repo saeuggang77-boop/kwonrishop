@@ -11,7 +11,7 @@ export default function NotFound() {
       <div className="mt-8 flex gap-3">
         <Link
           href="/"
-          className="rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+          className="rounded-lg bg-navy px-6 py-3 text-sm font-medium text-white hover:bg-navy-dark"
         >
           홈으로 돌아가기
         </Link>

@@ -140,7 +140,7 @@ export default function MyConsultationsPage() {
           <p className="mt-2 text-sm text-gray-500">상담 내역을 확인하려면 먼저 로그인해주세요.</p>
           <Link
             href="/login"
-            className="mt-6 inline-block rounded-lg bg-mint px-6 py-2.5 text-sm font-medium text-white hover:bg-mint/90"
+            className="mt-6 inline-block rounded-lg bg-accent px-6 py-2.5 text-sm font-medium text-white hover:bg-accent-dark"
           >
             로그인
           </Link>
@@ -159,7 +159,7 @@ export default function MyConsultationsPage() {
         </div>
         <Link
           href="/experts"
-          className="rounded-lg bg-mint px-4 py-2.5 text-sm font-medium text-white hover:bg-mint/90"
+          className="rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-dark"
         >
           전문가 찾기
         </Link>
@@ -192,7 +192,7 @@ export default function MyConsultationsPage() {
           <p className="mt-2 text-sm text-gray-500">전문가에게 상담을 신청해보세요.</p>
           <Link
             href="/experts"
-            className="mt-6 inline-block rounded-lg bg-mint px-6 py-2.5 text-sm font-medium text-white hover:bg-mint/90"
+            className="mt-6 inline-block rounded-lg bg-accent px-6 py-2.5 text-sm font-medium text-white hover:bg-accent-dark"
           >
             전문가 찾기
           </Link>
@@ -360,7 +360,7 @@ export default function MyConsultationsPage() {
               <button
                 onClick={submitReview}
                 disabled={submittingReview || reviewRating === 0 || !reviewContent.trim()}
-                className="rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-mint/90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {submittingReview ? "등록 중..." : "리뷰 등록"}
               </button>

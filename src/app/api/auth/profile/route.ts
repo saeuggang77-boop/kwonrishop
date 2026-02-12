@@ -19,7 +19,18 @@ export async function GET() {
         role: true,
         image: true,
         emailVerified: true,
+        businessName: true,
+        businessNumber: true,
+        subscriptionTier: true,
         createdAt: true,
+        _count: {
+          select: {
+            listings: true,
+            inquiriesSent: true,
+            reportPurchases: true,
+            simulations: true,
+          },
+        },
       },
     });
 
@@ -41,13 +52,15 @@ export async function PATCH(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, phone } = body;
+    const { name, phone, businessName, businessNumber } = body;
 
     const user = await prisma.user.update({
       where: { id: session.user.id },
       data: {
         ...(name !== undefined && { name }),
         ...(phone !== undefined && { phone }),
+        ...(businessName !== undefined && { businessName }),
+        ...(businessNumber !== undefined && { businessNumber }),
       },
       select: {
         id: true,
@@ -56,6 +69,9 @@ export async function PATCH(req: NextRequest) {
         phone: true,
         role: true,
         image: true,
+        businessName: true,
+        businessNumber: true,
+        subscriptionTier: true,
       },
     });
 

@@ -211,7 +211,7 @@ export default async function ListingDetailPage({
           <section id="listing-info">
             {/* Price Info Card */}
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <div className="bg-gradient-to-r from-mint/5 to-navy/5 px-6 py-4">
+              <div className="bg-gradient-to-r from-navy/5 to-navy/10 px-6 py-4">
                 <h2 className="text-lg font-bold text-navy">가격 정보</h2>
               </div>
               <div className="divide-y divide-gray-100">
@@ -365,7 +365,7 @@ export default async function ListingDetailPage({
                 </div>
                 <Link
                   href={`/reports/request/${listing.id}`}
-                  className="shrink-0 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                  className="shrink-0 rounded-lg bg-[#F59E0B] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#D97706]"
                 >
                   권리분석 리포트 신청
                 </Link>
@@ -384,7 +384,7 @@ export default async function ListingDetailPage({
                   <SummaryCard
                     label="월매출"
                     value={formatKRW(numMonthlyRevenue)}
-                    color="mint"
+                    color="purple"
                   />
                   <SummaryCard
                     label="월순이익"
@@ -439,11 +439,11 @@ export default async function ListingDetailPage({
                             numManagementFee,
                         )}
                       />
-                      <div className="flex items-center justify-between bg-mint/5 px-6 py-3">
+                      <div className="flex items-center justify-between bg-purple/5 px-6 py-3">
                         <span className="text-sm font-bold text-navy">
                           월 순이익
                         </span>
-                        <span className="text-base font-bold text-mint">
+                        <span className="text-base font-bold text-purple">
                           {formatKRW(numMonthlyProfit)}
                         </span>
                       </div>
@@ -465,7 +465,7 @@ export default async function ListingDetailPage({
                 </div>
 
                 {/* ROI Summary */}
-                <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-r from-navy/5 to-mint/5">
+                <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-r from-navy/5 to-navy/10">
                   <div className="px-6 py-5">
                     <h3 className="text-base font-semibold text-navy">
                       투자 수익률 (ROI)
@@ -487,7 +487,7 @@ export default async function ListingDetailPage({
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">투자회수</p>
-                        <p className="mt-1 text-sm font-bold text-mint">
+                        <p className="mt-1 text-sm font-bold text-purple">
                           {roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}
                         </p>
                       </div>
@@ -500,7 +500,7 @@ export default async function ListingDetailPage({
                         </div>
                         <div className="mt-1 h-3 overflow-hidden rounded-full bg-gray-200">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-mint to-navy transition-all"
+                            className="h-full rounded-full bg-gradient-to-r from-purple to-navy transition-all"
                             style={{
                               width: `${Math.min(100, (12 / roiMonths) * 100)}%`,
                             }}
@@ -508,7 +508,7 @@ export default async function ListingDetailPage({
                         </div>
                         <p className="mt-1 text-xs text-gray-500">
                           1년 기준 회수율:{" "}
-                          <span className="font-semibold text-mint">
+                          <span className="font-semibold text-purple">
                             {((12 / roiMonths) * 100).toFixed(1)}%
                           </span>
                         </p>
@@ -537,7 +537,7 @@ export default async function ListingDetailPage({
                 {numPremiumFee > 0 && (
                   <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
                     <div className="mb-4 flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-mint" />
+                      <TrendingUp className="h-4 w-4 text-navy" />
                       <h3 className="text-base font-semibold text-navy">
                         권리금 시세 비교
                       </h3>
@@ -580,7 +580,7 @@ export default async function ListingDetailPage({
                           </span>
                           <Link
                             href={`/market-price?subRegion=${listing.district}&businessType=${listing.businessCategory}`}
-                            className="flex items-center gap-1 text-sm text-mint hover:underline"
+                            className="flex items-center gap-1 text-sm text-navy hover:underline"
                           >
                             상세 시세 보기
                             <Lock className="h-3.5 w-3.5" />
@@ -657,7 +657,7 @@ export default async function ListingDetailPage({
                       <tr className="bg-mint/5">
                         <td className="px-4 py-3 font-semibold text-navy">
                           {listing.title}
-                          <span className="ml-1.5 text-[10px] font-bold text-mint">
+                          <span className="ml-1.5 text-[10px] font-bold text-navy">
                             현재
                           </span>
                         </td>
@@ -685,7 +685,7 @@ export default async function ListingDetailPage({
                           <td className="px-4 py-3">
                             <Link
                               href={`/listings/${sl.id}`}
-                              className="font-medium text-gray-800 hover:text-mint"
+                              className="font-medium text-gray-800 hover:text-navy"
                             >
                               {sl.title}
                             </Link>
@@ -740,7 +740,7 @@ export default async function ListingDetailPage({
               {/* Nearby Facilities */}
               <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                 <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
-                  <Store className="h-4 w-4 text-mint" />
+                  <Store className="h-4 w-4 text-navy" />
                   <h3 className="text-sm font-semibold text-navy">
                     주변 시설
                   </h3>
@@ -762,7 +762,7 @@ export default async function ListingDetailPage({
               {/* Foot Traffic */}
               <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                 <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
-                  <Footprints className="h-4 w-4 text-mint" />
+                  <Footprints className="h-4 w-4 text-navy" />
                   <h3 className="text-sm font-semibold text-navy">
                     유동인구 (추정)
                   </h3>
@@ -836,9 +836,9 @@ export default async function ListingDetailPage({
 
             {/* Expert Consultation CTA */}
             <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <div className="bg-gradient-to-r from-mint/5 to-navy/5 px-6 py-4">
+              <div className="bg-gradient-to-r from-navy/5 to-navy/10 px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-mint" />
+                  <Users className="h-5 w-5 text-navy" />
                   <h2 className="text-lg font-bold text-navy">
                     전문가에게 물어보세요
                   </h2>
@@ -864,7 +864,7 @@ export default async function ListingDetailPage({
                           className="flex items-center justify-between px-6 py-4"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-mint/10 text-sm font-bold text-mint">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-navy/10 text-sm font-bold text-navy">
                               {expert.name.charAt(0)}
                             </div>
                             <div>
@@ -888,7 +888,7 @@ export default async function ListingDetailPage({
                           </div>
                           <Link
                             href={`/experts/${expert.id}?listingId=${listing.id}`}
-                            className="rounded-lg bg-mint px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-mint/90"
+                            className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-dark"
                           >
                             상담 신청
                           </Link>
@@ -899,7 +899,7 @@ export default async function ListingDetailPage({
                   <div className="border-t border-gray-100 px-6 py-3">
                     <Link
                       href="/experts"
-                      className="flex items-center gap-1 text-sm font-medium text-mint hover:underline"
+                      className="flex items-center gap-1 text-sm font-medium text-navy hover:underline"
                     >
                       전문가 더 보기
                       <ArrowRight className="h-4 w-4" />
@@ -913,7 +913,7 @@ export default async function ListingDetailPage({
                   </p>
                   <Link
                     href="/experts"
-                    className="mt-3 inline-flex items-center gap-1 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-mint/90"
+                    className="mt-3 inline-flex items-center gap-1 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
                   >
                     전문가 찾기
                     <ArrowRight className="h-4 w-4" />
@@ -933,7 +933,7 @@ export default async function ListingDetailPage({
                 판매자
               </p>
               <div className="mt-4 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-mint/10 text-lg font-bold text-mint">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-navy/10 text-lg font-bold text-navy">
                   {listing.seller?.name?.charAt(0) ?? "?"}
                 </div>
                 <div>
@@ -949,7 +949,7 @@ export default async function ListingDetailPage({
                 {listing.contactPhone && (
                   <a
                     href={`tel:${listing.contactPhone}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-mint px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-mint-dark"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
                   >
                     <Phone className="h-4 w-4" />
                     전화 문의
@@ -1021,7 +1021,7 @@ export default async function ListingDetailPage({
             {/* Simulator Button */}
             <Link
               href={`/simulator?listingId=${listing.id}&keyMoney=${Math.round(Number(listing.premiumFee || 0) / 10000)}&deposit=${Math.round(Number(listing.price || 0) / 10000)}&monthlyRent=${Math.round(Number(listing.monthlyRent || 0) / 10000)}&businessType=${encodeURIComponent(BUSINESS_CATEGORY_LABELS[listing.businessCategory] || "기타")}`}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-mint bg-mint/5 px-4 py-3 text-sm font-bold text-mint transition-colors hover:bg-mint/10"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-navy bg-navy/5 px-4 py-3 text-sm font-bold text-navy transition-colors hover:bg-navy/10"
             >
               <Calculator className="h-4 w-4" />이 매물로 창업 시뮬레이션
             </Link>
@@ -1052,7 +1052,7 @@ export default async function ListingDetailPage({
             <h2 className="text-xl font-bold text-navy">비슷한 매물 추천</h2>
             <Link
               href={`/listings?businessCategory=${listing.businessCategory}&city=${listing.city}`}
-              className="flex items-center gap-1 text-sm font-medium text-mint hover:underline"
+              className="flex items-center gap-1 text-sm font-medium text-navy hover:underline"
             >
               더보기
               <ArrowRight className="h-4 w-4" />
@@ -1088,7 +1088,7 @@ export default async function ListingDetailPage({
                     </span>
                   </div>
                   <div className="p-4">
-                    <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-mint">
+                    <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-navy">
                       {sl.title}
                     </p>
                     <p className="mt-1 text-xs text-gray-500">
@@ -1132,7 +1132,7 @@ function PriceRow({
     ? highlight === "orange"
       ? "text-orange-600 font-bold"
       : highlight === "mint"
-        ? "text-mint font-bold"
+        ? "text-purple font-bold"
         : "text-green-600 font-bold"
     : secondary
       ? "text-gray-600"
@@ -1172,19 +1172,21 @@ function SummaryCard({
 }: {
   label: string;
   value: string;
-  color: "mint" | "green" | "navy" | "orange";
+  color: "mint" | "green" | "navy" | "orange" | "purple";
 }) {
   const colorMap = {
     mint: "border-mint/30 bg-mint/5",
     green: "border-green-200 bg-green-50",
     navy: "border-navy/20 bg-navy/5",
     orange: "border-orange-200 bg-orange-50",
+    purple: "border-purple/30 bg-purple/5",
   };
   const textMap = {
     mint: "text-mint",
     green: "text-green-700",
     navy: "text-navy",
     orange: "text-orange-600",
+    purple: "text-purple",
   };
 
   return (
@@ -1252,7 +1254,7 @@ function TrafficRow({
       </div>
       <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100">
         <div
-          className="h-full rounded-full bg-mint transition-all"
+          className="h-full rounded-full bg-navy transition-all"
           style={{ width: `${level}%` }}
         />
       </div>

@@ -8,7 +8,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 border-b border-navy-dark bg-navy backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -18,30 +18,30 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               width={32}
               height={32}
             />
-            <span className="font-heading text-lg font-bold text-navy">권리샵</span>
+            <span className="font-heading text-lg font-bold text-white">권리샵</span>
           </Link>
 
           {/* Center: Nav Links (hidden on mobile) */}
           <nav className="hidden items-center gap-6 md:flex">
-            <Link href="/listings" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+            <Link href="/listings" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               점포 찾기
             </Link>
-            <Link href="/listings/new" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+            <Link href="/listings/new" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               점포 팔기
             </Link>
-            <Link href="/franchise" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+            <Link href="/franchise" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               프랜차이즈
             </Link>
-            <Link href="/market-price" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+            <Link href="/market-price" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               시세 정보
             </Link>
-            <Link href="/simulator" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+            <Link href="/simulator" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               창업 시뮬레이터
             </Link>
-            <Link href="/experts" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+            <Link href="/experts" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               전문가 상담
             </Link>
-            <Link href="/bbs" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+            <Link href="/bbs" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               이용가이드
             </Link>
           </nav>

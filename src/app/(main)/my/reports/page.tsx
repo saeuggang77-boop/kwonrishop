@@ -48,12 +48,12 @@ export default function MyReportsPage() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-blue-900">내 리포트 관리</h1>
+          <h1 className="text-2xl font-bold text-navy">내 리포트 관리</h1>
           <p className="mt-1 text-sm text-gray-500">구매한 권리분석 리포트를 확인하세요</p>
         </div>
         <Link
           href="/listings"
-          className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+          className="rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-dark"
         >
           매물 둘러보기
         </Link>
@@ -94,7 +94,7 @@ export default function MyReportsPage() {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-gray-900">{purchase.listing.title}</h3>
                       <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${
-                        isPremium ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+                        isPremium ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-600"
                       }`}>
                         {purchase.plan.displayName}
                       </span>
@@ -116,7 +116,7 @@ export default function MyReportsPage() {
                     {purchase.status === "COMPLETED" && (
                       <Link
                         href={`/reports/${purchase.id}`}
-                        className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                        className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-dark"
                       >
                         <Eye className="h-4 w-4" />
                         리포트 보기

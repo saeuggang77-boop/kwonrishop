@@ -42,13 +42,16 @@ export async function GET(
     ]);
 
     return Response.json({
-      data: reviews,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      reviews: reviews.map((r) => ({
+        id: r.id,
+        rating: r.rating,
+        content: r.content,
+        reviewerName: r.user.name ?? "익명",
+        createdAt: r.createdAt.toISOString(),
+      })),
+      total,
+      page,
+      hasMore: skip + reviews.length < total,
     });
   } catch (error) {
     return errorToResponse(error);

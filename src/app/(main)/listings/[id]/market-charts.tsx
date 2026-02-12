@@ -17,7 +17,7 @@ interface MarketBarChartProps {
   district: string;
 }
 
-const BAR_COLORS = ["#2EC4B6", "#0B3B57"];
+const BAR_COLORS = ["#1B3A5C", "#2D5F8A"];
 
 export function MarketBarChart({
   currentPremium,

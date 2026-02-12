@@ -127,17 +127,17 @@ export const ALLOWED_DOCUMENT_TYPES = [
 
 export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; description: string }> = {
   A: { label: "A등급", color: "text-green-700", bg: "bg-green-100", border: "border-green-300", description: "매출증빙 완료 + 권리금 적정" },
-  B: { label: "B등급", color: "text-yellow-700", bg: "bg-yellow-100", border: "border-yellow-300", description: "일부 증빙 있음" },
-  C: { label: "C등급", color: "text-orange-700", bg: "bg-orange-100", border: "border-orange-300", description: "증빙 부족" },
+  B: { label: "B등급", color: "text-blue-700", bg: "bg-blue-100", border: "border-blue-300", description: "일부 증빙 있음" },
+  C: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300", description: "증빙 부족" },
   D: { label: "D등급", color: "text-red-700", bg: "bg-red-100", border: "border-red-300", description: "주의 필요" },
 };
 
 export const FRANCHISE_CATEGORIES = ["외식", "도소매", "서비스"] as const;
 
 export const PREMIUM_AD_CONFIG: Record<string, { label: string; badge: string; color: string; bg: string; border: string; gradient: string }> = {
-  BASIC:   { label: "BASIC",   badge: "AD",      color: "text-amber-700",  bg: "bg-amber-50",    border: "border-amber-300", gradient: "from-amber-100 to-amber-50" },
-  PREMIUM: { label: "PREMIUM", badge: "PREMIUM", color: "text-purple-700", bg: "bg-purple-50",   border: "border-purple-300", gradient: "from-purple-100 to-purple-50" },
-  VIP:     { label: "VIP",     badge: "VIP",     color: "text-yellow-800", bg: "bg-yellow-50",   border: "border-yellow-400", gradient: "from-yellow-200 via-amber-100 to-yellow-50" },
+  BASIC:   { label: "BASIC",   badge: "AD",      color: "text-gray-600",   bg: "bg-gray-50",     border: "border-gray-300",  gradient: "from-gray-100 to-gray-50" },
+  PREMIUM: { label: "PREMIUM", badge: "PREMIUM", color: "text-blue-800",   bg: "bg-blue-50",     border: "border-blue-300",  gradient: "from-blue-100 to-blue-50" },
+  VIP:     { label: "VIP",     badge: "VIP",     color: "text-amber-800",  bg: "bg-amber-50",    border: "border-amber-400", gradient: "from-amber-200 via-amber-100 to-amber-50" },
 };
 
 export const PREMIUM_AD_PLANS = [

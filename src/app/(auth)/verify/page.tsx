@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function VerifyPage() {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-      <Mail className="mx-auto h-12 w-12 text-mint" />
+      <Mail className="mx-auto h-12 w-12 text-navy" />
       <h1 className="mt-4 font-heading text-2xl font-bold text-navy">이메일 인증</h1>
       <p className="mt-2 text-sm text-gray-500">
         가입 시 입력한 이메일로 인증 링크를 발송했습니다.
@@ -20,7 +20,7 @@ export default function VerifyPage() {
       <div className="mt-6 space-y-3">
         <Link
           href="/login"
-          className="block rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+          className="block rounded-lg bg-navy px-6 py-3 text-sm font-medium text-white hover:bg-navy-dark"
         >
           로그인 페이지로
         </Link>

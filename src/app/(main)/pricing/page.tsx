@@ -210,7 +210,7 @@ export default function PricingPage() {
               "mt-6 w-full rounded-lg border px-4 py-3 text-sm font-medium transition-all",
               isCurrentPlan("FREE")
                 ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400"
-                : "border-mint text-mint hover:bg-mint/5 active:scale-[0.97]"
+                : "border-accent text-accent hover:bg-accent/5 active:scale-[0.97]"
             )}
           >
             {getButtonLabel("FREE")}
@@ -286,7 +286,7 @@ export default function PricingPage() {
               "mt-6 w-full rounded-lg px-4 py-3 text-sm font-medium transition-all",
               isCurrentPlan("PRO")
                 ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                : "bg-mint text-white hover:bg-mint-dark active:scale-[0.97]"
+                : "bg-accent text-white hover:bg-accent-dark active:scale-[0.97]"
             )}
           >
             {getButtonLabel("PRO")}
@@ -362,7 +362,7 @@ export default function PricingPage() {
               "mt-6 w-full rounded-lg px-4 py-3 text-sm font-medium transition-all",
               isCurrentPlan("EXPERT")
                 ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                : "bg-navy text-white hover:bg-navy-dark active:scale-[0.97]"
+                : "bg-accent text-white hover:bg-accent-dark active:scale-[0.97]"
             )}
           >
             {getButtonLabel("EXPERT")}
@@ -504,9 +504,7 @@ export default function PricingPage() {
             className={cn(
               "mt-6 w-full rounded-lg py-3 text-sm font-medium transition-all",
               agreedToTerms
-                ? selectedPlan === "PRO"
-                  ? "bg-mint text-white hover:bg-mint-dark active:scale-[0.97]"
-                  : "bg-navy text-white hover:bg-navy-dark active:scale-[0.97]"
+                ? "bg-accent text-white hover:bg-accent-dark active:scale-[0.97]"
                 : "cursor-not-allowed bg-gray-200 text-gray-400"
             )}
           >

@@ -53,7 +53,7 @@ export default async function PremiumManagePage() {
         ) : (
           <div className="py-8 text-center">
             <p className="text-gray-500">활성 구독이 없습니다.</p>
-            <Link href="/premium/checkout" className="mt-4 inline-block rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark">
+            <Link href="/premium/checkout" className="mt-4 inline-block rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:bg-accent-dark">
               프리미엄 구독하기
             </Link>
           </div>

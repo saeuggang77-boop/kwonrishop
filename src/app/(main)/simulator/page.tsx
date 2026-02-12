@@ -132,7 +132,7 @@ const INDUSTRY_AVG: Record<string, { avgRevenue: number; avgProfitRate: number }
   "기타": { avgRevenue: 2500, avgProfitRate: 20 },
 };
 
-const PIE_COLORS = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#2EC4B6"];
+const PIE_COLORS = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#1B3A5C"];
 
 const INITIAL_STATE: SimulatorState = {
   businessType: "",
@@ -442,7 +442,7 @@ export default function SimulatorPage() {
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 예상 면적:{" "}
-                <span className="font-bold text-mint">{state.area}평</span>
+                <span className="font-bold text-navy">{state.area}평</span>
               </label>
               <input
                 type="range"
@@ -450,7 +450,7 @@ export default function SimulatorPage() {
                 max={100}
                 value={state.area}
                 onChange={(e) => update("area", Number(e.target.value))}
-                className="w-full accent-[#2EC4B6]"
+                className="w-full accent-[#1B3A5C]"
               />
               <div className="mt-1 flex justify-between text-xs text-gray-400">
                 <span>10평</span>
@@ -556,7 +556,7 @@ export default function SimulatorPage() {
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     일 평균 고객수:{" "}
-                    <span className="font-bold text-mint">
+                    <span className="font-bold text-purple-600">
                       {fmt(state.dailyCustomers)}명
                     </span>
                   </label>
@@ -568,7 +568,7 @@ export default function SimulatorPage() {
                     onChange={(e) =>
                       update("dailyCustomers", Number(e.target.value))
                     }
-                    className="w-full accent-[#2EC4B6]"
+                    className="w-full accent-[#1B3A5C]"
                   />
                   <div className="mt-1 flex justify-between text-xs text-gray-400">
                     <span>10명</span>
@@ -580,7 +580,7 @@ export default function SimulatorPage() {
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     객단가:{" "}
-                    <span className="font-bold text-mint">
+                    <span className="font-bold text-purple-600">
                       {fmt(state.avgSpending)}원
                     </span>
                   </label>
@@ -593,7 +593,7 @@ export default function SimulatorPage() {
                     onChange={(e) =>
                       update("avgSpending", Number(e.target.value))
                     }
-                    className="w-full accent-[#2EC4B6]"
+                    className="w-full accent-[#1B3A5C]"
                   />
                   <div className="mt-1 flex justify-between text-xs text-gray-400">
                     <span>5,000원</span>
@@ -610,9 +610,9 @@ export default function SimulatorPage() {
                 />
 
                 {/* 예상 월 매출 */}
-                <div className="rounded-lg bg-mint/10 px-4 py-3 text-center">
+                <div className="rounded-lg bg-purple-50 px-4 py-3 text-center">
                   <span className="text-sm text-gray-600">예상 월 매출 </span>
-                  <span className="text-xl font-bold text-mint">
+                  <span className="text-xl font-bold text-purple-600">
                     {fmt(monthlyRevenue)} 만원
                   </span>
                 </div>
@@ -777,14 +777,14 @@ export default function SimulatorPage() {
                       <Line
                         type="monotone"
                         dataKey="낙관"
-                        stroke="#2EC4B6"
+                        stroke="#1B3A5C"
                         strokeWidth={2}
                         dot={{ r: 3 }}
                       />
                       <Line
                         type="monotone"
                         dataKey="기본"
-                        stroke="#0B3B57"
+                        stroke="#3B6B8A"
                         strokeWidth={2}
                         dot={{ r: 3 }}
                       />
@@ -815,13 +815,13 @@ export default function SimulatorPage() {
                       <Legend />
                       <Bar
                         dataKey="내매출"
-                        fill="#2EC4B6"
+                        fill="#1B3A5C"
                         name="내 매출"
                         radius={[4, 4, 0, 0]}
                       />
                       <Bar
                         dataKey="업종평균"
-                        fill="#0B3B57"
+                        fill="#3B6B8A"
                         name="업종 평균 매출"
                         radius={[4, 4, 0, 0]}
                       />
@@ -942,7 +942,7 @@ export default function SimulatorPage() {
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="flex items-center gap-2 rounded-lg bg-mint px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-mint/90"
+                  className="flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
                 >
                   <Save className="h-4 w-4" />
                   시뮬레이션 저장

@@ -232,7 +232,7 @@ function PremiumListingAdContent() {
         <button
           onClick={handlePayment}
           disabled={isLoading}
-          className="mt-6 w-full rounded-lg bg-mint py-3.5 text-lg font-medium text-white transition-colors hover:bg-mint-dark disabled:opacity-50"
+          className="mt-6 w-full rounded-lg bg-accent py-3.5 text-lg font-medium text-white transition-colors hover:bg-accent-dark disabled:opacity-50"
         >
           {isLoading ? "결제 준비 중..." : isExtend ? "광고 연장하기" : "광고 결제하기"}
         </button>

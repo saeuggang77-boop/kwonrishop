@@ -198,7 +198,7 @@ export default function RegisterPage() {
               onClick={() => updateField("role", "BUYER")}
               className={`rounded-lg border px-4 py-3 text-sm font-medium transition-all duration-150 ${
                 form.role === "BUYER"
-                  ? "border-mint bg-mint/5 text-mint"
+                  ? "border-navy bg-navy/5 text-navy"
                   : "border-gray-300 text-gray-500 hover:border-gray-400"
               }`}
             >
@@ -209,7 +209,7 @@ export default function RegisterPage() {
               onClick={() => updateField("role", "SELLER")}
               className={`rounded-lg border px-4 py-3 text-sm font-medium transition-all duration-150 ${
                 form.role === "SELLER"
-                  ? "border-mint bg-mint/5 text-mint"
+                  ? "border-navy bg-navy/5 text-navy"
                   : "border-gray-300 text-gray-500 hover:border-gray-400"
               }`}
             >
@@ -225,10 +225,10 @@ export default function RegisterPage() {
               type="checkbox"
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-gray-300 accent-mint"
+              className="mt-1 h-4 w-4 rounded border-gray-300 accent-navy"
             />
             <span className="text-sm text-gray-700">
-              <Link href="/legal/terms" target="_blank" className="font-medium text-mint hover:underline">
+              <Link href="/legal/terms" target="_blank" className="font-medium text-navy hover:underline">
                 이용약관
               </Link>
               에 동의합니다 (필수)
@@ -240,10 +240,10 @@ export default function RegisterPage() {
               type="checkbox"
               checked={privacyAccepted}
               onChange={(e) => setPrivacyAccepted(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-gray-300 accent-mint"
+              className="mt-1 h-4 w-4 rounded border-gray-300 accent-navy"
             />
             <span className="text-sm text-gray-700">
-              <Link href="/legal/privacy" target="_blank" className="font-medium text-mint hover:underline">
+              <Link href="/legal/privacy" target="_blank" className="font-medium text-navy hover:underline">
                 개인정보 수집·이용
               </Link>
               에 동의합니다 (필수)
@@ -251,14 +251,14 @@ export default function RegisterPage() {
           </label>
         </div>
 
-        <Button type="submit" loading={isLoading} size="lg" className="mt-2 w-full">
+        <Button type="submit" loading={isLoading} size="lg" className="mt-2 w-full bg-accent hover:bg-accent-dark">
           회원가입
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-500">
         이미 계정이 있으신가요?{" "}
-        <Link href="/login" className="font-medium text-mint hover:underline">
+        <Link href="/login" className="font-medium text-navy hover:underline">
           로그인
         </Link>
       </p>

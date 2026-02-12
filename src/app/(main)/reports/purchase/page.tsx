@@ -55,7 +55,7 @@ function ReportPurchaseContent() {
       <button
         onClick={handlePurchase}
         disabled={isLoading || !listingId}
-        className="mt-8 w-full rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark disabled:opacity-50"
+        className="mt-8 w-full rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:bg-accent-dark disabled:opacity-50"
       >
         {isLoading ? "처리 중..." : "결제하기"}
       </button>

@@ -60,7 +60,7 @@ export default function DashboardPremiumPage() {
         </div>
         <Link
           href="/premium/listing-ad"
-          className="flex items-center gap-2 rounded-lg bg-mint px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-mint-dark"
+          className="flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
         >
           <Plus className="h-4 w-4" />
           새 광고 신청
@@ -119,7 +119,7 @@ export default function DashboardPremiumPage() {
             <p className="mt-3 text-sm font-medium text-gray-500">등록된 프리미엄 광고가 없습니다</p>
             <Link
               href="/premium/listing-ad"
-              className="mt-4 inline-block rounded-lg bg-mint px-6 py-2 text-sm font-medium text-white hover:bg-mint-dark"
+              className="mt-4 inline-block rounded-lg bg-accent px-6 py-2 text-sm font-medium text-white hover:bg-accent-dark"
             >
               첫 광고 시작하기
             </Link>

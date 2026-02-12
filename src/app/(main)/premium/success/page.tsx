@@ -69,7 +69,7 @@ function PremiumSuccessContent() {
         <div className="mt-8">
           <Link
             href="/premium/checkout"
-            className="rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+            className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:bg-accent-dark"
           >
             다시 시도
           </Link>
@@ -86,7 +86,7 @@ function PremiumSuccessContent() {
       <div className="mt-8 flex justify-center gap-3">
         <Link
           href="/listings"
-          className="rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+          className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:bg-accent-dark"
         >
           매물 둘러보기
         </Link>

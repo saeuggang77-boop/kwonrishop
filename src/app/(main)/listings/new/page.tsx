@@ -403,7 +403,7 @@ export default function NewListingPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isLoading}
-            className="flex-[2] rounded-xl bg-gradient-to-r from-purple to-purple-light py-3.5 text-base font-bold text-white shadow-lg shadow-purple/25 transition-all duration-150 hover:shadow-xl hover:shadow-purple/30 active:scale-[0.98] disabled:opacity-50"
+            className="flex-[2] rounded-xl bg-[#F59E0B] py-3.5 text-base font-bold text-white shadow-lg shadow-[#F59E0B]/25 transition-all duration-150 hover:bg-[#D97706] hover:shadow-xl hover:shadow-[#F59E0B]/30 active:scale-[0.98] disabled:opacity-50"
           >
             {isLoading ? "등록 중..." : "매물 등록 완료"}
           </button>

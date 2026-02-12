@@ -69,7 +69,7 @@ function ListingAdSuccessContent() {
         <div className="mt-8">
           <Link
             href="/premium/listing-ad"
-            className="rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+            className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:bg-accent-dark"
           >
             다시 시도
           </Link>
@@ -89,7 +89,7 @@ function ListingAdSuccessContent() {
         {listingId && (
           <Link
             href={`/listings/${listingId}`}
-            className="rounded-lg bg-mint px-6 py-3 text-sm font-medium text-white hover:bg-mint-dark"
+            className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:bg-accent-dark"
           >
             매물 보기
           </Link>
