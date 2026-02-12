@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend,
 } from "recharts";
-import { Search, Lock, TrendingUp, Wallet, Building, DollarSign, BarChart3 } from "lucide-react";
+import { Search, TrendingUp, Wallet, Building, DollarSign, BarChart3 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { BUSINESS_CATEGORY_LABELS, REGIONS } from "@/lib/utils/constants";
 
@@ -21,12 +20,6 @@ interface MarketPriceData {
   avgKeyMoney: number;
   avgMonthlySales: number;
   sampleCount: number;
-}
-
-interface SessionUser {
-  id: string;
-  name?: string | null;
-  subscriptionTier: string;
 }
 
 interface MyListing {
@@ -48,9 +41,6 @@ export default function MarketPricePage() {
   const { data: session } = useSession();
   const [myListings, setMyListings] = useState<MyListing[]>([]);
   const [selectedListingId, setSelectedListingId] = useState("");
-
-  const user = session?.user as SessionUser | undefined;
-  const isPro = user && user.subscriptionTier !== "FREE";
 
   useEffect(() => {
     if (!session?.user) return;
@@ -150,7 +140,7 @@ export default function MarketPricePage() {
               value={region}
               onChange={(e) => { setRegion(e.target.value); setSubRegion(""); }}
               aria-label="시/도 선택"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
             >
               {Object.keys(REGIONS).map((r) => (
                 <option key={r} value={r}>{r}</option>
@@ -163,7 +153,7 @@ export default function MarketPricePage() {
               value={subRegion}
               onChange={(e) => setSubRegion(e.target.value)}
               aria-label="구/군 선택"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
             >
               <option value="">전체</option>
               {(REGIONS[region] ?? []).map((d) => (
@@ -177,7 +167,7 @@ export default function MarketPricePage() {
               value={businessType}
               onChange={(e) => setBusinessType(e.target.value)}
               aria-label="업종 선택"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
             >
               <option value="">전체 업종</option>
               {Object.entries(BUSINESS_CATEGORY_LABELS).map(([k, v]) => (
@@ -188,7 +178,7 @@ export default function MarketPricePage() {
           <div className="flex items-end">
             <button
               onClick={doSearch}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-mint px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-mint-dark"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-navy px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy-dark"
             >
               <Search className="h-4 w-4" />
               검색
@@ -197,29 +187,12 @@ export default function MarketPricePage() {
         </div>
       </div>
 
-      {/* Pro Lock Overlay Wrapper */}
-      <div className="relative">
-        {/* Blur overlay for non-pro */}
-        {!isPro && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm">
-            <Lock className="h-8 w-8 text-gray-400" />
-            <p className="mt-2 text-sm font-medium text-gray-600">
-              시세 비교 위젯은 PRO 이상 플랜에서 이용 가능합니다
-            </p>
-            <Link
-              href="/pricing"
-              className="mt-3 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint/90"
-            >
-              업그레이드
-            </Link>
-          </div>
-        )}
-
-        {/* Content (blurred for non-pro) */}
-        <div className={!isPro ? "pointer-events-none select-none" : ""}>
+      {/* Market Price Content */}
+      <div>
+        <div>
           {loading ? (
             <div className="flex h-64 items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-mint border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-navy border-t-transparent" />
             </div>
           ) : !avg ? (
             <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
@@ -286,7 +259,7 @@ export default function MarketPricePage() {
                     </thead>
                     <tbody>
                       {nearbyData.map((d) => (
-                        <tr key={d.id} className={`border-b border-gray-100 ${d.subRegion === subRegion ? "bg-mint/5 font-medium" : ""}`}>
+                        <tr key={d.id} className={`border-b border-gray-100 ${d.subRegion === subRegion ? "bg-navy/5 font-medium" : ""}`}>
                           <td className="px-3 py-2.5">{d.subRegion}</td>
                           <td className="px-3 py-2.5">{BUSINESS_CATEGORY_LABELS[d.businessType] ?? d.businessType}</td>
                           <td className="px-3 py-2.5 text-right font-medium text-orange-600">{formatKRW(d.avgKeyMoney)}</td>
@@ -301,14 +274,14 @@ export default function MarketPricePage() {
               </div>
 
               {/* My Listing Comparison */}
-              {user && myListings.length > 0 && (
+              {session?.user && myListings.length > 0 && (
                 <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                   <h3 className="mb-4 text-sm font-bold text-navy">내 매물과 비교</h3>
                   <select
                     value={selectedListingId}
                     onChange={(e) => setSelectedListingId(e.target.value)}
                     aria-label="내 매물 선택"
-                    className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+                    className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
                   >
                     <option value="">매물을 선택하세요</option>
                     {myListings.map((l) => (
@@ -338,7 +311,7 @@ export default function MarketPricePage() {
                       </div>
                       <div className="relative h-6 overflow-hidden rounded-full bg-gray-200">
                         <div
-                          className="h-full rounded-full bg-mint"
+                          className="h-full rounded-full bg-navy"
                           style={{ width: `${Math.min(100, (myKeyMoney / (regionAvg * 1.5)) * 100)}%` }}
                         />
                         <div

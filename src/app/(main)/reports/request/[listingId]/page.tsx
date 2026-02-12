@@ -191,7 +191,7 @@ export default function ReportRequestPage({
     <div className="mx-auto max-w-2xl px-4 py-8">
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-blue-900">권리분석 리포트 신청</h1>
+        <h1 className="text-2xl font-bold text-blue-900">권리진단서 발급 신청</h1>
         <p className="mt-2 text-sm text-gray-500">정확한 분석을 위해 매물 정보를 입력해 주세요</p>
       </div>
 
@@ -218,7 +218,7 @@ export default function ReportRequestPage({
               <InfoRow label="주소" value={listing.address} />
               <InfoRow label="업종" value={BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory} />
               <p className="mt-4 rounded-lg bg-blue-50 p-4 text-sm text-blue-700">
-                아래 매물 정보를 기반으로 권리분석을 진행합니다. 정보가 다를 경우 다음 단계에서 수정할 수 있습니다.
+                아래 매물 정보를 기반으로 권리진단서를 발급합니다. 정보가 다를 경우 다음 단계에서 수정할 수 있습니다.
               </p>
             </div>
           </StepWrapper>
@@ -483,10 +483,10 @@ export default function ReportRequestPage({
                 disabled={!selectedPlanId || submitting}
                 className="w-full rounded-xl bg-blue-600 py-4 text-lg font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {submitting ? "처리 중..." : "분석 리포트 결제하기"}
+                {submitting ? "처리 중..." : "권리진단서 발급받기"}
               </button>
               <p className="text-center text-xs text-gray-500">
-                결제 완료 후 즉시 분석 리포트가 제공됩니다.
+                결제 완료 후 즉시 권리진단서가 발급됩니다.
               </p>
             </div>
           </StepWrapper>

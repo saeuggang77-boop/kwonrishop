@@ -48,7 +48,7 @@ export function ViolationActions({
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="처리 사유를 입력하세요..."
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
         />
       </div>
       <button

@@ -43,7 +43,7 @@ async function main() {
       phone: "010-1234-5678",
       businessName: "강남부동산",
       businessNumber: "123-45-67890",
-      subscriptionTier: "PRO",
+      subscriptionTier: "FREE",
     },
   });
 
@@ -362,13 +362,23 @@ async function main() {
   }
   console.log(`  Listings: ${createdListings.length}`);
 
+  // Set half of listings to isPhonePublic: false
+  for (let i = 0; i < createdListings.length; i++) {
+    if (i % 2 === 1) {
+      await prisma.listing.update({
+        where: { id: createdListings[i].id },
+        data: { isPhonePublic: false },
+      });
+    }
+  }
+  console.log("  Listings isPhonePublic:false: " + Math.floor(createdListings.length / 2));
+
   // ──────────────────────────────────────────────
   // 4b. Premium Plans & Premium Listings
   // ──────────────────────────────────────────────
   const premiumPlans = [
-    { id: "plan-basic", name: "BASIC" as const, displayName: "BASIC", price: BigInt(100_000), durationDays: 30, features: ["매물 목록 상단 노출", "BASIC 배지 표시", "일반 테두리 하이라이트"], sortOrder: 0 },
-    { id: "plan-premium", name: "PREMIUM" as const, displayName: "PREMIUM", price: BigInt(200_000), durationDays: 30, features: ["매물 목록 상단 노출", "PREMIUM 배지 표시", "보라색 프리미엄 테두리", "홈페이지 추천 섹션 노출"], sortOrder: 1 },
-    { id: "plan-vip", name: "VIP" as const, displayName: "VIP", price: BigInt(300_000), durationDays: 30, features: ["매물 목록 최상단 노출", "VIP 골드 배지", "골드 프리미엄 테두리", "홈페이지 추천 섹션 최우선", "상세페이지 VIP 전용 헤더"], sortOrder: 2 },
+    { id: "plan-premium", name: "PREMIUM" as const, displayName: "PREMIUM", price: BigInt(200_000), durationDays: 30, features: ["매물 목록 상단 노출", "PREMIUM 배지 표시", "프리미엄 테두리 하이라이트", "홈페이지 추천 섹션 노출"], sortOrder: 0 },
+    { id: "plan-vip", name: "VIP" as const, displayName: "VIP", price: BigInt(300_000), durationDays: 30, features: ["매물 목록 최상단 노출", "VIP 골드 배지", "골드 프리미엄 테두리", "홈페이지 추천 섹션 최우선", "상세페이지 VIP 전용 헤더"], sortOrder: 1 },
   ];
 
   for (const plan of premiumPlans) {
@@ -378,13 +388,12 @@ async function main() {
       create: plan,
     });
   }
-  console.log("  Premium plans: 3");
+  console.log("  Premium plans: 2");
 
-  // Set premium status on sample listings: 강남역 카페 → VIP, 홍대 치킨호프 → PREMIUM, 잠실 한식당 → BASIC
+  // Set premium status on sample listings: 강남역 카페 → VIP, 홍대 치킨호프 → PREMIUM
   const premiumMappings = [
-    { listingIdx: 0, planId: "plan-vip", rank: 3 },
-    { listingIdx: 1, planId: "plan-premium", rank: 2 },
-    { listingIdx: 2, planId: "plan-basic", rank: 1 },
+    { listingIdx: 0, planId: "plan-vip", rank: 2 },
+    { listingIdx: 1, planId: "plan-premium", rank: 1 },
   ];
 
   for (const mapping of premiumMappings) {
@@ -410,31 +419,39 @@ async function main() {
       },
     });
   }
-  console.log("  Premium listings: 3");
+  console.log("  Premium listings: 2");
 
   // ──────────────────────────────────────────────
-  // 5. Sample Inquiries
+  // 5. Sample Inquiries (with status)
   // ──────────────────────────────────────────────
-  const inquiryMessages = [
-    "안녕하세요, 이 매물에 대해 자세한 정보 부탁드립니다. 실제 매출 자료 확인 가능한가요?",
-    "권리금 협상이 가능한지 궁금합니다. 방문 상담 가능한 시간이 있을까요?",
-    "현재 운영 중인 직원 인수도 가능한지 궁금합니다.",
+  const inquiryData = [
+    { idx: 0, message: "안녕하세요, 이 매물에 대해 자세한 정보 부탁드립니다. 실제 매출 자료 확인 가능한가요?", status: "PENDING" as const, senderName: "이창업", senderPhone: "010-9876-5432" },
+    { idx: 1, message: "권리금 협상이 가능한지 궁금합니다. 방문 상담 가능한 시간이 있을까요?", status: "PENDING" as const, senderName: "이창업" },
+    { idx: 2, message: "현재 운영 중인 직원 인수도 가능한지 궁금합니다.", status: "PENDING" as const },
+    { idx: 0, message: "매출 증빙 자료를 확인했습니다. 현장 방문 일정을 잡고 싶습니다.", status: "REPLIED" as const, senderName: "이창업", senderPhone: "010-9876-5432" },
+    { idx: 1, message: "가격 조건이 맞지 않아 다른 매물을 알아보겠습니다. 감사합니다.", status: "CANCELLED" as const, senderName: "이창업" },
   ];
 
-  for (let i = 0; i < 3 && i < createdListings.length; i++) {
+  for (let i = 0; i < inquiryData.length; i++) {
+    const inq = inquiryData[i];
+    if (!createdListings[inq.idx]) continue;
     await prisma.inquiry.upsert({
       where: { id: `seed-inquiry-${i}` },
       update: {},
       create: {
         id: `seed-inquiry-${i}`,
-        listingId: createdListings[i].id,
+        listingId: createdListings[inq.idx].id,
         senderId: buyer.id,
         receiverId: seller.id,
-        message: inquiryMessages[i],
+        message: inq.message,
+        status: inq.status,
+        senderName: inq.senderName ?? null,
+        senderPhone: inq.senderPhone ?? null,
+        isRead: inq.status !== "PENDING",
       },
     });
   }
-  console.log("  Inquiries: 3");
+  console.log("  Inquiries: 5 (PENDING×3, REPLIED×1, CANCELLED×1)");
 
   // ──────────────────────────────────────────────
   // 6. Sample Notifications
@@ -514,7 +531,7 @@ async function main() {
   const banners = [
     {
       title: "권리샵 그랜드 오픈",
-      imageUrl: "gradient:linear-gradient(135deg, #2EC4B6 0%, #0B3B57 100%)",
+      imageUrl: "gradient:linear-gradient(135deg, #1B3A5C 0%, #0B3B57 100%)",
       linkUrl: "/listings",
       sortOrder: 0,
     },
@@ -585,10 +602,10 @@ async function main() {
         { text: "매물 등록 (월 3건)", included: true },
         { text: "권리 안전도 등급 확인", included: true },
         { text: "기본 매물 비교 (2개)", included: true },
+        { text: "권리진단서 샘플 미리보기", included: true },
         { text: "시세 비교 위젯", included: false },
         { text: "창업 시뮬레이터", included: false },
-        { text: "권리분석 리포트", included: false },
-        { text: "전문가 상담 무료", included: false },
+        { text: "권리진단서 발급", included: false },
       ],
       sortOrder: 0,
     },
@@ -596,34 +613,34 @@ async function main() {
       id: "subplan-pro",
       name: "PRO" as const,
       displayName: "프로",
-      price: 29_900,
-      yearlyPrice: 287_040,
+      price: 9_900,
+      yearlyPrice: 95_040,
       features: [
         { text: "매물 검색 & 조회", included: true },
-        { text: "매물 등록 무제한", included: true },
+        { text: "매물 등록 (월 10건)", included: true },
         { text: "권리 안전도 등급 확인", included: true },
         { text: "매물 비교 (최대 4개)", included: true },
         { text: "시세 비교 위젯 전체 이용", included: true },
         { text: "창업 시뮬레이터 전체 이용", included: true },
-        { text: "BASIC 리포트 1회/월 무료", included: true },
+        { text: "권리진단서 BASIC 1회/월 무료", included: true },
         { text: "BASIC 광고 1회/월 무료", included: true },
       ],
       sortOrder: 1,
     },
     {
-      id: "subplan-expert",
-      name: "EXPERT" as const,
-      displayName: "전문가",
-      price: 59_900,
-      yearlyPrice: 575_040,
+      id: "subplan-premium",
+      name: "PREMIUM" as const,
+      displayName: "프리미엄",
+      price: 29_900,
+      yearlyPrice: 287_040,
       features: [
         { text: "PRO 전체 포함", included: true },
-        { text: "PREMIUM 리포트 2회/월 무료", included: true },
+        { text: "매물 등록 무제한", included: true },
+        { text: "권리진단서 PREMIUM 2회/월 무료", included: true },
         { text: "PREMIUM 광고 1회/월 무료", included: true },
         { text: "전문가 상담 월 2회 무료", included: true },
+        { text: "안심거래 배지 자동 부여", included: true },
         { text: "시뮬레이터 PDF 다운로드", included: true },
-        { text: "전담 매니저 배정 (준비중)", included: true },
-        { text: "API 연동 (준비중)", included: true },
       ],
       sortOrder: 2,
     },
@@ -632,8 +649,8 @@ async function main() {
   for (const plan of subscriptionPlans) {
     await prisma.subscriptionPlan.upsert({
       where: { id: plan.id },
-      update: {},
-      create: plan,
+      update: { isActive: false },
+      create: { ...plan, isActive: false },
     });
   }
   console.log("  Subscription plans: 3");
@@ -1231,12 +1248,14 @@ async function main() {
   }
   console.log(`  Expert reviews: ${reviewCount} (with matching inquiries)`);
 
-  // Update seller to PRO membership for testing
-  await prisma.user.update({
-    where: { email: "seller@test.com" },
-    data: { subscriptionTier: "PRO" },
-  });
-  console.log("  seller@test.com → PRO member");
+  // Set hasDiagnosisBadge on first 2 listings
+  for (let i = 0; i < 2 && i < createdListings.length; i++) {
+    await prisma.listing.update({
+      where: { id: createdListings[i].id },
+      data: { hasDiagnosisBadge: true },
+    });
+  }
+  console.log("  hasDiagnosisBadge: first 2 listings");
 
   console.log("\nSeeding complete!");
   console.log("─────────────────────────────────");

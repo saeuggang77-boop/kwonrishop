@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
-import { Scale, ArrowLeft, X, MapPin, Info } from "lucide-react";
+import { Scale, ArrowLeft, X, MapPin } from "lucide-react";
 import { useCompare, type CompareItem } from "@/lib/compare-context";
 import { formatKRW } from "@/lib/utils/format";
 import {
@@ -72,14 +71,9 @@ function BarChart({ items, getter, label }: { items: CompareItem[]; getter: (i: 
 
 export default function ComparePage() {
   const { items, remove, clear } = useCompare();
-  const { data: session } = useSession();
   const router = useRouter();
 
-  const tier = session?.user?.subscriptionTier ?? "FREE";
-  const isPro = tier === "PRO" || tier === "EXPERT";
-  const maxCompare = isPro ? 4 : 2;
-  const displayItems = items.slice(0, maxCompare);
-  const hasExcessItems = items.length > maxCompare;
+  const displayItems = items;
 
   if (items.length === 0) {
     return (
@@ -151,19 +145,6 @@ export default function ComparePage() {
           전체 삭제
         </button>
       </div>
-
-      {/* Tier limit banner */}
-      {hasExcessItems && !isPro && (
-        <div className="mt-8 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-          <Info className="h-5 w-5 shrink-0 text-amber-600" />
-          <p className="text-sm text-amber-800">
-            FREE 플랜에서는 최대 2개까지 비교할 수 있습니다.{" "}
-            <Link href="/pricing" className="font-medium text-navy underline hover:text-navy/80">
-              PRO 플랜에서 최대 4개까지 비교 가능
-            </Link>
-          </p>
-        </div>
-      )}
 
       {/* Compare content */}
       <div className="relative mt-8">

@@ -55,57 +55,77 @@ export const FRAUD_SEVERITY_LABELS: Record<string, string> = {
   CRITICAL: "심각",
 };
 
+// ── 구독 시스템 (비활성화 — 레거시 참조용) ──
 export const SUBSCRIPTION_TIER_LABELS: Record<string, string> = {
   FREE: "무료",
   PRO: "프로",
-  EXPERT: "전문가",
+  PREMIUM: "프리미엄",
 };
 
-export const SUBSCRIPTION_PRICES: Record<string, number> = {
-  FREE: 0,
-  PRO: 29_900,
-  EXPERT: 59_900,
-};
+// ── 매도자 광고 요금 ──
+export const SELLER_AD_PLANS = [
+  {
+    tier: "PREMIUM" as const,
+    label: "프리미엄 광고",
+    price: 200_000,
+    priceWithVat: 220_000,
+    days: 30,
+    features: [
+      "매물 목록 상위 노출",
+      "\"프리미엄\" 배지 표시",
+      "그린 테두리 카드 디자인",
+      "기본 조회수 통계",
+    ],
+  },
+  {
+    tier: "VIP" as const,
+    label: "VIP 광고",
+    price: 300_000,
+    priceWithVat: 330_000,
+    days: 30,
+    recommended: true,
+    features: [
+      "매물 목록 최상단 고정",
+      "홈페이지 프리미엄 캐러셀 노출",
+      "\"VIP\" 배지 + 골드 테두리 카드",
+      "권리진단서 BASIC 1회 무료 포함",
+      "안전도 등급 상세 표시",
+      "상세 조회수 통계",
+      "\"안심거래\" 배지 부여",
+    ],
+  },
+];
 
-export const SUBSCRIPTION_YEARLY_PRICES: Record<string, number> = {
-  FREE: 0,
-  PRO: 287_040,   // 29900 * 12 * 0.8
-  EXPERT: 575_040, // 59900 * 12 * 0.8
-};
+// ── 매수자 권리진단서 요금 (건별 판매) ──
+export const REPORT_PLANS = [
+  {
+    tier: "BASIC" as const,
+    label: "BASIC 권리진단서",
+    price: 20_000,
+    priceWithVat: 22_000,
+    features: [
+      "권리금 적정성 평가",
+      "지역/업종 평균 비교",
+      "권리 위험요소 기본 분석",
+      "종합 위험 등급 판정",
+    ],
+  },
+  {
+    tier: "PREMIUM" as const,
+    label: "PREMIUM 권리진단서",
+    price: 40_000,
+    priceWithVat: 44_000,
+    features: [
+      "BASIC 전체 항목 포함",
+      "임대차 계약 체크리스트 20항목",
+      "상세 위험요소 분석",
+      "PDF 리포트 다운로드",
+    ],
+  },
+];
 
-export const SUBSCRIPTION_PLAN_FEATURES: Record<string, { text: string; included: boolean }[]> = {
-  FREE: [
-    { text: "매물 검색 & 조회", included: true },
-    { text: "매물 등록 (월 3건)", included: true },
-    { text: "권리 안전도 등급 확인", included: true },
-    { text: "기본 매물 비교 (2개)", included: true },
-    { text: "시세 비교 위젯", included: false },
-    { text: "창업 시뮬레이터", included: false },
-    { text: "권리분석 리포트", included: false },
-    { text: "전문가 상담 무료", included: false },
-  ],
-  PRO: [
-    { text: "매물 검색 & 조회", included: true },
-    { text: "매물 등록 무제한", included: true },
-    { text: "권리 안전도 등급 확인", included: true },
-    { text: "매물 비교 (최대 4개)", included: true },
-    { text: "시세 비교 위젯 전체 이용", included: true },
-    { text: "창업 시뮬레이터 전체 이용", included: true },
-    { text: "BASIC 리포트 1회/월 무료", included: true },
-    { text: "BASIC 광고 1회/월 무료", included: true },
-  ],
-  EXPERT: [
-    { text: "PRO 전체 포함", included: true },
-    { text: "PREMIUM 리포트 2회/월 무료", included: true },
-    { text: "PREMIUM 광고 1회/월 무료", included: true },
-    { text: "전문가 상담 월 2회 무료", included: true },
-    { text: "시뮬레이터 PDF 다운로드", included: true },
-    { text: "전담 매니저 배정 (준비중)", included: true },
-    { text: "API 연동 (준비중)", included: true },
-  ],
-};
-
-export const DEEP_REPORT_PRICE = 39_000;
+// ── 매도자 무료 등록 제한 ──
+export const FREE_LISTING_LIMIT_PER_MONTH = 2;
 
 export const MAX_IMAGES_PER_LISTING = 20;
 export const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
@@ -135,15 +155,20 @@ export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string;
 export const FRANCHISE_CATEGORIES = ["외식", "도소매", "서비스"] as const;
 
 export const PREMIUM_AD_CONFIG: Record<string, { label: string; badge: string; color: string; bg: string; border: string; gradient: string }> = {
-  BASIC:   { label: "BASIC",   badge: "AD",      color: "text-gray-600",   bg: "bg-gray-50",     border: "border-gray-300",  gradient: "from-gray-100 to-gray-50" },
-  PREMIUM: { label: "PREMIUM", badge: "PREMIUM", color: "text-blue-800",   bg: "bg-blue-50",     border: "border-blue-300",  gradient: "from-blue-100 to-blue-50" },
+  PREMIUM: { label: "프리미엄", badge: "프리미엄", color: "text-green-800",  bg: "bg-green-50",    border: "border-green-300", gradient: "from-green-100 to-green-50" },
   VIP:     { label: "VIP",     badge: "VIP",     color: "text-amber-800",  bg: "bg-amber-50",    border: "border-amber-400", gradient: "from-amber-200 via-amber-100 to-amber-50" },
 };
 
+export const DIAGNOSIS_BADGE_CONFIG = {
+  label: "권리진단 완료",
+  color: "text-blue-700",
+  bg: "bg-blue-50",
+  border: "border-blue-300",
+} as const;
+
 export const PREMIUM_AD_PLANS = [
-  { tier: "BASIC",   price: 100_000, days: 30, features: ["매물 목록 상단 노출", "BASIC 배지 표시", "일반 테두리 하이라이트"] },
-  { tier: "PREMIUM", price: 200_000, days: 30, features: ["매물 목록 상단 노출", "PREMIUM 배지 표시", "보라색 프리미엄 테두리", "홈페이지 추천 섹션 노출"] },
-  { tier: "VIP",     price: 300_000, days: 30, features: ["매물 목록 최상단 노출", "VIP 골드 배지", "골드 프리미엄 테두리", "홈페이지 추천 섹션 최우선", "상세페이지 VIP 전용 헤더"] },
+  { tier: "PREMIUM", price: 200_000, days: 30, features: ["매물 목록 상위 노출", "프리미엄 배지 표시", "그린 테두리 카드 디자인", "기본 조회수 통계"] },
+  { tier: "VIP",     price: 300_000, days: 30, features: ["매물 목록 최상단 고정", "홈페이지 프리미엄 캐러셀 노출", "VIP 배지 + 골드 테두리 카드", "권리진단서 BASIC 1회 무료", "안심거래 배지 부여", "상세 조회수 통계"] },
 ];
 
 // 업종 대분류 → 세부 카테고리 매핑 (레퍼런스 사이트 기준)
@@ -292,4 +317,16 @@ export const EXPERT_INQUIRY_STATUS_LABELS: Record<string, string> = {
   REPLIED: "답변완료",
   COMPLETED: "완료",
   CANCELLED: "취소",
+};
+
+export const INQUIRY_STATUS_LABELS: Record<string, string> = {
+  PENDING: "대기중",
+  REPLIED: "답변완료",
+  CANCELLED: "종료",
+};
+
+export const INQUIRY_STATUS_BADGE: Record<string, { bg: string; text: string }> = {
+  PENDING: { bg: "bg-yellow-100", text: "text-yellow-700" },
+  REPLIED: { bg: "bg-green-100", text: "text-green-700" },
+  CANCELLED: { bg: "bg-gray-100", text: "text-gray-500" },
 };

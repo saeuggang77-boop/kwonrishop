@@ -15,7 +15,7 @@ export function CompareIcon() {
     >
       <Scale className="h-5 w-5" />
       {items.length > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-mint px-1 text-[10px] font-bold text-white">
+        <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-navy px-1 text-[10px] font-bold text-white">
           {items.length}
         </span>
       )}

@@ -2,7 +2,6 @@
 
 import { useState, useRef, useMemo } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
   Calculator,
@@ -10,7 +9,6 @@ import {
   TrendingUp,
   Clock,
   Percent,
-  Lock,
   ChevronLeft,
   ChevronRight,
   Save,
@@ -172,10 +170,6 @@ export default function SimulatorPage() {
   const [state, setState] = useState<SimulatorState>(INITIAL_STATE);
   const [showResults, setShowResults] = useState(false);
 
-  const tier = session?.user?.subscriptionTier;
-  const isPro = tier === "PRO" || tier === "EXPERT";
-  const isExpert = tier === "EXPERT";
-
   // ── State updater ────────────────────────────────────────────────────
   function update<K extends keyof SimulatorState>(key: K, value: SimulatorState[K]) {
     setState((prev) => {
@@ -309,10 +303,6 @@ export default function SimulatorPage() {
   }
 
   function handlePdfDownload() {
-    if (!isExpert) {
-      toast("info", "PDF 다운로드는 EXPERT 플랜에서 이용 가능합니다.");
-      return;
-    }
     toast("info", "PDF 다운로드 기능은 준비 중입니다.");
   }
 
@@ -321,8 +311,8 @@ export default function SimulatorPage() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Header */}
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-mint/10">
-          <Calculator className="h-7 w-7 text-mint" />
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-navy/10">
+          <Calculator className="h-7 w-7 text-navy" />
         </div>
         <h1 className="text-2xl font-bold text-navy">창업 시뮬레이터</h1>
         <p className="mt-2 text-sm text-gray-500">
@@ -344,7 +334,7 @@ export default function SimulatorPage() {
               <div
                 className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                   step >= s.num
-                    ? "bg-mint text-white"
+                    ? "bg-navy text-white"
                     : "bg-gray-200 text-gray-500"
                 }`}
               >
@@ -352,7 +342,7 @@ export default function SimulatorPage() {
               </div>
               <span
                 className={`mt-1.5 text-xs font-medium ${
-                  step >= s.num ? "text-mint" : "text-gray-400"
+                  step >= s.num ? "text-navy" : "text-gray-400"
                 }`}
               >
                 {s.label}
@@ -361,7 +351,7 @@ export default function SimulatorPage() {
             {i < STEPS.length - 1 && (
               <div
                 className={`mx-2 h-0.5 w-8 sm:w-14 ${
-                  step > s.num ? "bg-mint" : "bg-gray-200"
+                  step > s.num ? "bg-navy" : "bg-gray-200"
                 }`}
               />
             )}
@@ -389,7 +379,7 @@ export default function SimulatorPage() {
                     onClick={() => update("businessType", bt.label)}
                     className={`flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-4 text-sm font-medium transition-colors ${
                       state.businessType === bt.label
-                        ? "border-mint bg-mint/10 text-navy"
+                        ? "border-navy bg-navy/10 text-navy"
                         : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                     }`}
                   >
@@ -413,7 +403,7 @@ export default function SimulatorPage() {
                     update("district", "");
                   }}
                   aria-label="시/도 선택"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
                 >
                   <option value="">시/도 선택</option>
                   {Object.keys(REGIONS).map((r) => (
@@ -426,7 +416,7 @@ export default function SimulatorPage() {
                   value={state.district}
                   onChange={(e) => update("district", e.target.value)}
                   aria-label="구/군 선택"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
                 >
                   <option value="">구/군 선택</option>
                   {(REGIONS[state.city] ?? []).map((d) => (
@@ -501,7 +491,7 @@ export default function SimulatorPage() {
                       min={0}
                       value={state.employees}
                       onChange={(e) => update("employees", Math.max(0, Number(e.target.value)))}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-right text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-right text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
                     />
                     <span className="shrink-0 text-sm text-gray-500">명</span>
                   </div>
@@ -531,7 +521,7 @@ export default function SimulatorPage() {
                 onClick={() => update("isManualRevenue", false)}
                 className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
                   !state.isManualRevenue
-                    ? "bg-mint text-white"
+                    ? "bg-navy text-white"
                     : "bg-white text-gray-600 hover:bg-gray-50"
                 }`}
               >
@@ -542,7 +532,7 @@ export default function SimulatorPage() {
                 onClick={() => update("isManualRevenue", true)}
                 className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
                   state.isManualRevenue
-                    ? "bg-mint text-white"
+                    ? "bg-navy text-white"
                     : "bg-white text-gray-600 hover:bg-gray-50"
                 }`}
               >
@@ -647,7 +637,7 @@ export default function SimulatorPage() {
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
-              className="flex items-center gap-1.5 rounded-lg bg-mint px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-mint/90"
+              className="flex items-center gap-1.5 rounded-lg bg-navy px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy/90"
             >
               다음
               <ChevronRight className="h-4 w-4" />
@@ -670,24 +660,8 @@ export default function SimulatorPage() {
         <div ref={resultRef} className="mt-10">
           <h2 className="mb-6 text-xl font-bold text-navy">시뮬레이션 결과</h2>
 
-          {/* Pro gate */}
-          <div className="relative">
-            {!isPro && (
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm">
-                <Lock className="h-8 w-8 text-gray-400" />
-                <p className="mt-2 text-sm font-medium text-gray-600">
-                  PRO 이상 플랜에서 이용 가능합니다
-                </p>
-                <Link
-                  href="/pricing"
-                  className="mt-3 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white hover:bg-mint/90"
-                >
-                  업그레이드
-                </Link>
-              </div>
-            )}
-
-            <div className={!isPro ? "pointer-events-none select-none" : ""}>
+          <div>
+            <div>
               {/* KPI Cards */}
               <div className="mb-8 grid gap-4 grid-cols-2 lg:grid-cols-4">
                 <KpiCard
@@ -947,31 +921,14 @@ export default function SimulatorPage() {
                   <Save className="h-4 w-4" />
                   시뮬레이션 저장
                 </button>
-                <div className="relative group">
-                  <button
-                    type="button"
-                    onClick={handlePdfDownload}
-                    disabled={!isExpert}
-                    className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors ${
-                      isExpert
-                        ? "border-gray-300 text-gray-600 hover:bg-gray-50"
-                        : "cursor-not-allowed border-gray-200 text-gray-400"
-                    }`}
-                  >
-                    {isExpert ? (
-                      <FileDown className="h-4 w-4" />
-                    ) : (
-                      <Lock className="h-4 w-4" />
-                    )}
-                    PDF 다운로드
-                  </button>
-                  {!isExpert && (
-                    <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-gray-800 px-3 py-1.5 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      EXPERT 플랜에서 이용 가능
-                      <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
-                    </div>
-                  )}
-                </div>
+                <button
+                  type="button"
+                  onClick={handlePdfDownload}
+                  className="flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+                >
+                  <FileDown className="h-4 w-4" />
+                  PDF 다운로드
+                </button>
                 <button
                   type="button"
                   onClick={handleReset}
@@ -1013,7 +970,7 @@ function NumberInput({
           value={value || ""}
           placeholder="0"
           onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
-          className="w-32 rounded-lg border border-gray-300 px-3 py-2.5 text-right text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+          className="w-32 rounded-lg border border-gray-300 px-3 py-2.5 text-right text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
         />
         <span className="shrink-0 text-sm text-gray-500">{suffix}</span>
       </div>

@@ -53,7 +53,7 @@ function PremiumSuccessContent() {
   if (status === "confirming") {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <Loader2 className="mx-auto h-16 w-16 animate-spin text-mint" />
+        <Loader2 className="mx-auto h-16 w-16 animate-spin text-navy" />
         <h1 className="mt-6 text-2xl font-bold text-navy">결제 확인 중...</h1>
         <p className="mt-2 text-gray-500">잠시만 기다려주세요.</p>
       </div>
@@ -80,7 +80,7 @@ function PremiumSuccessContent() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-20 text-center">
-      <CheckCircle className="mx-auto h-16 w-16 text-mint" />
+      <CheckCircle className="mx-auto h-16 w-16 text-navy" />
       <h1 className="mt-6 text-2xl font-bold text-navy">구독이 완료되었습니다!</h1>
       <p className="mt-2 text-gray-500">프리미엄 기능을 이용하실 수 있습니다.</p>
       <div className="mt-8 flex justify-center gap-3">
@@ -105,7 +105,7 @@ export default function PremiumSuccessPage() {
   return (
     <Suspense fallback={
       <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <Loader2 className="mx-auto h-16 w-16 animate-spin text-mint" />
+        <Loader2 className="mx-auto h-16 w-16 animate-spin text-navy" />
         <h1 className="mt-6 text-2xl font-bold text-navy">로딩 중...</h1>
       </div>
     }>

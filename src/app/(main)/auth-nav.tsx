@@ -35,22 +35,10 @@ export function AuthNavItems() {
     );
   }
 
-  const tier = session.user.subscriptionTier;
-
   return (
     <div className="flex items-center gap-4">
       <CompareIcon />
       <NotificationBell />
-      {tier === "PRO" && (
-        <span className="rounded-full bg-accent/20 px-2 py-0.5 text-xs font-bold text-accent-light">
-          PRO
-        </span>
-      )}
-      {tier === "EXPERT" && (
-        <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold text-white">
-          EXPERT
-        </span>
-      )}
       {(session.user.role === "SELLER" || session.user.role === "ADMIN") && (
         <Link href="/listings/new" className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-dark">
           점포 등록

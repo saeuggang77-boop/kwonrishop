@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, Crown, Star, Zap } from "lucide-react";
+import { Check, Crown, Star } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { PREMIUM_AD_PLANS } from "@/lib/utils/constants";
 import { useToast } from "@/components/ui/toast";
@@ -18,13 +18,11 @@ interface MyListing {
 }
 
 const TIER_ICONS: Record<string, React.ElementType> = {
-  BASIC: Zap,
   PREMIUM: Star,
   VIP: Crown,
 };
 
 const TIER_STYLES: Record<string, { border: string; bg: string; badge: string }> = {
-  BASIC: { border: "border-amber-300", bg: "bg-gradient-to-b from-amber-50 to-white", badge: "bg-amber-100 text-amber-700" },
   PREMIUM: { border: "border-purple-300", bg: "bg-gradient-to-b from-purple-50 to-white", badge: "bg-purple-100 text-purple-700" },
   VIP: { border: "border-yellow-400", bg: "bg-gradient-to-b from-yellow-50 to-white", badge: "bg-yellow-100 text-yellow-800" },
 };
@@ -161,7 +159,7 @@ function PremiumListingAdContent() {
               <ul className="mt-6 space-y-3">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-mint" /> {f}
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-navy" /> {f}
                   </li>
                 ))}
               </ul>
@@ -176,7 +174,7 @@ function PremiumListingAdContent() {
         <select
           value={selectedListingId}
           onChange={(e) => setSelectedListingId(e.target.value)}
-          className="mt-3 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+          className="mt-3 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
         >
           <option value="">매물을 선택하세요</option>
           {myListings.map((listing) => (
@@ -192,7 +190,7 @@ function PremiumListingAdContent() {
         <h2 className="text-lg font-bold text-navy">결제수단</h2>
         <div className="mt-3 flex gap-4">
           <label className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 px-6 py-3 transition-all ${
-            paymentMethod === "card" ? "border-mint bg-mint/5" : "border-gray-200"
+            paymentMethod === "card" ? "border-navy bg-navy/5" : "border-gray-200"
           }`}>
             <input
               type="radio"
@@ -200,12 +198,12 @@ function PremiumListingAdContent() {
               value="card"
               checked={paymentMethod === "card"}
               onChange={(e) => setPaymentMethod(e.target.value)}
-              className="accent-mint"
+              className="accent-navy"
             />
             <span className="text-sm font-medium text-gray-700">신용/체크카드</span>
           </label>
           <label className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 px-6 py-3 transition-all ${
-            paymentMethod === "transfer" ? "border-mint bg-mint/5" : "border-gray-200"
+            paymentMethod === "transfer" ? "border-navy bg-navy/5" : "border-gray-200"
           }`}>
             <input
               type="radio"
@@ -213,7 +211,7 @@ function PremiumListingAdContent() {
               value="transfer"
               checked={paymentMethod === "transfer"}
               onChange={(e) => setPaymentMethod(e.target.value)}
-              className="accent-mint"
+              className="accent-navy"
             />
             <span className="text-sm font-medium text-gray-700">계좌이체</span>
           </label>
@@ -242,7 +240,7 @@ function PremiumListingAdContent() {
       </div>
 
       <div className="mt-6 text-center">
-        <Link href="/dashboard/premium" className="text-sm text-gray-500 hover:text-mint">
+        <Link href="/dashboard/premium" className="text-sm text-gray-500 hover:text-navy">
           광고 관리 대시보드로 돌아가기
         </Link>
       </div>

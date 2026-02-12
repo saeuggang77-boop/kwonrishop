@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { createInquirySchema } from "@/lib/validators/inquiry";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -75,13 +76,11 @@ export async function POST(req: NextRequest) {
       if (limited) return limited;
     } catch {}
 
-    const { listingId, message } = await req.json();
-    if (!listingId || !message?.trim()) {
-      return Response.json({ error: "listingId and message required" }, { status: 400 });
-    }
+    const body = await req.json();
+    const parsed = createInquirySchema.parse(body);
 
     const listing = await prisma.listing.findUnique({
-      where: { id: listingId },
+      where: { id: parsed.listingId },
       select: { sellerId: true, title: true },
     });
 
@@ -95,10 +94,13 @@ export async function POST(req: NextRequest) {
 
     const inquiry = await prisma.inquiry.create({
       data: {
-        listingId,
+        listingId: parsed.listingId,
         senderId: session.user.id,
         receiverId: listing.sellerId,
-        message: message.trim(),
+        message: parsed.message.trim(),
+        senderName: parsed.senderName ?? null,
+        senderPhone: parsed.senderPhone ?? null,
+        status: "PENDING",
       },
     });
 
@@ -108,14 +110,27 @@ export async function POST(req: NextRequest) {
         userId: listing.sellerId,
         title: "새 문의가 도착했습니다",
         message: `"${listing.title}"에 대한 새 문의가 있습니다.`,
-        link: `/dashboard/inquiries`,
+        link: `/my/inquiries`,
         sourceType: "inquiry",
         sourceId: inquiry.id,
       },
     });
 
+    // Send SMS notification (fire-and-forget)
+    fetch(`${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/notifications/sms`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: listing.sellerId,
+        message: `"${listing.title}"에 대한 새 문의가 도착했습니다.`,
+      }),
+    }).catch(() => {
+      // fire-and-forget: ignore errors
+    });
+
     return Response.json({ data: inquiry }, { status: 201 });
   } catch (error) {
+    console.error("POST /api/inquiries error:", error);
     return Response.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }
 }

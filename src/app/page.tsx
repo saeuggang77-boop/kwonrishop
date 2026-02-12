@@ -8,13 +8,14 @@ import {
   Paintbrush, Trash2, Sparkles, Signpost, MapPin, ChevronRight,
   ChevronLeft, Home, User, Users, Calculator, Check, Scale, Hammer,
   ArrowRight, ShieldCheck, FileText, ClipboardList, BarChart3,
-  Receipt, Target, Calendar, Crown, ChevronDown, MessageCircle,
+  Receipt, Target, Calendar, Crown, ChevronDown, MessageCircle, Eye,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
 import { formatKRW } from "@/lib/utils/format";
 import {
   BUSINESS_CATEGORY_LABELS,
   SAFETY_GRADE_CONFIG, PREMIUM_AD_CONFIG,
+  DIAGNOSIS_BADGE_CONFIG,
 } from "@/lib/utils/constants";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 
@@ -75,6 +76,8 @@ interface ListingCard {
   city: string; district: string;
   images: { url: string; thumbnailUrl: string | null }[];
   safetyGrade: string | null; isPremium: boolean; premiumRank: number;
+  hasDiagnosisBadge: boolean;
+  seller?: { isTrustedSeller?: boolean };
 }
 interface FranchiseCard {
   id: string; brandName: string; subcategory: string;
@@ -96,6 +99,7 @@ interface RawListingResponse {
   city: string; district: string;
   images: { url: string; thumbnailUrl: string | null }[];
   safetyGrade: string | null; isPremium: boolean | null; premiumRank: number | null;
+  hasDiagnosisBadge?: boolean;
 }
 
 /* ─── Constants ─── */
@@ -103,20 +107,20 @@ const REGION_TABS = ["서울", "경기", "그 외"];
 const FRANCHISE_TABS = ["외식", "도소매", "서비스"];
 
 const CATEGORY_ICONS = [
-  { icon: Store, label: "점포 찾기", href: "/listings", color: "text-blue-500", bg: "bg-blue-50", hover: "active:bg-blue-100" },
-  { icon: FileEdit, label: "점포 팔기", href: "/listings/new", color: "text-green-500", bg: "bg-green-50", hover: "active:bg-green-100" },
-  { icon: Building, label: "프랜차이즈", href: "/franchise", color: "text-purple-500", bg: "bg-purple-50", hover: "active:bg-purple-100" },
-  { icon: Search, label: "점포찾기 의뢰", href: "/listings", color: "text-orange-500", bg: "bg-orange-50", hover: "active:bg-orange-100" },
-  { icon: Paintbrush, label: "인테리어", href: "/bbs?category=인테리어", color: "text-pink-500", bg: "bg-pink-50", hover: "active:bg-pink-100" },
-  { icon: Trash2, label: "철거 의뢰", href: "/bbs?category=철거", color: "text-red-500", bg: "bg-red-50", hover: "active:bg-red-100" },
-  { icon: Sparkles, label: "청소 의뢰", href: "/bbs?category=청소", color: "text-cyan-500", bg: "bg-cyan-50", hover: "active:bg-cyan-100" },
-  { icon: Signpost, label: "간판 의뢰", href: "/bbs?category=간판", color: "text-amber-500", bg: "bg-amber-50", hover: "active:bg-amber-100" },
+  { icon: Store, label: "점포 찾기", href: "/listings" },
+  { icon: FileEdit, label: "점포 팔기", href: "/listings/new" },
+  { icon: Building, label: "프랜차이즈", href: "/franchise" },
+  { icon: Search, label: "점포찾기 의뢰", href: "/listings" },
+  { icon: Paintbrush, label: "인테리어", href: "/bbs?category=인테리어" },
+  { icon: Trash2, label: "철거 의뢰", href: "/bbs?category=철거" },
+  { icon: Sparkles, label: "청소 의뢰", href: "/bbs?category=청소" },
+  { icon: Signpost, label: "간판 의뢰", href: "/bbs?category=간판" },
 ];
 
 const HERO_SLIDES = [
-  { title: "안전한 점포거래,\n권리샵과 함께", sub: "검증된 매물만 거래하는 프리미엄 플랫폼", cta: "매물 보러가기", ctaHref: "/listings", gradient: "from-navy via-[#1B3A5C] to-[#2D5F8A]" },
-  { title: "AI 권리분석으로\n안전한 거래", sub: "권리금 적정성 분석부터 위험요소 체크까지", cta: "리포트 신청", ctaHref: "/reports/request", gradient: "from-[#1e40af] via-[#3b82f6] to-[#60a5fa]" },
-  { title: "창업 수익성,\n미리 계산해보세요", sub: "업종별 예상 수익과 투자 회수 기간 시뮬레이션", cta: "시뮬레이터 시작", ctaHref: "/simulator", gradient: "from-[#1B3A5C] via-[#2D5F8A] to-[#15304D]" },
+  { title: "안전한 점포거래,\n권리샵과 함께", sub: "검증된 매물만 거래하는 프리미엄 플랫폼", cta: "매물 보러가기", ctaHref: "/listings" },
+  { title: "권리진단서로\n안전한 거래", sub: "권리금 적정성 분석부터 위험요소 체크까지", cta: "권리진단서 발급", ctaHref: "/reports/request" },
+  { title: "내 매물, 프리미엄 광고로\n빠르게", sub: "상위 노출과 프리미엄 배지로 빠른 매도", cta: "서비스 요금 보기", ctaHref: "/pricing" },
 ];
 
 const MARKET_BARS = [
@@ -137,6 +141,7 @@ function toCard(l: RawListingResponse): ListingCard {
     monthlyProfit: l.monthlyProfit ? String(l.monthlyProfit) : null,
     isPremium: Boolean(l.isPremium),
     premiumRank: Number(l.premiumRank ?? 0),
+    hasDiagnosisBadge: Boolean(l.hasDiagnosisBadge),
   };
 }
 
@@ -223,7 +228,10 @@ export default function HomePage() {
           {item.images?.[0] ? (
             <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover md:transition-transform md:duration-300 md:group-hover:scale-105" sizes="(max-width:768px) 260px, 25vw" loading="lazy" />
           ) : (
-            <div className="flex h-full items-center justify-center text-gray-300"><Store className="h-8 w-8" /></div>
+            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#E8F0FE] to-[#BFDBFE]">
+              <Store className="h-10 w-10 text-navy/30" />
+              <span className="text-xs font-medium text-navy/40">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
+            </div>
           )}
           <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/30 to-transparent" />
           <span className="absolute left-2 top-2 rounded bg-navy/80 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
@@ -239,7 +247,15 @@ export default function HomePage() {
           )}
         </div>
         <div className="p-3">
-          <h3 className="truncate text-[13px] font-bold text-navy">{item.title}</h3>
+          <div className="flex items-center gap-1">
+            <h3 className="truncate text-[13px] font-bold text-navy">{item.title}</h3>
+            {item.seller?.isTrustedSeller && (
+              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-700">
+                <ShieldCheck className="h-2.5 w-2.5" />
+                안심
+              </span>
+            )}
+          </div>
           <div className="mt-1.5 space-y-0.5 text-xs">
             <div className="flex gap-2">
               <span className="w-14 shrink-0 text-gray-400">보증금</span>
@@ -289,20 +305,20 @@ export default function HomePage() {
           {banners.length > 0 ? banners.map((b, i) => (
             <div key={b.id} className="absolute inset-0 flex items-center justify-center transition-all duration-600 ease-in-out"
               style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-navy to-[#2D5F8A] px-6">
-                {b.linkUrl ? <Link href={b.linkUrl}><h2 className="font-heading text-xl font-bold text-white md:text-4xl">{b.title}</h2></Link>
-                  : <h2 className="font-heading text-xl font-bold text-white md:text-4xl">{b.title}</h2>}
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-[#E8F0FE] to-[#BFDBFE] px-6">
+                {b.linkUrl ? <Link href={b.linkUrl}><h2 className="font-heading text-xl font-bold text-navy md:text-4xl">{b.title}</h2></Link>
+                  : <h2 className="font-heading text-xl font-bold text-navy md:text-4xl">{b.title}</h2>}
               </div>
             </div>
           )) : HERO_SLIDES.map((s, i) => (
-            <div key={i} className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br ${s.gradient} transition-all duration-600 ease-in-out`}
+            <div key={i} className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-[#E8F0FE] to-[#BFDBFE] transition-all duration-600 ease-in-out"
               style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
-              <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px,white 1px,transparent 0)", backgroundSize: "32px 32px" }} />
+              <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #1B3A5C 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
               <div className="relative z-10 w-full px-5 text-center md:px-8">
-                <h2 className="font-heading text-xl font-bold leading-tight text-white whitespace-pre-line md:text-4xl lg:text-5xl">{s.title}</h2>
-                <p className="mt-2 text-xs text-white/75 md:mt-3 md:text-base">{s.sub}</p>
+                <h2 className="font-heading text-xl font-bold leading-tight text-navy whitespace-pre-line md:text-4xl lg:text-5xl">{s.title}</h2>
+                <p className="mt-2 text-xs text-navy/60 md:mt-3 md:text-base">{s.sub}</p>
                 <Link href={s.ctaHref}
-                  className="mt-4 inline-flex min-h-[48px] w-full max-w-xs items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-accent-dark md:mt-6 md:w-auto md:hover:scale-105">
+                  className="mt-4 inline-flex min-h-[48px] w-full max-w-xs items-center justify-center gap-2 rounded-full bg-navy px-6 text-sm font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-navy-dark md:mt-6 md:w-auto md:hover:scale-105">
                   {s.cta} <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
@@ -310,12 +326,12 @@ export default function HomePage() {
           ))}
         </div>
         {bannerCount > 1 && (<>
-          <button onClick={prevBanner} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm md:left-4 md:p-2.5" aria-label="이전"><ChevronLeft className="h-4 w-4 md:h-5 md:w-5" /></button>
-          <button onClick={nextBanner} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm md:right-4 md:p-2.5" aria-label="다음"><ChevronRight className="h-4 w-4 md:h-5 md:w-5" /></button>
+          <button onClick={prevBanner} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-navy/10 p-2 text-navy backdrop-blur-sm md:left-4 md:p-2.5 hover:bg-navy/20" aria-label="이전"><ChevronLeft className="h-4 w-4 md:h-5 md:w-5" /></button>
+          <button onClick={nextBanner} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-navy/10 p-2 text-navy backdrop-blur-sm md:right-4 md:p-2.5 hover:bg-navy/20" aria-label="다음"><ChevronRight className="h-4 w-4 md:h-5 md:w-5" /></button>
           <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5" role="tablist">
             {Array.from({ length: bannerCount }).map((_, i) => (
               <button key={i} onClick={() => setBannerIdx(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${i === bannerIdx ? "w-6 bg-white" : "w-2 bg-white/40"}`}
+                className={`h-2 rounded-full transition-all duration-300 ${i === bannerIdx ? "w-6 bg-navy" : "w-2 bg-navy/30"}`}
                 role="tab" aria-selected={i === bannerIdx} aria-label={`배너 ${i + 1}`} />
             ))}
           </div>
@@ -327,7 +343,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 px-4 md:grid-cols-4 md:gap-0">
           {[
             { label: "등록 매물", value: 1234, suffix: "건", icon: Store },
-            { label: "권리분석 리포트", value: 456, suffix: "건", icon: FileText },
+            { label: "권리진단서 발급", value: 456, suffix: "건", icon: FileText },
             { label: "안전거래 완료", value: 789, suffix: "건", icon: ShieldCheck },
             { label: "전문가 상담", value: 234, suffix: "건", icon: Users },
           ].map(s => (
@@ -351,9 +367,9 @@ export default function HomePage() {
             <div className="grid grid-cols-4 gap-2 md:grid-cols-8 md:gap-3">
               {CATEGORY_ICONS.map(c => (
                 <Link key={c.label} href={c.href}
-                  className={`flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white text-gray-600 transition-all md:gap-2.5 md:py-4 md:hover:-translate-y-0.5 md:hover:border-navy md:hover:shadow-md ${c.hover}`}>
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${c.bg} md:h-14 md:w-14 md:rounded-xl`}>
-                    <c.icon className={`h-5 w-5 ${c.color} md:h-7 md:w-7`} />
+                  className="group flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white text-gray-600 transition-all md:gap-2.5 md:py-4 md:hover:-translate-y-0.5 md:hover:border-navy md:hover:bg-navy md:hover:text-white md:hover:shadow-md active:bg-navy/5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#E8F0FE] transition-colors md:h-14 md:w-14 md:rounded-xl md:group-hover:bg-white/20">
+                    <c.icon className="h-5 w-5 text-navy transition-colors md:h-7 md:w-7 md:group-hover:text-white" />
                   </div>
                   <span className="text-[10px] font-medium leading-tight md:text-[11px]">{c.label}</span>
                 </Link>
@@ -379,13 +395,19 @@ export default function HomePage() {
               premiumListings.length > 0 ? premiumListings.map(item => {
                 const tk = item.premiumRank === 3 ? "VIP" : item.premiumRank === 2 ? "PREMIUM" : "BASIC";
                 const tc = PREMIUM_AD_CONFIG[tk];
+                const tierBg = tk === "VIP" ? "from-[#FEF3C7] to-[#FDE68A]" : tk === "PREMIUM" ? "from-[#DBEAFE] to-[#BFDBFE]" : "from-[#F3F4F6] to-[#E5E7EB]";
                 return (
                   <Link key={item.id} href={`/listings/${item.id}`}
                     className={`group w-64 flex-none snap-start overflow-hidden rounded-xl border-2 bg-white transition-all active:scale-[0.98] md:w-auto md:flex-1 md:hover:-translate-y-1 md:hover:shadow-lg ${tc?.border ?? "border-gray-200"}`}>
                     <div className={`h-1 bg-gradient-to-r ${tc?.gradient ?? ""}`} />
                     <div className="relative aspect-[4/3] bg-gray-100">
                       {item.images?.[0] ? <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 256px, 25vw" loading="lazy" />
-                        : <div className="flex h-full items-center justify-center text-gray-300"><Store className="h-8 w-8" /></div>}
+                        : (
+                          <div className={`flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${tierBg}`}>
+                            <Store className={`h-10 w-10 ${tk === "VIP" ? "text-amber-500" : tk === "PREMIUM" ? "text-blue-400" : "text-gray-400"}`} />
+                            <span className={`text-xs font-medium ${tk === "VIP" ? "text-amber-600" : tk === "PREMIUM" ? "text-blue-500" : "text-gray-500"}`}>{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
+                          </div>
+                        )}
                       <span className={`absolute left-2 bottom-2 rounded px-1.5 py-0.5 text-[10px] font-bold border ${tc?.bg} ${tc?.color} ${tc?.border}`}>{tc?.badge}</span>
                     </div>
                     <div className="p-3">
@@ -393,6 +415,13 @@ export default function HomePage() {
                       <div className="mt-1.5 space-y-0.5 text-xs">
                         <div className="flex gap-2"><span className="w-14 text-gray-400">보증금</span><span className="font-bold text-navy">{formatKRW(Number(item.price))}</span></div>
                         <div className="flex gap-2"><span className="w-14 text-gray-400">권리금</span><span className={`font-bold ${Number(item.premiumFee) > 0 ? "text-orange-600" : "text-navy"}`}>{item.premiumFee && Number(item.premiumFee) > 0 ? formatKRW(Number(item.premiumFee)) : "무권리"}</span></div>
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                        {item.hasDiagnosisBadge && (
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${DIAGNOSIS_BADGE_CONFIG.bg} ${DIAGNOSIS_BADGE_CONFIG.color} border ${DIAGNOSIS_BADGE_CONFIG.border}`}>
+                            {DIAGNOSIS_BADGE_CONFIG.label}
+                          </span>
+                        )}
                       </div>
                       <p className="mt-1.5 flex items-center gap-1 text-[11px] text-gray-400"><MapPin className="h-3 w-3" />{item.city} {item.district}</p>
                     </div>
@@ -411,9 +440,9 @@ export default function HomePage() {
             <div className="md:flex md:items-center md:gap-12">
               {/* text */}
               <div className="flex-1 text-center md:text-left">
-                <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white">AI 권리분석</span>
+                <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white">권리진단서</span>
                 <h2 className="mt-3 font-heading text-xl font-bold text-white md:text-3xl">내 가게 권리금,<br />적정한가요?</h2>
-                <p className="mt-2 text-xs text-white/70 md:text-sm">전문 권리분석 리포트로 정확한 시세를 확인하세요</p>
+                <p className="mt-2 text-xs text-white/70 md:text-sm">권리진단서로 안전한 거래를 시작하세요</p>
               </div>
               {/* feature cards */}
               <div className="mt-6 space-y-3 md:mt-0 md:flex md:flex-1 md:gap-4 md:space-y-0">
@@ -434,9 +463,14 @@ export default function HomePage() {
             </div>
             <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:justify-start">
               <Link href="/reports/request" className="flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-[#1e40af] shadow-lg transition-all active:scale-95 md:w-auto md:px-10 md:hover:scale-105">
-                리포트 신청하기 <ArrowRight className="h-4 w-4" />
+                권리진단서 발급받기 <ArrowRight className="h-4 w-4" />
               </Link>
-              <p className="text-xs text-white/50">BASIC 20,000원~ | PREMIUM 40,000원~</p>
+              <p className="text-xs text-white/50">권리진단서 BASIC 20,000원~ | PREMIUM 40,000원~</p>
+            </div>
+            <div className="mt-3 flex justify-center md:justify-start">
+              <Link href="/reports/sample" className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm transition-all hover:bg-white/20 hover:text-white active:scale-95">
+                <Eye className="h-3.5 w-3.5" /> 샘플 미리보기
+              </Link>
             </div>
           </div>
         </section>
@@ -463,10 +497,13 @@ export default function HomePage() {
               {loadingListings ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />) :
                 listings.length === 0 ? (
                   <div className="flex w-full flex-col items-center py-12 text-center md:col-span-4">
-                    <Store className="h-10 w-10 text-gray-300" />
-                    <p className="mt-2 text-sm text-gray-400">아직 매물이 없습니다</p>
-                    <Link href="/listings/new" className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-accent px-5 text-sm font-medium text-white active:scale-95 hover:bg-accent-dark">
-                      <FileEdit className="h-4 w-4" /> 첫 번째 매물을 등록해보세요!
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#E8F0FE]">
+                      <Store className="h-10 w-10 text-navy/40" />
+                    </div>
+                    <p className="mt-4 text-base font-bold text-navy">아직 추천 매물이 없어요</p>
+                    <p className="mt-1 text-sm text-gray-400">첫 번째 매물을 등록해보세요!</p>
+                    <Link href="/listings/new" className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-navy px-6 text-sm font-medium text-white active:scale-95 hover:bg-navy-dark">
+                      <FileEdit className="h-4 w-4" /> 매물 등록하기
                     </Link>
                   </div>
                 ) : listings.map(item => renderListingCard(item, true))
@@ -515,14 +552,33 @@ export default function HomePage() {
                   시뮬레이터 시작하기 <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
-              {/* Desktop chart */}
-              <div className="hidden items-end justify-center gap-3 bg-gradient-to-br from-navy/5 to-navy/10 p-10 pb-14 lg:flex lg:w-[360px]">
-                {[65, 85, 45, 70, 90].map((h, i) => (
-                  <div key={i} className="flex flex-col items-center gap-2">
-                    <div className="w-10 rounded-t-md bg-gradient-to-t from-navy to-navy/50" style={{ height: `${h * 1.5}px` }} />
-                    <span className="text-[10px] text-gray-400">{["1월", "2월", "3월", "4월", "5월"][i]}</span>
+              {/* Desktop: Simulator Preview */}
+              <div className="hidden flex-col items-center justify-center gap-6 bg-gradient-to-br from-[#E8F0FE] to-[#DBEAFE] p-10 lg:flex lg:w-[400px]">
+                <div className="w-full rounded-xl bg-white p-5 shadow-sm">
+                  <p className="text-xs font-medium text-gray-400">시뮬레이션 결과 미리보기</p>
+                  <div className="mt-4 grid grid-cols-3 gap-3">
+                    <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">
+                      <p className="text-[10px] text-gray-500">총 투자금</p>
+                      <p className="mt-1 text-lg font-bold text-navy">1.2억</p>
+                    </div>
+                    <div className="rounded-lg bg-[#FEF3C7] p-3 text-center">
+                      <p className="text-[10px] text-gray-500">예상 월수익</p>
+                      <p className="mt-1 text-lg font-bold text-accent-dark">850만</p>
+                    </div>
+                    <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">
+                      <p className="text-[10px] text-gray-500">회수기간</p>
+                      <p className="mt-1 text-lg font-bold text-navy">14개월</p>
+                    </div>
                   </div>
-                ))}
+                  <div className="mt-4 flex items-end justify-between gap-1.5">
+                    {[40, 55, 35, 65, 50, 75, 60].map((h, i) => (
+                      <div key={i} className="flex flex-1 flex-col items-center gap-1">
+                        <div className="w-full rounded-t bg-gradient-to-t from-navy to-[#3B82F6]" style={{ height: `${h}px` }} />
+                        <span className="text-[8px] text-gray-400">{["1월", "2월", "3월", "4월", "5월", "6월", "7월"][i]}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -583,9 +639,9 @@ export default function HomePage() {
             <p className="mt-1.5 text-center text-xs text-gray-500 md:mt-2 md:text-sm">법률, 인테리어, 철거, 세무 전문가가 도와드립니다</p>
             <div className="mt-5 space-y-3 md:mt-8 md:grid md:grid-cols-3 md:gap-5 md:space-y-0">
               {[
-                { icon: Scale, title: "법률 / 세무 전문가", desc: "계약서 검토, 세무 신고, 사업자 등록 등", color: "text-blue-500", bg: "bg-blue-50" },
-                { icon: Paintbrush, title: "인테리어 전문가", desc: "업종 맞춤 인테리어 설계부터 시공까지", color: "text-pink-500", bg: "bg-pink-50" },
-                { icon: Hammer, title: "철거 / 부동산 전문가", desc: "원상복구, 철거 견적, 상권 분석까지", color: "text-orange-500", bg: "bg-orange-50" },
+                { icon: Scale, title: "법률 / 세무 전문가", desc: "계약서 검토, 세무 신고, 사업자 등록 등", color: "text-navy", bg: "bg-[#E8F0FE]" },
+                { icon: Paintbrush, title: "인테리어 전문가", desc: "업종 맞춤 인테리어 설계부터 시공까지", color: "text-navy", bg: "bg-[#E8F0FE]" },
+                { icon: Hammer, title: "철거 / 부동산 전문가", desc: "원상복구, 철거 견적, 상권 분석까지", color: "text-navy", bg: "bg-[#E8F0FE]" },
               ].map(c => (
                 <div key={c.title} className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-all active:scale-[0.98] md:flex-col md:items-start md:gap-0 md:p-6 md:hover:-translate-y-1 md:hover:shadow-lg">
                   <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${c.bg} md:h-12 md:w-12`}>
@@ -623,14 +679,14 @@ export default function HomePage() {
                 {MARKET_BARS.map(b => (
                   <div key={b.area} className="flex flex-1 flex-col items-center gap-1.5">
                     <span className="text-[10px] font-bold text-navy md:text-xs">{b.value.toLocaleString()}</span>
-                    <div className="relative w-full overflow-hidden rounded-t bg-gray-100" style={{ height: "90px" }}>
-                      <div className="absolute bottom-0 w-full rounded-t bg-gradient-to-t from-navy to-navy/50 transition-all duration-700" style={{ height: `${(b.value / b.max) * 100}%` }} />
+                    <div className="relative w-full overflow-hidden rounded-t-md bg-gray-100" style={{ height: "90px" }}>
+                      <div className="absolute bottom-0 w-full rounded-t-md bg-gradient-to-t from-[#1B3A5C] to-[#3B82F6] transition-all duration-700" style={{ height: `${(b.value / b.max) * 100}%` }} />
                     </div>
                     <span className="text-[10px] font-medium text-gray-600 md:text-xs">{b.area}</span>
                   </div>
                 ))}
               </div>
-              <p className="mt-3 text-center text-[10px] text-gray-400 md:text-xs">PRO 회원은 전체 지역의 상세 시세를 확인할 수 있습니다</p>
+              <p className="mt-3 text-center text-[10px] text-gray-400 md:text-xs">시세 비교 위젯에서 전체 지역의 상세 시세를 확인할 수 있습니다</p>
             </div>
           </div>
         </section>
@@ -646,64 +702,104 @@ export default function HomePage() {
             </div>
             <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
               {posts.length === 0 ? <p className="col-span-4 py-8 text-center text-sm text-gray-400">게시글이 없습니다</p>
-                : posts.map(p => (
-                  <Link key={p.id} href={`/bbs/${p.id}`}
-                    className="group w-56 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white transition-all active:scale-[0.98] md:w-auto md:flex-1 md:hover:-translate-y-1 md:hover:shadow-lg">
-                    <div className="relative h-28 bg-gradient-to-br from-gray-100 to-gray-50 md:h-36">
-                      {p.thumbnailUrl ? <Image src={p.thumbnailUrl} alt={p.title} fill className="object-cover" sizes="(max-width:768px) 224px, 25vw" loading="lazy" />
-                        : <div className="flex h-full items-center justify-center"><FileText className="h-7 w-7 text-gray-300" /></div>}
-                    </div>
-                    <div className="p-3 md:p-4">
-                      <span className="inline-block rounded bg-navy/10 px-1.5 py-0.5 text-[10px] font-medium text-navy">{p.category}</span>
-                      <h3 className="mt-1.5 line-clamp-2 text-[13px] font-bold text-navy transition-colors md:group-hover:text-navy-light">{p.title}</h3>
-                      <p className="mt-1.5 flex items-center gap-1 text-[10px] text-gray-400"><Calendar className="h-3 w-3" />{new Date(p.createdAt).toLocaleDateString("ko-KR")}</p>
-                    </div>
-                  </Link>
-                ))}
+                : posts.map(p => {
+                  const catStyle = p.category === "이용가이드" ? { bg: "from-[#DBEAFE] to-[#BFDBFE]", icon: "text-blue-500", badge: "bg-blue-100 text-blue-700" }
+                    : p.category === "알림공지" ? { bg: "from-[#FEF3C7] to-[#FDE68A]", icon: "text-amber-500", badge: "bg-amber-100 text-amber-700" }
+                    : p.category === "창업정보" ? { bg: "from-[#DCFCE7] to-[#BBF7D0]", icon: "text-green-600", badge: "bg-green-100 text-green-700" }
+                    : { bg: "from-[#E8F0FE] to-[#DBEAFE]", icon: "text-navy", badge: "bg-navy/10 text-navy" };
+                  return (
+                    <Link key={p.id} href={`/bbs/${p.id}`}
+                      className="group w-56 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white transition-all active:scale-[0.98] md:w-auto md:flex-1 md:hover:-translate-y-1 md:hover:shadow-lg">
+                      <div className={`relative h-28 bg-gradient-to-br ${catStyle.bg} md:h-36`}>
+                        {p.thumbnailUrl ? <Image src={p.thumbnailUrl} alt={p.title} fill className="object-cover" sizes="(max-width:768px) 224px, 25vw" loading="lazy" />
+                          : <div className="flex h-full items-center justify-center"><FileText className={`h-8 w-8 ${catStyle.icon}`} /></div>}
+                      </div>
+                      <div className="p-3 md:p-4">
+                        <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-medium ${catStyle.badge}`}>{p.category}</span>
+                        <h3 className="mt-1.5 line-clamp-2 text-[13px] font-bold text-navy transition-colors md:group-hover:text-navy-light">{p.title}</h3>
+                        <p className="mt-1.5 flex items-center gap-1 text-[10px] text-gray-400"><Calendar className="h-3 w-3" />{new Date(p.createdAt).toLocaleDateString("ko-KR")}</p>
+                      </div>
+                    </Link>
+                  );
+                })}
             </div>
           </div>
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 13. Pricing Plans ═══ */}
+      {/* ═══ 13. 서비스 요금 안내 ═══ */}
       <RevealOnScroll>
-        <section className="border-t border-gray-200 bg-white py-6 md:py-12">
+        <section className="border-t border-gray-200 bg-gray-50 py-6 md:py-12">
           <div className="mx-auto max-w-7xl px-4">
-            <h2 className="text-center font-heading text-lg font-bold text-navy md:text-2xl">나에게 맞는 요금제를 선택하세요</h2>
-            <div className="mt-5 space-y-3 md:mt-8 md:grid md:grid-cols-3 md:gap-4 md:space-y-0">
-              {/* FREE */}
-              <div className="rounded-xl border border-gray-200 bg-white p-4 transition-all md:p-5 md:hover:-translate-y-0.5 md:hover:shadow-md">
-                <h3 className="text-base font-bold text-navy">FREE</h3>
-                <p className="text-xl font-bold text-navy md:text-2xl">&#8361;0<span className="text-xs font-normal text-gray-400">/월</span></p>
-                <ul className="mt-3 space-y-1.5">
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />매물 검색 및 조회</li>
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />월 3건 매물 등록</li>
-                </ul>
-              </div>
-              {/* PRO */}
-              <div className="relative rounded-xl border-2 border-accent bg-white p-4 shadow-md md:p-5 md:hover:-translate-y-0.5 md:hover:shadow-lg">
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-0.5 text-[10px] font-bold text-white">인기</span>
-                <h3 className="text-base font-bold text-navy">PRO</h3>
-                <p className="text-xl font-bold text-navy md:text-2xl">&#8361;29,900<span className="text-xs font-normal text-gray-400">/월</span></p>
-                <ul className="mt-3 space-y-1.5">
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />무제한 매물 등록</li>
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />시뮬레이터 + 시세 비교</li>
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />리포트 1회/월 무료</li>
-                </ul>
-              </div>
-              {/* EXPERT */}
-              <div className="rounded-xl border border-gray-200 bg-white p-4 transition-all md:p-5 md:hover:-translate-y-0.5 md:hover:shadow-md">
-                <h3 className="text-base font-bold text-navy">EXPERT</h3>
-                <p className="text-xl font-bold text-navy md:text-2xl">&#8361;59,900<span className="text-xs font-normal text-gray-400">/월</span></p>
-                <ul className="mt-3 space-y-1.5">
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />PRO 전체 포함</li>
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />전문가 상담 무제한</li>
-                  <li className="flex items-center gap-2 text-xs text-gray-600"><Check className="h-3.5 w-3.5 text-navy" />프리미엄 리포트 2회/월</li>
-                </ul>
+            <h2 className="text-center font-heading text-lg font-bold text-navy md:text-2xl">서비스 요금 안내</h2>
+            <p className="mt-2 text-center text-xs text-gray-500 md:text-sm">매수자는 모든 매물 정보를 무료로 열람할 수 있습니다</p>
+
+            {/* 매도자 광고 */}
+            <div className="mx-auto mt-6 max-w-4xl md:mt-10">
+              <h3 className="text-sm font-bold text-navy md:text-base">매도자 광고</h3>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-md bg-green-50 px-2 py-0.5 text-xs font-bold text-green-700 border border-green-200">프리미엄</span>
+                    <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
+                  </div>
+                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500" />매물 목록 상위 노출</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500" />프리미엄 배지 표시</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500" />기본 조회수 통계</li>
+                  </ul>
+                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+                </div>
+                <div className="relative rounded-xl border-2 border-amber-300 bg-white p-4 md:p-5">
+                  <span className="absolute -top-2.5 right-3 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">VIP</span>
+                    <span className="text-base font-bold text-navy md:text-lg">&#8361;300,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
+                  </div>
+                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 캐러셀 노출</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />VIP 배지 + 골드 테두리</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 BASIC 1회 무료</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />안심거래 배지 부여</li>
+                  </ul>
+                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+                </div>
               </div>
             </div>
-            <div className="mt-4 text-center md:mt-6">
-              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 md:text-sm">자세히 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
+
+            {/* 권리진단서 */}
+            <div className="mx-auto mt-6 max-w-4xl md:mt-8">
+              <h3 className="text-sm font-bold text-navy md:text-base">권리진단서</h3>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">BASIC</span>
+                    <span className="text-base font-bold text-navy md:text-lg">&#8361;20,000<span className="text-xs font-normal text-gray-400">/건</span></span>
+                  </div>
+                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />권리금 적정성 평가</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />지역/업종 평균 비교</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />종합 위험 등급 판정</li>
+                  </ul>
+                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">PREMIUM</span>
+                    <span className="text-base font-bold text-navy md:text-lg">&#8361;40,000<span className="text-xs font-normal text-gray-400">/건</span></span>
+                  </div>
+                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />BASIC 전체 항목 포함</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />임대차 체크리스트 20항목</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />PDF 리포트 다운로드</li>
+                  </ul>
+                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 text-center md:mt-8">
+              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-navy hover:underline md:text-sm">자세히 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
             </div>
           </div>
         </section>
@@ -754,7 +850,7 @@ export default function HomePage() {
           <div className="mt-4 space-y-0 md:hidden">
             {[
               { title: "서비스", links: [{ label: "점포 찾기", href: "/listings" }, { label: "점포 팔기", href: "/listings/new" }, { label: "프랜차이즈", href: "/franchise" }, { label: "시뮬레이터", href: "/simulator" }] },
-              { title: "고객지원", links: [{ label: "이용가이드", href: "/bbs" }, { label: "전문가 상담", href: "/experts" }, { label: "요금제", href: "/pricing" }] },
+              { title: "고객지원", links: [{ label: "이용가이드", href: "/bbs" }, { label: "전문가 상담", href: "/experts" }, { label: "서비스 요금", href: "/pricing" }] },
               { title: "법적고지", links: [{ label: "이용약관", href: "/legal/terms" }, { label: "개인정보처리방침", href: "/legal/privacy" }, { label: "면책조항", href: "/legal/disclaimer" }] },
             ].map(group => (
               <div key={group.title} className="border-b border-gray-100">
@@ -778,7 +874,7 @@ export default function HomePage() {
               <Link href="/legal/terms" className="hover:text-navy">이용약관</Link>
               <Link href="/legal/privacy" className="hover:text-navy">개인정보처리방침</Link>
               <Link href="/legal/disclaimer" className="hover:text-navy">면책조항</Link>
-              <Link href="/pricing" className="hover:text-navy">요금제</Link>
+              <Link href="/pricing" className="hover:text-navy">서비스 요금</Link>
             </nav>
             <p className="text-xs text-gray-500">&copy; 2026 권리샵. All rights reserved.</p>
           </div>

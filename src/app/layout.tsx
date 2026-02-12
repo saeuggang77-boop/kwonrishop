@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   description:
     "부동산 권리 분석, 매물 등록, 시세 비교를 한 곳에서. 전세권, 저당권, 임차권 등 다양한 권리 매물을 안전하게 거래하세요.",
-  keywords: ["부동산", "권리분석", "전세권", "근저당권", "임차권", "매물", "시세비교"],
+  keywords: ["부동산", "권리진단서", "전세권", "근저당권", "임차권", "매물", "시세비교"],
   icons: {
     icon: "/logos/krw_shop_favicon.png",
     apple: "/logos/krw_shop_logo_symbol.png",

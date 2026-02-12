@@ -29,7 +29,7 @@ export default async function BbsDetailPage({ params }: { params: Promise<{ id: 
         {/* Header */}
         <div className="border-b border-gray-200 pb-6">
           <div className="flex items-center gap-2">
-            <span className="inline-block rounded-full bg-mint/10 px-3 py-1 text-sm font-medium text-mint">
+            <span className="inline-block rounded-full bg-navy/10 px-3 py-1 text-sm font-medium text-navy">
               {post.category}
             </span>
             <span className="text-sm text-gray-500">{formatDateKR(post.createdAt)}</span>

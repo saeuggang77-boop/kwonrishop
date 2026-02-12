@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { purchaseReportSchema } from "@/lib/validators/payment";
 import { errorToResponse, NotFoundError } from "@/lib/utils/errors";
-import { DEEP_REPORT_PRICE } from "@/lib/utils/constants";
+import { REPORT_PLANS } from "@/lib/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
@@ -30,9 +30,9 @@ export async function POST(req: NextRequest) {
       data: {
         userId: session.user.id,
         orderId,
-        amount: BigInt(DEEP_REPORT_PRICE),
+        amount: BigInt(REPORT_PLANS[0].price),
         paymentType: "DEEP_REPORT",
-        tossOrderName: `권리 분석 리포트 - ${listing.title}`,
+        tossOrderName: `권리진단서 - ${listing.title}`,
       },
     });
 
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     return Response.json({
       data: {
         orderId,
-        amount: DEEP_REPORT_PRICE,
+        amount: REPORT_PLANS[0].price,
         orderName: payment.tossOrderName,
         customerKey: session.user.id,
       },

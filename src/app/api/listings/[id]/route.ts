@@ -27,7 +27,7 @@ export async function GET(
       where: { id },
       include: {
         images: { orderBy: { sortOrder: "asc" } },
-        seller: { select: { id: true, name: true, image: true, businessName: true } },
+        seller: { select: { id: true, name: true, image: true, businessName: true, isTrustedSeller: true } },
         comparisons: true,
       },
     });

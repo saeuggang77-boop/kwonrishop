@@ -61,7 +61,7 @@ export default async function AdminLayout({
       <aside className="flex w-[260px] flex-col bg-[var(--admin-sidebar-bg)]">
         {/* Logo Area */}
         <div className="flex h-[70px] items-center gap-3 border-b border-white/10 px-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-mint text-sm font-bold text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white">
             K
           </div>
           <span className="text-lg font-bold tracking-tight text-white">
@@ -83,7 +83,7 @@ export default async function AdminLayout({
                       href={item.href}
                       className="group flex items-center gap-3 rounded-md px-3 py-2.5 text-[var(--admin-text-muted)] transition-colors hover:bg-white/5 hover:text-white"
                     >
-                      <item.icon className="h-[18px] w-[18px] shrink-0 text-[var(--admin-text-dim)] transition-colors group-hover:text-mint" />
+                      <item.icon className="h-[18px] w-[18px] shrink-0 text-[var(--admin-text-dim)] transition-colors group-hover:text-navy" />
                       <span className="text-[13px] font-medium">{item.label}</span>
                     </Link>
                   </li>
@@ -99,7 +99,7 @@ export default async function AdminLayout({
               target="_blank"
               className="group flex items-center gap-3 rounded-md px-3 py-2.5 text-[var(--admin-text-muted)] transition-colors hover:bg-white/5 hover:text-white"
             >
-              <ExternalLink className="h-[18px] w-[18px] shrink-0 text-[var(--admin-text-dim)] transition-colors group-hover:text-mint" />
+              <ExternalLink className="h-[18px] w-[18px] shrink-0 text-[var(--admin-text-dim)] transition-colors group-hover:text-navy" />
               <span className="text-[13px] font-medium">사이트 바로가기</span>
             </Link>
           </div>
@@ -108,7 +108,7 @@ export default async function AdminLayout({
         {/* User info at bottom */}
         <div className="border-t border-white/10 px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mint/20 text-sm font-bold text-mint">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-navy/20 text-sm font-bold text-navy">
               {session.user.name?.charAt(0) ?? "A"}
             </div>
             <div className="min-w-0 flex-1">

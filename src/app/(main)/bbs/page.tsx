@@ -74,7 +74,7 @@ export default function BbsPage() {
               onClick={() => handleCategoryChange(catValue)}
               className={`px-4 py-2 text-sm font-medium transition border-b-2 ${
                 activeCategory === catValue
-                  ? "border-mint text-mint"
+                  ? "border-navy text-navy"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -117,7 +117,7 @@ export default function BbsPage() {
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="inline-block rounded-full bg-mint/10 px-2.5 py-0.5 text-xs font-medium text-mint">
+                    <span className="inline-block rounded-full bg-navy/10 px-2.5 py-0.5 text-xs font-medium text-navy">
                       [{post.category}]
                     </span>
                     <h3 className="text-base font-bold text-navy truncate">{post.title}</h3>
@@ -152,7 +152,7 @@ export default function BbsPage() {
                 onClick={() => handlePageChange(pageNum)}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                   meta.page === pageNum
-                    ? "bg-mint text-white"
+                    ? "bg-navy text-white"
                     : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                 }`}
               >

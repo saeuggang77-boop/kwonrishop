@@ -120,7 +120,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
           )}
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-mint/50 focus-visible:outline-none"
+            className="rounded-lg p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-navy/50 focus-visible:outline-none"
             aria-label="닫기"
           >
             <X className="h-5 w-5" />

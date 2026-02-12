@@ -70,8 +70,8 @@ export default async function DashboardPage() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           icon={<Package className="h-5 w-5" />}
-          accentColor="bg-mint"
-          iconColor="text-mint"
+          accentColor="bg-navy"
+          iconColor="text-navy"
           label="활성 매물"
           value={formatNumber(activeCount)}
           sub={`전체 ${listings.length}건`}
@@ -109,7 +109,7 @@ export default async function DashboardPage() {
         {listings.length === 0 ? (
           <div className="py-12 text-center text-gray-500">
             <p>등록된 매물이 없습니다.</p>
-            <Link href="/listings/new" className="mt-2 inline-block text-sm text-mint hover:underline">
+            <Link href="/listings/new" className="mt-2 inline-block text-sm text-navy hover:underline">
               첫 매물 등록하기
             </Link>
           </div>
@@ -133,7 +133,7 @@ export default async function DashboardPage() {
                   {listings.map((listing) => (
                     <tr key={listing.id} className="transition-colors hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <Link href={`/listings/${listing.id}`} className="font-medium text-navy transition-colors hover:text-mint">
+                        <Link href={`/listings/${listing.id}`} className="font-medium text-navy transition-colors hover:text-navy">
                           {listing.title}
                         </Link>
                       </td>

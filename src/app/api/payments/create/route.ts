@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createPaymentSchema } from "@/lib/validators/payment";
 import { errorToResponse } from "@/lib/utils/errors";
-import { SUBSCRIPTION_PRICES, DEEP_REPORT_PRICE, PREMIUM_AD_PLANS } from "@/lib/utils/constants";
+import { REPORT_PLANS, PREMIUM_AD_PLANS } from "@/lib/utils/constants";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
@@ -27,13 +27,8 @@ export async function POST(req: NextRequest) {
 
     switch (paymentType) {
       case "PREMIUM_SUBSCRIPTION": {
-        if (!tier || !SUBSCRIPTION_PRICES[tier] || SUBSCRIPTION_PRICES[tier] === 0) {
-          return Response.json({ error: { message: "유효하지 않은 구독 플랜입니다." } }, { status: 400 });
-        }
-        amount = SUBSCRIPTION_PRICES[tier];
-        orderName = `${tier} 구독`;
-        metadata.tier = tier;
-        break;
+        // 구독 시스템 비활성화됨
+        return Response.json({ error: { message: "구독 시스템이 종료되었습니다. 광고 또는 권리진단서를 이용해주세요." } }, { status: 400 });
       }
       case "DEEP_REPORT": {
         if (!listingId) {
@@ -42,13 +37,13 @@ export async function POST(req: NextRequest) {
         if (reportPlanId) {
           const plan = await prisma.reportPlan.findUnique({ where: { id: reportPlanId } });
           if (!plan) {
-            return Response.json({ error: { message: "리포트 플랜을 찾을 수 없습니다." } }, { status: 404 });
+            return Response.json({ error: { message: "권리진단서 플랜을 찾을 수 없습니다." } }, { status: 404 });
           }
           amount = Number(plan.price);
         } else {
-          amount = DEEP_REPORT_PRICE;
+          amount = REPORT_PLANS[0].price;
         }
-        orderName = "심층 분석 리포트";
+        orderName = "권리진단서";
         metadata.listingId = listingId;
         if (reportPlanId) metadata.reportPlanId = reportPlanId;
         break;

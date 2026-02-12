@@ -2,12 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  MapPin, Calendar, Eye, Building, Layers, Phone, Mail,
-  FileSearch, TrendingUp, Lock, Calculator, Star, Users,
-  ArrowRight, MapPinned, Footprints, Store, Shield,
+  MapPin, Calendar, Eye, Building, Layers,
+  FileSearch, TrendingUp, Calculator, Star, Users,
+  ArrowRight, MapPinned, Footprints, Store, Shield, ShieldCheck,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { InquiryForm } from "@/components/listings/inquiry-form";
+import { ContactSection } from "@/components/listings/contact-section";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
 import {
   BUSINESS_CATEGORY_LABELS,
@@ -16,6 +16,7 @@ import {
   SAFETY_GRADE_CONFIG,
   PREMIUM_AD_CONFIG,
   EXPERT_CATEGORY_LABELS,
+  DIAGNOSIS_BADGE_CONFIG,
 } from "@/lib/utils/constants";
 import { m2ToPyeong } from "@/lib/utils/area";
 import { ImageGallery } from "./image-gallery";
@@ -64,7 +65,7 @@ export default async function ListingDetailPage({
       }),
       prisma.user.findUnique({
         where: { id: listingData.sellerId },
-        select: { id: true, name: true, image: true },
+        select: { id: true, name: true, image: true, isTrustedSeller: true },
       }),
       prisma.marketPrice.findFirst({
         where: {
@@ -187,6 +188,17 @@ export default async function ListingDetailPage({
               {premiumTierConfig.badge}
             </span>
           )}
+          {listing.seller?.isTrustedSeller && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              안심거래
+            </span>
+          )}
+          {listing.hasDiagnosisBadge && (
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium ${DIAGNOSIS_BADGE_CONFIG.bg} ${DIAGNOSIS_BADGE_CONFIG.color} border ${DIAGNOSIS_BADGE_CONFIG.border}`}>
+              {DIAGNOSIS_BADGE_CONFIG.label}
+            </span>
+          )}
         </div>
 
         <h1 className="mt-4 text-3xl font-bold text-navy">{listing.title}</h1>
@@ -229,7 +241,7 @@ export default async function ListingDetailPage({
                     highlight="orange"
                   />
                 ) : (
-                  <PriceRow label="권리금" value="무권리" highlight="mint" />
+                  <PriceRow label="권리금" value="무권리" highlight="navy" />
                 )}
                 {listing.managementFee &&
                   Number(listing.managementFee) > 0 && (
@@ -244,7 +256,7 @@ export default async function ListingDetailPage({
                     <PriceRow
                       label="월매출"
                       value={formatKRW(listing.monthlyRevenue)}
-                      highlight="mint"
+                      highlight="navy"
                     />
                   )}
                 {listing.monthlyProfit &&
@@ -347,7 +359,24 @@ export default async function ListingDetailPage({
                 );
               })()}
 
-            {/* 권리분석 리포트 CTA Banner */}
+            {/* Diagnosis promotion banner for listings without badge */}
+            {!listing.hasDiagnosisBadge && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-blue-800">이 매물의 권리진단서를 발급받아보세요</p>
+                    <p className="text-xs text-blue-600 mt-1">권리진단서 발급 시 &quot;권리진단 완료&quot; 배지가 자동 부여됩니다</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 권리진단서 CTA Banner */}
             <div className="mt-8 overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50">
               <div className="flex items-center justify-between px-6 py-5">
                 <div className="flex items-center gap-4">
@@ -356,10 +385,10 @@ export default async function ListingDetailPage({
                   </div>
                   <div>
                     <p className="font-bold text-blue-900">
-                      더 자세한 분석이 필요하신가요?
+                      이 매물의 권리진단서를 발급받으세요
                     </p>
                     <p className="mt-0.5 text-sm text-gray-600">
-                      권리금 적정성 + 위험요소 분석 리포트를 받아보세요
+                      권리금 적정성 + 위험요소까지 분석해드립니다
                     </p>
                   </div>
                 </div>
@@ -367,7 +396,7 @@ export default async function ListingDetailPage({
                   href={`/reports/request/${listing.id}`}
                   className="shrink-0 rounded-lg bg-[#F59E0B] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#D97706]"
                 >
-                  권리분석 리포트 신청
+                  권리진단서 발급
                 </Link>
               </div>
             </div>
@@ -583,7 +612,6 @@ export default async function ListingDetailPage({
                             className="flex items-center gap-1 text-sm text-navy hover:underline"
                           >
                             상세 시세 보기
-                            <Lock className="h-3.5 w-3.5" />
                           </Link>
                         </div>
                       );
@@ -654,7 +682,7 @@ export default async function ListingDetailPage({
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {/* Current listing row */}
-                      <tr className="bg-mint/5">
+                      <tr className="bg-navy/5">
                         <td className="px-4 py-3 font-semibold text-navy">
                           {listing.title}
                           <span className="ml-1.5 text-[10px] font-bold text-navy">
@@ -940,42 +968,25 @@ export default async function ListingDetailPage({
                   <p className="font-semibold text-navy">
                     {listing.seller?.name ?? "미인증"}
                   </p>
-                  <p className="text-xs text-gray-500">판매자</p>
+                  {listing.seller?.isTrustedSeller ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-700">
+                      <ShieldCheck className="h-3 w-3" />
+                      안심거래 판매자
+                    </span>
+                  ) : (
+                    <p className="text-xs text-gray-500">판매자</p>
+                  )}
                 </div>
               </div>
 
-              {/* Contact Buttons */}
-              <div className="mt-4 space-y-2">
-                {listing.contactPhone && (
-                  <a
-                    href={`tel:${listing.contactPhone}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
-                  >
-                    <Phone className="h-4 w-4" />
-                    전화 문의
-                  </a>
-                )}
-                {listing.contactEmail && (
-                  <a
-                    href={`mailto:${listing.contactEmail}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                  >
-                    <Mail className="h-4 w-4" />
-                    이메일 문의
-                  </a>
-                )}
-                {!listing.contactPhone && !listing.contactEmail && (
-                  <p className="text-center text-sm text-gray-500">
-                    연락처가 등록되지 않았습니다.
-                  </p>
-                )}
-              </div>
             </div>
 
-            {/* Inquiry Form */}
-            <InquiryForm
+            <ContactSection
               listingId={listing.id}
               sellerId={listing.sellerId}
+              contactPhone={listing.contactPhone}
+              contactEmail={listing.contactEmail}
+              isPhonePublic={listing.isPhonePublic}
             />
 
             {/* Compare Button */}
@@ -1125,13 +1136,13 @@ function PriceRow({
 }: {
   label: string;
   value: string;
-  highlight?: "orange" | "mint" | "green";
+  highlight?: "orange" | "navy" | "green";
   secondary?: boolean;
 }) {
   const valueClass = highlight
     ? highlight === "orange"
       ? "text-orange-600 font-bold"
-      : highlight === "mint"
+      : highlight === "navy"
         ? "text-purple font-bold"
         : "text-green-600 font-bold"
     : secondary
@@ -1172,17 +1183,15 @@ function SummaryCard({
 }: {
   label: string;
   value: string;
-  color: "mint" | "green" | "navy" | "orange" | "purple";
+  color: "green" | "navy" | "orange" | "purple";
 }) {
   const colorMap = {
-    mint: "border-mint/30 bg-mint/5",
     green: "border-green-200 bg-green-50",
     navy: "border-navy/20 bg-navy/5",
     orange: "border-orange-200 bg-orange-50",
     purple: "border-purple/30 bg-purple/5",
   };
   const textMap = {
-    mint: "text-mint",
     green: "text-green-700",
     navy: "text-navy",
     orange: "text-orange-600",

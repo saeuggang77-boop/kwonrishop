@@ -124,8 +124,8 @@ async function generateReport(job: Job<ReportJobData>) {
     // In-app notification
     await createNotification({
       userId,
-      title: "분석 리포트가 준비되었습니다",
-      message: `"${listing.title}" 매물에 대한 심층 분석 리포트가 완성되었습니다.`,
+      title: "권리진단서가 준비되었습니다",
+      message: `"${listing.title}" 매물에 대한 권리진단서가 완성되었습니다.`,
       link: `/reports/${reportId}`,
       sourceType: "REPORT",
       sourceId: reportId,

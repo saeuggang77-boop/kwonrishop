@@ -71,7 +71,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <Link href="/legal/terms" className="transition-colors hover:text-navy">이용약관</Link>
               <Link href="/legal/privacy" className="transition-colors hover:text-navy">개인정보처리방침</Link>
               <Link href="/legal/disclaimer" className="transition-colors hover:text-navy">면책조항</Link>
-              <Link href="/pricing" className="transition-colors hover:text-navy">요금제</Link>
+              <Link href="/pricing" className="transition-colors hover:text-navy">서비스 요금</Link>
             </nav>
             <p className="text-xs text-gray-500">&copy; 2026 권리샵</p>
           </div>

@@ -39,7 +39,7 @@ export default async function DashboardAnalyticsPage() {
           <p className="text-xs text-gray-500">총 문의수</p>
         </div>
         <div className="rounded-xl border border-gray-200 bg-white p-5">
-          <TrendingUp className="h-5 w-5 text-mint" />
+          <TrendingUp className="h-5 w-5 text-navy" />
           <p className="mt-3 text-2xl font-bold text-navy">{formatPercent(avgConversion)}</p>
           <p className="text-xs text-gray-500">평균 전환율</p>
         </div>

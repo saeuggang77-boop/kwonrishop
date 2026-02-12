@@ -18,6 +18,7 @@ import {
   SAFETY_GRADE_CONFIG,
   PREMIUM_AD_CONFIG,
   STORE_FEATURES,
+  DIAGNOSIS_BADGE_CONFIG,
 } from "@/lib/utils/constants";
 
 /* ================================================================
@@ -45,10 +46,11 @@ interface ListingItem {
   createdAt: string;
   viewCount: number;
   images: { url: string; thumbnailUrl: string | null }[];
-  seller: { name: string | null; image: string | null };
+  seller: { name: string | null; image: string | null; isTrustedSeller?: boolean };
   safetyGrade: string | null;
   isPremium: boolean;
   premiumRank: number;
+  hasDiagnosisBadge: boolean;
 }
 
 type TabType = "direct" | "franchise";
@@ -96,6 +98,8 @@ export default function ListingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("direct");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
 
+  const [diagnosisOnly, setDiagnosisOnly] = useState(false);
+
   const [filters, setFilters] = useState({
     query: searchParams.get("query") ?? "",
     businessCategory: searchParams.get("businessCategory") ?? "",
@@ -109,6 +113,7 @@ export default function ListingsPage() {
     areaMax: "",
     theme: "",
     revenueVerified: false,
+    trustedOnly: false,
     sortBy: "createdAt",
     sortOrder: "desc",
   });
@@ -132,6 +137,8 @@ export default function ListingsPage() {
       if (filters.areaMin) params.set("areaMin", filters.areaMin);
       if (filters.areaMax) params.set("areaMax", filters.areaMax);
       if (activeTab === "franchise") params.set("storeType", "FRANCHISE");
+      if (filters.trustedOnly) params.set("trustedOnly", "true");
+      if (diagnosisOnly) params.set("diagnosisOnly", "true");
       params.set("sortBy", filters.sortBy);
       params.set("sortOrder", filters.sortOrder);
       params.set("limit", "12");
@@ -154,7 +161,7 @@ export default function ListingsPage() {
         setIsLoading(false);
       }
     },
-    [filters, cursor, activeTab]
+    [filters, cursor, activeTab, diagnosisOnly]
   );
 
   useEffect(() => {
@@ -165,7 +172,7 @@ export default function ListingsPage() {
     filters.businessCategory, filters.storeType, filters.city, filters.district,
     filters.totalCostMin, filters.totalCostMax, filters.floor,
     filters.areaMin, filters.areaMax, filters.sortBy, filters.sortOrder,
-    filters.revenueVerified, activeTab,
+    filters.revenueVerified, filters.trustedOnly, activeTab, diagnosisOnly,
   ]);
 
   // Infinite scroll
@@ -190,8 +197,9 @@ export default function ListingsPage() {
       query: "", businessCategory: "", storeType: "",
       city: "", district: "", totalCostMin: "", totalCostMax: "",
       floor: "", areaMin: "", areaMax: "", theme: "",
-      revenueVerified: false, sortBy: "createdAt", sortOrder: "desc",
+      revenueVerified: false, trustedOnly: false, sortBy: "createdAt", sortOrder: "desc",
     });
+    setDiagnosisOnly(false);
     setOpenFilter(null);
   };
 
@@ -219,7 +227,7 @@ export default function ListingsPage() {
   const priceCount = filters.totalCostMin || filters.totalCostMax ? 1 : 0;
   const floorCount = filters.floor ? 1 : 0;
   const areaCount = filters.areaMin || filters.areaMax ? 1 : 0;
-  const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + floorCount + areaCount > 0 || filters.city;
+  const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + floorCount + areaCount > 0 || filters.city || filters.trustedOnly || diagnosisOnly;
 
   return (
     <div className="flex h-[calc(100vh-56px)] flex-col overflow-hidden md:h-[calc(100vh-64px)]">
@@ -300,6 +308,27 @@ export default function ListingsPage() {
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
+
+              <label className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs font-medium text-green-700 transition-colors hover:bg-green-100">
+                <input
+                  type="checkbox"
+                  checked={filters.trustedOnly}
+                  onChange={(e) => setFilters((f) => ({ ...f, trustedOnly: e.target.checked }))}
+                  className="h-3.5 w-3.5 rounded border-green-300 accent-green-600"
+                />
+                <ShieldCheck className="h-3.5 w-3.5" />
+                안심거래 매물만
+              </label>
+
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={diagnosisOnly}
+                  onChange={(e) => setDiagnosisOnly(e.target.checked)}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span>권리진단 완료 매물만</span>
+              </label>
 
               {hasActiveFilters && (
                 <button
@@ -657,6 +686,7 @@ function ListingCard({ listing }: { listing: ListingItem }) {
   if (listing.floor != null) floorAreaParts.push(`${listing.floor}층`);
   if (listing.areaPyeong != null) floorAreaParts.push(`${listing.areaPyeong}평`);
 
+  const isTrusted = listing.seller?.isTrustedSeller ?? false;
   const hasPremiumFee = listing.premiumFee != null && Number(listing.premiumFee) > 0;
   const hasRevenue = listing.monthlyRevenue != null && Number(listing.monthlyRevenue) > 0;
   const hasProfit = listing.monthlyProfit != null && Number(listing.monthlyProfit) > 0;
@@ -698,6 +728,11 @@ function ListingCard({ listing }: { listing: ListingItem }) {
             {gradeConfig.label}
           </span>
         )}
+        {listing.hasDiagnosisBadge && (
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${DIAGNOSIS_BADGE_CONFIG.bg} ${DIAGNOSIS_BADGE_CONFIG.color} border ${DIAGNOSIS_BADGE_CONFIG.border} absolute right-2 ${gradeConfig ? "top-8" : "top-2"}`}>
+            {DIAGNOSIS_BADGE_CONFIG.label}
+          </span>
+        )}
         {/* Premium badge */}
         {tierConfig && (
           <span className={`absolute bottom-2 left-2 rounded px-2 py-0.5 text-[11px] font-bold leading-tight border ${tierConfig.bg} ${tierConfig.color} ${tierConfig.border}`}>
@@ -737,9 +772,17 @@ function ListingCard({ listing }: { listing: ListingItem }) {
             <p className="text-right text-sm text-gray-500">{floorAreaParts.join(" · ")}</p>
           )}
           {/* Title */}
-          <h3 className="truncate text-base font-bold text-[#1B3A5C] transition-colors group-hover:text-[#1B3A5C]/70">
-            {listing.title}
-          </h3>
+          <div className="flex items-center gap-1.5">
+            <h3 className="truncate text-base font-bold text-[#1B3A5C] transition-colors group-hover:text-[#1B3A5C]/70">
+              {listing.title}
+            </h3>
+            {isTrusted && (
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                <ShieldCheck className="h-3 w-3" />
+                안심거래
+              </span>
+            )}
+          </div>
           {/* Deposit / Monthly rent */}
           <p className="mt-1.5 text-sm font-semibold text-[#1B3A5C]">
             보증금 {formatKRW(Number(listing.price))} / 월세{" "}

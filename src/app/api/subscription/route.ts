@@ -67,7 +67,7 @@ export async function GET() {
 // ─── POST: Create or upgrade subscription ───
 
 const createSubscriptionBody = z.object({
-  planName: z.enum(["PRO", "EXPERT"]),
+  planName: z.enum(["PRO", "PREMIUM"]),
   billingCycle: z.enum(["monthly", "yearly"]),
   paymentMethod: z.enum(["CARD", "TRANSFER"]),
 });

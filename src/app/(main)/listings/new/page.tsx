@@ -122,6 +122,7 @@ interface FormData {
   contactVisible: boolean;
   contactPhone: string;
   contactEmail: string;
+  isPhonePublic: boolean;
   // Step 7
   hometaxLinked: boolean;
   creditCardLinked: boolean;
@@ -142,7 +143,7 @@ const initialForm: FormData = {
   floor: "", areaPyeong: "", features: [], parkingAvailable: false, parkingCount: "",
   monthlyRevenue: "", monthlyExpenses: "", staffCount: "", operatingYears: "",
   title: "", description: "",
-  contactVisible: true, contactPhone: "", contactEmail: "",
+  contactVisible: true, contactPhone: "", contactEmail: "", isPhonePublic: true,
   hometaxLinked: false, creditCardLinked: false, baeminLinked: false, yogiyoLinked: false, coupangLinked: false,
 };
 
@@ -284,6 +285,7 @@ export default function NewListingPage() {
       if (form.operatingYears) body.operatingYears = Number(form.operatingYears);
       if (form.contactPhone) body.contactPhone = form.contactPhone;
       if (form.contactEmail) body.contactEmail = form.contactEmail;
+      if (form.isPhonePublic !== undefined) body.isPhonePublic = form.isPhonePublic;
       if (form.storeName) body.storeName = form.storeName;
       if (form.franchiseName) body.franchiseName = form.franchiseName;
       if (form.features.length > 0) body.features = form.features;
@@ -315,7 +317,7 @@ export default function NewListingPage() {
   if (status === "loading") {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-mint" />
+        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-navy" />
       </div>
     );
   }
@@ -377,6 +379,21 @@ export default function NewListingPage() {
         {step === 5 && <Step5Description form={form} update={update} />}
         {step === 6 && <Step6Photos form={form} update={update} setUploadedImages={setUploadedImages} uploadedDocs={uploadedDocs} setUploadedDocs={setUploadedDocs} />}
         {step === 7 && <Step7Integration />}
+      </div>
+
+      {/* 권리진단 프로모션 배너 */}
+      <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-blue-800">매물 등록 후 권리진단서를 발급받으면 배지가 자동 부여됩니다</p>
+            <p className="text-xs text-blue-600 mt-1">권리진단 완료 매물은 문의율이 평균 2배 높습니다</p>
+          </div>
+        </div>
       </div>
 
       {/* Navigation Buttons */}
@@ -1171,6 +1188,25 @@ function Step6Photos({
                 className="step-input"
               />
             </div>
+
+            {/* Phone Public Toggle */}
+            {form.contactPhone && (
+              <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                <div>
+                  <span className="text-sm font-medium text-gray-700">전화번호 공개</span>
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    전화번호를 매물 상세에서 공개합니다
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => update("isPhonePublic", !form.isPhonePublic)}
+                  className={`relative h-6 w-11 rounded-full transition-colors ${form.isPhonePublic ? "bg-purple" : "bg-gray-300"}`}
+                >
+                  <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.isPhonePublic ? "left-[22px]" : "left-0.5"}`} />
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

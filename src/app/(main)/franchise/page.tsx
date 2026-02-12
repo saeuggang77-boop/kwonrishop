@@ -83,7 +83,7 @@ export default function FranchisePage() {
             onClick={() => setActiveTab(cat)}
             className={`rounded-lg px-5 py-2 text-sm font-medium transition ${
               activeTab === cat
-                ? "bg-mint text-white"
+                ? "bg-navy text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -102,11 +102,11 @@ export default function FranchisePage() {
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="브랜드명 검색"
             aria-label="브랜드명 검색"
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
           />
           <button
             onClick={handleSearch}
-            className="rounded-lg bg-mint px-6 py-2 text-sm font-medium text-white hover:bg-mint/90 transition"
+            className="rounded-lg bg-navy px-6 py-2 text-sm font-medium text-white hover:bg-navy/90 transition"
           >
             검색
           </button>
@@ -115,7 +115,7 @@ export default function FranchisePage() {
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           aria-label="정렬 기준"
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-mint focus:ring-1 focus:ring-mint"
+          className="rounded-lg border border-gray-300 px-4 py-2 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
         >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -147,7 +147,7 @@ export default function FranchisePage() {
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-xs font-medium text-mint">{brand.subcategory}</span>
+                    <span className="text-xs font-medium text-navy">{brand.subcategory}</span>
                     <h3 className="mt-1 text-lg font-bold text-navy">{brand.brandName}</h3>
                   </div>
                   {brand.isPromoting && (
@@ -216,7 +216,7 @@ export default function FranchisePage() {
                 onClick={() => handlePageChange(pageNum)}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                   meta.page === pageNum
-                    ? "bg-mint text-white"
+                    ? "bg-navy text-white"
                     : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                 }`}
               >

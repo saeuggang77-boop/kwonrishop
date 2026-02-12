@@ -60,7 +60,7 @@ export default async function DashboardListingsPage() {
                   <td className="px-4 py-4 text-right text-gray-500">{formatNumber(l.viewCount)}</td>
                   <td className="px-4 py-4 text-right text-gray-500">{formatRelativeTime(l.createdAt)}</td>
                   <td className="px-4 py-4 text-right">
-                    <Link href={`/listings/${l.id}/edit`} className="text-mint hover:underline">수정</Link>
+                    <Link href={`/listings/${l.id}/edit`} className="text-navy hover:underline">수정</Link>
                   </td>
                 </tr>
               ))}

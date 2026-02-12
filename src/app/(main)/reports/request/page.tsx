@@ -43,10 +43,10 @@ export default function ReportRequestIndexPage() {
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="font-heading text-2xl font-bold text-[#1B3A5C]">
-          권리분석 리포트 신청
+          권리진단서 발급 신청
         </h1>
         <p className="mt-2 text-sm text-gray-500">
-          매물을 선택하거나 직접 정보를 입력하여 리포트를 신청하세요
+          매물을 선택하거나 직접 정보를 입력하여 권리진단서를 발급받으세요
         </p>
       </div>
 
@@ -263,6 +263,7 @@ function DirectInputTab({
   const [plans, setPlans] = useState<PlanData[]>([]);
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [disclaimerAgreed, setDisclaimerAgreed] = useState(false);
 
   // Form fields
   const [businessCategory, setBusinessCategory] = useState("");
@@ -506,10 +507,23 @@ function DirectInputTab({
         )}
       </Section>
 
+      {/* Legal Disclaimer Agreement */}
+      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={disclaimerAgreed}
+          onChange={(e) => setDisclaimerAgreed(e.target.checked)}
+          className="mt-0.5 h-4 w-4 rounded border-gray-300 accent-navy"
+        />
+        <span className="text-sm text-gray-600">
+          본 권리진단서는 참고용 자료이며 법적 효력이 없음을 이해합니다. <span className="text-red-500">*</span>
+        </span>
+      </label>
+
       {/* Submit */}
       <button
         onClick={handleSubmit}
-        disabled={!businessCategory || !selectedPlanId || submitting}
+        disabled={!businessCategory || !selectedPlanId || !disclaimerAgreed || submitting}
         className="w-full rounded-xl bg-accent py-4 text-lg font-medium text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? (
@@ -518,11 +532,11 @@ function DirectInputTab({
             처리 중...
           </span>
         ) : (
-          "분석 리포트 신청하기"
+          "권리진단서 발급받기"
         )}
       </button>
       <p className="mt-2 text-center text-xs text-gray-500">
-        결제 완료 후 즉시 분석 리포트가 제공됩니다.
+        결제 완료 후 즉시 권리진단서가 발급됩니다.
       </p>
     </div>
   );

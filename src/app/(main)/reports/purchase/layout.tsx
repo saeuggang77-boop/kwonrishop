@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "리포트 구매 - 권리샵",
+  title: "권리진단서 구매 - 권리샵",
 };
 
 export default function PurchaseLayout({ children }: { children: React.ReactNode }) {

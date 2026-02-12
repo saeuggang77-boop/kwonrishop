@@ -32,7 +32,7 @@ export default async function PrivacyPage() {
         )}
       </div>
       <div className="mt-8 border-t pt-6">
-        <Link href="/legal/terms" className="text-mint hover:text-mint-dark">
+        <Link href="/legal/terms" className="text-navy hover:text-navy-dark">
           이용약관 보기 &rarr;
         </Link>
       </div>

@@ -7,7 +7,7 @@ import Link from "next/link";
 import {
   User, Mail, Phone, Building, CreditCard, Shield,
   Calendar, FileText, MessageSquare, Calculator, ChevronRight,
-  CheckCircle, Crown,
+  CheckCircle, Settings,
 } from "lucide-react";
 
 interface ProfileData {
@@ -20,7 +20,6 @@ interface ProfileData {
   emailVerified: string | null;
   businessName: string | null;
   businessNumber: string | null;
-  subscriptionTier: string;
   createdAt: string;
   _count: {
     listings: number;
@@ -34,12 +33,6 @@ const ROLE_LABELS: Record<string, string> = {
   BUYER: "매수자",
   SELLER: "매도자",
   ADMIN: "관리자",
-};
-
-const TIER_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  FREE: { label: "FREE", color: "text-gray-600", bg: "bg-gray-100", border: "border-gray-200" },
-  PRO: { label: "PRO", color: "text-mint", bg: "bg-mint/10", border: "border-mint/30" },
-  EXPERT: { label: "EXPERT", color: "text-navy", bg: "bg-navy/10", border: "border-navy/30" },
 };
 
 export default function ProfilePage() {
@@ -118,7 +111,6 @@ export default function ProfilePage() {
     );
   }
 
-  const tierConfig = TIER_CONFIG[profile?.subscriptionTier ?? "FREE"] ?? TIER_CONFIG.FREE;
   const joinDate = profile?.createdAt
     ? new Date(profile.createdAt).toLocaleDateString("ko-KR", {
         year: "numeric",
@@ -133,7 +125,7 @@ export default function ProfilePage() {
 
       {/* Profile Header Card */}
       <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <div className="bg-gradient-to-r from-mint/10 to-navy/10 px-6 py-6">
+        <div className="bg-gradient-to-r from-navy/10 to-navy/10 px-6 py-6">
           <div className="flex items-center gap-4">
             {/* Avatar */}
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-navy/20 text-2xl font-bold text-navy">
@@ -144,9 +136,6 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-bold text-navy">
                   {profile?.name ?? "이름 미설정"}
                 </h2>
-                <span className={`rounded-md border px-2 py-0.5 text-xs font-bold ${tierConfig.bg} ${tierConfig.color} ${tierConfig.border}`}>
-                  {tierConfig.label}
-                </span>
                 <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
                   {ROLE_LABELS[profile?.role ?? "BUYER"]}
                 </span>
@@ -172,7 +161,7 @@ export default function ProfilePage() {
         {profile?._count && (
           <div className="grid grid-cols-4 divide-x divide-gray-100 border-t border-gray-100">
             <StatItem
-              icon={<FileText className="h-4 w-4 text-mint" />}
+              icon={<FileText className="h-4 w-4 text-navy" />}
               label="등록 매물"
               value={profile._count.listings}
             />
@@ -183,7 +172,7 @@ export default function ProfilePage() {
             />
             <StatItem
               icon={<Shield className="h-4 w-4 text-orange-500" />}
-              label="리포트"
+              label="권리진단서"
               value={profile._count.reportPurchases}
             />
             <StatItem
@@ -194,23 +183,6 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
-
-      {/* Subscription CTA */}
-      {(profile?.subscriptionTier === "FREE") && (
-        <Link
-          href="/pricing"
-          className="mt-4 flex items-center justify-between rounded-xl border border-accent/30 bg-accent/5 px-5 py-4 transition-colors hover:bg-accent/10"
-        >
-          <div className="flex items-center gap-3">
-            <Crown className="h-5 w-5 text-accent" />
-            <div>
-              <p className="text-sm font-semibold text-navy">PRO 플랜으로 업그레이드</p>
-              <p className="text-xs text-gray-500">시세 비교, 시뮬레이터, 리포트 무료 혜택</p>
-            </div>
-          </div>
-          <ChevronRight className="h-5 w-5 text-accent" />
-        </Link>
-      )}
 
       {/* Profile Edit Form */}
       <form onSubmit={handleSave} className="mt-6 space-y-6">
@@ -288,7 +260,6 @@ export default function ProfilePage() {
           </div>
           <div className="divide-y divide-gray-50 px-6 py-2">
             <InfoRow label="계정 유형" value={ROLE_LABELS[profile?.role ?? "BUYER"] ?? profile?.role ?? ""} />
-            <InfoRow label="구독 플랜" value={tierConfig.label} badge={tierConfig} />
             <InfoRow label="가입일" value={joinDate} />
             <InfoRow
               label="이메일 인증"
@@ -320,10 +291,10 @@ export default function ProfilePage() {
             {isSaving ? "저장 중..." : "프로필 저장"}
           </button>
           <Link
-            href="/my/subscription"
+            href="/my/ads"
             className="rounded-lg border border-gray-300 px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
           >
-            구독 관리
+            광고 관리
           </Link>
         </div>
       </form>
@@ -334,9 +305,11 @@ export default function ProfilePage() {
           <h3 className="text-base font-semibold text-navy">바로가기</h3>
         </div>
         <div className="divide-y divide-gray-50">
-          <QuickLink href="/my/reports" label="내 리포트" description="구매한 권리분석 리포트 확인" icon={<FileText className="h-4 w-4 text-mint" />} />
+          <QuickLink href="/my/reports" label="내 권리진단서" description="발급받은 권리진단서 확인" icon={<FileText className="h-4 w-4 text-navy" />} />
           <QuickLink href="/my/simulations" label="내 시뮬레이션" description="저장된 창업 시뮬레이션 확인" icon={<Calculator className="h-4 w-4 text-navy" />} />
           <QuickLink href="/my/consultations" label="내 상담" description="전문가 상담 내역 확인" icon={<MessageSquare className="h-4 w-4 text-blue-500" />} />
+          <QuickLink href="/my/inquiries" label="문의 관리" description="받은 문의와 보낸 문의 확인" icon={<MessageSquare className="h-4 w-4 text-blue-500" />} />
+          <QuickLink href="/my/settings" label="설정" description="알림 등 설정 관리" icon={<Settings className="h-4 w-4 text-gray-500" />} />
         </div>
       </div>
     </div>

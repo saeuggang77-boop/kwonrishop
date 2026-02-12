@@ -41,7 +41,7 @@ export function CompareButton({ listing, variant = "card" }: CompareButtonProps)
         onClick={handleClick}
         className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
           isAdded
-            ? "border border-mint bg-mint/10 text-mint"
+            ? "border border-navy bg-navy/10 text-navy"
             : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
         }`}
       >
@@ -57,8 +57,8 @@ export function CompareButton({ listing, variant = "card" }: CompareButtonProps)
       onClick={handleClick}
       className={`absolute right-3 bottom-3 z-10 flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-all ${
         isAdded
-          ? "bg-mint text-white"
-          : "bg-white/90 text-gray-600 opacity-0 backdrop-blur-sm group-hover:opacity-100 hover:bg-mint hover:text-white"
+          ? "bg-navy text-white"
+          : "bg-white/90 text-gray-600 opacity-0 backdrop-blur-sm group-hover:opacity-100 hover:bg-navy hover:text-white"
       }`}
       title={isAdded ? "비교 목록에서 제거" : "비교 담기"}
     >

@@ -31,8 +31,10 @@ export const createListingSchema = z.object({
   areaM2: z.number().positive().optional(),
   floor: z.number().int().optional(),
   totalFloors: z.number().int().positive().optional(),
+  unit: z.string().optional(),
   contactPhone: z.string().optional(),
   contactEmail: z.string().email("올바른 이메일을 입력해주세요.").optional(),
+  isPhonePublic: z.boolean().optional(),
 });
 
 export const updateListingSchema = createListingSchema.partial();
@@ -54,6 +56,8 @@ export const searchListingsSchema = z.object({
   areaMin: z.coerce.number().nonnegative().optional(),
   areaMax: z.coerce.number().positive().optional(),
   premiumOnly: z.coerce.boolean().optional(),
+  trustedOnly: z.coerce.boolean().optional(),
+  diagnosisOnly: z.coerce.boolean().optional(),
   sortBy: z.enum(["createdAt", "price", "viewCount", "favoriteCount", "monthlyRevenue", "monthlyProfit"]).optional().default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
   cursor: z.string().optional(),

@@ -149,7 +149,7 @@ function ExpertCard({ expert }: { expert: ExpertItem }) {
   return (
     <Link
       href={`/experts/${expert.id}`}
-      className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-mint/40 hover:shadow-md"
+      className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-navy/40 hover:shadow-md"
     >
       <div className="flex gap-4">
         {/* Profile Image */}
@@ -182,7 +182,7 @@ function ExpertCard({ expert }: { expert: ExpertItem }) {
               {expert.name}
             </h3>
             {expert.isVerified && (
-              <Shield className="h-4 w-4 shrink-0 text-mint" />
+              <Shield className="h-4 w-4 shrink-0 text-navy" />
             )}
           </div>
           {expert.title && (
@@ -356,7 +356,7 @@ function ExpertsPageContent() {
                 onClick={() => setCategory(tab.key)}
                 className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   category === tab.key
-                    ? "bg-mint text-white"
+                    ? "bg-navy text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
@@ -372,7 +372,7 @@ function ExpertsPageContent() {
               <select
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-8 text-sm text-gray-700 outline-none transition focus:border-mint focus:ring-1 focus:ring-mint"
+                className="appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-8 text-sm text-gray-700 outline-none transition focus:border-navy focus:ring-1 focus:ring-navy"
               >
                 <option value="">전체 지역</option>
                 {Object.keys(REGIONS).map((r) => (
@@ -389,7 +389,7 @@ function ExpertsPageContent() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-8 text-sm text-gray-700 outline-none transition focus:border-mint focus:ring-1 focus:ring-mint"
+                className="appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-8 text-sm text-gray-700 outline-none transition focus:border-navy focus:ring-1 focus:ring-navy"
               >
                 {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -444,7 +444,7 @@ function ExpertsPageContent() {
                 >
                   {isLoadingMore ? (
                     <span className="flex items-center gap-2">
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-mint" />
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
                       불러오는 중...
                     </span>
                   ) : (
@@ -472,7 +472,7 @@ function ExpertsPageContent() {
                 setRegion("");
                 setSort("recommended");
               }}
-              className="mt-4 rounded-lg bg-mint px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-mint-dark"
+              className="mt-4 rounded-lg bg-navy px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy-dark"
             >
               필터 초기화
             </button>

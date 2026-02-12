@@ -69,6 +69,12 @@ export async function GET(req: NextRequest) {
     if (parsed.premiumOnly) {
       where.isPremium = true;
     }
+    if (parsed.trustedOnly) {
+      where.seller = { isTrustedSeller: true };
+    }
+    if (parsed.diagnosisOnly) {
+      where.hasDiagnosisBadge = true;
+    }
 
     const orderBy = [
       { premiumRank: "desc" as const },
@@ -82,7 +88,7 @@ export async function GET(req: NextRequest) {
       },
       include: {
         images: { where: { isPrimary: true }, take: 1 },
-        seller: { select: { name: true, image: true } },
+        seller: { select: { name: true, image: true, isTrustedSeller: true } },
       },
       orderBy,
       take: parsed.limit + 1,
@@ -123,6 +129,42 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const parsed = createListingSchema.parse(body);
+
+    // ── Duplicate active listing check ──
+    const duplicateWhere: Record<string, unknown> = {
+      sellerId: session.user.id,
+      status: "ACTIVE",
+      address: parsed.address,
+      floor: parsed.floor ?? null,
+    };
+    if (parsed.unit) {
+      duplicateWhere.unit = parsed.unit;
+    } else {
+      duplicateWhere.title = parsed.title;
+    }
+    const existingDuplicate = await prisma.listing.findFirst({ where: duplicateWhere });
+    if (existingDuplicate) {
+      return Response.json(
+        { error: { message: "동일한 주소/층수/호수의 매물이 이미 등록되어 있습니다." } },
+        { status: 409 },
+      );
+    }
+
+    // ── Monthly free listing limit (2 per month) ──
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthlyCount = await prisma.listing.count({
+      where: {
+        sellerId: session.user.id,
+        createdAt: { gte: monthStart },
+      },
+    });
+    if (monthlyCount >= 2) {
+      return Response.json(
+        { error: { message: "무료 매물 등록은 월 2건까지 가능합니다." } },
+        { status: 429 },
+      );
+    }
 
     const listing = await prisma.listing.create({
       data: {

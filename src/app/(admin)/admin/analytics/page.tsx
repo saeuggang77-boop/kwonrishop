@@ -23,7 +23,7 @@ export default async function AdminAnalyticsPage() {
           <p className="text-xs text-gray-500">총 회원수</p>
         </div>
         <div className="rounded-xl border border-gray-200 bg-white p-5">
-          <Package className="h-5 w-5 text-mint" />
+          <Package className="h-5 w-5 text-navy" />
           <p className="mt-3 text-2xl font-bold text-navy">{formatNumber(listingCount)}</p>
           <p className="text-xs text-gray-500">활성 매물</p>
         </div>

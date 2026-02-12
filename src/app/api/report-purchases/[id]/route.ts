@@ -31,22 +31,23 @@ export async function GET(
       },
     });
 
-    if (!purchase) throw new NotFoundError("리포트를 찾을 수 없습니다.");
+    if (!purchase) throw new NotFoundError("권리진단서를 찾을 수 없습니다.");
     if (purchase.userId !== session.user.id && session.user.role !== "ADMIN") {
       return Response.json({ error: { message: "접근 권한이 없습니다." } }, { status: 403 });
     }
 
+    const listing = purchase.listing!;
     return Response.json({
       data: {
         ...purchase,
         listing: {
-          ...purchase.listing,
-          price: Number(purchase.listing.price),
-          monthlyRent: purchase.listing.monthlyRent ? Number(purchase.listing.monthlyRent) : null,
-          premiumFee: purchase.listing.premiumFee ? Number(purchase.listing.premiumFee) : null,
-          managementFee: purchase.listing.managementFee ? Number(purchase.listing.managementFee) : null,
-          monthlyRevenue: purchase.listing.monthlyRevenue ? Number(purchase.listing.monthlyRevenue) : null,
-          monthlyProfit: purchase.listing.monthlyProfit ? Number(purchase.listing.monthlyProfit) : null,
+          ...listing,
+          price: Number(listing.price),
+          monthlyRent: listing.monthlyRent ? Number(listing.monthlyRent) : null,
+          premiumFee: listing.premiumFee ? Number(listing.premiumFee) : null,
+          managementFee: listing.managementFee ? Number(listing.managementFee) : null,
+          monthlyRevenue: listing.monthlyRevenue ? Number(listing.monthlyRevenue) : null,
+          monthlyProfit: listing.monthlyProfit ? Number(listing.monthlyProfit) : null,
         },
         plan: { ...purchase.plan, price: Number(purchase.plan.price) },
       },

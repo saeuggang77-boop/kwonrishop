@@ -48,8 +48,8 @@ export default function MyReportsPage() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-navy">내 리포트 관리</h1>
-          <p className="mt-1 text-sm text-gray-500">구매한 권리분석 리포트를 확인하세요</p>
+          <h1 className="text-2xl font-bold text-navy">내 권리진단서</h1>
+          <p className="mt-1 text-sm text-gray-500">발급받은 권리진단서를 확인하세요</p>
         </div>
         <Link
           href="/listings"
@@ -68,8 +68,8 @@ export default function MyReportsPage() {
       ) : purchases.length === 0 ? (
         <div className="mt-20 text-center">
           <FileText className="mx-auto h-12 w-12 text-gray-300" />
-          <h3 className="mt-4 text-lg font-medium text-gray-600">구매한 리포트가 없습니다</h3>
-          <p className="mt-2 text-sm text-gray-500">매물 상세 페이지에서 권리분석 리포트를 신청해보세요</p>
+          <h3 className="mt-4 text-lg font-medium text-gray-600">발급받은 권리진단서가 없습니다</h3>
+          <p className="mt-2 text-sm text-gray-500">매물 상세 페이지에서 권리진단서를 발급받아보세요</p>
           <Link
             href="/listings"
             className="mt-6 inline-block rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
@@ -119,7 +119,7 @@ export default function MyReportsPage() {
                         className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-dark"
                       >
                         <Eye className="h-4 w-4" />
-                        리포트 보기
+                        진단서 보기
                       </Link>
                     )}
                     {purchase.status === "COMPLETED" && isPremium && purchase.data?.pdfUrl && (

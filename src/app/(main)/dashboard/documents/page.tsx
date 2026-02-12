@@ -31,7 +31,7 @@ export default async function DashboardDocumentsPage() {
           {documents.map((doc) => (
             <div key={doc.id} className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5">
               <div className="flex items-center gap-3">
-                <Lock className="h-5 w-5 text-mint" />
+                <Lock className="h-5 w-5 text-navy" />
                 <div>
                   <p className="font-medium text-navy">{doc.fileName}</p>
                   <p className="text-xs text-gray-500">

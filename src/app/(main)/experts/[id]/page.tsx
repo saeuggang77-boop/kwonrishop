@@ -285,7 +285,7 @@ function ConsultationModal({
             </p>
             <Link
               href="/login"
-              className="mt-4 inline-block rounded-lg bg-mint px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-dark"
+              className="mt-4 inline-block rounded-lg bg-navy px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-dark"
             >
               로그인하기
             </Link>
@@ -506,7 +506,7 @@ export default function ExpertDetailPage() {
           </p>
           <Link
             href="/experts"
-            className="mt-4 inline-block rounded-lg bg-mint px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-dark"
+            className="mt-4 inline-block rounded-lg bg-navy px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-dark"
           >
             전문가 목록으로 돌아가기
           </Link>

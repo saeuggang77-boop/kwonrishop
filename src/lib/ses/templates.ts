@@ -61,7 +61,7 @@ export function reportReadyEmail(params: {
   downloadUrl: string;
 }): { subject: string; html: string } {
   return {
-    subject: `[권리샵] 권리 분석 리포트가 준비되었습니다`,
+    subject: `[권리샵] 권리진단서가 준비되었습니다`,
     html: `
       <div style="font-family: 'Noto Sans KR', sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #1B3A5C; padding: 20px; text-align: center;">
@@ -69,9 +69,9 @@ export function reportReadyEmail(params: {
         </div>
         <div style="padding: 30px; background: #fff;">
           <p>${params.userName}님, 안녕하세요.</p>
-          <p><strong>"${params.listingTitle}"</strong>에 대한 권리 분석 리포트가 준비되었습니다.</p>
+          <p><strong>"${params.listingTitle}"</strong>에 대한 권리진단서가 준비되었습니다.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${params.downloadUrl}" style="background: #F59E0B; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 700;">리포트 다운로드</a>
+            <a href="${params.downloadUrl}" style="background: #F59E0B; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 700;">권리진단서 다운로드</a>
           </div>
           <p style="color: #6B7280; font-size: 13px;">다운로드 링크는 72시간 동안 유효합니다.</p>
         </div>

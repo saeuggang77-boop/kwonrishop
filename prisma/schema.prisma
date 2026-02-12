@@ -99,7 +99,7 @@ enum PaymentType {
 enum SubscriptionTier {
   FREE
   PRO
-  EXPERT
+  PREMIUM
 }
 
 enum SubscriptionStatus {
@@ -275,6 +275,8 @@ model User {
   businessName     String?
   businessNumber   String?
   subscriptionTier SubscriptionTier @default(FREE)
+  isTrustedSeller  Boolean          @default(false)
+  smsNotificationEnabled Boolean    @default(true)
   violationCount   Int              @default(0)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
@@ -334,17 +336,20 @@ model Listing {
   areaPyeong       Float?
   floor            Int?
   totalFloors      Int?
+  unit             String?          // 호수 (예: "101호")
   status           ListingStatus    @default(DRAFT)
   isFeatured       Boolean          @default(false)
   safetyGrade      SafetyGrade?
   safetyComment    String?          // 등급 판정 요약
   isPremium        Boolean          @default(false)
+  hasDiagnosisBadge Boolean         @default(false)
   premiumRank      Int              @default(0)
   viewCount        Int              @default(0)
   inquiryCount     Int              @default(0)
   favoriteCount    Int              @default(0)
   contactPhone     String?
   contactEmail     String?
+  isPhonePublic    Boolean          @default(true)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   publishedAt      DateTime?
@@ -439,13 +444,17 @@ model Document {
 // ============================================================
 
 model Inquiry {
-  id         String   @id @default(cuid())
-  listingId  String
-  senderId   String
-  receiverId String
-  message    String   @db.Text
-  isRead     Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id          String        @id @default(cuid())
+  listingId   String
+  senderId    String
+  receiverId  String
+  message     String        @db.Text
+  senderName  String?
+  senderPhone String?
+  status      InquiryStatus @default(PENDING)
+  isRead      Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   listing  Listing @relation(fields: [listingId], references: [id])
   sender   User    @relation("InquirySender", fields: [senderId], references: [id])
@@ -455,6 +464,7 @@ model Inquiry {
   @@index([senderId])
   @@index([receiverId])
   @@index([createdAt])
+  @@index([status])
   @@map("inquiries")
 }
 
@@ -505,8 +515,8 @@ model SubscriptionPlan {
   id            String           @id @default(cuid())
   name          SubscriptionTier @unique
   displayName   String
-  price         Int              // monthly price in KRW (0, 29900, 59900)
-  yearlyPrice   Int              // yearly price in KRW (0, 287040, 575040) - 20% discount
+  price         Int              // monthly price in KRW (0, 9900, 29900)
+  yearlyPrice   Int              // yearly price in KRW (0, 95040, 287040) - 20% discount
   features      Json             // array of feature objects
   sortOrder     Int              @default(0)
   isActive      Boolean          @default(true)

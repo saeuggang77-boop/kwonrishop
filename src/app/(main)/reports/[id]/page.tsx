@@ -104,9 +104,9 @@ export default function ReportDetailPage({
   if (!report || !report.data) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <p className="text-gray-500">리포트를 찾을 수 없습니다.</p>
+        <p className="text-gray-500">권리진단서를 찾을 수 없습니다.</p>
         <Link href="/my/reports" className="mt-4 inline-block text-blue-600 hover:underline">
-          내 리포트 목록으로
+          내 권리진단서 목록으로
         </Link>
       </div>
     );
@@ -125,11 +125,11 @@ export default function ReportDetailPage({
       {/* Header */}
       <div className="mb-8">
         <Link href="/my/reports" className="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600">
-          <ArrowLeft className="h-4 w-4" /> 내 리포트 목록
+          <ArrowLeft className="h-4 w-4" /> 내 권리진단서 목록
         </Link>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-blue-900">권리분석 리포트</h1>
+            <h1 className="text-2xl font-bold text-blue-900">권리진단서</h1>
             <p className="mt-1 text-gray-500">{report.listing.title} - {report.listing.address}</p>
           </div>
           <span className={`rounded-lg px-3 py-1.5 text-sm font-bold ${
@@ -334,8 +334,8 @@ export default function ReportDetailPage({
         <section className="mb-8 overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white shadow-sm">
           <div className="flex items-center justify-between px-6 py-6">
             <div>
-              <h3 className="font-bold text-blue-900">PDF 리포트 다운로드</h3>
-              <p className="mt-1 text-sm text-gray-500">권리샵 로고 + 워터마크가 포함된 전체 분석 리포트</p>
+              <h3 className="font-bold text-blue-900">진단서 PDF 다운로드</h3>
+              <p className="mt-1 text-sm text-gray-500">권리샵 로고 + 워터마크가 포함된 전체 권리진단서</p>
             </div>
             <button
               onClick={() => {
@@ -349,7 +349,7 @@ export default function ReportDetailPage({
               className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
               <Download className="h-4 w-4" />
-              PDF 다운로드
+              진단서 PDF 다운로드
             </button>
           </div>
         </section>
@@ -359,7 +359,7 @@ export default function ReportDetailPage({
       {!isPremium && (
         <section className="mb-8 overflow-hidden rounded-2xl border border-dashed border-blue-300 bg-blue-50 p-6 text-center">
           <Target className="mx-auto h-8 w-8 text-blue-400" />
-          <h3 className="mt-3 font-bold text-blue-900">PREMIUM 리포트로 업그레이드</h3>
+          <h3 className="mt-3 font-bold text-blue-900">권리진단서 PREMIUM으로 업그레이드</h3>
           <p className="mt-2 text-sm text-gray-600">
             임대차 계약 체크리스트 20항목 + 상세 위험요소 분석 + PDF 다운로드
           </p>
@@ -372,12 +372,18 @@ export default function ReportDetailPage({
         </section>
       )}
 
-      {/* Footer */}
+      {/* Watermark */}
+      <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50/50 p-3 text-center text-xs text-blue-600">
+        본 권리진단서는 권리샵에서 발급되었습니다
+      </div>
+
+      {/* Footer Disclaimer */}
       <div className="rounded-lg bg-yellow-50 p-4 text-xs leading-relaxed text-yellow-800">
         <p className="font-medium">면책사항</p>
         <p className="mt-1">
-          본 분석 리포트는 입력된 정보를 기반으로 한 참고 자료이며, 법적 효력이 없습니다.
-          중요한 거래 결정 시 반드시 전문가 (변호사, 공인중개사) 상담을 받으시기 바랍니다.
+          본 권리진단서는 권리샵이 제공하는 참고용 분석 자료이며, 법적 효력이 있는 공식 문서가 아닙니다.
+          실제 거래 시 반드시 공인중개사, 법률 전문가와 상담하시기 바랍니다.
+          분석 결과의 정확성을 보증하지 않으며, 이를 근거로 한 거래 손실에 대해 책임지지 않습니다.
         </p>
       </div>
     </div>

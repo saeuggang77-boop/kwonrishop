@@ -27,7 +27,7 @@ export default async function AdminFraudPage() {
           <div key={rule.id} className="rounded-xl border border-gray-200 bg-white p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3">
-                <Shield className="mt-0.5 h-5 w-5 text-mint" />
+                <Shield className="mt-0.5 h-5 w-5 text-navy" />
                 <div>
                   <h3 className="font-bold text-navy">{rule.name}</h3>
                   <p className="mt-1 text-sm text-gray-500">{rule.description}</p>
@@ -47,7 +47,7 @@ export default async function AdminFraudPage() {
       </div>
 
       <div className="mt-6">
-        <Link href="/admin/queue" className="text-sm text-mint hover:underline">사기탐지 큐 보기 →</Link>
+        <Link href="/admin/queue" className="text-sm text-navy hover:underline">사기탐지 큐 보기 →</Link>
       </div>
     </div>
   );

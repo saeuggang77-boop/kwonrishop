@@ -101,7 +101,7 @@ export default async function ViolationDetailPage({
               <InfoRow label="등록일" value={formatDateTimeKR(listing.createdAt)} />
             </div>
             <div className="mt-4">
-              <Link href={`/listings/${listing.id}`} className="text-sm text-mint hover:underline">
+              <Link href={`/listings/${listing.id}`} className="text-sm text-navy hover:underline">
                 매물 상세 보기 →
               </Link>
             </div>

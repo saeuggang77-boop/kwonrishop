@@ -53,7 +53,7 @@ function ListingAdSuccessContent() {
   if (status === "confirming") {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <Loader2 className="mx-auto h-16 w-16 animate-spin text-mint" />
+        <Loader2 className="mx-auto h-16 w-16 animate-spin text-navy" />
         <h1 className="mt-6 text-2xl font-bold text-navy">결제 확인 중...</h1>
         <p className="mt-2 text-gray-500">잠시만 기다려주세요.</p>
       </div>
@@ -80,7 +80,7 @@ function ListingAdSuccessContent() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-20 text-center">
-      <CheckCircle className="mx-auto h-16 w-16 text-mint" />
+      <CheckCircle className="mx-auto h-16 w-16 text-navy" />
       <h1 className="mt-6 text-2xl font-bold text-navy">광고가 활성화되었습니다!</h1>
       <p className="mt-2 text-gray-500">
         {tier} 플랜으로 30일간 매물이 상단에 노출됩니다.
@@ -110,7 +110,7 @@ export default function ListingAdSuccessPage() {
     <Suspense
       fallback={
         <div className="mx-auto max-w-md px-4 py-20 text-center">
-          <Loader2 className="mx-auto h-16 w-16 animate-spin text-mint" />
+          <Loader2 className="mx-auto h-16 w-16 animate-spin text-navy" />
           <h1 className="mt-6 text-2xl font-bold text-navy">로딩 중...</h1>
         </div>
       }

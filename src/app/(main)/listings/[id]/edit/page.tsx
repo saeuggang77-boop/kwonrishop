@@ -166,7 +166,7 @@ export default function EditListingPage() {
         </div>
 
         <div className="flex gap-3">
-          <button type="submit" disabled={isSaving} className="rounded-lg bg-mint px-8 py-3 text-sm font-medium text-white hover:bg-mint-dark disabled:opacity-50">
+          <button type="submit" disabled={isSaving} className="rounded-lg bg-navy px-8 py-3 text-sm font-medium text-white hover:bg-navy-dark disabled:opacity-50">
             {isSaving ? "저장 중..." : "수정 완료"}
           </button>
           <Link href={`/listings/${id}`} className="rounded-lg border border-gray-300 px-8 py-3 text-sm text-gray-600 hover:bg-gray-50">

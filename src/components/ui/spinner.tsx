@@ -15,7 +15,7 @@ export function Spinner({ size = "md", className }: SpinnerProps) {
   return (
     <span
       className={cn(
-        "inline-block animate-spin rounded-full border-mint border-t-transparent",
+        "inline-block animate-spin rounded-full border-navy border-t-transparent",
         sizeStyles[size],
         className
       )}

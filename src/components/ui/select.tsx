@@ -37,7 +37,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             aria-describedby={errorId}
             className={cn(
               "w-full appearance-none rounded-lg border border-gray-300 px-4 py-2.5 pr-10 text-sm outline-none transition-colors",
-              "focus:border-mint focus:ring-2 focus:ring-mint/20",
+              "focus:border-navy focus:ring-2 focus:ring-navy/20",
               "disabled:bg-gray-100 disabled:cursor-not-allowed",
               error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
               !props.value && "text-gray-400",

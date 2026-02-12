@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { updateInquiryStatusSchema } from "@/lib/validators/inquiry";
 
 export async function GET(
   _req: NextRequest,
@@ -32,6 +33,44 @@ export async function GET(
     }
 
     return Response.json({ data: inquiry });
+  } catch (error) {
+    return Response.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const session = await auth();
+    if (!session?.user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const inquiry = await prisma.inquiry.findUnique({ where: { id } });
+    if (!inquiry) {
+      return Response.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // Only the receiver (listing seller) can change status
+    if (inquiry.receiverId !== session.user.id) {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const parsed = updateInquiryStatusSchema.parse(body);
+
+    const updated = await prisma.inquiry.update({
+      where: { id },
+      data: {
+        status: parsed.status,
+        isRead: true,
+      },
+    });
+
+    return Response.json({ data: updated });
   } catch (error) {
     return Response.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }

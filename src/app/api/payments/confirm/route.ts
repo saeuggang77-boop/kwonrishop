@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { confirmPayment } from "@/lib/toss/confirm";
@@ -70,29 +70,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (payment.paymentType === "PREMIUM_SUBSCRIPTION") {
-      // Activate subscription
-      const meta = payment.metadata as Record<string, string> | null;
-      const tier = meta?.tier ?? "PRO";
-      const now = new Date();
-      const periodEnd = new Date(now);
-      periodEnd.setMonth(periodEnd.getMonth() + 1);
-
-      await prisma.subscription.upsert({
-        where: { userId: session.user.id },
-        create: {
-          userId: session.user.id,
-          tier: tier as "PRO" | "EXPERT",
-          status: "ACTIVE",
-          currentPeriodStart: now,
-          currentPeriodEnd: periodEnd,
-        },
-        update: {
-          tier: tier as "PRO" | "EXPERT",
-          status: "ACTIVE",
-          currentPeriodStart: now,
-          currentPeriodEnd: periodEnd,
-        },
-      });
+      return NextResponse.json(
+        { error: "구독 서비스는 현재 지원하지 않습니다." },
+        { status: 400 }
+      );
     }
 
     if (payment.paymentType === "ADVERTISEMENT" || payment.paymentType === "FEATURED_LISTING") {

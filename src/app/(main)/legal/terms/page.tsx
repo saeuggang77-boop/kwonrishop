@@ -32,7 +32,7 @@ export default async function TermsPage() {
         )}
       </div>
       <div className="mt-8 border-t pt-6">
-        <Link href="/legal/privacy" className="text-mint hover:text-mint-dark">
+        <Link href="/legal/privacy" className="text-navy hover:text-navy-dark">
           개인정보처리방침 보기 &rarr;
         </Link>
       </div>

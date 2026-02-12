@@ -43,8 +43,9 @@ export async function POST(req: NextRequest) {
     const { listingId, planId, paymentMethod, inputData } = body;
 
     // listingId가 있으면 listing 조회 검증
+    let listing: { id: string; sellerId: string } | null = null;
     if (listingId) {
-      const listing = await prisma.listing.findUnique({ where: { id: listingId }, select: { id: true } });
+      listing = await prisma.listing.findUnique({ where: { id: listingId }, select: { id: true, sellerId: true } });
       if (!listing) throw new NotFoundError("매물을 찾을 수 없습니다.");
     }
 
@@ -74,6 +75,14 @@ export async function POST(req: NextRequest) {
         pdfUrl: plan.name === "PREMIUM" ? `/reports/${purchase.id}/pdf` : null,
       },
     });
+
+    // Auto-set diagnosis badge on the listing
+    if (listing?.id) {
+      await prisma.listing.update({
+        where: { id: listing.id },
+        data: { hasDiagnosisBadge: true },
+      });
+    }
 
     return Response.json({ data: { purchaseId: purchase.id } });
   } catch (error) {

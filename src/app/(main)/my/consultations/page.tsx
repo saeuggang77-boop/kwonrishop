@@ -214,7 +214,7 @@ export default function MyConsultationsPage() {
                 <div className="p-5">
                   <div className="flex items-start gap-4">
                     {/* Expert Avatar */}
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-mint/10 text-sm font-bold text-mint">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-navy/10 text-sm font-bold text-navy">
                       {item.expert.name.charAt(0)}
                     </div>
 
@@ -252,7 +252,7 @@ export default function MyConsultationsPage() {
                     {canReview && (
                       <button
                         onClick={() => openReviewModal(item)}
-                        className="shrink-0 rounded-lg border border-mint bg-mint/5 px-3 py-1.5 text-xs font-medium text-mint transition-colors hover:bg-mint/10"
+                        className="shrink-0 rounded-lg border border-navy bg-navy/5 px-3 py-1.5 text-xs font-medium text-navy transition-colors hover:bg-navy/10"
                       >
                         리뷰 작성
                       </button>
@@ -341,7 +341,7 @@ export default function MyConsultationsPage() {
                     }
                   }}
                   placeholder="상담은 어떠셨나요? 다른 분들에게 도움이 될 수 있도록 솔직한 리뷰를 남겨주세요."
-                  className="h-32 w-full resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint"
+                  className="h-32 w-full resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
                 />
                 <p className="mt-1 text-right text-xs text-gray-400">
                   {reviewContent.length}/500

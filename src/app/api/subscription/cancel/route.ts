@@ -57,6 +57,17 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Remove trusted seller badge on downgrade from PREMIUM
+    if (subscription.tier === "PREMIUM") {
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: {
+          isTrustedSeller: false,
+          subscriptionTier: "FREE",
+        },
+      });
+    }
+
     return Response.json({
       data: {
         success: true,

@@ -13,12 +13,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-mint text-white hover:bg-mint-dark",
+  primary: "bg-navy text-white hover:bg-navy-dark",
   cta: "bg-accent text-white hover:bg-accent-dark",
   secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
   danger: "bg-red-600 text-white hover:bg-red-700",
   ghost: "text-gray-600 hover:bg-gray-100",
-  outline: "border border-mint text-mint hover:bg-mint/5",
+  outline: "border border-navy text-navy hover:bg-navy/5",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -35,7 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         "inline-flex items-center justify-center gap-2 rounded-lg font-medium",
         "transition-all duration-150",
         "active:scale-[0.97]",
-        "focus-visible:ring-2 focus-visible:ring-mint/50 focus-visible:ring-offset-2 focus-visible:outline-none",
+        "focus-visible:ring-2 focus-visible:ring-navy/50 focus-visible:ring-offset-2 focus-visible:outline-none",
         "disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
         variantStyles[variant],
         sizeStyles[size],

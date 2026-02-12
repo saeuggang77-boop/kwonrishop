@@ -222,7 +222,7 @@ export function DeepReportDocument({ data }: { data: ReportData }) {
         </View>
 
         {/* Title */}
-        <Text style={styles.title}>상가 분석 심층 리포트</Text>
+        <Text style={styles.title}>권리진단서</Text>
         <Text style={{ fontSize: 12, color: "#374151", marginBottom: 15 }}>
           {listing.title}
         </Text>
@@ -367,9 +367,16 @@ export function DeepReportDocument({ data }: { data: ReportData }) {
           </Text>
         </View>
 
+        {/* Legal Disclaimer */}
+        <View style={{ marginTop: 20, padding: 10, backgroundColor: "#F9FAFB", borderRadius: 4 }}>
+          <Text style={{ fontSize: 7, color: "#6B7280", lineHeight: 1.6 }}>
+            본 권리진단서는 권리샵이 제공하는 참고용 분석 자료이며, 법적 효력이 있는 공식 문서가 아닙니다. 실제 거래 시 반드시 공인중개사, 법률 전문가와 상담하시기 바랍니다. 분석 결과의 정확성을 보증하지 않으며, 이를 근거로 한 거래 손실에 대해 책임지지 않습니다.
+          </Text>
+        </View>
+
         {/* Footer */}
         <Text style={styles.footer}>
-          © 권리샵 (kwonrishop.com) — 본 보고서는 참고용이며 법적 효력이 없습니다.
+          © 권리샵 (kwonrishop.com) — 본 권리진단서는 참고용이며 법적 효력이 없습니다.
         </Text>
       </Page>
     </Document>

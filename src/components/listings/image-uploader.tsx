@@ -104,7 +104,7 @@ export function ImageUploader({ listingId, onImagesChange }: ImageUploaderProps)
               unoptimized
             />
             {i === 0 && (
-              <span className="absolute left-1 top-1 rounded bg-mint px-1.5 py-0.5 text-[10px] font-bold text-white">
+              <span className="absolute left-1 top-1 rounded bg-navy px-1.5 py-0.5 text-[10px] font-bold text-white">
                 대표
               </span>
             )}
@@ -123,10 +123,10 @@ export function ImageUploader({ listingId, onImagesChange }: ImageUploaderProps)
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 transition-colors hover:border-mint hover:text-mint disabled:opacity-50"
+            className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 transition-colors hover:border-navy hover:text-navy disabled:opacity-50"
           >
             {uploading ? (
-              <span className="h-6 w-6 animate-spin rounded-full border-2 border-mint border-t-transparent" />
+              <span className="h-6 w-6 animate-spin rounded-full border-2 border-navy border-t-transparent" />
             ) : (
               <Upload className="h-6 w-6" />
             )}

@@ -149,7 +149,7 @@ export default function DashboardPremiumPage() {
                   return (
                     <tr key={item.id} className="border-b border-gray-100">
                       <td className="py-3 pr-4">
-                        <Link href={`/listings/${item.listing.id}`} className="text-sm font-medium text-navy hover:text-mint">
+                        <Link href={`/listings/${item.listing.id}`} className="text-sm font-medium text-navy hover:text-navy">
                           {item.listing.title}
                         </Link>
                       </td>

@@ -74,14 +74,14 @@ export default async function InquiriesPage() {
               <div
                 key={inq.id}
                 className={`rounded-xl border bg-white p-5 ${
-                  inq.isRead ? "border-gray-100" : "border-mint/30 bg-mint/5"
+                  inq.isRead ? "border-gray-100" : "border-navy/30 bg-navy/5"
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
                       {!inq.isRead && (
-                        <span className="h-2 w-2 rounded-full bg-mint" />
+                        <span className="h-2 w-2 rounded-full bg-navy" />
                       )}
                       <p className="font-medium text-navy">
                         {sender?.name ?? sender?.email ?? "익명"}
@@ -96,7 +96,7 @@ export default async function InquiriesPage() {
                   {listing && (
                     <Link
                       href={`/listings/${inq.listingId}`}
-                      className="shrink-0 text-sm text-mint hover:underline"
+                      className="shrink-0 text-sm text-navy hover:underline"
                     >
                       매물 보기
                     </Link>
@@ -140,7 +140,7 @@ export default async function InquiriesPage() {
                   {listing && (
                     <Link
                       href={`/listings/${inq.listingId}`}
-                      className="shrink-0 text-sm text-mint hover:underline"
+                      className="shrink-0 text-sm text-navy hover:underline"
                     >
                       매물 보기
                     </Link>

@@ -79,14 +79,14 @@ export default async function AdminDashboardPage() {
       label: "총 매물",
       value: formatNumber(listingCount),
       borderColor: "border-l-green-500",
-      iconColor: "text-green-500/40",
+      iconColor: "text-blue-500/40",
     },
     {
       icon: TrendingUp,
       label: "오늘 신규 매물",
       value: formatNumber(todayListingsCount),
-      borderColor: "border-l-emerald-500",
-      iconColor: "text-emerald-500/40",
+      borderColor: "border-l-blue-500",
+      iconColor: "text-blue-500/40",
     },
     {
       icon: AlertTriangle,

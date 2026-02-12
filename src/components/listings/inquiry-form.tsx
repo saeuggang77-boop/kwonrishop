@@ -86,7 +86,7 @@ export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="매물에 대해 궁금한 점을 작성해주세요..."
           rows={4}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/20 placeholder:text-gray-400"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-navy focus:ring-2 focus:ring-navy/20 placeholder:text-gray-400"
           maxLength={1000}
         />
         {status === "error" && (
@@ -97,7 +97,7 @@ export function InquiryForm({ listingId, sellerId }: InquiryFormProps) {
             type="checkbox"
             checked={privacyConsent}
             onChange={(e) => setPrivacyConsent(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-mint focus:ring-mint"
+            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-navy focus:ring-navy"
           />
           <span>
             개인정보 수집 및 이용에 동의합니다. (필수)

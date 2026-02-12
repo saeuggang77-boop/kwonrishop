@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
-import { DEEP_REPORT_PRICE } from "@/lib/utils/constants";
+import { REPORT_PLANS } from "@/lib/utils/constants";
 import { useToast } from "@/components/ui/toast";
 
 function ReportPurchaseContent() {
@@ -37,13 +37,13 @@ function ReportPurchaseContent() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16 text-center">
-      <FileText className="mx-auto h-16 w-16 text-mint" />
-      <h1 className="mt-6 text-2xl font-bold text-navy">심층 리포트 구매</h1>
+      <FileText className="mx-auto h-16 w-16 text-navy" />
+      <h1 className="mt-6 text-2xl font-bold text-navy">권리진단서 발급</h1>
       <p className="mt-2 text-gray-500">
-        전문가 수준의 권리 분석 리포트를 PDF로 받아보세요.
+        전문가 수준의 권리진단서를 PDF로 받아보세요.
       </p>
       <div className="mt-6 rounded-lg bg-gray-50 p-4">
-        <p className="text-3xl font-bold text-navy">{formatKRW(DEEP_REPORT_PRICE)}</p>
+        <p className="text-3xl font-bold text-navy">{formatKRW(REPORT_PLANS[0].price)}</p>
         <p className="text-xs text-gray-500">1회 결제</p>
       </div>
       <ul className="mt-6 space-y-2 text-left text-sm text-gray-600">
