@@ -68,7 +68,7 @@ function PremiumSuccessContent() {
         <p className="mt-2 text-gray-500">{errorMsg}</p>
         <div className="mt-8">
           <Link
-            href="/premium/checkout"
+            href="/pricing"
             className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:bg-accent-dark"
           >
             다시 시도
@@ -81,8 +81,8 @@ function PremiumSuccessContent() {
   return (
     <div className="mx-auto max-w-md px-4 py-20 text-center">
       <CheckCircle className="mx-auto h-16 w-16 text-navy" />
-      <h1 className="mt-6 text-2xl font-bold text-navy">구독이 완료되었습니다!</h1>
-      <p className="mt-2 text-gray-500">프리미엄 기능을 이용하실 수 있습니다.</p>
+      <h1 className="mt-6 text-2xl font-bold text-navy">결제가 완료되었습니다!</h1>
+      <p className="mt-2 text-gray-500">서비스를 이용하실 수 있습니다.</p>
       <div className="mt-8 flex justify-center gap-3">
         <Link
           href="/listings"
@@ -91,10 +91,10 @@ function PremiumSuccessContent() {
           매물 둘러보기
         </Link>
         <Link
-          href="/premium/manage"
+          href="/my/ads"
           className="rounded-lg border border-gray-300 px-6 py-3 text-sm text-gray-600 hover:bg-gray-50"
         >
-          구독 관리
+          내 광고 관리
         </Link>
       </div>
     </div>
