@@ -38,6 +38,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <Link href="/simulator" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
               창업 시뮬레이터
             </Link>
+            <Link href="/experts" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
+              전문가 상담
+            </Link>
             <Link href="/bbs" className="text-sm font-medium text-gray-600 transition-colors hover:text-navy">
               이용가이드
             </Link>
@@ -68,6 +71,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <Link href="/legal/terms" className="transition-colors hover:text-navy">이용약관</Link>
               <Link href="/legal/privacy" className="transition-colors hover:text-navy">개인정보처리방침</Link>
               <Link href="/legal/disclaimer" className="transition-colors hover:text-navy">면책조항</Link>
+              <Link href="/pricing" className="transition-colors hover:text-navy">요금제</Link>
             </nav>
             <p className="text-xs text-gray-500">&copy; 2026 권리샵</p>
           </div>

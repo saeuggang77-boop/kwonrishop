@@ -57,16 +57,52 @@ export const FRAUD_SEVERITY_LABELS: Record<string, string> = {
 
 export const SUBSCRIPTION_TIER_LABELS: Record<string, string> = {
   FREE: "무료",
-  BASIC: "베이직",
-  PREMIUM: "프리미엄",
-  ENTERPRISE: "엔터프라이즈",
+  PRO: "프로",
+  EXPERT: "전문가",
 };
 
 export const SUBSCRIPTION_PRICES: Record<string, number> = {
   FREE: 0,
-  BASIC: 29_000,
-  PREMIUM: 79_000,
-  ENTERPRISE: 0,
+  PRO: 29_900,
+  EXPERT: 59_900,
+};
+
+export const SUBSCRIPTION_YEARLY_PRICES: Record<string, number> = {
+  FREE: 0,
+  PRO: 287_040,   // 29900 * 12 * 0.8
+  EXPERT: 575_040, // 59900 * 12 * 0.8
+};
+
+export const SUBSCRIPTION_PLAN_FEATURES: Record<string, { text: string; included: boolean }[]> = {
+  FREE: [
+    { text: "매물 검색 & 조회", included: true },
+    { text: "매물 등록 (월 3건)", included: true },
+    { text: "권리 안전도 등급 확인", included: true },
+    { text: "기본 매물 비교 (2개)", included: true },
+    { text: "시세 비교 위젯", included: false },
+    { text: "창업 시뮬레이터", included: false },
+    { text: "권리분석 리포트", included: false },
+    { text: "전문가 상담 무료", included: false },
+  ],
+  PRO: [
+    { text: "매물 검색 & 조회", included: true },
+    { text: "매물 등록 무제한", included: true },
+    { text: "권리 안전도 등급 확인", included: true },
+    { text: "매물 비교 (최대 4개)", included: true },
+    { text: "시세 비교 위젯 전체 이용", included: true },
+    { text: "창업 시뮬레이터 전체 이용", included: true },
+    { text: "BASIC 리포트 1회/월 무료", included: true },
+    { text: "BASIC 광고 1회/월 무료", included: true },
+  ],
+  EXPERT: [
+    { text: "PRO 전체 포함", included: true },
+    { text: "PREMIUM 리포트 2회/월 무료", included: true },
+    { text: "PREMIUM 광고 1회/월 무료", included: true },
+    { text: "전문가 상담 월 2회 무료", included: true },
+    { text: "시뮬레이터 PDF 다운로드", included: true },
+    { text: "전담 매니저 배정 (준비중)", included: true },
+    { text: "API 연동 (준비중)", included: true },
+  ],
 };
 
 export const DEEP_REPORT_PRICE = 39_000;
@@ -222,4 +258,38 @@ export const REGIONS: Record<string, string[]> = {
   광주광역시: ["광산구", "남구", "동구", "북구", "서구"],
   울산광역시: ["남구", "동구", "북구", "울주군", "중구"],
   세종특별자치시: ["세종시"],
+};
+
+export const EXPERT_CATEGORY_LABELS: Record<string, string> = {
+  LAW: "법률",
+  INTERIOR: "인테리어",
+  DEMOLITION: "철거",
+  ACCOUNTING: "세무회계",
+  REALESTATE: "부동산",
+};
+
+export const EXPERT_CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
+  LAW: { bg: "bg-blue-100", text: "text-blue-700" },
+  INTERIOR: { bg: "bg-orange-100", text: "text-orange-700" },
+  DEMOLITION: { bg: "bg-red-100", text: "text-red-700" },
+  ACCOUNTING: { bg: "bg-green-100", text: "text-green-700" },
+  REALESTATE: { bg: "bg-purple-100", text: "text-purple-700" },
+};
+
+export const EXPERT_INQUIRY_CATEGORIES = [
+  "권리금분쟁",
+  "임대차계약",
+  "인테리어견적",
+  "철거견적",
+  "세무상담",
+  "입지분석",
+  "권리분석",
+  "기타",
+] as const;
+
+export const EXPERT_INQUIRY_STATUS_LABELS: Record<string, string> = {
+  PENDING: "대기중",
+  REPLIED: "답변완료",
+  COMPLETED: "완료",
+  CANCELLED: "취소",
 };

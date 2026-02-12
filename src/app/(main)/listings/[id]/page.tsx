@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Calendar, Eye, Building, Layers, Phone, Mail, FileSearch, TrendingUp, Lock, Calculator } from "lucide-react";
+import { MapPin, Calendar, Eye, Building, Layers, Phone, Mail, FileSearch, TrendingUp, Lock, Calculator, Star, Users, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { InquiryForm } from "@/components/listings/inquiry-form";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
@@ -10,6 +10,7 @@ import {
   LISTING_STATUS_LABELS,
   SAFETY_GRADE_CONFIG,
   PREMIUM_AD_CONFIG,
+  EXPERT_CATEGORY_LABELS,
 } from "@/lib/utils/constants";
 import { m2ToPyeong } from "@/lib/utils/area";
 import { ImageGallery } from "./image-gallery";
@@ -45,7 +46,7 @@ export default async function ListingDetailPage({
     notFound();
   }
 
-  const [images, seller, marketPrice] = await Promise.all([
+  const [images, seller, marketPrice, recommendedExperts] = await Promise.all([
     prisma.listingImage.findMany({
       where: { listingId: id },
       orderBy: { sortOrder: "asc" },
@@ -59,6 +60,14 @@ export default async function ListingDetailPage({
         subRegion: listingData.district,
         businessType: listingData.businessCategory,
       },
+    }),
+    prisma.expert.findMany({
+      where: {
+        isActive: true,
+        region: listingData.city,
+      },
+      orderBy: [{ isVerified: "desc" }, { rating: "desc" }, { consultCount: "desc" }],
+      take: 3,
     }),
   ]);
 
@@ -353,6 +362,74 @@ export default async function ListingDetailPage({
               <Calendar className="h-4 w-4" />
               등록 {formatDateKR(listing.createdAt)}
             </span>
+          </div>
+
+          {/* Expert Consultation CTA */}
+          <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
+            <div className="bg-gradient-to-r from-mint/5 to-navy/5 px-6 py-4">
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-mint" />
+                <h2 className="text-lg font-bold text-navy">전문가에게 물어보세요</h2>
+              </div>
+              <p className="mt-1 text-sm text-gray-600">이 매물에 대해 전문가의 의견을 들어보세요</p>
+            </div>
+
+            {recommendedExperts.length > 0 ? (
+              <>
+                <div className="divide-y divide-gray-100">
+                  {recommendedExperts.map((expert: { id: string; name: string; title: string; rating: number; category: string }) => (
+                    <div key={expert.id} className="flex items-center justify-between px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-mint/10 text-sm font-bold text-mint">
+                          {expert.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">{expert.name}</p>
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <span>{expert.title}</span>
+                            {expert.rating > 0 && (
+                              <span className="flex items-center gap-0.5">
+                                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                {expert.rating.toFixed(1)}
+                              </span>
+                            )}
+                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+                              {EXPERT_CATEGORY_LABELS[expert.category] ?? expert.category}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <Link
+                        href={`/experts/${expert.id}?listingId=${listing.id}`}
+                        className="rounded-lg bg-mint px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-mint/90"
+                      >
+                        상담 신청
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-gray-100 px-6 py-3">
+                  <Link
+                    href="/experts"
+                    className="flex items-center gap-1 text-sm font-medium text-mint hover:underline"
+                  >
+                    전문가 더 보기
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="px-6 py-6 text-center">
+                <p className="text-sm text-gray-500">전문가 상담이 필요하신가요?</p>
+                <Link
+                  href="/experts"
+                  className="mt-3 inline-flex items-center gap-1 rounded-lg bg-mint px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-mint/90"
+                >
+                  전문가 찾기
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 

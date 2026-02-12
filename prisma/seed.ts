@@ -43,7 +43,7 @@ async function main() {
       phone: "010-1234-5678",
       businessName: "강남부동산",
       businessNumber: "123-45-67890",
-      subscriptionTier: "BASIC",
+      subscriptionTier: "PRO",
     },
   });
 
@@ -571,6 +571,74 @@ async function main() {
   console.log("  Report plans: 2");
 
   // ──────────────────────────────────────────────
+  // 10b. Subscription Plans (구독 플랜)
+  // ──────────────────────────────────────────────
+  const subscriptionPlans = [
+    {
+      id: "subplan-free",
+      name: "FREE" as const,
+      displayName: "무료",
+      price: 0,
+      yearlyPrice: 0,
+      features: [
+        { text: "매물 검색 & 조회", included: true },
+        { text: "매물 등록 (월 3건)", included: true },
+        { text: "권리 안전도 등급 확인", included: true },
+        { text: "기본 매물 비교 (2개)", included: true },
+        { text: "시세 비교 위젯", included: false },
+        { text: "창업 시뮬레이터", included: false },
+        { text: "권리분석 리포트", included: false },
+        { text: "전문가 상담 무료", included: false },
+      ],
+      sortOrder: 0,
+    },
+    {
+      id: "subplan-pro",
+      name: "PRO" as const,
+      displayName: "프로",
+      price: 29_900,
+      yearlyPrice: 287_040,
+      features: [
+        { text: "매물 검색 & 조회", included: true },
+        { text: "매물 등록 무제한", included: true },
+        { text: "권리 안전도 등급 확인", included: true },
+        { text: "매물 비교 (최대 4개)", included: true },
+        { text: "시세 비교 위젯 전체 이용", included: true },
+        { text: "창업 시뮬레이터 전체 이용", included: true },
+        { text: "BASIC 리포트 1회/월 무료", included: true },
+        { text: "BASIC 광고 1회/월 무료", included: true },
+      ],
+      sortOrder: 1,
+    },
+    {
+      id: "subplan-expert",
+      name: "EXPERT" as const,
+      displayName: "전문가",
+      price: 59_900,
+      yearlyPrice: 575_040,
+      features: [
+        { text: "PRO 전체 포함", included: true },
+        { text: "PREMIUM 리포트 2회/월 무료", included: true },
+        { text: "PREMIUM 광고 1회/월 무료", included: true },
+        { text: "전문가 상담 월 2회 무료", included: true },
+        { text: "시뮬레이터 PDF 다운로드", included: true },
+        { text: "전담 매니저 배정 (준비중)", included: true },
+        { text: "API 연동 (준비중)", included: true },
+      ],
+      sortOrder: 2,
+    },
+  ];
+
+  for (const plan of subscriptionPlans) {
+    await prisma.subscriptionPlan.upsert({
+      where: { id: plan.id },
+      update: {},
+      create: plan,
+    });
+  }
+  console.log("  Subscription plans: 3");
+
+  // ──────────────────────────────────────────────
   // 11. Market Prices (시세 데이터)
   // ──────────────────────────────────────────────
   const marketPriceData: { subRegion: string; businessType: string; avgDeposit: number; avgMonthlyRent: number; avgKeyMoney: number; avgMonthlySales: number; sampleCount: number }[] = [
@@ -652,12 +720,523 @@ async function main() {
   }
   console.log(`  Market prices: ${mpCount}`);
 
+  // ──────────────────────────────────────────────
+  // 12. Experts (전문가)
+  // ──────────────────────────────────────────────
+  const expertsData = [
+    // LAW (법률) - 4명
+    {
+      id: "seed-expert-law-1",
+      name: "김정훈",
+      category: "LAW" as const,
+      title: "변호사",
+      company: "법무법인 한결",
+      career: 15,
+      description: "상가 권리금 분쟁 및 임대차 관련 법률 자문 전문. 15년간 500건 이상의 상가 관련 소송을 성공적으로 수행하였습니다.",
+      specialties: ["권리금분쟁", "임대차계약", "상가임대차보호법"],
+      rating: 4.8,
+      reviewCount: 32,
+      consultCount: 156,
+      phone: "02-1234-0001",
+      email: "kim.jh@hankyul.law",
+      region: "서울특별시",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-law-2",
+      name: "박수진",
+      category: "LAW" as const,
+      title: "변호사",
+      company: "법률사무소 정의",
+      career: 8,
+      description: "부동산 소송 및 계약 분쟁 전문 변호사. 의뢰인의 권리 보호를 최우선으로 합니다.",
+      specialties: ["부동산소송", "계약분쟁", "명도소송"],
+      rating: 4.6,
+      reviewCount: 18,
+      consultCount: 89,
+      phone: "031-1234-0002",
+      email: "park.sj@justice.law",
+      region: "경기도",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-law-3",
+      name: "이준혁",
+      category: "LAW" as const,
+      title: "법무사",
+      company: "이준혁 법무사사무소",
+      career: 12,
+      description: "등기 및 권리분석 전문 법무사. 정확한 분석으로 안전한 거래를 지원합니다.",
+      specialties: ["등기", "권리분석", "가등기"],
+      rating: 4.7,
+      reviewCount: 25,
+      consultCount: 124,
+      phone: "051-1234-0003",
+      email: "lee.jh@legal.kr",
+      region: "부산광역시",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-law-4",
+      name: "최민아",
+      category: "LAW" as const,
+      title: "변호사",
+      company: "법무법인 새빛",
+      career: 6,
+      description: "상가 권리금 보호 및 임차인 권리 전문. 소상공인의 든든한 법적 파트너입니다.",
+      specialties: ["상가권리금", "임차인보호"],
+      rating: 4.5,
+      reviewCount: 12,
+      consultCount: 45,
+      phone: "032-1234-0004",
+      email: "choi.ma@saebit.law",
+      region: "인천광역시",
+      isVerified: false,
+    },
+    // INTERIOR (인테리어) - 4명
+    {
+      id: "seed-expert-interior-1",
+      name: "한승우",
+      category: "INTERIOR" as const,
+      title: "실장",
+      company: "디자인스튜디오 모던",
+      career: 10,
+      description: "상가 인테리어 디자인 및 시공 전문. 트렌디한 디자인과 합리적인 비용으로 최적의 공간을 만들어 드립니다.",
+      specialties: ["상가인테리어", "카페인테리어", "음식점설계"],
+      rating: 4.9,
+      reviewCount: 45,
+      consultCount: 210,
+      phone: "02-1234-0005",
+      email: "han.sw@modern.design",
+      region: "서울특별시",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-interior-2",
+      name: "정미래",
+      category: "INTERIOR" as const,
+      title: "대표",
+      company: "인테리어랩",
+      career: 7,
+      description: "소규모 상가 리모델링 및 인테리어 비용 산정 전문. 예산에 맞는 최적의 솔루션을 제안합니다.",
+      specialties: ["소규모상가", "리모델링", "인테리어비용산정"],
+      rating: 4.4,
+      reviewCount: 15,
+      consultCount: 67,
+      phone: "031-1234-0006",
+      email: "jung.mr@interlab.co",
+      region: "경기도",
+      isVerified: false,
+    },
+    {
+      id: "seed-expert-interior-3",
+      name: "오건호",
+      category: "INTERIOR" as const,
+      title: "부장",
+      company: "세움건설인테리어",
+      career: 15,
+      description: "대형 상가 및 프랜차이즈 인테리어 시공 전문. 풍부한 경험으로 완벽한 시공을 보장합니다.",
+      specialties: ["대형상가", "프랜차이즈인테리어"],
+      rating: 4.7,
+      reviewCount: 28,
+      consultCount: 143,
+      phone: "042-1234-0007",
+      email: "oh.kh@seum.co.kr",
+      region: "대전광역시",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-interior-4",
+      name: "김나윤",
+      category: "INTERIOR" as const,
+      title: "디자이너",
+      company: "스페이스플랜",
+      career: 5,
+      description: "카페 디자인 및 소호 인테리어 전문. 감각적인 공간 컨설팅으로 매장 가치를 높여드립니다.",
+      specialties: ["카페디자인", "소호인테리어", "공간컨설팅"],
+      rating: 4.3,
+      reviewCount: 8,
+      consultCount: 34,
+      phone: "02-1234-0008",
+      email: "kim.ny@spaceplan.kr",
+      region: "서울특별시",
+      isVerified: false,
+    },
+    // DEMOLITION (철거) - 3명
+    {
+      id: "seed-expert-demo-1",
+      name: "박대현",
+      category: "DEMOLITION" as const,
+      title: "대표",
+      company: "클린철거",
+      career: 20,
+      description: "상가 철거 및 원상복구 전문. 20년 경력의 노하우로 깔끔하고 안전한 철거를 약속합니다.",
+      specialties: ["상가철거", "원상복구", "폐기물처리"],
+      rating: 4.6,
+      reviewCount: 22,
+      consultCount: 178,
+      phone: "02-1234-0009",
+      email: "park.dh@cleandemol.kr",
+      region: "서울특별시",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-demo-2",
+      name: "이상진",
+      category: "DEMOLITION" as const,
+      title: "팀장",
+      company: "한국철거산업",
+      career: 12,
+      description: "내부 철거 및 구조물 해체 전문. 석면 처리 자격 보유로 안전한 작업을 진행합니다.",
+      specialties: ["내부철거", "구조물해체", "석면처리"],
+      rating: 4.5,
+      reviewCount: 16,
+      consultCount: 95,
+      phone: "031-1234-0010",
+      email: "lee.sj@kdemol.co.kr",
+      region: "경기도",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-demo-3",
+      name: "최용석",
+      category: "DEMOLITION" as const,
+      title: "대표",
+      company: "신속철거",
+      career: 8,
+      description: "소규모 철거 및 원상복구 견적 전문. 합리적인 가격과 신속한 작업을 약속합니다.",
+      specialties: ["소규모철거", "원상복구견적"],
+      rating: 4.3,
+      reviewCount: 9,
+      consultCount: 52,
+      phone: "051-1234-0011",
+      email: "choi.ys@quickdemol.kr",
+      region: "부산광역시",
+      isVerified: false,
+    },
+    // ACCOUNTING (세무회계) - 4명
+    {
+      id: "seed-expert-acct-1",
+      name: "강현우",
+      category: "ACCOUNTING" as const,
+      title: "세무사",
+      company: "강현우세무회계사무소",
+      career: 14,
+      description: "창업 세무 및 부가가치세, 종합소득세 전문. 체계적인 세무 관리로 절세를 도와드립니다.",
+      specialties: ["창업세무", "부가가치세", "종합소득세"],
+      rating: 4.8,
+      reviewCount: 38,
+      consultCount: 192,
+      phone: "02-1234-0012",
+      email: "kang.hw@tax.kr",
+      region: "서울특별시",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-acct-2",
+      name: "윤서현",
+      category: "ACCOUNTING" as const,
+      title: "회계사",
+      company: "정도회계법인",
+      career: 9,
+      description: "법인세 및 세무조사 대응 전문. 꼼꼼한 절세 컨설팅으로 사업자의 세금 부담을 줄여드립니다.",
+      specialties: ["법인세", "세무조사대응", "절세컨설팅"],
+      rating: 4.6,
+      reviewCount: 20,
+      consultCount: 87,
+      phone: "031-1234-0013",
+      email: "yoon.sh@jungdo.cpa",
+      region: "경기도",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-acct-3",
+      name: "임재현",
+      category: "ACCOUNTING" as const,
+      title: "세무사",
+      company: "세무법인 한울",
+      career: 7,
+      description: "개인사업자 및 양도소득세 전문 세무사. 사업 초기부터 안정까지 함께합니다.",
+      specialties: ["개인사업자", "양도소득세"],
+      rating: 4.4,
+      reviewCount: 14,
+      consultCount: 63,
+      phone: "053-1234-0014",
+      email: "lim.jh@hanul.tax",
+      region: "대구광역시",
+      isVerified: false,
+    },
+    {
+      id: "seed-expert-acct-4",
+      name: "송지은",
+      category: "ACCOUNTING" as const,
+      title: "세무사",
+      company: "송지은세무사사무소",
+      career: 5,
+      description: "신규 창업 세무 및 간편장부 전문. 창업자의 첫 세무를 쉽고 정확하게 도와드립니다.",
+      specialties: ["신규창업세무", "간편장부"],
+      rating: 4.2,
+      reviewCount: 7,
+      consultCount: 28,
+      phone: "032-1234-0015",
+      email: "song.je@tax.kr",
+      region: "인천광역시",
+      isVerified: false,
+    },
+    // REALESTATE (부동산) - 3명
+    {
+      id: "seed-expert-re-1",
+      name: "황정민",
+      category: "REALESTATE" as const,
+      title: "공인중개사",
+      company: "황정민부동산",
+      career: 18,
+      description: "상가 매매 및 권리금 협상 전문. 18년간의 경험으로 최적의 입지와 가격을 분석해드립니다.",
+      specialties: ["상가매매", "권리금협상", "입지분석"],
+      rating: 4.9,
+      reviewCount: 52,
+      consultCount: 267,
+      phone: "02-1234-0016",
+      email: "hwang.jm@realestate.kr",
+      region: "서울특별시",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-re-2",
+      name: "조영수",
+      category: "REALESTATE" as const,
+      title: "공인중개사",
+      company: "새시대부동산",
+      career: 11,
+      description: "상가 임대 및 프랜차이즈 입지 분석 전문. 데이터 기반의 상권 분석을 제공합니다.",
+      specialties: ["상가임대", "프랜차이즈입지", "상권분석"],
+      rating: 4.5,
+      reviewCount: 19,
+      consultCount: 98,
+      phone: "031-1234-0017",
+      email: "cho.ys@newera.kr",
+      region: "경기도",
+      isVerified: true,
+    },
+    {
+      id: "seed-expert-re-3",
+      name: "나은채",
+      category: "REALESTATE" as const,
+      title: "공인중개사",
+      company: "드림부동산",
+      career: 6,
+      description: "소형 상가 및 투자 분석 전문. 합리적인 투자 판단을 도와드립니다.",
+      specialties: ["소형상가", "투자분석"],
+      rating: 4.3,
+      reviewCount: 10,
+      consultCount: 41,
+      phone: "062-1234-0018",
+      email: "na.ec@dream.kr",
+      region: "광주광역시",
+      isVerified: false,
+    },
+  ];
+
+  for (const expert of expertsData) {
+    await prisma.expert.upsert({
+      where: { id: expert.id },
+      update: {},
+      create: expert,
+    });
+  }
+  console.log(`  Experts: ${expertsData.length}`);
+
+  // ──────────────────────────────────────────────
+  // 13. Expert Reviews (전문가 리뷰)
+  // ──────────────────────────────────────────────
+  // We need a user to be the reviewer. Use the buyer user for all reviews.
+  // Create additional review users for variety
+  const reviewUsers = [
+    { id: "seed-review-user-1", email: "reviewer1@test.com", name: "김민수" },
+    { id: "seed-review-user-2", email: "reviewer2@test.com", name: "이영희" },
+    { id: "seed-review-user-3", email: "reviewer3@test.com", name: "박지성" },
+    { id: "seed-review-user-4", email: "reviewer4@test.com", name: "정수아" },
+    { id: "seed-review-user-5", email: "reviewer5@test.com", name: "최준호" },
+  ];
+
+  for (const ru of reviewUsers) {
+    await prisma.user.upsert({
+      where: { email: ru.email },
+      update: {},
+      create: {
+        id: ru.id,
+        email: ru.email,
+        name: ru.name,
+        hashedPassword: password,
+        role: "BUYER",
+        accountStatus: "ACTIVE",
+        emailVerified: new Date(),
+      },
+    });
+  }
+
+  // Review data per expert: each expert gets 3-5 reviews
+  const reviewTemplates: Record<string, { rating: number; content: string; daysAgo: number; userId: string }[]> = {
+    "seed-expert-law-1": [
+      { rating: 5, content: "권리금 분쟁 관련 상담을 받았는데 정말 꼼꼼하게 법적 근거를 설명해주셨습니다. 덕분에 유리하게 합의할 수 있었어요.", daysAgo: 10, userId: "seed-review-user-1" },
+      { rating: 5, content: "임대차 계약서 검토를 요청했는데 위험 조항을 정확히 짚어주셨습니다. 매우 전문적입니다.", daysAgo: 35, userId: "seed-review-user-2" },
+      { rating: 4, content: "상가임대차보호법에 대해 자세히 알려주셔서 감사합니다. 응답이 조금 늦은 점은 아쉬웠어요.", daysAgo: 60, userId: "seed-review-user-3" },
+      { rating: 5, content: "명도 소송 관련 상담이었는데 예상 절차와 기간을 상세히 안내해주셨습니다.", daysAgo: 90, userId: "seed-review-user-4" },
+      { rating: 5, content: "변호사님 덕분에 권리금을 온전히 보전할 수 있었습니다. 강력 추천합니다!", daysAgo: 120, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-law-2": [
+      { rating: 5, content: "부동산 소송 관련 깊이 있는 상담을 해주셨습니다. 승소 전략이 정확했어요.", daysAgo: 15, userId: "seed-review-user-1" },
+      { rating: 4, content: "계약 분쟁 해결에 큰 도움을 받았습니다. 친절하고 전문적이었습니다.", daysAgo: 45, userId: "seed-review-user-3" },
+      { rating: 5, content: "명도소송을 대리해주셨는데 빠른 시간 내에 원만히 해결되었습니다.", daysAgo: 80, userId: "seed-review-user-4" },
+      { rating: 4, content: "상담 내용이 명확하고 이해하기 쉬웠습니다. 비용도 합리적이었어요.", daysAgo: 130, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-law-3": [
+      { rating: 5, content: "등기부등본 분석을 꼼꼼하게 해주셔서 위험 요소를 미리 파악할 수 있었습니다.", daysAgo: 12, userId: "seed-review-user-1" },
+      { rating: 5, content: "권리분석 결과를 알기 쉽게 설명해주셔서 좋았습니다. 전문성이 느껴졌어요.", daysAgo: 40, userId: "seed-review-user-2" },
+      { rating: 4, content: "가등기 관련 문의에 친절하게 답변해주셨습니다. 추천합니다.", daysAgo: 70, userId: "seed-review-user-4" },
+      { rating: 5, content: "복잡한 등기 사항을 쉽게 풀어서 설명해주셔서 이해가 잘 됐습니다.", daysAgo: 100, userId: "seed-review-user-5" },
+      { rating: 5, content: "상가 매입 전 권리분석을 맡겼는데 숨겨진 위험을 발견해주셨습니다.", daysAgo: 150, userId: "seed-review-user-3" },
+    ],
+    "seed-expert-law-4": [
+      { rating: 5, content: "상가 권리금 보호에 대해 명쾌하게 설명해주셨습니다.", daysAgo: 20, userId: "seed-review-user-1" },
+      { rating: 4, content: "임차인으로서 어떤 권리가 있는지 잘 알게 되었어요.", daysAgo: 55, userId: "seed-review-user-2" },
+      { rating: 5, content: "젊은 변호사님이지만 실력이 뛰어나십니다. 성의 있는 답변 감사합니다.", daysAgo: 90, userId: "seed-review-user-3" },
+    ],
+    "seed-expert-interior-1": [
+      { rating: 5, content: "카페 인테리어를 맡겼는데 결과물이 정말 만족스러웠습니다. 센스가 뛰어나세요!", daysAgo: 8, userId: "seed-review-user-1" },
+      { rating: 5, content: "견적부터 시공까지 체계적으로 진행해주셨습니다. 약속한 기간 내에 완벽하게 마무리!", daysAgo: 25, userId: "seed-review-user-2" },
+      { rating: 5, content: "음식점 인테리어 설계를 의뢰했는데 동선까지 꼼꼼하게 고려해주셔서 놀랐습니다.", daysAgo: 50, userId: "seed-review-user-3" },
+      { rating: 5, content: "디자인 감각이 정말 좋으십니다. 고객들이 인테리어 칭찬을 많이 합니다.", daysAgo: 80, userId: "seed-review-user-4" },
+      { rating: 4, content: "전체적으로 만족스러웠으나 A/S 요청 시 응대가 조금 늦었습니다.", daysAgo: 120, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-interior-2": [
+      { rating: 5, content: "소규모 카페 리모델링을 합리적 비용으로 깔끔하게 진행해주셨습니다.", daysAgo: 18, userId: "seed-review-user-1" },
+      { rating: 4, content: "비용 산정이 투명하고 정확했습니다. 숨겨진 추가 비용이 없어서 좋았어요.", daysAgo: 50, userId: "seed-review-user-3" },
+      { rating: 4, content: "리모델링 후 매장 분위기가 확 달라졌습니다. 추천합니다.", daysAgo: 100, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-interior-3": [
+      { rating: 5, content: "대형 상가 인테리어를 완벽하게 시공해주셨습니다. 15년 경력답습니다.", daysAgo: 14, userId: "seed-review-user-1" },
+      { rating: 5, content: "프랜차이즈 인테리어 기준에 맞춰 정확하게 시공해주셨어요.", daysAgo: 40, userId: "seed-review-user-2" },
+      { rating: 4, content: "시공 품질이 우수합니다. 다음에도 의뢰하고 싶어요.", daysAgo: 75, userId: "seed-review-user-3" },
+      { rating: 5, content: "공사 기간을 정확히 지켜주셔서 오픈 일정에 맞출 수 있었습니다.", daysAgo: 110, userId: "seed-review-user-4" },
+      { rating: 5, content: "전문적인 조언과 깔끔한 시공. 두 가지 모두 만족합니다.", daysAgo: 140, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-interior-4": [
+      { rating: 5, content: "카페 디자인 컨셉을 정말 잘 잡아주셨어요. 감각적이고 트렌디합니다!", daysAgo: 22, userId: "seed-review-user-1" },
+      { rating: 4, content: "공간 컨설팅이 유익했습니다. 작은 공간도 넓어 보이게 만들어주셨어요.", daysAgo: 60, userId: "seed-review-user-2" },
+      { rating: 4, content: "젊은 디자이너님의 참신한 아이디어가 인상적이었습니다.", daysAgo: 120, userId: "seed-review-user-4" },
+    ],
+    "seed-expert-demo-1": [
+      { rating: 5, content: "상가 철거를 깔끔하게 진행해주셨습니다. 폐기물 처리도 완벽했어요.", daysAgo: 10, userId: "seed-review-user-1" },
+      { rating: 4, content: "원상복구 작업이 꼼꼼했습니다. 집주인도 만족하셨어요.", daysAgo: 35, userId: "seed-review-user-2" },
+      { rating: 5, content: "20년 경력답게 작업이 빠르고 깔끔합니다. 강추!", daysAgo: 65, userId: "seed-review-user-3" },
+      { rating: 4, content: "견적이 정확하고 추가 비용 없이 진행되어 좋았습니다.", daysAgo: 100, userId: "seed-review-user-4" },
+      { rating: 5, content: "철거 후 마감 처리까지 완벽하게 해주셨습니다.", daysAgo: 140, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-demo-2": [
+      { rating: 5, content: "내부 철거를 안전하게 진행해주셨습니다. 석면 처리도 전문적으로 해주셨어요.", daysAgo: 15, userId: "seed-review-user-1" },
+      { rating: 4, content: "구조물 해체가 필요했는데 경험이 풍부하셔서 안심하고 맡겼습니다.", daysAgo: 50, userId: "seed-review-user-3" },
+      { rating: 5, content: "안전 기준을 철저히 지키며 작업해주셔서 믿음이 갔습니다.", daysAgo: 90, userId: "seed-review-user-4" },
+      { rating: 4, content: "작업 일정을 정확히 맞춰주셨습니다. 전문적인 팀입니다.", daysAgo: 130, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-demo-3": [
+      { rating: 4, content: "소규모 철거를 빠르고 합리적인 가격에 진행해주셨습니다.", daysAgo: 20, userId: "seed-review-user-1" },
+      { rating: 5, content: "원상복구 견적이 다른 곳보다 합리적이었고, 작업도 깔끔했어요.", daysAgo: 70, userId: "seed-review-user-2" },
+      { rating: 4, content: "신속하게 처리해주셔서 일정에 차질이 없었습니다.", daysAgo: 130, userId: "seed-review-user-4" },
+    ],
+    "seed-expert-acct-1": [
+      { rating: 5, content: "창업 초기 세무 설정을 체계적으로 도와주셨습니다. 정말 큰 도움이 되었어요.", daysAgo: 8, userId: "seed-review-user-1" },
+      { rating: 5, content: "부가가치세 신고를 맡겼는데 절세 포인트를 정확히 잡아주셨습니다.", daysAgo: 30, userId: "seed-review-user-2" },
+      { rating: 5, content: "종합소득세 신고 시 꼼꼼한 검토 덕분에 환급을 받을 수 있었습니다.", daysAgo: 55, userId: "seed-review-user-3" },
+      { rating: 4, content: "전문적인 상담이었습니다. 세무 관련 궁금증이 모두 해소되었어요.", daysAgo: 85, userId: "seed-review-user-4" },
+      { rating: 5, content: "장기적인 세무 계획까지 세워주셔서 감사합니다. 최고의 세무사!", daysAgo: 120, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-acct-2": [
+      { rating: 5, content: "법인세 절세 방안을 상세히 안내해주셨습니다. 매우 전문적이에요.", daysAgo: 12, userId: "seed-review-user-1" },
+      { rating: 4, content: "세무조사 대응 상담을 받았는데 마음이 많이 놓였습니다.", daysAgo: 45, userId: "seed-review-user-2" },
+      { rating: 5, content: "절세 컨설팅이 탁월합니다. 실질적인 세금 절감 효과가 있었어요.", daysAgo: 80, userId: "seed-review-user-3" },
+      { rating: 4, content: "회계사님의 꼼꼼한 리뷰 덕분에 오류 없이 신고할 수 있었습니다.", daysAgo: 130, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-acct-3": [
+      { rating: 5, content: "개인사업자 등록부터 세무 신고까지 원스톱으로 도와주셨습니다.", daysAgo: 18, userId: "seed-review-user-1" },
+      { rating: 4, content: "양도소득세 관련 상담이 정확하고 이해하기 쉬웠습니다.", daysAgo: 55, userId: "seed-review-user-3" },
+      { rating: 4, content: "친절하고 성실한 세무사님입니다. 추천합니다.", daysAgo: 100, userId: "seed-review-user-4" },
+      { rating: 5, content: "사업 초기에 알아야 할 세무 사항을 잘 정리해주셨어요.", daysAgo: 140, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-acct-4": [
+      { rating: 5, content: "신규 창업 세무를 쉽고 친절하게 안내해주셨습니다.", daysAgo: 25, userId: "seed-review-user-1" },
+      { rating: 4, content: "간편장부 작성법을 자세히 알려주셔서 감사합니다.", daysAgo: 70, userId: "seed-review-user-2" },
+      { rating: 4, content: "젊지만 실력 있는 세무사님입니다. 소통도 원활해요.", daysAgo: 120, userId: "seed-review-user-4" },
+    ],
+    "seed-expert-re-1": [
+      { rating: 5, content: "상가 매매 과정에서 권리금 협상을 탁월하게 해주셨습니다. 최고의 중개사!", daysAgo: 5, userId: "seed-review-user-1" },
+      { rating: 5, content: "입지 분석이 정말 정확했습니다. 데이터를 기반으로 설명해주셔서 신뢰가 갔어요.", daysAgo: 25, userId: "seed-review-user-2" },
+      { rating: 5, content: "18년 경력답게 시장을 꿰뚫고 계십니다. 안심하고 맡길 수 있었어요.", daysAgo: 50, userId: "seed-review-user-3" },
+      { rating: 5, content: "매매 전 과정을 체계적으로 안내해주셔서 처음 창업하는 저도 수월하게 진행했습니다.", daysAgo: 80, userId: "seed-review-user-4" },
+      { rating: 4, content: "전문성은 최고입니다. 다만 인기가 많아서 예약이 빠듯했어요.", daysAgo: 110, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-re-2": [
+      { rating: 5, content: "프랜차이즈 입지 분석을 받았는데 상권 데이터가 매우 정확했습니다.", daysAgo: 14, userId: "seed-review-user-1" },
+      { rating: 4, content: "상가 임대 계약 과정에서 꼼꼼하게 챙겨주셨습니다.", daysAgo: 45, userId: "seed-review-user-2" },
+      { rating: 5, content: "상권 분석 리포트가 매우 유용했습니다. 투자 결정에 큰 도움이 되었어요.", daysAgo: 80, userId: "seed-review-user-3" },
+      { rating: 4, content: "경험이 풍부하시고 지역 시장을 잘 파악하고 계십니다.", daysAgo: 120, userId: "seed-review-user-5" },
+    ],
+    "seed-expert-re-3": [
+      { rating: 5, content: "소형 상가 투자 상담이 매우 유익했습니다. 구체적인 수익률까지 분석해주셨어요.", daysAgo: 20, userId: "seed-review-user-1" },
+      { rating: 4, content: "광주 지역 상가 시장에 대해 잘 알고 계셔서 도움이 많이 되었습니다.", daysAgo: 65, userId: "seed-review-user-2" },
+      { rating: 4, content: "친절하고 성실한 중개사님입니다. 초보 투자자에게도 추천합니다.", daysAgo: 130, userId: "seed-review-user-4" },
+    ],
+  };
+
+  let reviewCount = 0;
+  for (const [expertId, reviews] of Object.entries(reviewTemplates)) {
+    for (let i = 0; i < reviews.length; i++) {
+      const review = reviews[i];
+      const reviewId = `seed-review-${expertId}-${i}`;
+      const inquiryId = `seed-expert-inquiry-${expertId}-${i}`;
+
+      // Create a completed inquiry for each review
+      await prisma.expertInquiry.upsert({
+        where: { id: inquiryId },
+        update: {},
+        create: {
+          id: inquiryId,
+          expertId,
+          userId: review.userId,
+          category: "기타",
+          subject: "상담 완료",
+          message: "상담이 완료되었습니다.",
+          status: "COMPLETED",
+          createdAt: new Date(Date.now() - (review.daysAgo + 5) * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(Date.now() - review.daysAgo * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      // Create the review
+      await prisma.expertReview.upsert({
+        where: { id: reviewId },
+        update: {},
+        create: {
+          id: reviewId,
+          expertId,
+          userId: review.userId,
+          inquiryId,
+          rating: review.rating,
+          content: review.content,
+          createdAt: new Date(Date.now() - review.daysAgo * 24 * 60 * 60 * 1000),
+        },
+      });
+      reviewCount++;
+    }
+  }
+  console.log(`  Expert reviews: ${reviewCount} (with matching inquiries)`);
+
   // Update seller to PRO membership for testing
   await prisma.user.update({
     where: { email: "seller@test.com" },
-    data: { subscriptionTier: "BASIC" },
+    data: { subscriptionTier: "PRO" },
   });
-  console.log("  seller@test.com → BASIC (PRO member)");
+  console.log("  seller@test.com → PRO member");
 
   console.log("\nSeeding complete!");
   console.log("─────────────────────────────────");
