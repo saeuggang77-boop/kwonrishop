@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { errorToResponse } from "@/lib/utils/errors";
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE_BYTES } from "@/lib/utils/constants";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { v4 as uuidv4 } from "uuid";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -12,6 +13,11 @@ export async function POST(req: NextRequest) {
     if (!session?.user) {
       return Response.json({ error: { message: "인증이 필요합니다." } }, { status: 401 });
     }
+
+    try {
+      const limited = await checkRateLimit(`upload-image:${session.user.id}`, 20, 60);
+      if (limited) return limited;
+    } catch {}
 
     const contentType = req.headers.get("content-type") ?? "";
 

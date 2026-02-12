@@ -6,6 +6,7 @@ import { encryptDocument } from "@/lib/kms/encrypt";
 import { uploadToS3 } from "@/lib/s3/upload";
 import { errorToResponse } from "@/lib/utils/errors";
 import { ALLOWED_DOCUMENT_TYPES, MAX_DOCUMENT_SIZE_BYTES } from "@/lib/utils/constants";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
@@ -14,6 +15,11 @@ export async function POST(req: NextRequest) {
     if (!session?.user) {
       return Response.json({ error: { message: "인증이 필요합니다." } }, { status: 401 });
     }
+
+    try {
+      const limited = await checkRateLimit(`upload-document:${session.user.id}`, 10, 60);
+      if (limited) return limited;
+    } catch {}
 
     const formData = await req.formData();
     const file = formData.get("file") as File;

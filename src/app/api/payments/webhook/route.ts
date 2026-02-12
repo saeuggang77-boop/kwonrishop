@@ -1,9 +1,16 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyWebhookSignature } from "@/lib/toss/webhook";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+    try {
+      const limited = await checkRateLimit(`payment-webhook:${ip}`, 30, 60);
+      if (limited) return limited;
+    } catch {}
+
     const body = await req.text();
     const signature = req.headers.get("toss-signature") ?? "";
 

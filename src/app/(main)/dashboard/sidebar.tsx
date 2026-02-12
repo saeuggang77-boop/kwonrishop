@@ -18,6 +18,8 @@ import {
   Users,
   X,
   Sparkles,
+  Calculator,
+  Crown,
 } from "lucide-react";
 
 interface NavItem {
@@ -36,6 +38,8 @@ const navItems: NavItem[] = [
   { href: "/dashboard/documents", label: "문서", icon: FolderOpen, roles: ["SELLER", "ADMIN"] },
   { href: "/dashboard/reports", label: "리포트", icon: FileText, roles: ["SELLER", "ADMIN", "BUYER"] },
   { href: "/my/consultations", label: "상담 내역", icon: Users, roles: ["SELLER", "ADMIN", "BUYER"] },
+  { href: "/my/simulations", label: "시뮬레이션", icon: Calculator, roles: ["SELLER", "ADMIN", "BUYER"] },
+  { href: "/my/subscription", label: "구독 관리", icon: Crown, roles: ["SELLER", "ADMIN", "BUYER"] },
   { href: "/dashboard/premium", label: "프리미엄 광고", icon: Star, roles: ["SELLER", "ADMIN"] },
   { href: "/dashboard/settlements", label: "정산 내역", icon: DollarSign, roles: ["SELLER", "ADMIN"] },
   { href: "/profile", label: "프로필", icon: User, roles: ["SELLER", "ADMIN", "BUYER"] },

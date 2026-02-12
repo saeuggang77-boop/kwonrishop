@@ -6,6 +6,7 @@ import { confirmPaymentSchema } from "@/lib/validators/payment";
 import { errorToResponse } from "@/lib/utils/errors";
 import { reportGenerationQueue } from "@/lib/queue";
 import { createNotification } from "@/lib/notifications/create";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,11 @@ export async function POST(req: NextRequest) {
     if (!session?.user) {
       return Response.json({ error: { message: "인증이 필요합니다." } }, { status: 401 });
     }
+
+    try {
+      const limited = await checkRateLimit(`payment-confirm:${session.user.id}`, 10, 60);
+      if (limited) return limited;
+    } catch {}
 
     const body = await req.json();
     const { paymentKey, orderId, amount } = confirmPaymentSchema.parse(body);
@@ -28,6 +34,10 @@ export async function POST(req: NextRequest) {
 
     if (Number(payment.amount) !== amount) {
       return Response.json({ error: { message: "결제 금액이 일치하지 않습니다." } }, { status: 400 });
+    }
+
+    if (payment.paymentStatus !== "PENDING") {
+      return Response.json({ error: { message: "이미 처리된 결제입니다." } }, { status: 400 });
     }
 
     // Confirm with TossPayments

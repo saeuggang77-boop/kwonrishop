@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { createPaymentSchema } from "@/lib/validators/payment";
 import { errorToResponse } from "@/lib/utils/errors";
 import { SUBSCRIPTION_PRICES, DEEP_REPORT_PRICE, PREMIUM_AD_PLANS } from "@/lib/utils/constants";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +12,11 @@ export async function POST(req: NextRequest) {
     if (!session?.user) {
       return Response.json({ error: { message: "인증이 필요합니다." } }, { status: 401 });
     }
+
+    try {
+      const limited = await checkRateLimit(`payment-create:${session.user.id}`, 10, 60);
+      if (limited) return limited;
+    } catch {}
 
     const body = await req.json();
     const { paymentType, tier, listingId, reportPlanId } = createPaymentSchema.parse(body);

@@ -20,6 +20,16 @@ import {
   ChevronLeft,
   Home,
   User,
+  Users,
+  Calculator,
+  Crown,
+  Check,
+  Scale,
+  Hammer,
+  Receipt,
+  BarChart3,
+  Target,
+  ArrowRight,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
 import { formatKRW } from "@/lib/utils/format";
@@ -684,6 +694,267 @@ export default function HomePage() {
                   </Link>
                 ))
               )}
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      {/* Expert Consultation */}
+      <RevealOnScroll>
+        <section className="border-t border-gray-200 bg-white py-12 md:py-16">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="text-center">
+              <h2 className="font-heading text-2xl font-bold text-navy md:text-3xl">
+                전문 분야별 전문가와 직접 상담하세요
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-gray-500">
+                검증된 각 분야 전문가가 창업과 점포 운영에 필요한 모든 상담을 도와드립니다.
+                법률, 인테리어, 철거, 세무, 부동산 전문가를 지금 만나보세요.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  icon: Scale,
+                  title: "법률 / 세무 전문가",
+                  desc: "계약서 검토, 세무 신고, 사업자 등록 등 법률·세무 분야의 전문 상담을 받아보세요.",
+                  color: "text-blue-500",
+                  bg: "bg-blue-50",
+                },
+                {
+                  icon: Paintbrush,
+                  title: "인테리어 전문가",
+                  desc: "업종에 최적화된 인테리어 설계부터 시공까지, 경험 많은 전문가가 함께합니다.",
+                  color: "text-pink-500",
+                  bg: "bg-pink-50",
+                },
+                {
+                  icon: Hammer,
+                  title: "철거 / 부동산 전문가",
+                  desc: "원상복구, 철거 견적부터 상권 분석, 입지 선정까지 전문가의 도움을 받으세요.",
+                  color: "text-orange-500",
+                  bg: "bg-orange-50",
+                },
+              ].map((card) => (
+                <div
+                  key={card.title}
+                  className="rounded-xl border border-gray-200 bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${card.bg}`}>
+                    <card.icon className={`h-6 w-6 ${card.color}`} />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-navy">{card.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-500">{card.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <Link
+                href="/experts"
+                className="inline-flex items-center gap-2 rounded-lg bg-mint px-8 py-3 font-medium text-white shadow-lg shadow-mint/25 transition-all duration-150 hover:bg-mint-dark hover:shadow-xl hover:shadow-mint/30 active:scale-[0.97]"
+              >
+                <Users className="h-5 w-5" />
+                전문가 찾기
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      {/* Startup Simulator */}
+      <RevealOnScroll>
+        <section className="py-12 md:py-16">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm lg:flex">
+              {/* Left content */}
+              <div className="flex-1 p-8 md:p-10 lg:p-12">
+                <span className="inline-block rounded-full bg-mint/10 px-3 py-1 text-xs font-bold text-mint">
+                  NEW
+                </span>
+                <h2 className="mt-4 font-heading text-2xl font-bold text-navy md:text-3xl">
+                  창업 수익성을 미리 계산해보세요
+                </h2>
+                <p className="mt-3 max-w-lg text-gray-500">
+                  권리샵 시뮬레이터로 업종별 예상 수익과 초기 투자비를 미리 분석하고,
+                  데이터 기반의 스마트한 창업 결정을 내리세요.
+                </p>
+                <div className="mt-8 space-y-4">
+                  {[
+                    { icon: BarChart3, label: "업종별 수익 분석", desc: "실제 매출 데이터 기반 예상 수익 시뮬레이션" },
+                    { icon: Receipt, label: "초기 투자비 산정", desc: "보증금, 권리금, 인테리어 등 총 창업비용 계산" },
+                    { icon: Target, label: "손익분기점 계산", desc: "투자금 회수 시점과 월별 손익 추이 분석" },
+                  ].map((feature) => (
+                    <div key={feature.label} className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-mint/10">
+                        <feature.icon className="h-5 w-5 text-mint" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-navy">{feature.label}</h3>
+                        <p className="mt-0.5 text-xs text-gray-500">{feature.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-8">
+                  <Link
+                    href="/simulator"
+                    className="inline-flex items-center gap-2 rounded-lg bg-mint px-8 py-3 font-medium text-white shadow-lg shadow-mint/25 transition-all duration-150 hover:bg-mint-dark hover:shadow-xl hover:shadow-mint/30 active:scale-[0.97]"
+                  >
+                    <Calculator className="h-5 w-5" />
+                    시뮬레이터 시작하기
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+              {/* Right visual */}
+              <div className="hidden items-center justify-center bg-gradient-to-br from-mint/5 to-navy/5 p-10 lg:flex lg:w-96">
+                <div className="text-center">
+                  <Calculator className="mx-auto h-20 w-20 text-mint/60" />
+                  <p className="mt-4 text-sm font-medium text-navy/60">
+                    창업 시뮬레이터
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    업종 선택 한 번으로 수익성 분석 완료
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      {/* Subscription Plans */}
+      <RevealOnScroll>
+        <section className="border-t border-gray-200 bg-white py-12 md:py-16">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="text-center">
+              <h2 className="font-heading text-2xl font-bold text-navy md:text-3xl">
+                나에게 맞는 요금제를 선택하세요
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-gray-500">
+                무료 플랜부터 전문가 전용 플랜까지, 필요에 맞는 요금제로 권리샵의 모든 기능을 활용하세요.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {/* FREE Plan */}
+              <div className="rounded-xl border border-gray-200 bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                    <Users className="h-5 w-5 text-gray-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-navy">FREE</h3>
+                    <p className="text-xs text-gray-500">무료</p>
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-gray-100 pt-4">
+                  <p className="text-2xl font-bold text-navy">
+                    &#8361;0<span className="text-sm font-normal text-gray-400">/월</span>
+                  </p>
+                </div>
+                <ul className="mt-5 space-y-3">
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 매물 검색 및 조회
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 월 3건 매물 등록
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 기본 시뮬레이터 이용
+                  </li>
+                </ul>
+                <div className="mt-6">
+                  <Link
+                    href="/pricing"
+                    className="block rounded-lg border border-gray-300 py-2.5 text-center text-sm font-medium text-gray-700 transition-all duration-150 hover:border-mint hover:text-mint"
+                  >
+                    현재 플랜
+                  </Link>
+                </div>
+              </div>
+
+              {/* PRO Plan */}
+              <div className="relative rounded-xl border-2 border-mint bg-white p-6 shadow-lg shadow-mint/10 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-mint/15">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-mint px-4 py-1 text-xs font-bold text-white">
+                  인기
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-mint/10">
+                    <Crown className="h-5 w-5 text-mint" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-navy">PRO</h3>
+                    <p className="text-xs text-gray-500">프로</p>
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-gray-100 pt-4">
+                  <p className="text-2xl font-bold text-navy">
+                    &#8361;29,900<span className="text-sm font-normal text-gray-400">/월</span>
+                  </p>
+                </div>
+                <ul className="mt-5 space-y-3">
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 무제한 매물 등록
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 프리미엄 시뮬레이터
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 안전거래 리포트 제공
+                  </li>
+                </ul>
+                <div className="mt-6">
+                  <Link
+                    href="/pricing"
+                    className="block rounded-lg bg-mint py-2.5 text-center text-sm font-bold text-white shadow-sm transition-all duration-150 hover:bg-mint-dark active:scale-[0.97]"
+                  >
+                    PRO 시작하기
+                  </Link>
+                </div>
+              </div>
+
+              {/* EXPERT Plan */}
+              <div className="rounded-xl border border-gray-200 bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy/10">
+                    <Crown className="h-5 w-5 text-navy" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-navy">EXPERT</h3>
+                    <p className="text-xs text-gray-500">전문가</p>
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-gray-100 pt-4">
+                  <p className="text-2xl font-bold text-navy">
+                    &#8361;59,900<span className="text-sm font-normal text-gray-400">/월</span>
+                  </p>
+                </div>
+                <ul className="mt-5 space-y-3">
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> PRO 플랜 전체 포함
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 1:1 전문가 상담 무제한
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 shrink-0 text-mint" /> 상권 분석 리포트 제공
+                  </li>
+                </ul>
+                <div className="mt-6">
+                  <Link
+                    href="/pricing"
+                    className="block rounded-lg border border-navy py-2.5 text-center text-sm font-medium text-navy transition-all duration-150 hover:bg-navy hover:text-white"
+                  >
+                    EXPERT 시작하기
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 text-center">
+              <Link href="/pricing" className="text-sm text-gray-500 underline underline-offset-4 transition-colors hover:text-mint">
+                요금제 상세 비교 보기
+              </Link>
             </div>
           </div>
         </section>

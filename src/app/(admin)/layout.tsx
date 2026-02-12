@@ -14,6 +14,7 @@ import {
   ExternalLink,
   LogOut,
   Bell,
+  TrendingUp,
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -31,6 +32,7 @@ export default async function AdminLayout({
       label: "주요 관리",
       items: [
         { href: "/admin", icon: BarChart3, label: "대시보드" },
+        { href: "/admin/analytics", icon: TrendingUp, label: "통계/분석" },
         { href: "/admin/listings", icon: ListChecks, label: "매물 관리" },
         { href: "/admin/users", icon: Users, label: "회원 관리" },
       ],
