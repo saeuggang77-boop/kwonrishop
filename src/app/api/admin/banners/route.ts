@@ -14,14 +14,10 @@ const bannerCreateSchema = z.object({
 export async function GET() {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return Response.json(
-        { error: { message: "관리자 권한이 필요합니다." } },
-        { status: 403 }
-      );
-    }
+    const isAdmin = session?.user?.role === "ADMIN";
 
     const banners = await prisma.banner.findMany({
+      where: isAdmin ? {} : { isActive: true },
       orderBy: { sortOrder: "asc" },
     });
 

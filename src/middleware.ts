@@ -20,7 +20,7 @@ export default auth((req) => {
   }
 
   // Public routes
-  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium", "/franchise", "/bbs", "/market-price", "/simulator"];
+  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium", "/pricing", "/franchise", "/bbs", "/market-price", "/simulator", "/experts"];
   const isPublicPath = publicPaths.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
@@ -32,6 +32,8 @@ export default auth((req) => {
     (pathname === "/api/admin/banners" && req.method === "GET") ||
     (pathname.startsWith("/api/report-plans") && req.method === "GET") ||
     (pathname.startsWith("/api/market-prices") && req.method === "GET") ||
+    (pathname.startsWith("/api/experts") && req.method === "GET") ||
+    (pathname === "/api/subscription/plans" && req.method === "GET") ||
     pathname.startsWith("/api/events");
 
   // CRON routes - secured by secret
@@ -48,8 +50,14 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Public paths don't require auth
-  if (isPublicPath || isPublicApi) {
+  // Auth-required sub-paths under public routes
+  const authRequiredSubPaths = ["/listings/new", "/listings/compare"];
+  const needsAuth = authRequiredSubPaths.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+
+  // Public paths don't require auth (unless in authRequiredSubPaths)
+  if ((isPublicPath || isPublicApi) && !needsAuth) {
     return NextResponse.next();
   }
 
