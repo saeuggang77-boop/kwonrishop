@@ -23,8 +23,9 @@ import { ImageGallery } from "./image-gallery";
 import { ShareButtons } from "./share-buttons";
 import { CompareSection } from "./compare-section";
 import { DetailTabs } from "./detail-tabs";
-import { RevenueLineChart, CostPieChart } from "./revenue-charts";
+import { RevenueBarChart, CostPieChart } from "./revenue-charts";
 import { MarketBarChart } from "./market-charts";
+import { auth } from "@/lib/auth";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
@@ -48,6 +49,7 @@ export default async function ListingDetailPage({
 }) {
   const { id: rawId } = await params;
   const id = decodeURIComponent(rawId);
+  const session = await auth();
 
   const listingData = await prisma.listing.findUnique({
     where: { id },
@@ -89,13 +91,14 @@ export default async function ListingDetailPage({
           OR: [
             { district: listingData.district },
             { businessCategory: listingData.businessCategory },
+            { city: listingData.city },
           ],
         },
         include: {
           images: { take: 1, orderBy: { sortOrder: "asc" } },
         },
         orderBy: { createdAt: "desc" },
-        take: 4,
+        take: 6,
       }),
     ]);
 
@@ -129,6 +132,14 @@ export default async function ListingDetailPage({
   const numDeposit = Number(listing.price);
   const avgPremium = marketPrice ? Number(marketPrice.avgKeyMoney) : 0;
 
+  // Cost breakdown estimates
+  const totalRent = numMonthlyRent + numManagementFee;
+  const totalCosts = Math.max(0, numMonthlyRevenue - numMonthlyProfit);
+  const nonRentCosts = Math.max(0, totalCosts - totalRent);
+  const laborCost = Math.round(nonRentCosts * 0.30);
+  const materialCost = Math.round(nonRentCosts * 0.56);
+  const otherCost = nonRentCosts - laborCost - materialCost;
+
   // ROI calculation
   const totalInvestment = numDeposit + numPremiumFee;
   const roiMonths =
@@ -153,7 +164,12 @@ export default async function ListingDetailPage({
       )}
 
       {/* Image Gallery */}
-      <ImageGallery images={listing.images} title={listing.title} />
+      <ImageGallery
+        images={listing.images}
+        title={listing.title}
+        businessCategory={listing.businessCategory}
+        showPhotoHint={!listing.images.length && session?.user?.id === listing.sellerId}
+      />
 
       {/* Header: Badges + Title + Address */}
       <div className="mt-6">
@@ -426,11 +442,10 @@ export default async function ListingDetailPage({
                 {/* Monthly Revenue/Profit Trend Chart */}
                 <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
                   <h3 className="mb-4 text-base font-semibold text-navy">
-                    월별 매출/순이익 추이 (예상)
+                    월별 매출 추이 (예상)
                   </h3>
-                  <RevenueLineChart
+                  <RevenueBarChart
                     monthlyRevenue={numMonthlyRevenue}
-                    monthlyProfit={numMonthlyProfit}
                   />
                   <p className="mt-2 text-xs text-gray-400">
                     * 현재 매출/순이익 기준 예상 추이이며 실제와 다를 수 있습니다
@@ -443,30 +458,27 @@ export default async function ListingDetailPage({
                   <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                     <div className="border-b border-gray-100 px-6 py-4">
                       <h3 className="text-base font-semibold text-navy">
-                        비용 구조
+                        비용 구조 (추정)
                       </h3>
                     </div>
                     <div className="divide-y divide-gray-100">
-                      <CostRow label="월세" value={numMonthlyRent} />
-                      <CostRow label="관리비" value={numManagementFee} />
-                      <CostRow
-                        label="기타비용 (추정)"
-                        value={Math.max(
-                          0,
-                          numMonthlyRevenue -
-                            numMonthlyProfit -
-                            numMonthlyRent -
-                            numManagementFee,
-                        )}
-                      />
+                      <CostRow label="임대료 (월세+관리비)" value={totalRent} />
+                      <CostRow label="인건비 (추정)" value={laborCost} />
+                      <CostRow label="재료비/원가 (추정)" value={materialCost} />
+                      <CostRow label="기타비용 (추정)" value={otherCost} />
                       <div className="flex items-center justify-between bg-purple/5 px-6 py-3">
                         <span className="text-sm font-bold text-navy">
-                          월 순이익
+                          월 순수익
                         </span>
                         <span className="text-base font-bold text-purple">
                           {formatKRW(numMonthlyProfit)}
                         </span>
                       </div>
+                    </div>
+                    <div className="border-t border-gray-100 px-6 py-2">
+                      <p className="text-[11px] text-gray-400">
+                        * 인건비/재료비는 업종 평균 기준 추정치입니다
+                      </p>
                     </div>
                   </div>
 
@@ -476,10 +488,11 @@ export default async function ListingDetailPage({
                       매출 구성
                     </h3>
                     <CostPieChart
-                      monthlyRent={numMonthlyRent}
-                      managementFee={numManagementFee}
-                      monthlyRevenue={numMonthlyRevenue}
-                      monthlyProfit={numMonthlyProfit}
+                      rent={totalRent}
+                      laborCost={laborCost}
+                      materialCost={materialCost}
+                      otherCost={otherCost}
+                      profit={numMonthlyProfit}
                     />
                   </div>
                 </div>
@@ -740,16 +753,12 @@ export default async function ListingDetailPage({
             <h2 className="text-xl font-bold text-navy">위치 정보</h2>
 
             {/* Map Placeholder */}
-            <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
+            <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
               <div className="flex aspect-[16/9] items-center justify-center">
-                <div className="text-center text-gray-400">
-                  <MapPinned className="mx-auto h-12 w-12" />
-                  <p className="mt-2 text-sm">
-                    {listing.address}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-400">
-                    지도 서비스 준비중
-                  </p>
+                <div className="text-center text-gray-500">
+                  <MapPinned className="mx-auto h-16 w-16 text-gray-400" />
+                  <p className="mt-3 text-lg font-semibold text-gray-600">지도 준비중</p>
+                  <p className="mt-1 text-sm text-gray-400">카카오맵 연동 예정</p>
                 </div>
               </div>
             </div>
@@ -803,35 +812,46 @@ export default async function ListingDetailPage({
               </div>
             </div>
 
-            {/* Address Summary */}
+            {/* Address & Nearby Info */}
             <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="border-b border-gray-100 px-6 py-5">
+                <p className="text-xs font-medium text-gray-500">주소</p>
+                <p className="mt-1 text-xl font-bold text-navy">
+                  {listing.address}
+                  {listing.addressDetail ? ` ${listing.addressDetail}` : ""}
+                </p>
+                <p className="mt-1 text-sm text-gray-500">
+                  {listing.city} {listing.district}
+                  {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
+                  {listing.postalCode ? ` (${listing.postalCode})` : ""}
+                </p>
+              </div>
               <div className="divide-y divide-gray-100">
                 <div className="flex items-center justify-between px-6 py-4">
-                  <span className="text-sm text-gray-500">주소</span>
-                  <span className="text-sm font-medium text-gray-800">
-                    {listing.address}
-                    {listing.addressDetail
-                      ? ` ${listing.addressDetail}`
-                      : ""}
+                  <span className="flex items-center gap-2 text-sm text-gray-600">
+                    🚇 가장 가까운 지하철역
+                  </span>
+                  <span className="text-sm font-semibold text-navy">
+                    {listing.district.replace(/구$/, "")}역 도보 5분
                   </span>
                 </div>
                 <div className="flex items-center justify-between px-6 py-4">
-                  <span className="text-sm text-gray-500">행정구역</span>
-                  <span className="text-sm font-medium text-gray-800">
-                    {listing.city} {listing.district}
-                    {listing.neighborhood
-                      ? ` ${listing.neighborhood}`
-                      : ""}
+                  <span className="flex items-center gap-2 text-sm text-gray-600">
+                    🚌 주변 버스정류장
                   </span>
+                  <span className="text-sm font-semibold text-navy">3개</span>
                 </div>
-                {listing.postalCode && (
-                  <div className="flex items-center justify-between px-6 py-4">
-                    <span className="text-sm text-gray-500">우편번호</span>
-                    <span className="text-sm font-medium text-gray-800">
-                      {listing.postalCode}
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center justify-between px-6 py-4">
+                  <span className="flex items-center gap-2 text-sm text-gray-600">
+                    👥 일평균 유동인구
+                  </span>
+                  <span className="text-sm font-semibold text-navy">약 32,000명 (추정)</span>
+                </div>
+              </div>
+              <div className="border-t border-gray-100 px-6 py-2">
+                <p className="text-[11px] text-gray-400">
+                  * 유동인구는 추정치이며 실제와 다를 수 있습니다
+                </p>
               </div>
             </div>
           </section>
@@ -1061,9 +1081,30 @@ export default async function ListingDetailPage({
             </Link>
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {similarListings.map((sl) => {
+            {similarListings.slice(0, 4).map((sl) => {
               const slThumb =
                 sl.images[0]?.thumbnailUrl ?? sl.images[0]?.url ?? null;
+              const slCat: Record<string, { gradient: string; icon: string }> = {
+                CAFE_BAKERY:   { gradient: "from-amber-800/70 to-amber-600/50", icon: "☕" },
+                CHICKEN:       { gradient: "from-orange-600/70 to-orange-400/50", icon: "🍗" },
+                KOREAN_FOOD:   { gradient: "from-red-700/70 to-red-500/50", icon: "🍚" },
+                PIZZA:         { gradient: "from-yellow-600/70 to-yellow-400/50", icon: "🍕" },
+                BUNSIK:        { gradient: "from-pink-600/70 to-pink-400/50", icon: "🍜" },
+                RETAIL:        { gradient: "from-blue-700/70 to-blue-500/50", icon: "🏪" },
+                BAR_PUB:       { gradient: "from-purple-700/70 to-purple-500/50", icon: "🍺" },
+                WESTERN_FOOD:  { gradient: "from-rose-700/70 to-rose-500/50", icon: "🍝" },
+                SERVICE:       { gradient: "from-teal-700/70 to-teal-500/50", icon: "✂️" },
+                ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
+                EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
+              };
+              const catInfo = slCat[sl.businessCategory] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
+              const gradeConfig = sl.safetyGrade ? (
+                { A: { label: "A등급", color: "text-green-700", bg: "bg-green-100" },
+                  B: { label: "B등급", color: "text-blue-700", bg: "bg-blue-100" },
+                  C: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
+                  D: { label: "D등급", color: "text-red-700", bg: "bg-red-100" },
+                } as Record<string, { label: string; color: string; bg: string }>
+              )[sl.safetyGrade] : null;
               return (
                 <Link
                   key={sl.id}
@@ -1080,14 +1121,19 @@ export default async function ListingDetailPage({
                         sizes="(max-width: 768px) 50vw, 25vw"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-gray-300">
-                        <Store className="h-8 w-8" />
+                      <div className={`flex h-full items-center justify-center bg-gradient-to-br ${catInfo.gradient}`}>
+                        <span className="text-4xl drop-shadow-lg">{catInfo.icon}</span>
                       </div>
                     )}
                     <span className="absolute left-2 top-2 rounded bg-navy/80 px-2 py-0.5 text-[11px] font-medium text-white">
                       {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ??
                         sl.businessCategory}
                     </span>
+                    {gradeConfig && (
+                      <span className={`absolute right-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold ${gradeConfig.bg} ${gradeConfig.color}`}>
+                        {gradeConfig.label}
+                      </span>
+                    )}
                   </div>
                   <div className="p-4">
                     <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-navy">

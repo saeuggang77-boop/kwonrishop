@@ -61,7 +61,56 @@ async function main() {
     },
   });
 
-  console.log("  Users: admin, seller, buyer");
+  const agent = await prisma.user.upsert({
+    where: { email: "agent@test.com" },
+    update: {},
+    create: {
+      email: "agent@test.com",
+      name: "박중개",
+      hashedPassword: password,
+      role: "AGENT",
+      accountStatus: "ACTIVE",
+      emailVerified: new Date(),
+      phone: "010-5555-1234",
+      businessName: "박중개부동산",
+      businessNumber: "456-78-90123",
+    },
+  });
+
+  const franchiseUser = await prisma.user.upsert({
+    where: { email: "franchise@test.com" },
+    update: {},
+    create: {
+      email: "franchise@test.com",
+      name: "최본사",
+      hashedPassword: password,
+      role: "FRANCHISE",
+      accountStatus: "ACTIVE",
+      emailVerified: new Date(),
+      phone: "010-6666-1234",
+      businessName: "맛있는치킨 본사",
+      businessNumber: "789-01-23456",
+    },
+  });
+
+  const expert = await prisma.user.upsert({
+    where: { email: "expert@test.com" },
+    update: {},
+    create: {
+      email: "expert@test.com",
+      name: "정세무",
+      hashedPassword: password,
+      role: "EXPERT",
+      expertCategory: "ACCOUNTING",
+      accountStatus: "ACTIVE",
+      emailVerified: new Date(),
+      phone: "010-7777-1234",
+      businessName: "정세무회계사무소",
+      businessNumber: "012-34-56789",
+    },
+  });
+
+  console.log("  Users: admin, seller, buyer, agent, franchise, expert");
 
   // ──────────────────────────────────────────────
   // 2. Fraud Rules
@@ -339,6 +388,110 @@ async function main() {
       contactPhone: "010-1234-5678",
       safetyGrade: "D" as const,
       safetyComment: "매출증빙 없음, 권리금 적정성 미확인",
+    },
+    {
+      title: "신촌 맘스터치 양도",
+      description: "신촌역 도보 3분 맘스터치 매장. 대학가 핵심 상권, 점심 매출 높음. 본사 계약 잔여 4년.",
+      businessCategory: "CHICKEN" as const,
+      storeType: "FRANCHISE" as const,
+      businessSubtype: "맘스터치",
+      price: BigInt(25_000_000),
+      monthlyRent: BigInt(2_200_000),
+      premiumFee: BigInt(70_000_000),
+      managementFee: BigInt(120_000),
+      monthlyRevenue: BigInt(38_000_000),
+      monthlyProfit: BigInt(9_000_000),
+      operatingYears: 3,
+      address: "신촌로 104",
+      city: "서울특별시",
+      district: "서대문구",
+      neighborhood: "신촌동",
+      areaM2: 66.0,
+      areaPyeong: 20.0,
+      floor: 1,
+      latitude: 37.5560,
+      longitude: 126.9369,
+      contactPhone: "010-1234-5678",
+      safetyGrade: "A" as const,
+      safetyComment: "프랜차이즈 본사 인증, 매출증빙 완료",
+    },
+    {
+      title: "역삼 이디야커피 양도",
+      description: "역삼역 오피스 밀집 지역 이디야커피. 오전 테이크아웃 매출 높음. 본사 계약 잔여 5년.",
+      businessCategory: "CAFE_BAKERY" as const,
+      storeType: "FRANCHISE" as const,
+      businessSubtype: "이디야커피",
+      price: BigInt(30_000_000),
+      monthlyRent: BigInt(2_000_000),
+      premiumFee: BigInt(55_000_000),
+      managementFee: BigInt(100_000),
+      monthlyRevenue: BigInt(22_000_000),
+      monthlyProfit: BigInt(6_500_000),
+      operatingYears: 2,
+      address: "역삼로 180",
+      city: "서울특별시",
+      district: "강남구",
+      neighborhood: "역삼동",
+      areaM2: 49.5,
+      areaPyeong: 15.0,
+      floor: 1,
+      latitude: 37.5007,
+      longitude: 127.0365,
+      contactPhone: "010-1234-5678",
+      safetyGrade: "B" as const,
+      safetyComment: "프랜차이즈 확인됨, 매출증빙 일부",
+    },
+    {
+      title: "목동 크린토피아 양도",
+      description: "목동 아파트 단지 내 크린토피아 세탁소. 무인 운영 가능, 안정적 고정 매출. 본사 지원 우수.",
+      businessCategory: "SERVICE" as const,
+      storeType: "FRANCHISE" as const,
+      businessSubtype: "크린토피아",
+      price: BigInt(15_000_000),
+      monthlyRent: BigInt(1_200_000),
+      premiumFee: BigInt(35_000_000),
+      managementFee: BigInt(80_000),
+      monthlyRevenue: BigInt(12_000_000),
+      monthlyProfit: BigInt(4_500_000),
+      operatingYears: 3,
+      address: "목동중앙로 88",
+      city: "서울특별시",
+      district: "양천구",
+      neighborhood: "목동",
+      areaM2: 33.0,
+      areaPyeong: 10.0,
+      floor: 1,
+      latitude: 37.5270,
+      longitude: 126.8695,
+      contactPhone: "010-1234-5678",
+      safetyGrade: "A" as const,
+      safetyComment: "매출증빙 완료, 무인 운영 검증 완료",
+    },
+    {
+      title: "건대 빽다방 양도",
+      description: "건대입구역 도보 2분 빽다방. 저가 커피 수요 탄탄, 배달 매출 비중 30%. 본사 계약 잔여 3년.",
+      businessCategory: "CAFE_BAKERY" as const,
+      storeType: "FRANCHISE" as const,
+      businessSubtype: "빽다방",
+      price: BigInt(20_000_000),
+      monthlyRent: BigInt(1_800_000),
+      premiumFee: BigInt(45_000_000),
+      managementFee: BigInt(90_000),
+      monthlyRevenue: BigInt(20_000_000),
+      monthlyProfit: BigInt(5_500_000),
+      operatingYears: 2,
+      address: "동일로22길 15",
+      city: "서울특별시",
+      district: "광진구",
+      neighborhood: "화양동",
+      areaM2: 33.0,
+      areaPyeong: 10.0,
+      floor: 1,
+      latitude: 37.5404,
+      longitude: 127.0690,
+      contactPhone: "010-1234-5678",
+      safetyGrade: "B" as const,
+      safetyComment: "프랜차이즈 확인됨, 매출증빙 일부",
     },
   ];
 
@@ -1259,9 +1412,12 @@ async function main() {
 
   console.log("\nSeeding complete!");
   console.log("─────────────────────────────────");
-  console.log("  admin@kwonrishop.com / test1234!");
-  console.log("  seller@test.com     / test1234!");
-  console.log("  buyer@test.com      / test1234!");
+  console.log("  admin@kwonrishop.com  / test1234!");
+  console.log("  seller@test.com      / test1234!");
+  console.log("  buyer@test.com       / test1234!");
+  console.log("  agent@test.com       / test1234!");
+  console.log("  franchise@test.com   / test1234!");
+  console.log("  expert@test.com      / test1234!");
   console.log("─────────────────────────────────");
 }
 

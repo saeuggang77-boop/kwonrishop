@@ -14,6 +14,9 @@ datasource db {
 enum UserRole {
   BUYER
   SELLER
+  AGENT
+  FRANCHISE
+  EXPERT
   ADMIN
 }
 
@@ -275,6 +278,7 @@ model User {
   businessName     String?
   businessNumber   String?
   subscriptionTier SubscriptionTier @default(FREE)
+  expertCategory   String?
   isTrustedSeller  Boolean          @default(false)
   smsNotificationEnabled Boolean    @default(true)
   violationCount   Int              @default(0)

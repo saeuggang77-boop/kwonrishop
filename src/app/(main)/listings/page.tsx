@@ -17,7 +17,6 @@ import {
   SAFETY_GRADE_CONFIG,
   PREMIUM_AD_CONFIG,
   STORE_FEATURES,
-  DIAGNOSIS_BADGE_CONFIG,
 } from "@/lib/utils/constants";
 
 /* ================================================================
@@ -54,6 +53,20 @@ interface ListingItem {
 
 type TabType = "direct" | "franchise";
 type FilterKey = "category" | "revenue" | "theme" | "price" | "floor" | "area";
+
+const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> = {
+  CAFE_BAKERY:   { gradient: "from-amber-800/70 to-amber-600/50", icon: "☕" },
+  CHICKEN:       { gradient: "from-orange-600/70 to-orange-400/50", icon: "🍗" },
+  KOREAN_FOOD:   { gradient: "from-red-700/70 to-red-500/50", icon: "🍚" },
+  PIZZA:         { gradient: "from-yellow-600/70 to-yellow-400/50", icon: "🍕" },
+  SNACK_BAR:     { gradient: "from-pink-600/70 to-pink-400/50", icon: "🍜" },
+  RETAIL:        { gradient: "from-blue-700/70 to-blue-500/50", icon: "🏪" },
+  BAR_PUB:       { gradient: "from-purple-700/70 to-purple-500/50", icon: "🍺" },
+  WESTERN_FOOD:  { gradient: "from-rose-700/70 to-rose-500/50", icon: "🍝" },
+  SERVICE:       { gradient: "from-teal-700/70 to-teal-500/50", icon: "✂️" },
+  ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
+  EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
+};
 
 const SORT_OPTIONS = [
   { value: "createdAt-desc", label: "최신등록순" },
@@ -709,11 +722,14 @@ function ListingCard({ listing }: { listing: ListingItem }) {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="176px"
           />
-        ) : (
-          <div className="flex h-full items-center justify-center text-gray-300">
-            <Store className="h-10 w-10" />
-          </div>
-        )}
+        ) : (() => {
+          const cat = CATEGORY_PLACEHOLDER[listing.businessCategory] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
+          return (
+            <div className={`flex h-full items-center justify-center bg-gradient-to-br ${cat.gradient}`}>
+              <span className="text-5xl drop-shadow-lg">{cat.icon}</span>
+            </div>
+          );
+        })()}
         {/* Category tag top-left */}
         <span className="absolute left-2 top-2 rounded bg-[#1B3A5C]/80 px-2 py-0.5 text-[11px] font-medium leading-tight text-white">
           {categoryLabel}

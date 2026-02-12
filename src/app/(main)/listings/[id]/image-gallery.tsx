@@ -7,9 +7,29 @@ import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 interface ImageGalleryProps {
   images: { id: string; url: string }[];
   title: string;
+  businessCategory?: string;
+  showPhotoHint?: boolean;
 }
 
-export function ImageGallery({ images, title }: ImageGalleryProps) {
+const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> = {
+  CAFE_BAKERY:   { gradient: "from-amber-800/70 to-amber-600/50", icon: "☕" },
+  CHICKEN:       { gradient: "from-orange-600/70 to-orange-400/50", icon: "🍗" },
+  KOREAN_FOOD:   { gradient: "from-red-700/70 to-red-500/50", icon: "🍚" },
+  PIZZA:         { gradient: "from-yellow-600/70 to-yellow-400/50", icon: "🍕" },
+  BUNSIK:        { gradient: "from-pink-600/70 to-pink-400/50", icon: "🍜" },
+  RETAIL:        { gradient: "from-blue-700/70 to-blue-500/50", icon: "🏪" },
+  BAR_PUB:       { gradient: "from-purple-700/70 to-purple-500/50", icon: "🍺" },
+  WESTERN_FOOD:  { gradient: "from-rose-700/70 to-rose-500/50", icon: "🍝" },
+  JAPANESE_FOOD: { gradient: "from-sky-700/70 to-sky-500/50", icon: "🍣" },
+  CHINESE_FOOD:  { gradient: "from-red-800/70 to-red-600/50", icon: "🥟" },
+  SERVICE:       { gradient: "from-teal-700/70 to-teal-500/50", icon: "✂️" },
+  ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
+  EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
+  DELIVERY:      { gradient: "from-lime-700/70 to-lime-500/50", icon: "🛵" },
+  ACCOMMODATION: { gradient: "from-stone-700/70 to-stone-500/50", icon: "🏨" },
+};
+
+export function ImageGallery({ images, title, businessCategory, showPhotoHint }: ImageGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -58,24 +78,18 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   }, [lightboxOpen, handlePrevious, handleNext]);
 
   if (images.length === 0) {
+    const cat = CATEGORY_PLACEHOLDER[businessCategory ?? ""] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
     return (
-      <div className="flex aspect-[16/9] items-center justify-center rounded-xl bg-gray-100">
-        <div className="text-center text-gray-400">
-          <svg
-            className="mx-auto h-16 w-16"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-          <p className="mt-2 text-sm">이미지 없음</p>
+      <div className={`relative flex aspect-[16/9] items-center justify-center rounded-xl bg-gradient-to-br ${cat.gradient}`}>
+        <div className="text-center">
+          <span className="text-8xl drop-shadow-lg">{cat.icon}</span>
+          <p className="mt-4 text-sm font-medium text-white/80">등록된 사진이 없습니다</p>
         </div>
+        {showPhotoHint && (
+          <div className="absolute bottom-0 left-0 right-0 bg-black/40 px-4 py-3 text-center backdrop-blur-sm">
+            <p className="text-sm font-medium text-white">📸 사진을 등록하면 문의율이 3배 높아집니다</p>
+          </div>
+        )}
       </div>
     );
   }

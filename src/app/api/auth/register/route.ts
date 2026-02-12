@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       if (limited) return limited;
     } catch {}
 
-    const { name, email, phone, password, role } = await req.json();
+    const { name, email, phone, password, role, expertCategory } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -32,8 +32,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const validRoles = ["BUYER", "SELLER"];
+    const validRoles = ["BUYER", "SELLER", "AGENT", "FRANCHISE", "EXPERT"];
     const userRole = validRoles.includes(role) ? role : "BUYER";
+    const validExpertCategories = ["LAW", "ACCOUNTING", "INTERIOR", "DEMOLITION", "REALESTATE"];
+    const userExpertCategory = userRole === "EXPERT" && validExpertCategories.includes(expertCategory) ? expertCategory : null;
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
@@ -52,6 +54,7 @@ export async function POST(req: NextRequest) {
         phone: phone || null,
         hashedPassword,
         role: userRole,
+        expertCategory: userExpertCategory,
         accountStatus: "ACTIVE",
       },
     });

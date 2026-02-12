@@ -7,6 +7,47 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+const ROLE_OPTIONS = [
+  {
+    value: "BUYER" as const,
+    icon: "🔍",
+    label: "점포 찾는 사람",
+    description: "창업할 점포를 찾고 있어요",
+  },
+  {
+    value: "SELLER" as const,
+    icon: "🏪",
+    label: "점포 파는 사람",
+    description: "운영중인 점포를 양도하고 싶어요",
+  },
+  {
+    value: "AGENT" as const,
+    icon: "🏢",
+    label: "공인중개사",
+    description: "점포 중개 업무를 하고 있어요",
+  },
+  {
+    value: "FRANCHISE" as const,
+    icon: "🏬",
+    label: "프랜차이즈 본사",
+    description: "프랜차이즈 가맹점을 모집해요",
+  },
+  {
+    value: "EXPERT" as const,
+    icon: "👨‍💼",
+    label: "전문가",
+    description: "법률/세무/인테리어 전문 서비스를 제공해요",
+  },
+] as const;
+
+const EXPERT_CATEGORIES = [
+  { value: "LAW", label: "법률" },
+  { value: "ACCOUNTING", label: "세무회계" },
+  { value: "INTERIOR", label: "인테리어" },
+  { value: "DEMOLITION", label: "철거" },
+  { value: "REALESTATE", label: "부동산" },
+] as const;
+
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -15,7 +56,8 @@ export default function RegisterPage() {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "BUYER" as "BUYER" | "SELLER",
+    role: "BUYER" as "BUYER" | "SELLER" | "AGENT" | "FRANCHISE" | "EXPERT",
+    expertCategory: "",
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
@@ -40,6 +82,11 @@ export default function RegisterPage() {
       return;
     }
 
+    if (form.role === "EXPERT" && !form.expertCategory) {
+      setErrorMsg("전문 분야를 선택해주세요.");
+      return;
+    }
+
     if (!termsAccepted || !privacyAccepted) {
       setErrorMsg("이용약관과 개인정보 수집·이용에 모두 동의해주세요.");
       return;
@@ -57,6 +104,7 @@ export default function RegisterPage() {
           phone: form.phone,
           password: form.password,
           role: form.role,
+          expertCategory: form.expertCategory,
         }),
       });
 
@@ -192,30 +240,47 @@ export default function RegisterPage() {
           <label className="mb-2 block text-sm font-medium text-navy">
             가입 유형
           </label>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => updateField("role", "BUYER")}
-              className={`rounded-lg border px-4 py-3 text-sm font-medium transition-all duration-150 ${
-                form.role === "BUYER"
-                  ? "border-navy bg-navy/5 text-navy"
-                  : "border-gray-300 text-gray-500 hover:border-gray-400"
-              }`}
-            >
-              양수인
-            </button>
-            <button
-              type="button"
-              onClick={() => updateField("role", "SELLER")}
-              className={`rounded-lg border px-4 py-3 text-sm font-medium transition-all duration-150 ${
-                form.role === "SELLER"
-                  ? "border-navy bg-navy/5 text-navy"
-                  : "border-gray-300 text-gray-500 hover:border-gray-400"
-              }`}
-            >
-              양도인
-            </button>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {ROLE_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => {
+                  updateField("role", option.value);
+                  if (option.value !== "EXPERT") {
+                    updateField("expertCategory", "");
+                  }
+                }}
+                className={`flex flex-col items-center gap-1 rounded-lg border px-3 py-4 text-center transition-all duration-150 ${
+                  form.role === option.value
+                    ? "border-navy bg-navy/5 text-navy"
+                    : "border-gray-300 text-gray-500 hover:border-gray-400"
+                }`}
+              >
+                <span className="text-2xl">{option.icon}</span>
+                <span className="text-sm font-bold">{option.label}</span>
+                <span className="text-xs text-gray-400">{option.description}</span>
+              </button>
+            ))}
           </div>
+
+          {/* Expert Category Dropdown */}
+          {form.role === "EXPERT" && (
+            <div className="mt-3">
+              <select
+                value={form.expertCategory}
+                onChange={(e) => updateField("expertCategory", e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-700 outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy"
+              >
+                <option value="">전문 분야를 선택하세요</option>
+                {EXPERT_CATEGORIES.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         {/* Terms Checkboxes */}

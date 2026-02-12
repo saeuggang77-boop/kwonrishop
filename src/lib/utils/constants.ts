@@ -55,6 +55,16 @@ export const FRAUD_SEVERITY_LABELS: Record<string, string> = {
   CRITICAL: "심각",
 };
 
+// ── 사용자 역할 ──
+export const ROLE_LABELS: Record<string, string> = {
+  BUYER: "점포 찾는 사람",
+  SELLER: "점포 파는 사람",
+  AGENT: "공인중개사",
+  FRANCHISE: "프랜차이즈 본사",
+  EXPERT: "전문가",
+  ADMIN: "관리자",
+};
+
 // ── 구독 시스템 (비활성화 — 레거시 참조용) ──
 export const SUBSCRIPTION_TIER_LABELS: Record<string, string> = {
   FREE: "무료",

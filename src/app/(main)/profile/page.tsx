@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ROLE_LABELS, EXPERT_CATEGORY_LABELS } from "@/lib/utils/constants";
 import {
   User, Mail, Phone, Building, CreditCard, Shield,
   Calendar, FileText, MessageSquare, Calculator, ChevronRight,
@@ -16,6 +17,7 @@ interface ProfileData {
   email: string | null;
   phone: string | null;
   role: string;
+  expertCategory: string | null;
   image: string | null;
   emailVerified: string | null;
   businessName: string | null;
@@ -28,12 +30,6 @@ interface ProfileData {
     simulations: number;
   };
 }
-
-const ROLE_LABELS: Record<string, string> = {
-  BUYER: "양수인",
-  SELLER: "양도인",
-  ADMIN: "관리자",
-};
 
 export default function ProfilePage() {
   const { data: session, status, update } = useSession();
@@ -260,6 +256,9 @@ export default function ProfilePage() {
           </div>
           <div className="divide-y divide-gray-50 px-6 py-2">
             <InfoRow label="계정 유형" value={ROLE_LABELS[profile?.role ?? "BUYER"] ?? profile?.role ?? ""} />
+            {profile?.expertCategory && (
+              <InfoRow label="전문 분야" value={EXPERT_CATEGORY_LABELS[profile.expertCategory] ?? profile.expertCategory} />
+            )}
             <InfoRow label="가입일" value={joinDate} />
             <InfoRow
               label="이메일 인증"
