@@ -183,8 +183,20 @@ export default function HomePage() {
 
   useEffect(() => {
     setLoadingPremium(true);
-    fetch("/api/listings?premiumOnly=true&limit=4").then(r => r.json())
-      .then(j => setPremiumListings((j.data ?? []).map((l: RawListingResponse) => toCard(l))))
+    fetch("/api/listings?premiumOnly=true&limit=8").then(r => r.json())
+      .then(j => {
+        const premium = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
+        if (premium.length < 4) {
+          fetch("/api/listings?limit=" + (4 - premium.length)).then(r2 => r2.json())
+            .then(j2 => {
+              const extra = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
+                .filter((e: ListingCard) => !premium.find((p: ListingCard) => p.id === e.id));
+              setPremiumListings([...premium, ...extra].slice(0, 4));
+            }).catch(() => setPremiumListings(premium));
+        } else {
+          setPremiumListings(premium);
+        }
+      })
       .catch(() => {}).finally(() => setLoadingPremium(false));
   }, []);
 
