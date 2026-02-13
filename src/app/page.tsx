@@ -187,7 +187,7 @@ export default function HomePage() {
       .then(j => {
         const premium = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
         if (premium.length < 4) {
-          fetch("/api/listings?limit=" + (4 - premium.length)).then(r2 => r2.json())
+          fetch("/api/listings?limit=10&sort=latest").then(r2 => r2.json())
             .then(j2 => {
               const extra = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
                 .filter((e: ListingCard) => !premium.find((p: ListingCard) => p.id === e.id));
