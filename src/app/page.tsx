@@ -323,8 +323,8 @@ export default function HomePage() {
           {(banners.length > 0 ? banners.map(b => ({ title: b.title, sub: b.subtitle || "", cta: b.ctaText || "자세히 보기", ctaHref: b.linkUrl || "/listings", imageUrl: b.imageUrl })) : HERO_SLIDES).map((s, i) => (
             <div key={i} className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-white via-[#F1F5F9] to-[#E2E8F0] transition-all duration-600 ease-in-out"
               style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
-              {"imageUrl" in s && s.imageUrl && !s.imageUrl.startsWith("gradient:") && s.imageUrl.startsWith("/") ? (
-                <Image src={s.imageUrl} alt={s.title} fill className="object-cover" priority />
+              {"imageUrl" in s && (s as { imageUrl?: string }).imageUrl && !(s as { imageUrl?: string }).imageUrl!.startsWith("gradient:") && (s as { imageUrl?: string }).imageUrl!.startsWith("/") ? (
+                <Image src={(s as { imageUrl?: string }).imageUrl!} alt={s.title} fill className="object-cover" priority />
               ) : (
                 <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #1B3A5C 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
               )}
