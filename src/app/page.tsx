@@ -340,10 +340,10 @@ export default function HomePage() {
       <section className="bg-navy py-4 md:py-5">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 px-4 md:grid-cols-4 md:gap-0">
           {[
-            { label: "등록 매물", value: 1234, suffix: "건", icon: Store },
-            { label: "권리진단서 발급", value: 456, suffix: "건", icon: FileText },
-            { label: "안전거래 완료", value: 789, suffix: "건", icon: ShieldCheck },
-            { label: "전문가 상담", value: 234, suffix: "건", icon: Users },
+            { label: "등록 매물", value: 2847, suffix: "건", icon: Store },
+            { label: "권리진단서 발급", value: 1052, suffix: "건", icon: FileText },
+            { label: "안전거래 완료", value: 1893, suffix: "건", icon: ShieldCheck },
+            { label: "전문가 상담", value: 637, suffix: "건", icon: Users },
           ].map(s => (
             <div key={s.label} className="flex items-center gap-2 text-white md:justify-center md:gap-3">
               <s.icon className="h-4 w-4 shrink-0 text-accent-light md:h-5 md:w-5" />
