@@ -87,7 +87,7 @@ interface BoardPostCard {
   id: string; category: string; title: string;
   thumbnailUrl: string | null; createdAt: string;
 }
-interface BannerItem { id: string; title: string; imageUrl: string; linkUrl: string | null; }
+interface BannerItem { id: string; title: string; subtitle: string | null; ctaText: string | null; imageUrl: string; linkUrl: string | null; }
 interface RawListingResponse {
   id: string; title: string; businessCategory: string; storeType: string;
   price: string | number | bigint; monthlyRent: string | number | bigint | null;
@@ -320,10 +320,14 @@ export default function HomePage() {
       {/* ═══ 1. Hero Banner ═══ */}
       <section className="relative overflow-hidden">
         <div className="relative h-[200px] md:h-[350px]">
-          {HERO_SLIDES.map((s, i) => (
+          {(banners.length > 0 ? banners.map(b => ({ title: b.title, sub: b.subtitle || "", cta: b.ctaText || "자세히 보기", ctaHref: b.linkUrl || "/listings", imageUrl: b.imageUrl })) : HERO_SLIDES).map((s, i) => (
             <div key={i} className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-white via-[#F1F5F9] to-[#E2E8F0] transition-all duration-600 ease-in-out"
               style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
-              <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #1B3A5C 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+              {"imageUrl" in s && s.imageUrl && !s.imageUrl.startsWith("gradient:") && s.imageUrl.startsWith("/") ? (
+                <Image src={s.imageUrl} alt={s.title} fill className="object-cover" priority />
+              ) : (
+                <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #1B3A5C 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+              )}
               <div className="relative z-10 w-full px-5 text-center md:px-8">
                 <h2 className="font-heading text-xl font-bold leading-tight text-navy whitespace-pre-line md:text-4xl lg:text-5xl">{s.title}</h2>
                 <p className="mt-2 text-xs text-navy/60 md:mt-3 md:text-base">{s.sub}</p>

@@ -6,8 +6,10 @@ import { errorToResponse } from "@/lib/utils/errors";
 
 const bannerCreateSchema = z.object({
   title: z.string().min(1).max(100),
-  imageUrl: z.string().url(),
-  linkUrl: z.string().url().optional(),
+  subtitle: z.string().max(200).optional(),
+  ctaText: z.string().max(50).optional(),
+  imageUrl: z.string().min(1),
+  linkUrl: z.string().optional(),
   sortOrder: z.number().int().min(0).optional(),
 });
 

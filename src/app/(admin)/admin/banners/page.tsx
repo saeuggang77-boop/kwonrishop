@@ -9,6 +9,8 @@ type Banner = {
   title: string;
   imageUrl: string;
   linkUrl: string | null;
+  subtitle: string | null;
+  ctaText: string | null;
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
@@ -22,6 +24,8 @@ export default function AdminBannersPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
+    subtitle: "",
+    ctaText: "",
     imageUrl: "",
     linkUrl: "",
     sortOrder: 0,
@@ -78,6 +82,8 @@ export default function AdminBannersPage() {
   const handleEdit = (banner: Banner) => {
     setFormData({
       title: banner.title,
+      subtitle: banner.subtitle || "",
+      ctaText: banner.ctaText || "",
       imageUrl: banner.imageUrl,
       linkUrl: banner.linkUrl || "",
       sortOrder: banner.sortOrder,
@@ -123,6 +129,8 @@ export default function AdminBannersPage() {
   const resetForm = () => {
     setFormData({
       title: "",
+      subtitle: "",
+      ctaText: "",
       imageUrl: "",
       linkUrl: "",
       sortOrder: 0,
@@ -199,20 +207,82 @@ export default function AdminBannersPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                이미지 URL *
+                배너 이미지 *
               </label>
-              <input
-                type="text"
-                required
-                value={formData.imageUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, imageUrl: e.target.value })
-                }
-                placeholder="https:// 또는 gradient:..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600 rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer">
+                    <ImageIcon className="w-4 h-4" />
+                    이미지 업로드
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 10 * 1024 * 1024) { toast("error", "10MB 이하만 가능"); return; }
+                        const fd = new FormData();
+                        fd.append("file", file);
+                        fd.append("listingId", "banners");
+                        try {
+                          const res = await fetch("/api/upload/image", { method: "POST", body: fd });
+                          const result = await res.json();
+                          if (result.data?.url) {
+                            setFormData(prev => ({ ...prev, imageUrl: result.data.url }));
+                            toast("success", "업로드 완료");
+                          } else { toast("error", "업로드 실패"); }
+                        } catch { toast("error", "업로드 오류"); }
+                      }}
+                    />
+                  </label>
+                  <span className="text-xs text-gray-400">또는</span>
+                  <input
+                    type="text"
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                    placeholder="이미지 URL 직접 입력"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                {formData.imageUrl && (
+                  <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                    {formData.imageUrl.startsWith("gradient:") ? (
+                      <div className="w-full h-full" style={{ background: formData.imageUrl.replace("gradient:", "") }} />
+                    ) : (
+                      <img src={formData.imageUrl} alt="미리보기" className="w-full h-full object-cover" />
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  부제목
+                </label>
+                <input
+                  type="text"
+                  value={formData.subtitle}
+                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                  placeholder="검증된 매물만 거래하는 프리미엄 플랫폼"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  버튼 텍스트
+                </label>
+                <input
+                  type="text"
+                  value={formData.ctaText}
+                  onChange={(e) => setFormData({ ...formData, ctaText: e.target.value })}
+                  placeholder="매물 보러가기"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 링크 URL
