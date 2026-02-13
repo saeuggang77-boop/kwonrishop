@@ -132,8 +132,8 @@ const CATEGORY_EMOJI: Record<string, string> = {
 const MARKET_BARS = [
   { area: "강남", value: 18000, max: 18000 },
   { area: "홍대", value: 14500, max: 18000 },
-  { area: "신촌", value: 11000, max: 18000 },
   { area: "잠실", value: 12500, max: 18000 },
+  { area: "신촌", value: 11000, max: 18000 },
   { area: "건대", value: 10500, max: 18000 },
 ];
 
