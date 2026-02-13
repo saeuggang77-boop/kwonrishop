@@ -308,15 +308,7 @@ export default function HomePage() {
       {/* ═══ 1. Hero Banner ═══ */}
       <section className="relative overflow-hidden">
         <div className="relative h-[200px] md:h-[350px]">
-          {banners.length > 0 ? banners.map((b, i) => (
-            <div key={b.id} className="absolute inset-0 flex items-center justify-center transition-all duration-600 ease-in-out"
-              style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-white via-[#F1F5F9] to-[#E2E8F0] px-6">
-                {b.linkUrl ? <Link href={b.linkUrl}><h2 className="font-heading text-xl font-bold text-navy md:text-4xl">{b.title}</h2></Link>
-                  : <h2 className="font-heading text-xl font-bold text-navy md:text-4xl">{b.title}</h2>}
-              </div>
-            </div>
-          )) : HERO_SLIDES.map((s, i) => (
+          {HERO_SLIDES.map((s, i) => (
             <div key={i} className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-white via-[#F1F5F9] to-[#E2E8F0] transition-all duration-600 ease-in-out"
               style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
               <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #1B3A5C 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
@@ -374,7 +366,7 @@ export default function HomePage() {
               {CATEGORY_ICONS.map(c => (
                 <Link key={c.label} href={c.href}
                   className="group flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white text-gray-600 transition-all md:gap-2.5 md:py-4 md:hover:-translate-y-0.5 md:hover:border-navy md:hover:bg-navy md:hover:text-white md:hover:shadow-md active:bg-navy/5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#E8F0FE] transition-colors md:h-14 md:w-14 md:rounded-xl md:group-hover:bg-white/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy/10 transition-colors md:h-14 md:w-14 md:rounded-xl md:group-hover:bg-white/20">
                     <c.icon className="h-5 w-5 text-navy transition-colors md:h-7 md:w-7 md:group-hover:text-white" />
                   </div>
                   <span className="text-[10px] font-medium leading-tight md:text-[11px]">{c.label}</span>
@@ -502,16 +494,7 @@ export default function HomePage() {
             <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
               {loadingListings ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />) :
                 listings.length === 0 ? (
-                  <div className="flex w-full flex-col items-center py-12 text-center md:col-span-4">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#E8F0FE]">
-                      <Store className="h-10 w-10 text-navy/40" />
-                    </div>
-                    <p className="mt-4 text-base font-bold text-navy">아직 추천 매물이 없어요</p>
-                    <p className="mt-1 text-sm text-gray-400">첫 번째 매물을 등록해보세요!</p>
-                    <Link href="/listings/new" className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-navy px-6 text-sm font-medium text-white active:scale-95 hover:bg-navy-dark">
-                      <FileEdit className="h-4 w-4" /> 매물 등록하기
-                    </Link>
-                  </div>
+                  <div className="hidden" />
                 ) : listings.map(item => renderListingCard(item, true))
               }
             </div>
@@ -645,9 +628,9 @@ export default function HomePage() {
             <p className="mt-1.5 text-center text-xs text-gray-500 md:mt-2 md:text-sm">법률, 인테리어, 철거, 세무 전문가가 도와드립니다</p>
             <div className="mt-5 space-y-3 md:mt-8 md:grid md:grid-cols-3 md:gap-5 md:space-y-0">
               {[
-                { icon: Scale, title: "법률 / 세무 전문가", desc: "계약서 검토, 세무 신고, 사업자 등록 등", color: "text-navy", bg: "bg-[#E8F0FE]" },
-                { icon: Paintbrush, title: "인테리어 전문가", desc: "업종 맞춤 인테리어 설계부터 시공까지", color: "text-navy", bg: "bg-[#E8F0FE]" },
-                { icon: Hammer, title: "철거 / 부동산 전문가", desc: "원상복구, 철거 견적, 상권 분석까지", color: "text-navy", bg: "bg-[#E8F0FE]" },
+                { icon: Scale, title: "법률 / 세무 전문가", desc: "계약서 검토, 세무 신고, 사업자 등록 등", color: "text-navy", bg: "bg-navy/10" },
+                { icon: Paintbrush, title: "인테리어 전문가", desc: "업종 맞춤 인테리어 설계부터 시공까지", color: "text-navy", bg: "bg-navy/10" },
+                { icon: Hammer, title: "철거 / 부동산 전문가", desc: "원상복구, 철거 견적, 상권 분석까지", color: "text-navy", bg: "bg-navy/10" },
               ].map(c => (
                 <div key={c.title} className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-all active:scale-[0.98] md:flex-col md:items-start md:gap-0 md:p-6 md:hover:-translate-y-1 md:hover:shadow-lg">
                   <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${c.bg} md:h-12 md:w-12`}>
@@ -709,10 +692,10 @@ export default function HomePage() {
             <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
               {posts.length === 0 ? <p className="col-span-4 py-8 text-center text-sm text-gray-400">게시글이 없습니다</p>
                 : posts.map(p => {
-                  const catStyle = p.category === "이용가이드" ? { bg: "from-[#DBEAFE] to-[#BFDBFE]", icon: "text-blue-500", badge: "bg-blue-100 text-blue-700" }
-                    : p.category === "알림공지" ? { bg: "from-[#FEF3C7] to-[#FDE68A]", icon: "text-amber-500", badge: "bg-amber-100 text-amber-700" }
-                    : p.category === "창업정보" ? { bg: "from-[#DCFCE7] to-[#BBF7D0]", icon: "text-green-600", badge: "bg-green-100 text-green-700" }
-                    : p.category === "이벤트" ? { bg: "from-[#EDE9FE] to-[#DDD6FE]", icon: "text-purple-600", badge: "bg-purple-100 text-purple-700" }
+                  const catStyle = p.category === "이용가이드" ? { bg: "from-[#E2E8F0] to-[#CBD5E1]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
+                    : p.category === "알림공지" ? { bg: "from-[#CBD5E1] to-[#94A3B8]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
+                    : p.category === "창업정보" ? { bg: "from-[#F1F5F9] to-[#E2E8F0]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
+                    : p.category === "이벤트" ? { bg: "from-[#D5DCE6] to-[#B8C4D0]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
                     : { bg: "from-[#E8F0FE] to-[#DBEAFE]", icon: "text-navy", badge: "bg-navy/10 text-navy" };
                   return (
                     <Link key={p.id} href={`/bbs/${p.id}`}
@@ -886,9 +869,13 @@ export default function HomePage() {
             <p className="text-xs text-gray-500">&copy; 2026 권리샵. All rights reserved.</p>
           </div>
 
-          <p className="mt-4 text-center text-[10px] text-gray-400 md:text-xs">
-            본 서비스에서 제공하는 정보는 참고용이며, 플랫폼은 매물의 정확성을 보증하지 않습니다.
-          </p>
+          <div className="mt-6 border-t border-gray-100 pt-4">
+            <div className="text-center text-[10px] text-gray-400 md:text-left md:text-xs space-y-0.5">
+              <p>권리샵 | 대표: 박상만 | 사업자등록번호: 000-00-00000</p>
+              <p>서울특별시 동작구 장승배기로4길 9 | 이메일: samsungcu@naver.com | 전화: 010-6405-8668</p>
+              <p className="mt-2">본 서비스에서 제공하는 정보는 참고용이며, 플랫폼은 매물의 정확성을 보증하지 않습니다.</p>
+            </div>
+          </div>
           <p className="mt-1 text-center text-[10px] text-gray-400 md:hidden">&copy; 2026 권리샵</p>
         </div>
       </footer>
