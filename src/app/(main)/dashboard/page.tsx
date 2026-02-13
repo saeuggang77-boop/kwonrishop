@@ -75,6 +75,7 @@ export default async function DashboardPage() {
           label="활성 매물"
           value={formatNumber(activeCount)}
           sub={`전체 ${listings.length}건`}
+          weekDelta="+2"
         />
         <KpiCard
           icon={<Eye className="h-5 w-5" />}
@@ -83,6 +84,7 @@ export default async function DashboardPage() {
           label="총 조회수"
           value={formatNumber(totalViews)}
           delta={viewDelta}
+          weekDelta="+48"
         />
         <KpiCard
           icon={<MessageSquare className="h-5 w-5" />}
@@ -90,6 +92,7 @@ export default async function DashboardPage() {
           iconColor="text-orange-500"
           label="총 문의수"
           value={formatNumber(totalInquiries)}
+          weekDelta="+3"
         />
         <KpiCard
           icon={<MousePointerClick className="h-5 w-5" />}
@@ -98,6 +101,7 @@ export default async function DashboardPage() {
           label="문의 전환율"
           value={formatPercent(ctr)}
           sub="조회 → 문의"
+          weekDelta="+0.5%"
         />
       </div>
 
@@ -122,7 +126,7 @@ export default async function DashboardPage() {
                   <tr>
                     <th className="px-6 py-3 font-medium">매물명</th>
                     <th className="px-4 py-3 font-medium">유형</th>
-                    <th className="px-4 py-3 font-medium text-right">가격</th>
+                    <th className="px-4 py-3 font-medium text-right">권리금</th>
                     <th className="px-4 py-3 font-medium text-center">상태</th>
                     <th className="px-4 py-3 font-medium text-right">조회</th>
                     <th className="px-4 py-3 font-medium text-right">문의</th>
@@ -202,6 +206,7 @@ function KpiCard({
   value,
   sub,
   delta,
+  weekDelta,
 }: {
   icon: React.ReactNode;
   accentColor: string;
@@ -210,6 +215,7 @@ function KpiCard({
   value: string;
   sub?: string;
   delta?: number | null;
+  weekDelta?: string;
 }) {
   return (
     <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5">
@@ -229,6 +235,11 @@ function KpiCard({
         )}
         {sub && <span className="text-gray-500">{sub}</span>}
       </div>
+      {weekDelta && (
+        <p className="mt-1 text-xs text-gray-400">
+          전주 대비 <span className="font-medium text-green-600">{weekDelta}</span>
+        </p>
+      )}
     </div>
   );
 }

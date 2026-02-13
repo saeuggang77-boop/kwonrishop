@@ -1093,7 +1093,7 @@ export default async function ListingDetailPage({
                 RETAIL:        { gradient: "from-blue-700/70 to-blue-500/50", icon: "🏪" },
                 BAR_PUB:       { gradient: "from-purple-700/70 to-purple-500/50", icon: "🍺" },
                 WESTERN_FOOD:  { gradient: "from-rose-700/70 to-rose-500/50", icon: "🍝" },
-                SERVICE:       { gradient: "from-teal-700/70 to-teal-500/50", icon: "✂️" },
+                SERVICE:       { gradient: "from-blue-800/70 to-blue-600/50", icon: "✂️" },
                 ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
                 EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
               };

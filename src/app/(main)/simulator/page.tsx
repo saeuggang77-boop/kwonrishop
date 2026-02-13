@@ -130,7 +130,8 @@ const INDUSTRY_AVG: Record<string, { avgRevenue: number; avgProfitRate: number }
   "기타": { avgRevenue: 2500, avgProfitRate: 20 },
 };
 
-const PIE_COLORS = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#1B3A5C"];
+// 재료비, 인건비, 임대료, 관리비, 기타비용, 순이익 순서
+const PIE_COLORS = ["#F59E0B", "#3B82F6", "#EF4444", "#8B5CF6", "#6B7280", "#1B3A5C"];
 
 const INITIAL_STATE: SimulatorState = {
   businessType: "",
@@ -237,12 +238,14 @@ export default function SimulatorPage() {
   const industryAvg = INDUSTRY_AVG[state.businessType] ?? INDUSTRY_AVG["기타"];
   const myProfitRate = monthlyRevenue > 0 ? Math.round((monthlyProfit / monthlyRevenue) * 100) : 0;
 
-  const barCompareData = useMemo(
-    () => [
-      { name: "월 매출 (만원)", 내매출: monthlyRevenue, 업종평균: industryAvg.avgRevenue },
-      { name: "순이익률 (%)", 내순이익률: myProfitRate, 업종평균순이익률: industryAvg.avgProfitRate },
-    ],
-    [monthlyRevenue, industryAvg, myProfitRate],
+  const barRevenueData = useMemo(
+    () => [{ name: "월 매출 (만원)", 나: monthlyRevenue, 업종평균: industryAvg.avgRevenue }],
+    [monthlyRevenue, industryAvg.avgRevenue],
+  );
+
+  const barProfitRateData = useMemo(
+    () => [{ name: "순이익률 (%)", 나: myProfitRate, 업종평균: industryAvg.avgProfitRate }],
+    [myProfitRate, industryAvg.avgProfitRate],
   );
 
   // ── Sensitivity data ─────────────────────────────────────────────────
@@ -512,114 +515,133 @@ export default function SimulatorPage() {
         {/* ── Step 4 ───────────────────────────────────────────────── */}
         {step === 4 && (
           <div>
-            <h2 className="mb-6 text-lg font-bold text-navy">예상 매출</h2>
-
-            {/* Toggle */}
-            <div className="mb-6 flex overflow-hidden rounded-lg border border-gray-200">
-              <button
-                type="button"
-                onClick={() => update("isManualRevenue", false)}
-                className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
-                  !state.isManualRevenue
-                    ? "bg-navy text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                자동 계산
-              </button>
-              <button
-                type="button"
-                onClick={() => update("isManualRevenue", true)}
-                className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
-                  state.isManualRevenue
-                    ? "bg-navy text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                직접 입력
-              </button>
-            </div>
-
-            {!state.isManualRevenue ? (
-              <div className="space-y-6">
-                {/* 일 평균 고객수 */}
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    일 평균 고객수:{" "}
-                    <span className="font-bold text-purple-600">
-                      {fmt(state.dailyCustomers)}명
-                    </span>
-                  </label>
-                  <input
-                    type="range"
-                    min={10}
-                    max={500}
-                    value={state.dailyCustomers}
-                    onChange={(e) =>
-                      update("dailyCustomers", Number(e.target.value))
-                    }
-                    className="w-full accent-[#1B3A5C]"
-                  />
-                  <div className="mt-1 flex justify-between text-xs text-gray-400">
-                    <span>10명</span>
-                    <span>500명</span>
-                  </div>
-                </div>
-
-                {/* 객단가 */}
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    객단가:{" "}
-                    <span className="font-bold text-purple-600">
-                      {fmt(state.avgSpending)}원
-                    </span>
-                  </label>
-                  <input
-                    type="range"
-                    min={5000}
-                    max={50000}
-                    step={1000}
-                    value={state.avgSpending}
-                    onChange={(e) =>
-                      update("avgSpending", Number(e.target.value))
-                    }
-                    className="w-full accent-[#1B3A5C]"
-                  />
-                  <div className="mt-1 flex justify-between text-xs text-gray-400">
-                    <span>5,000원</span>
-                    <span>50,000원</span>
-                  </div>
-                </div>
-
-                {/* 월 영업일수 */}
-                <NumberInput
-                  label="월 영업일수"
-                  value={state.monthlyDays}
-                  onChange={(v) => update("monthlyDays", v)}
-                  suffix="일"
-                />
-
-                {/* 예상 월 매출 */}
-                <div className="rounded-lg bg-purple-50 px-4 py-3 text-center">
-                  <span className="text-sm text-gray-600">예상 월 매출 </span>
-                  <span className="text-xl font-bold text-purple-600">
-                    {fmt(monthlyRevenue)} 만원
-                  </span>
+            {/* 결과가 표시 중일 때는 요약만 표시 */}
+            {showResults ? (
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-navy">예상 매출</h2>
+                <div className="flex items-center gap-3">
+                  <span className="text-lg font-bold text-purple-600">{fmt(monthlyRevenue)} 만원/월</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowResults(false)}
+                    className="text-xs text-gray-500 underline hover:text-navy"
+                  >
+                    수정하기
+                  </button>
                 </div>
               </div>
             ) : (
-              <NumberInput
-                label="월 매출"
-                value={state.manualRevenue}
-                onChange={(v) => update("manualRevenue", v)}
-                suffix="만원"
-              />
+              <>
+                <h2 className="mb-6 text-lg font-bold text-navy">예상 매출</h2>
+
+                {/* Toggle */}
+                <div className="mb-6 flex overflow-hidden rounded-lg border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => update("isManualRevenue", false)}
+                    className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
+                      !state.isManualRevenue
+                        ? "bg-navy text-white"
+                        : "bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    자동 계산
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => update("isManualRevenue", true)}
+                    className={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
+                      state.isManualRevenue
+                        ? "bg-navy text-white"
+                        : "bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    직접 입력
+                  </button>
+                </div>
+
+                {!state.isManualRevenue ? (
+                  <div className="space-y-6">
+                    {/* 일 평균 고객수 */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700">
+                        일 평균 고객수:{" "}
+                        <span className="font-bold text-purple-600">
+                          {fmt(state.dailyCustomers)}명
+                        </span>
+                      </label>
+                      <input
+                        type="range"
+                        min={10}
+                        max={500}
+                        value={state.dailyCustomers}
+                        onChange={(e) =>
+                          update("dailyCustomers", Number(e.target.value))
+                        }
+                        className="w-full accent-[#1B3A5C]"
+                      />
+                      <div className="mt-1 flex justify-between text-xs text-gray-400">
+                        <span>10명</span>
+                        <span>500명</span>
+                      </div>
+                    </div>
+
+                    {/* 객단가 */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700">
+                        객단가:{" "}
+                        <span className="font-bold text-purple-600">
+                          {fmt(state.avgSpending)}원
+                        </span>
+                      </label>
+                      <input
+                        type="range"
+                        min={5000}
+                        max={50000}
+                        step={1000}
+                        value={state.avgSpending}
+                        onChange={(e) =>
+                          update("avgSpending", Number(e.target.value))
+                        }
+                        className="w-full accent-[#1B3A5C]"
+                      />
+                      <div className="mt-1 flex justify-between text-xs text-gray-400">
+                        <span>5,000원</span>
+                        <span>50,000원</span>
+                      </div>
+                    </div>
+
+                    {/* 월 영업일수 */}
+                    <NumberInput
+                      label="월 영업일수"
+                      value={state.monthlyDays}
+                      onChange={(v) => update("monthlyDays", v)}
+                      suffix="일"
+                    />
+
+                    {/* 예상 월 매출 */}
+                    <div className="rounded-lg bg-purple-50 px-4 py-3 text-center">
+                      <span className="text-sm text-gray-600">예상 월 매출 </span>
+                      <span className="text-xl font-bold text-purple-600">
+                        {fmt(monthlyRevenue)} 만원
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <NumberInput
+                    label="월 매출"
+                    value={state.manualRevenue}
+                    onChange={(v) => update("manualRevenue", v)}
+                    suffix="만원"
+                  />
+                )}
+              </>
             )}
           </div>
         )}
 
-        {/* Navigation */}
-        <div className="mt-8 flex items-center justify-between">
+        {/* Navigation (hide when results are showing) */}
+        <div className={`mt-8 flex items-center justify-between ${showResults ? "hidden" : ""}`}>
           {step > 1 ? (
             <button
               type="button"
@@ -774,46 +796,45 @@ export default function SimulatorPage() {
                 )}
               </div>
 
-              {/* Bar Chart — 업종 평균 비교 */}
-              <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 className="mb-4 text-sm font-bold text-navy">
-                  업종 평균 비교
-                </h3>
-                {typeof window !== "undefined" && (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={barCompareData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 11 }} />
-                      <RTooltip />
-                      <Legend />
-                      <Bar
-                        dataKey="내매출"
-                        fill="#1B3A5C"
-                        name="내 매출"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar
-                        dataKey="업종평균"
-                        fill="#3B6B8A"
-                        name="업종 평균 매출"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar
-                        dataKey="내순이익률"
-                        fill="#4ECDC4"
-                        name="내 순이익률"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar
-                        dataKey="업종평균순이익률"
-                        fill="#45B7D1"
-                        name="업종 평균 순이익률"
-                        radius={[4, 4, 0, 0]}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                )}
+              {/* Bar Charts — 업종 평균 비교 */}
+              <div className="mb-8 grid gap-6 lg:grid-cols-2">
+                {/* 월 매출 비교 */}
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <h3 className="mb-4 text-sm font-bold text-navy">
+                    월 매출 비교 (만원)
+                  </h3>
+                  {typeof window !== "undefined" && (
+                    <ResponsiveContainer width="100%" height={240}>
+                      <BarChart data={barRevenueData} barGap={8}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                        <YAxis tick={{ fontSize: 11 }} />
+                        <RTooltip formatter={(v) => `${fmt(Number(v ?? 0))} 만원`} />
+                        <Bar dataKey="나" fill="#1B3A5C" name="나" radius={[4, 4, 0, 0]} label={{ position: "top", fontSize: 12, fontWeight: 700, fill: "#1B3A5C" }} />
+                        <Bar dataKey="업종평균" fill="#93C5FD" name="업종 평균" radius={[4, 4, 0, 0]} label={{ position: "top", fontSize: 12, fontWeight: 700, fill: "#6B7280" }} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+
+                {/* 순이익률 비교 */}
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <h3 className="mb-4 text-sm font-bold text-navy">
+                    순이익률 비교 (%)
+                  </h3>
+                  {typeof window !== "undefined" && (
+                    <ResponsiveContainer width="100%" height={240}>
+                      <BarChart data={barProfitRateData} barGap={8}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                        <YAxis tick={{ fontSize: 11 }} domain={[0, (max: number) => Math.max(max * 1.3, 10)]} />
+                        <RTooltip formatter={(v) => `${Number(v ?? 0)}%`} />
+                        <Bar dataKey="나" fill="#1B3A5C" name="나" radius={[4, 4, 0, 0]} label={{ position: "top", fontSize: 12, fontWeight: 700, fill: "#1B3A5C" }} />
+                        <Bar dataKey="업종평균" fill="#93C5FD" name="업종 평균" radius={[4, 4, 0, 0]} label={{ position: "top", fontSize: 12, fontWeight: 700, fill: "#6B7280" }} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
               </div>
 
               {/* Sensitivity Analysis Table */}

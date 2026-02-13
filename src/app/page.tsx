@@ -122,6 +122,13 @@ const HERO_SLIDES = [
   { title: "내 매물, 프리미엄 광고로\n빠르게", sub: "상위 노출과 프리미엄 배지로 빠른 매도", cta: "서비스 요금 보기", ctaHref: "/pricing" },
 ];
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  CAFE_BAKERY: "☕", CHICKEN: "🍗", KOREAN_FOOD: "🍚", PIZZA: "🍕",
+  BUNSIK: "🍜", RETAIL: "🏪", BAR_PUB: "🍺", WESTERN_FOOD: "🍝",
+  JAPANESE_FOOD: "🍣", CHINESE_FOOD: "🥟", SERVICE: "✂️",
+  ENTERTAINMENT: "🎮", EDUCATION: "📚", DELIVERY: "🛵", ACCOMMODATION: "🏨",
+};
+
 const MARKET_BARS = [
   { area: "강남", value: 18000, max: 18000 },
   { area: "홍대", value: 14500, max: 18000 },
@@ -228,7 +235,7 @@ export default function HomePage() {
             <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover md:transition-transform md:duration-300 md:group-hover:scale-105" sizes="(max-width:768px) 260px, 25vw" loading="lazy" />
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#E8F0FE] to-[#BFDBFE]">
-              <Store className="h-10 w-10 text-navy/30" />
+              <span className="text-5xl drop-shadow-sm">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
               <span className="text-xs font-medium text-navy/40">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
             </div>
           )}
@@ -403,7 +410,7 @@ export default function HomePage() {
                       {item.images?.[0] ? <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 256px, 25vw" loading="lazy" />
                         : (
                           <div className={`flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${tierBg}`}>
-                            <Store className={`h-10 w-10 ${tk === "VIP" ? "text-amber-500" : tk === "PREMIUM" ? "text-blue-400" : "text-gray-400"}`} />
+                            <span className="text-5xl drop-shadow-sm">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
                             <span className={`text-xs font-medium ${tk === "VIP" ? "text-amber-600" : tk === "PREMIUM" ? "text-blue-500" : "text-gray-500"}`}>{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
                           </div>
                         )}
@@ -705,6 +712,7 @@ export default function HomePage() {
                   const catStyle = p.category === "이용가이드" ? { bg: "from-[#DBEAFE] to-[#BFDBFE]", icon: "text-blue-500", badge: "bg-blue-100 text-blue-700" }
                     : p.category === "알림공지" ? { bg: "from-[#FEF3C7] to-[#FDE68A]", icon: "text-amber-500", badge: "bg-amber-100 text-amber-700" }
                     : p.category === "창업정보" ? { bg: "from-[#DCFCE7] to-[#BBF7D0]", icon: "text-green-600", badge: "bg-green-100 text-green-700" }
+                    : p.category === "이벤트" ? { bg: "from-[#EDE9FE] to-[#DDD6FE]", icon: "text-purple-600", badge: "bg-purple-100 text-purple-700" }
                     : { bg: "from-[#E8F0FE] to-[#DBEAFE]", icon: "text-navy", badge: "bg-navy/10 text-navy" };
                   return (
                     <Link key={p.id} href={`/bbs/${p.id}`}

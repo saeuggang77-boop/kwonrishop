@@ -579,10 +579,15 @@ async function main() {
   // ──────────────────────────────────────────────
   const inquiryData = [
     { idx: 0, message: "안녕하세요, 이 매물에 대해 자세한 정보 부탁드립니다. 실제 매출 자료 확인 가능한가요?", status: "PENDING" as const, senderName: "이창업", senderPhone: "010-9876-5432" },
-    { idx: 1, message: "권리금 협상이 가능한지 궁금합니다. 방문 상담 가능한 시간이 있을까요?", status: "PENDING" as const, senderName: "이창업" },
-    { idx: 2, message: "현재 운영 중인 직원 인수도 가능한지 궁금합니다.", status: "PENDING" as const },
     { idx: 0, message: "매출 증빙 자료를 확인했습니다. 현장 방문 일정을 잡고 싶습니다.", status: "REPLIED" as const, senderName: "이창업", senderPhone: "010-9876-5432" },
+    { idx: 0, message: "임대차 계약 잔여 기간이 얼마나 되나요?", status: "PENDING" as const, senderName: "박매수" },
+    { idx: 1, message: "권리금 협상이 가능한지 궁금합니다. 방문 상담 가능한 시간이 있을까요?", status: "PENDING" as const, senderName: "이창업" },
     { idx: 1, message: "가격 조건이 맞지 않아 다른 매물을 알아보겠습니다. 감사합니다.", status: "CANCELLED" as const, senderName: "이창업" },
+    { idx: 2, message: "현재 운영 중인 직원 인수도 가능한지 궁금합니다.", status: "PENDING" as const },
+    { idx: 3, message: "주변 상권 분석 자료가 있으면 공유 부탁드립니다.", status: "PENDING" as const, senderName: "김투자" },
+    { idx: 3, message: "실제 월 순이익이 어느 정도인지 알 수 있을까요?", status: "REPLIED" as const, senderName: "최사장" },
+    { idx: 4, message: "인테리어 시설 상태가 궁금합니다. 최근 리모델링 한 적 있나요?", status: "PENDING" as const, senderName: "정매수" },
+    { idx: 5, message: "해당 매물 아직 거래 가능한가요? 급하게 찾고 있습니다.", status: "PENDING" as const, senderName: "한창업", senderPhone: "010-5555-1234" },
   ];
 
   for (let i = 0; i < inquiryData.length; i++) {
@@ -604,7 +609,23 @@ async function main() {
       },
     });
   }
-  console.log("  Inquiries: 5 (PENDING×3, REPLIED×1, CANCELLED×1)");
+
+  // Update inquiryCount on listings that received inquiries
+  const inquiryCountMap: Record<number, number> = {};
+  for (const inq of inquiryData) {
+    inquiryCountMap[inq.idx] = (inquiryCountMap[inq.idx] ?? 0) + 1;
+  }
+  for (const [idxStr, count] of Object.entries(inquiryCountMap)) {
+    const idx = Number(idxStr);
+    if (createdListings[idx]) {
+      await prisma.listing.update({
+        where: { id: createdListings[idx].id },
+        data: { inquiryCount: count },
+      });
+    }
+  }
+
+  console.log("  Inquiries: 10 (PENDING×7, REPLIED×2, CANCELLED×1)");
 
   // ──────────────────────────────────────────────
   // 6. Sample Notifications
@@ -640,9 +661,22 @@ async function main() {
   // 7. Sample Franchises
   // ──────────────────────────────────────────────
   const franchises = [
-    { brandName: "메가MGC커피", category: "외식", subcategory: "커피", monthlyAvgSales: BigInt(30_210_000), startupCost: BigInt(74_220_000), storeCount: 2709, dataYear: 2023 },
-    { brandName: "맘스터치", category: "외식", subcategory: "치킨", monthlyAvgSales: BigInt(42_800_000), startupCost: BigInt(95_000_000), storeCount: 1420, dataYear: 2023 },
+    // 커피
     { brandName: "이디야커피", category: "외식", subcategory: "커피", monthlyAvgSales: BigInt(18_500_000), startupCost: BigInt(62_000_000), storeCount: 3200, dataYear: 2023 },
+    { brandName: "메가MGC커피", category: "외식", subcategory: "커피", monthlyAvgSales: BigInt(30_210_000), startupCost: BigInt(74_220_000), storeCount: 2709, dataYear: 2023 },
+    { brandName: "컴포즈커피", category: "외식", subcategory: "커피", monthlyAvgSales: BigInt(22_800_000), startupCost: BigInt(55_000_000), storeCount: 2450, dataYear: 2023 },
+    { brandName: "빽다방", category: "외식", subcategory: "커피", monthlyAvgSales: BigInt(25_600_000), startupCost: BigInt(48_000_000), storeCount: 1050, dataYear: 2023 },
+    // 치킨
+    { brandName: "맘스터치", category: "외식", subcategory: "치킨", monthlyAvgSales: BigInt(42_800_000), startupCost: BigInt(95_000_000), storeCount: 1420, dataYear: 2023 },
+    { brandName: "BBQ", category: "외식", subcategory: "치킨", monthlyAvgSales: BigInt(38_500_000), startupCost: BigInt(110_000_000), storeCount: 1750, dataYear: 2023 },
+    { brandName: "교촌치킨", category: "외식", subcategory: "치킨", monthlyAvgSales: BigInt(35_200_000), startupCost: BigInt(98_000_000), storeCount: 1280, dataYear: 2023 },
+    // 한식/분식/피자
+    { brandName: "본죽", category: "외식", subcategory: "한식", monthlyAvgSales: BigInt(22_000_000), startupCost: BigInt(65_000_000), storeCount: 1350, dataYear: 2023 },
+    { brandName: "한솥도시락", category: "외식", subcategory: "도시락", monthlyAvgSales: BigInt(28_000_000), startupCost: BigInt(52_000_000), storeCount: 680, dataYear: 2023 },
+    { brandName: "도미노피자", category: "외식", subcategory: "피자", monthlyAvgSales: BigInt(55_000_000), startupCost: BigInt(180_000_000), storeCount: 480, dataYear: 2023 },
+    { brandName: "죠스떡볶이", category: "외식", subcategory: "분식", monthlyAvgSales: BigInt(19_500_000), startupCost: BigInt(42_000_000), storeCount: 520, dataYear: 2023 },
+    // 도소매/서비스
+    { brandName: "CU", category: "도소매", subcategory: "편의점", monthlyAvgSales: BigInt(48_000_000), startupCost: BigInt(80_000_000), storeCount: 17200, dataYear: 2023 },
     { brandName: "GS25", category: "도소매", subcategory: "편의점", monthlyAvgSales: BigInt(51_000_000), startupCost: BigInt(85_000_000), storeCount: 16800, dataYear: 2023 },
     { brandName: "올리브영", category: "도소매", subcategory: "화장품", monthlyAvgSales: BigInt(78_000_000), startupCost: BigInt(150_000_000), storeCount: 1300, dataYear: 2023 },
     { brandName: "크린토피아", category: "서비스", subcategory: "세탁", monthlyAvgSales: BigInt(12_500_000), startupCost: BigInt(45_000_000), storeCount: 2100, dataYear: 2023 },
@@ -655,7 +689,7 @@ async function main() {
       create: { id: `seed-franchise-${f.brandName}`, ...f },
     });
   }
-  console.log("  Franchises: 6");
+  console.log(`  Franchises: ${franchises.length}`);
 
   // ──────────────────────────────────────────────
   // 8. Sample Board Posts

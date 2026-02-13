@@ -76,10 +76,10 @@ export default function MarketPricePage() {
   // Aggregated averages from filtered data
   const avg = filtered.length > 0
     ? {
-        keyMoney: Math.round(filtered.reduce((s, d) => s + d.avgKeyMoney, 0) / filtered.length),
-        deposit: Math.round(filtered.reduce((s, d) => s + d.avgDeposit, 0) / filtered.length),
-        rent: Math.round(filtered.reduce((s, d) => s + d.avgMonthlyRent, 0) / filtered.length),
-        sales: Math.round(filtered.reduce((s, d) => s + d.avgMonthlySales, 0) / filtered.length),
+        keyMoney: Math.round(filtered.reduce((s, d) => s + d.avgKeyMoney, 0) / filtered.length / 10000) * 10000,
+        deposit: Math.round(filtered.reduce((s, d) => s + d.avgDeposit, 0) / filtered.length / 10000) * 10000,
+        rent: Math.round(filtered.reduce((s, d) => s + d.avgMonthlyRent, 0) / filtered.length / 10000) * 10000,
+        sales: Math.round(filtered.reduce((s, d) => s + d.avgMonthlySales, 0) / filtered.length / 10000) * 10000,
         count: filtered.reduce((s, d) => s + d.sampleCount, 0),
       }
     : null;
