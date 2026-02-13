@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { formatDateTimeKR } from "@/lib/utils/format";
 import { FRAUD_SEVERITY_LABELS } from "@/lib/utils/constants";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "사기탐지 큐" };
 
 export default async function FraudQueuePage() {

@@ -4,6 +4,8 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { formatDateKR } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function BbsDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 

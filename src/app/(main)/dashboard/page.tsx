@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { formatNumber, formatPercent, formatKRW, formatRelativeTime } from "@/lib/utils/format";
 import { LISTING_STATUS_LABELS, BUSINESS_CATEGORY_LABELS } from "@/lib/utils/constants";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "대시보드" };
 
 export default async function DashboardPage() {

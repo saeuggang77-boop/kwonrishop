@@ -5,6 +5,7 @@ import { formatDateTimeKR } from "@/lib/utils/format";
 import { DOCUMENT_TYPE_LABELS } from "@/lib/utils/constants";
 import { FileText, Lock } from "lucide-react";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "내 문서" };
 
 export default async function DashboardDocumentsPage() {

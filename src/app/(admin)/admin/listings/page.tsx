@@ -10,6 +10,7 @@ import { ListingStatus, BusinessCategory } from "@prisma/client";
 
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "매물 관리 - 권리샵",
 };

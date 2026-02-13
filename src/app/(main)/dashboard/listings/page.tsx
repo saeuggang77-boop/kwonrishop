@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { formatKRW, formatRelativeTime, formatNumber } from "@/lib/utils/format";
 import { LISTING_STATUS_LABELS } from "@/lib/utils/constants";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "내 매물 관리" };
 
 export default async function DashboardListingsPage() {

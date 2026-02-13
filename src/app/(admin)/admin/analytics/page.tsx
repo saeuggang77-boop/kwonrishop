@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { formatNumber } from "@/lib/utils/format";
 import { Users, Package, TrendingUp } from "lucide-react";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "플랫폼 분석" };
 
 export default async function AdminAnalyticsPage() {

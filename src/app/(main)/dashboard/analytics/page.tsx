@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { formatNumber, formatPercent } from "@/lib/utils/format";
 import { Eye, MessageSquare, TrendingUp } from "lucide-react";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "분석" };
 
 export default async function DashboardAnalyticsPage() {

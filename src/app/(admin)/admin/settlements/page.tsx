@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { formatKRW, formatDateKR } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "정산 관리" };
 
 export default async function AdminSettlementsPage() {

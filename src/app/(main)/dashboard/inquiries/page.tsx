@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatDateTimeKR } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "문의 관리" };
 
 export default async function InquiriesPage() {

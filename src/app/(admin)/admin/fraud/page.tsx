@@ -4,6 +4,7 @@ import { FRAUD_SEVERITY_LABELS } from "@/lib/utils/constants";
 import { Shield } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "사기탐지 규칙" };
 
 export default async function AdminFraudPage() {

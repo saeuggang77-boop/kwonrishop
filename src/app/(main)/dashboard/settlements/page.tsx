@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { formatKRW, formatDateKR } from "@/lib/utils/format";
 import { DollarSign } from "lucide-react";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "정산 내역" };
 
 export default async function DashboardSettlementsPage() {

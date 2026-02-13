@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { formatDateTimeKR } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "감사 로그" };
 
 export default async function AdminAuditPage() {

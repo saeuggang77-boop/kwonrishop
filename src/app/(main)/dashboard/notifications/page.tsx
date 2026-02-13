@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { formatDateTimeKR } from "@/lib/utils/format";
 import { MarkAllReadButton } from "./mark-all-read";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "알림" };
 
 export default async function NotificationsPage() {

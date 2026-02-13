@@ -4,6 +4,7 @@ import { ArrowLeft, MapPin, BarChart3 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatKRW, formatNumber } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "유사 매물 비교" };
 
 export default async function ComparisonPage({

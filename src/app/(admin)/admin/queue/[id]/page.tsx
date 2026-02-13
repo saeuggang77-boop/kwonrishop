@@ -7,6 +7,7 @@ import { formatDateTimeKR, formatKRW } from "@/lib/utils/format";
 import { FRAUD_SEVERITY_LABELS, BUSINESS_CATEGORY_LABELS, LISTING_STATUS_LABELS } from "@/lib/utils/constants";
 import { ViolationActions } from "./actions";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "위반 상세" };
 
 export default async function ViolationDetailPage({

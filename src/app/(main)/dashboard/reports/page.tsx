@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { formatDateKR } from "@/lib/utils/format";
 import { FileText, Download } from "lucide-react";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "내 권리진단서" };
 
 export default async function DashboardReportsPage() {

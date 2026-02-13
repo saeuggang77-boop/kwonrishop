@@ -6,6 +6,7 @@ import { UserRole, AccountStatus } from "@prisma/client";
 
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "회원 관리 - 권리샵",
 };
