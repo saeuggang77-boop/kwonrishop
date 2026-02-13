@@ -7,23 +7,23 @@
     },
     {
       "path": "/api/cron/etl-metrics",
-      "schedule": "0 17 * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/cron/settlements",
-      "schedule": "0 21 * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/cron/cleanup-documents",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/cron/expire-listings",
-      "schedule": "0 15 * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/cron/expire-premium-listings",
-      "schedule": "0 15 * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
