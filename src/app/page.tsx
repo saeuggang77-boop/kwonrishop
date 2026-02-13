@@ -234,7 +234,7 @@ export default function HomePage() {
           {item.images?.[0] ? (
             <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover md:transition-transform md:duration-300 md:group-hover:scale-105" sizes="(max-width:768px) 260px, 25vw" loading="lazy" />
           ) : (
-            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#E8F0FE] to-[#BFDBFE]">
+            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-white via-[#F1F5F9] to-[#E2E8F0]">
               <span className="text-5xl drop-shadow-sm">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
               <span className="text-xs font-medium text-navy/40">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
             </div>
@@ -311,13 +311,13 @@ export default function HomePage() {
           {banners.length > 0 ? banners.map((b, i) => (
             <div key={b.id} className="absolute inset-0 flex items-center justify-center transition-all duration-600 ease-in-out"
               style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-[#E8F0FE] to-[#BFDBFE] px-6">
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-white via-[#F1F5F9] to-[#E2E8F0] px-6">
                 {b.linkUrl ? <Link href={b.linkUrl}><h2 className="font-heading text-xl font-bold text-navy md:text-4xl">{b.title}</h2></Link>
                   : <h2 className="font-heading text-xl font-bold text-navy md:text-4xl">{b.title}</h2>}
               </div>
             </div>
           )) : HERO_SLIDES.map((s, i) => (
-            <div key={i} className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-[#E8F0FE] to-[#BFDBFE] transition-all duration-600 ease-in-out"
+            <div key={i} className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-white via-[#F1F5F9] to-[#E2E8F0] transition-all duration-600 ease-in-out"
               style={{ opacity: i === bannerIdx ? 1 : 0, transform: i === bannerIdx ? "translateX(0)" : bannerDir === "right" ? "translateX(50px)" : "translateX(-50px)", pointerEvents: i === bannerIdx ? "auto" : "none" }}>
               <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #1B3A5C 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
               <div className="relative z-10 w-full px-5 text-center md:px-8">
