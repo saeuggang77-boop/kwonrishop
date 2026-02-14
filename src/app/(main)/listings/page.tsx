@@ -9,7 +9,8 @@ import {
 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { CompareButton } from "@/components/listings/compare-button";
-import { KakaoMap } from "@/components/kakao-map";
+import dynamic from "next/dynamic";
+const KakaoMap = dynamic(() => import("@/components/kakao-map").then(m => m.KakaoMap), { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" /></div> });
 import {
   BUSINESS_CATEGORY_LABELS,
   BUSINESS_CATEGORY_GROUPS,
