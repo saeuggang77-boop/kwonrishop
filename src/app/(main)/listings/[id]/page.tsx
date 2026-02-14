@@ -53,7 +53,13 @@ export default async function ListingDetailPage({
 }) {
   const { id: rawId } = await params;
   const id = decodeURIComponent(rawId);
-  const session = await auth();
+
+  let session: { user?: { id?: string } } | null = null;
+  try {
+    session = await auth();
+  } catch (e) {
+    console.error("[listing-detail] auth() failed:", e);
+  }
 
   const listingData = await prisma.listing.findUnique({
     where: { id },
@@ -107,13 +113,29 @@ export default async function ListingDetailPage({
     ]);
 
   // Check if current user has liked this listing
-  const userLiked = session?.user?.id
-    ? !!(await prisma.listingLike.findUnique({
-        where: { listingId_userId: { listingId: id, userId: session.user.id } },
-      }))
-    : false;
+  let userLiked = false;
+  try {
+    userLiked = session?.user?.id
+      ? !!(await prisma.listingLike.findUnique({
+          where: { listingId_userId: { listingId: id, userId: session.user.id } },
+        }))
+      : false;
+  } catch (e) {
+    console.error("[listing-detail] listingLike query failed:", e);
+  }
 
-  const listing = { ...listingData, images, seller };
+  // Convert BigInt fields to Number to prevent RSC serialization issues
+  const listing = {
+    ...listingData,
+    price: Number(listingData.price),
+    monthlyRent: listingData.monthlyRent ? Number(listingData.monthlyRent) : null,
+    premiumFee: listingData.premiumFee ? Number(listingData.premiumFee) : null,
+    managementFee: listingData.managementFee ? Number(listingData.managementFee) : null,
+    monthlyRevenue: listingData.monthlyRevenue ? Number(listingData.monthlyRevenue) : null,
+    monthlyProfit: listingData.monthlyProfit ? Number(listingData.monthlyProfit) : null,
+    images,
+    seller,
+  };
 
   // Track view (fire-and-forget)
   prisma.listing
@@ -247,7 +269,7 @@ export default async function ListingDetailPage({
           <LikeButton
             listingId={listing.id}
             initialLiked={userLiked}
-            initialCount={listing.likeCount}
+            initialCount={listing.likeCount ?? 0}
           />
           <span className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
