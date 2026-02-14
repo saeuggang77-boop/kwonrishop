@@ -783,7 +783,6 @@ function Step2Business({
                 totalPremium={Number(form.premiumFee) || 0}
                 goodwill={Number(form.goodwillPremium) || 0}
                 facility={Number(form.facilityPremium) || 0}
-                value={form.floorPremium}
                 onValueChange={(v) => update("floorPremium", v)}
                 desc={form.floorPremiumDesc}
                 onDescChange={(v) => update("floorPremiumDesc", v)}
@@ -1645,43 +1644,34 @@ function PremiumBreakdownOpen({
 }
 
 function FloorPremiumAuto({
-  totalPremium, goodwill, facility, value, onValueChange, desc, onDescChange,
+  totalPremium, goodwill, facility, onValueChange, desc, onDescChange,
 }: {
   totalPremium: number;
   goodwill: number;
   facility: number;
-  value: string;
   onValueChange: (v: string) => void;
   desc: string;
   onDescChange: (v: string) => void;
 }) {
   const autoCalc = Math.max(totalPremium - goodwill - facility, 0);
   const overflow = goodwill + facility > totalPremium && totalPremium > 0;
-  const displayValue = value || (autoCalc > 0 ? String(autoCalc) : "");
+  const displayValue = overflow ? "0" : String(autoCalc);
 
-  // Auto-fill when user hasn't manually entered
+  // Always sync value with auto-calculated result
   useEffect(() => {
-    if (!value && autoCalc > 0) {
-      onValueChange(String(autoCalc));
-    }
-  }, [autoCalc, value, onValueChange]);
+    onValueChange(displayValue);
+  }, [displayValue, onValueChange]);
 
   return (
     <div className="rounded-lg border border-purple/20 bg-white p-3">
-      <div className="mb-2 flex items-center justify-between">
-        <p className="text-sm font-medium text-purple">바닥권리금</p>
-        {autoCalc > 0 && (
-          <span className="text-[11px] text-gray-400">자동계산: {addCommas(String(autoCalc))}만원</span>
-        )}
-      </div>
+      <p className="mb-2 text-sm font-medium text-purple">바닥권리금 (자동계산)</p>
       <div className="flex items-center gap-2">
         <input
           type="text"
           inputMode="numeric"
           value={addCommas(displayValue)}
-          onChange={(e) => onValueChange(stripCommas(e.target.value))}
-          placeholder="숫자만 입력"
-          className={`flex-1 rounded-lg border px-3 py-2 text-right text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 ${
+          disabled
+          className={`flex-1 rounded-lg border px-3 py-2 text-right text-sm outline-none bg-gray-50 text-gray-700 cursor-not-allowed ${
             overflow ? "border-red-300 bg-red-50" : "border-gray-200"
           }`}
         />
@@ -1689,7 +1679,7 @@ function FloorPremiumAuto({
       </div>
       {overflow && (
         <p className="mt-1 text-xs text-red-500">
-          영업권리금 + 시설권리금이 총 권리금보다 큽니다.
+          영업권리금과 시설권리금의 합이 총 권리금을 초과합니다.
         </p>
       )}
       <textarea
