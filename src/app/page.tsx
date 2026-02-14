@@ -887,8 +887,8 @@ export default function HomePage() {
 
           <div className="mt-6 border-t border-gray-100 pt-4">
             <div className="text-center text-[10px] text-gray-400 md:text-left md:text-xs space-y-0.5">
-              <p>권리샵 | 대표: 박상만 | 사업자등록번호: 000-00-00000</p>
-              <p>서울특별시 동작구 장승배기로4길 9 | 이메일: samsungcu@naver.com | 전화: 010-6405-8668</p>
+              <p>권리샵 | 대표: 박상만 | 사업자등록번호: 408-70-43230</p>
+              <p>서울특별시 동작구 장승배기로4길 9 | 이메일: samsungcu@naver.com | 전화: 1588-7928</p>
               <p className="mt-2">본 서비스에서 제공하는 정보는 참고용이며, 플랫폼은 매물의 정확성을 보증하지 않습니다.</p>
             </div>
           </div>
