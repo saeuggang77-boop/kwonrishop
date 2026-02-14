@@ -194,9 +194,11 @@ export default async function ListingDetailPage({
           </span>
           {listing.safetyGrade && SAFETY_GRADE_CONFIG[listing.safetyGrade] && (
             <span
-              className={`rounded-md border px-3 py-1.5 text-sm font-bold ${SAFETY_GRADE_CONFIG[listing.safetyGrade].bg} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].color} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].border}`}
+              className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-bold ${SAFETY_GRADE_CONFIG[listing.safetyGrade].bg} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].color} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].border}`}
             >
+              <Shield className="h-4 w-4" />
               안전 {SAFETY_GRADE_CONFIG[listing.safetyGrade].label}
+              <span className="hidden font-normal sm:inline">· {SAFETY_GRADE_CONFIG[listing.safetyGrade].description}</span>
             </span>
           )}
           {premiumTierConfig && (
@@ -251,6 +253,31 @@ export default async function ListingDetailPage({
         <div className="lg:col-span-7">
           {/* ===== TAB 1: 매물정보 ===== */}
           <section id="listing-info">
+            {/* 권리진단서 CTA Banner (moved above price card for visibility) */}
+            <div className="mb-6 overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50">
+              <div className="flex items-center justify-between px-6 py-5">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+                    <FileSearch className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-blue-900">
+                      이 매물의 권리진단서를 발급받으세요
+                    </p>
+                    <p className="mt-0.5 text-sm text-gray-600">
+                      권리금 적정성 + 위험요소까지 분석해드립니다
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href={`/reports/request/${listing.id}`}
+                  className="shrink-0 rounded-lg bg-[#F59E0B] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#D97706]"
+                >
+                  권리진단서 발급
+                </Link>
+              </div>
+            </div>
+
             {/* Price Info Card */}
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
               <div className="bg-gradient-to-r from-navy/5 to-navy/10 px-6 py-4">
@@ -299,6 +326,69 @@ export default async function ListingDetailPage({
                   )}
               </div>
             </div>
+
+            {/* Revenue Quick Summary (Item 6: preview in TAB 1) */}
+            {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) && (
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                <div className="rounded-lg border border-purple/20 bg-purple/5 p-3 text-center">
+                  <p className="text-[11px] text-gray-500">월매출</p>
+                  <p className="mt-0.5 text-sm font-bold text-purple">{formatKRW(numMonthlyRevenue)}</p>
+                </div>
+                <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-center">
+                  <p className="text-[11px] text-gray-500">월순이익</p>
+                  <p className="mt-0.5 text-sm font-bold text-green-700">{formatKRW(numMonthlyProfit)}</p>
+                </div>
+                <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-center">
+                  <p className="text-[11px] text-gray-500">투자회수</p>
+                  <p className="mt-0.5 text-sm font-bold text-orange-600">{roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Premium Gauge Bar (Item 7: market comparison one-liner) */}
+            {numPremiumFee > 0 && avgPremium > 0 && (() => {
+              const ratio = numPremiumFee / avgPremium;
+              const verdict = ratio <= 0.8 ? "저가" : ratio >= 1.2 ? "고가" : "적정";
+              const pct = Math.min(100, Math.round(ratio * 50));
+              return (
+                <div className="mt-4 rounded-lg border border-gray-200 bg-white px-5 py-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-gray-700">
+                      <TrendingUp className="mr-1 inline h-4 w-4 text-navy" />
+                      권리금 시세
+                    </span>
+                    <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${
+                      verdict === "적정" ? "bg-green-100 text-green-700"
+                        : verdict === "저가" ? "bg-blue-100 text-blue-700"
+                        : "bg-red-100 text-red-700"
+                    }`}>
+                      {listing.district} 평균 대비 {verdict === "적정" ? "적정 수준" : verdict === "저가" ? "저렴한 편" : "높은 편"}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-3">
+                    <div className="flex-1">
+                      <div className="relative h-2.5 overflow-hidden rounded-full bg-gray-100">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            verdict === "적정" ? "bg-green-500"
+                              : verdict === "저가" ? "bg-blue-500"
+                              : "bg-red-400"
+                          }`}
+                          style={{ width: `${pct}%` }}
+                        />
+                        {/* Average marker */}
+                        <div className="absolute top-0 h-full w-0.5 bg-gray-400" style={{ left: "50%" }} />
+                      </div>
+                      <div className="mt-1 flex justify-between text-[10px] text-gray-400">
+                        <span>저렴</span>
+                        <span>평균</span>
+                        <span>높음</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Store Details */}
             <div className="mt-8">
@@ -396,31 +486,6 @@ export default async function ListingDetailPage({
                 <p className="text-xs text-emerald-600 mt-1">권리진단서를 발급받으면 &ldquo;권리진단 완료&rdquo; 배지가 자동으로 부여됩니다.</p>
               </div>
             )}
-
-            {/* 권리진단서 CTA Banner */}
-            <div className="mt-8 overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50">
-              <div className="flex items-center justify-between px-6 py-5">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                    <FileSearch className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-blue-900">
-                      이 매물의 권리진단서를 발급받으세요
-                    </p>
-                    <p className="mt-0.5 text-sm text-gray-600">
-                      권리금 적정성 + 위험요소까지 분석해드립니다
-                    </p>
-                  </div>
-                </div>
-                <Link
-                  href={`/reports/request/${listing.id}`}
-                  className="shrink-0 rounded-lg bg-[#F59E0B] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#D97706]"
-                >
-                  권리진단서 발급
-                </Link>
-              </div>
-            </div>
           </section>
 
           {/* ===== TAB 2: 수익분석 ===== */}
