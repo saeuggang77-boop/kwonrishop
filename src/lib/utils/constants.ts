@@ -139,7 +139,7 @@ export const FREE_LISTING_LIMIT_PER_MONTH = 2;
 
 export const MAX_IMAGES_PER_LISTING = 20;
 export const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
-export const MAX_DOCUMENT_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
+export const MAX_DOCUMENT_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
 export const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
@@ -150,9 +150,9 @@ export const ALLOWED_IMAGE_TYPES = [
 export const ALLOWED_DOCUMENT_TYPES = [
   "application/pdf",
   "image/jpeg",
+  "image/jpg",
   "image/png",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "image/webp",
 ];
 
 export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; description: string }> = {
