@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck,
+  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck, Eye, Heart,
 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { CompareButton } from "@/components/listings/compare-button";
@@ -45,6 +45,7 @@ interface ListingItem {
   floor: number | null;
   createdAt: string;
   viewCount: number;
+  likeCount: number;
   images: { url: string; thumbnailUrl: string | null }[];
   seller: { name: string | null; image: string | null; isTrustedSeller?: boolean };
   safetyGrade: string | null;
@@ -824,6 +825,17 @@ function ListingCard({ listing }: { listing: ListingItem }) {
           {listing.city} {listing.district}
           {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
         </p>
+        {/* Stats */}
+        <div className="mt-1 flex items-center gap-3 text-xs text-gray-400">
+          <span className="flex items-center gap-1">
+            <Eye className="h-3 w-3" />
+            {listing.viewCount}
+          </span>
+          <span className="flex items-center gap-1">
+            <Heart className="h-3 w-3" />
+            {listing.likeCount}
+          </span>
+        </div>
       </div>
     </Link>
   );

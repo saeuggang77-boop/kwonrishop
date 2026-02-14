@@ -14,6 +14,7 @@ import {
   Users,
   Calculator,
   Megaphone,
+  Heart,
   Settings,
 } from "lucide-react";
 
@@ -36,6 +37,7 @@ const navGroups: NavGroup[] = [
       { href: "/dashboard", label: "대시보드", icon: LayoutDashboard, roles: ["SELLER", "ADMIN"] },
       { href: "/dashboard/listings", label: "매물 관리", icon: Package, roles: ["SELLER", "ADMIN"] },
       { href: "/my/ads", label: "광고 관리", icon: Megaphone, roles: ["SELLER", "ADMIN", "BUYER"] },
+      { href: "/my/likes", label: "찜한 매물", icon: Heart, roles: ["SELLER", "ADMIN", "BUYER"] },
     ],
   },
   {

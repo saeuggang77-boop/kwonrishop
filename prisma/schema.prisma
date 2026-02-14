@@ -303,6 +303,7 @@ model User {
   simulations      Simulation[]
   expertInquiries  ExpertInquiry[]
   expertReviews    ExpertReview[]
+  listingLikes     ListingLike[]
 
   @@index([role])
   @@index([accountStatus])
@@ -350,6 +351,7 @@ model Listing {
   premiumRank      Int              @default(0)
   viewCount        Int              @default(0)
   inquiryCount     Int              @default(0)
+  likeCount        Int              @default(0)
   favoriteCount    Int              @default(0)
   contactPhone     String?
   contactEmail     String?
@@ -372,6 +374,7 @@ model Listing {
   reportData       ReportData[]
   simulations      Simulation[]
   expertInquiries  ExpertInquiry[]
+  likes            ListingLike[]
 
   @@index([sellerId])
   @@index([status])
@@ -382,6 +385,21 @@ model Listing {
   @@index([latitude, longitude])
   @@index([createdAt])
   @@map("listings")
+}
+
+model ListingLike {
+  id        String   @id @default(cuid())
+  listingId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, userId])
+  @@index([userId])
+  @@index([listingId])
+  @@map("listing_likes")
 }
 
 model ListingImage {

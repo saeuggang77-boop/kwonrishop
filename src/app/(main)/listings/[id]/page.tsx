@@ -25,6 +25,7 @@ import { CompareSection } from "./compare-section";
 import { DetailTabs } from "./detail-tabs";
 import { RevenueBarChart, CostPieChart } from "./revenue-charts";
 import { MarketBarChart } from "./market-charts";
+import { LikeButton } from "@/components/listings/like-button";
 import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -99,10 +100,17 @@ export default async function ListingDetailPage({
         include: {
           images: { take: 1, orderBy: { sortOrder: "asc" } },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { viewCount: "desc" },
         take: 6,
       }),
     ]);
+
+  // Check if current user has liked this listing
+  const userLiked = session?.user?.id
+    ? !!(await prisma.listingLike.findUnique({
+        where: { listingId_userId: { listingId: id, userId: session.user.id } },
+      }))
+    : false;
 
   const listing = { ...listingData, images, seller };
 
@@ -229,12 +237,17 @@ export default async function ListingDetailPage({
           {listing.addressDetail ? ` ${listing.addressDetail}` : ""}
         </p>
 
-        {/* View count + date (prominent position) */}
+        {/* View count + like + date */}
         <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
           <span className="flex items-center gap-1.5">
             <Eye className="h-4 w-4" />
-            조회 {formatNumber(listing.viewCount)}회
+            조회 {formatNumber(listing.viewCount)}
           </span>
+          <LikeButton
+            listingId={listing.id}
+            initialLiked={userLiked}
+            initialCount={listing.likeCount}
+          />
           <span className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
             {formatDateKR(listing.createdAt)}
@@ -937,19 +950,9 @@ export default async function ListingDetailPage({
 
           {/* ===== Bottom Section ===== */}
           <div className="mt-12 border-t border-gray-200 pt-8">
-            {/* Share + Stats */}
+            {/* Share */}
             <div className="flex items-center justify-between">
               <ShareButtons listingId={listing.id} title={listing.title} />
-              <div className="flex items-center gap-6 text-sm text-gray-500">
-                <span className="flex items-center gap-2">
-                  <Eye className="h-4 w-4" />
-                  조회 {formatNumber(listing.viewCount)}
-                </span>
-                <span className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  등록 {formatDateKR(listing.createdAt)}
-                </span>
-              </div>
             </div>
 
             {/* Expert Consultation CTA */}
@@ -1150,7 +1153,7 @@ export default async function ListingDetailPage({
       {similarListings.length > 0 && (
         <div className="mt-16 border-t border-gray-200 pt-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-navy">비슷한 매물 추천</h2>
+            <h2 className="text-xl font-bold text-navy">이 지역 다른 매물</h2>
             <Link
               href={`/listings?businessCategory=${listing.businessCategory}&city=${listing.city}`}
               className="flex items-center gap-1 text-sm font-medium text-navy hover:underline"
