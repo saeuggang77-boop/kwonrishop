@@ -312,68 +312,48 @@ export default async function ListingDetailPage({
               </div>
             </div>
 
-            {/* Price Info Card */}
+            {/* Price Info Card - 2-Column Grid */}
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
               <div className="bg-gradient-to-r from-navy/5 to-navy/10 px-6 py-4">
                 <h2 className="text-lg font-bold text-navy">가격 정보</h2>
               </div>
-              <div className="divide-y divide-gray-100">
-                <PriceRow label="보증금" value={formatKRW(listing.price)} />
-                {listing.monthlyRent && Number(listing.monthlyRent) > 0 && (
-                  <PriceRow
-                    label="월세"
-                    value={formatKRW(listing.monthlyRent)}
-                  />
-                )}
-                {listing.premiumFee && Number(listing.premiumFee) > 0 ? (
-                  <PriceRow
+              <div className="p-4">
+                {/* Top 2x2 grid: 보증금, 월세, 권리금, 관리비 */}
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  <PriceCard emoji="💰" label="보증금" value={formatKRW(numDeposit)} />
+                  <PriceCard emoji="🏠" label="월세" value={numMonthlyRent > 0 ? formatKRW(numMonthlyRent) : null} />
+                  <PriceCard
+                    emoji="🔑"
                     label="권리금"
-                    value={formatKRW(listing.premiumFee)}
-                    highlight="orange"
+                    value={numPremiumFee > 0 ? formatKRW(numPremiumFee) : "무권리"}
+                    color="text-orange-600"
                   />
-                ) : (
-                  <PriceRow label="권리금" value="무권리" highlight="navy" />
+                  <PriceCard emoji="🧾" label="관리비" value={numManagementFee > 0 ? formatKRW(numManagementFee) : null} />
+                </div>
+
+                {/* Revenue row */}
+                {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) && (
+                  <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    <PriceCard emoji="📊" label="월매출" value={numMonthlyRevenue > 0 ? formatKRW(numMonthlyRevenue) : null} color="text-green-600" />
+                    <PriceCard emoji="💵" label="월수익" value={numMonthlyProfit > 0 ? formatKRW(numMonthlyProfit) : null} color="text-green-600" />
+                  </div>
                 )}
-                {listing.managementFee &&
-                  Number(listing.managementFee) > 0 && (
-                    <PriceRow
-                      label="관리비"
-                      value={formatKRW(listing.managementFee)}
-                      secondary
-                    />
-                  )}
-                {listing.monthlyRevenue &&
-                  Number(listing.monthlyRevenue) > 0 && (
-                    <PriceRow
-                      label="월매출"
-                      value={formatKRW(listing.monthlyRevenue)}
-                      highlight="navy"
-                    />
-                  )}
-                {listing.monthlyProfit &&
-                  Number(listing.monthlyProfit) > 0 && (
-                    <PriceRow
-                      label="월수익"
-                      value={formatKRW(listing.monthlyProfit)}
-                      highlight="green"
-                    />
-                  )}
               </div>
             </div>
 
-            {/* Revenue Quick Summary (Item 6: preview in TAB 1) */}
+            {/* Revenue Quick Summary: 월매출, 월순이익, 투자회수 */}
             {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) && (
               <div className="mt-4 grid grid-cols-3 gap-3">
                 <div className="rounded-lg border border-purple/20 bg-purple/5 p-3 text-center">
-                  <p className="text-[11px] text-gray-500">월매출</p>
+                  <p className="text-[11px] text-gray-500">📊 월매출</p>
                   <p className="mt-0.5 text-sm font-bold text-purple">{formatKRW(numMonthlyRevenue)}</p>
                 </div>
                 <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-center">
-                  <p className="text-[11px] text-gray-500">월순이익</p>
+                  <p className="text-[11px] text-gray-500">💵 월순이익</p>
                   <p className="mt-0.5 text-sm font-bold text-green-700">{formatKRW(numMonthlyProfit)}</p>
                 </div>
                 <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-center">
-                  <p className="text-[11px] text-gray-500">투자회수</p>
+                  <p className="text-[11px] text-gray-500">⏱️ 투자회수</p>
                   <p className="mt-0.5 text-sm font-bold text-orange-600">{roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}</p>
                 </div>
               </div>
@@ -1310,31 +1290,37 @@ export default async function ListingDetailPage({
 
 /* ===== Helper Components ===== */
 
-function PriceRow({
+function PriceCard({
+  emoji,
   label,
   value,
-  highlight,
-  secondary,
+  color,
 }: {
+  emoji: string;
   label: string;
-  value: string;
-  highlight?: "orange" | "navy" | "green";
-  secondary?: boolean;
+  value: string | null;
+  color?: string;
 }) {
-  const valueClass = highlight
-    ? highlight === "orange"
-      ? "text-orange-600 font-bold"
-      : highlight === "navy"
-        ? "text-purple font-bold"
-        : "text-green-600 font-bold"
-    : secondary
-      ? "text-gray-600"
-      : "text-navy font-semibold";
-
+  const hasValue = value !== null;
   return (
-    <div className="flex items-center justify-between px-6 py-4">
-      <span className="text-sm text-gray-600">{label}</span>
-      <span className={`text-lg ${valueClass}`}>{value}</span>
+    <div
+      className={`rounded-lg p-4 ${
+        hasValue
+          ? "bg-gray-50"
+          : "border border-dashed border-gray-300 bg-white"
+      }`}
+    >
+      <p className="text-sm text-gray-500">
+        <span className="mr-1">{emoji}</span>
+        {label}
+      </p>
+      {hasValue ? (
+        <p className={`mt-1 text-xl font-bold ${color ?? "text-gray-900"}`}>
+          {value}
+        </p>
+      ) : (
+        <p className="mt-1 text-lg italic text-gray-300">미입력</p>
+      )}
     </div>
   );
 }
