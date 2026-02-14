@@ -199,6 +199,7 @@ export default function NewListingPage() {
   const [uploadedImages, setUploadedImages] = useState<{ key: string; url: string }[]>([]);
   const [uploadedDocs, setUploadedDocs] = useState<{ name: string; key: string; url: string }[]>([]);
   const [showFairTradeModal, setShowFairTradeModal] = useState(false);
+  const [categoryShake, setCategoryShake] = useState(false);
   const { toast } = useToast();
 
   const districtOptions = form.city ? REGIONS[form.city] ?? [] : [];
@@ -259,8 +260,14 @@ export default function NewListingPage() {
         }
         break;
       case 2: // Category
+        if (!form.categoryGroup) {
+          toast("info", "업종 대분류를 선택해주세요.");
+          setCategoryShake(true);
+          setTimeout(() => setCategoryShake(false), 600);
+          return;
+        }
         if (!form.businessCategory) {
-          toast("info", "업종을 선택해주세요.");
+          toast("info", "세부 업종을 선택해주세요.");
           return;
         }
         break;
@@ -442,7 +449,7 @@ export default function NewListingPage() {
       {/* Step Content */}
       <div className="animate-fade-in">
         {step === 1 && <Step1Location form={form} update={update} districtOptions={districtOptions} showFairTradeModal={showFairTradeModal} setShowFairTradeModal={setShowFairTradeModal} />}
-        {step === 2 && <Step2Business form={form} update={update} premiumBreakdownTotal={premiumBreakdownTotal} />}
+        {step === 2 && <Step2Business form={form} update={update} premiumBreakdownTotal={premiumBreakdownTotal} categoryShake={categoryShake} />}
         {step === 3 && <Step3Basic form={form} update={update} />}
         {step === 4 && <Step4Additional form={form} update={update} investmentTotal={investmentTotal} totalExpenses={totalExpenses} netProfit={netProfit} expensePercent={expensePercent} />}
         {step === 5 && <Step5Description form={form} update={update} />}
@@ -656,20 +663,28 @@ function Step1Location({
    ═══════════════════════════════════════════════════ */
 
 function Step2Business({
-  form, update, premiumBreakdownTotal,
+  form, update, premiumBreakdownTotal, categoryShake,
 }: {
   form: FormData;
   update: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
   premiumBreakdownTotal: number;
+  categoryShake: boolean;
 }) {
   const subcategories = form.categoryGroup ? BUSINESS_SUBCATEGORIES[form.categoryGroup] ?? [] : [];
 
   return (
     <div className="space-y-6">
-      {/* Category Group Chips */}
+      {/* Category Group Cards */}
       <div>
-        <SectionLabel>업종 대분류</SectionLabel>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <p className="mb-1 text-sm font-medium text-gray-700">
+          업종 대분류 <span className="text-red-500">*</span>
+        </p>
+        <div
+          className={`mt-2 grid grid-cols-3 gap-2.5 sm:grid-cols-4 ${
+            categoryShake ? "animate-[shake_0.5s_ease-in-out]" : ""
+          }`}
+          style={categoryShake ? { animation: "shake 0.5s ease-in-out" } : undefined}
+        >
           {CATEGORY_GROUPS.map((group) => {
             const isActive = form.categoryGroup === group.key;
             return (
@@ -681,25 +696,34 @@ function Step2Business({
                   update("businessCategory", "");
                   update("businessSubtype", "");
                 }}
-                className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-all ${
+                className={`relative flex min-h-[80px] flex-col items-center justify-center gap-1.5 rounded-xl border-2 px-2 py-3 text-center transition-all ${
                   isActive
-                    ? "border-purple bg-purple text-white shadow-sm"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-purple/40 hover:bg-purple/5"
+                    ? "border-purple bg-purple text-white shadow-md"
+                    : `bg-white text-gray-600 hover:border-purple hover:bg-purple-50 ${
+                        categoryShake ? "border-red-400" : "border-gray-300"
+                      }`
                 }`}
               >
-                <span>{group.emoji}</span>
-                {group.key}
+                {isActive && (
+                  <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-white/30">
+                    <Check className="h-3 w-3 text-white" />
+                  </span>
+                )}
+                <span className="text-[32px] leading-none">{group.emoji}</span>
+                <span className="text-xs font-semibold">{group.key}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Subcategory Chips */}
+      {/* Subcategory Cards */}
       {subcategories.length > 0 && (
         <div>
-          <SectionLabel>세부 업종</SectionLabel>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <p className="mb-1 text-sm font-medium text-gray-700">
+            세부 업종 <span className="text-red-500">*</span>
+          </p>
+          <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
             {subcategories.map((sub) => {
               const isActive = form.businessCategory === sub.key && (sub.subtype ? form.businessSubtype === sub.subtype : true);
               return (
@@ -710,15 +734,19 @@ function Step2Business({
                     update("businessCategory", sub.key);
                     update("businessSubtype", sub.subtype ?? "");
                   }}
-                  className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition-all ${
+                  className={`relative flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-xl border-2 px-2 py-2.5 text-center transition-all ${
                     isActive
-                      ? "border-purple bg-purple text-white shadow-sm"
-                      : "border-gray-200 bg-white text-gray-600 hover:border-purple/40 hover:bg-purple/5"
+                      ? "border-purple bg-purple text-white shadow-md"
+                      : "border-gray-300 bg-white text-gray-600 hover:border-purple hover:bg-purple-50"
                   }`}
                 >
-                  {isActive && <Check className="h-3.5 w-3.5" />}
-                  <span className="text-base">{sub.emoji}</span>
-                  <span className="font-medium">{sub.label}</span>
+                  {isActive && (
+                    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-white/30">
+                      <Check className="h-3 w-3 text-white" />
+                    </span>
+                  )}
+                  <span className="text-xl leading-none">{sub.emoji}</span>
+                  <span className="text-[11px] font-semibold leading-tight">{sub.label}</span>
                 </button>
               );
             })}
