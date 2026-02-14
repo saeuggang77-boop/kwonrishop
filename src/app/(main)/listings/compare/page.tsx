@@ -11,6 +11,7 @@ import {
   SAFETY_GRADE_CONFIG,
   STORE_TYPE_LABELS,
 } from "@/lib/utils/constants";
+import { SafetyBadge } from "@/components/listings/safety-badge";
 
 function numVal(v: string | null | undefined): number {
   if (!v) return 0;
@@ -310,20 +311,15 @@ export default function ComparePage() {
           </div>
 
           <CompareRow label="안전도 등급" gridCols={gridCols}>
-            {displayItems.map((item) => {
-              const cfg = item.safetyGrade ? SAFETY_GRADE_CONFIG[item.safetyGrade] : null;
-              return (
-                <Cell key={item.id}>
-                  {cfg ? (
-                    <span className={`rounded-md px-2 py-1 text-xs font-bold border ${cfg.bg} ${cfg.color} ${cfg.border}`}>
-                      안전 {cfg.label}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
-                </Cell>
-              );
-            })}
+            {displayItems.map((item) => (
+              <Cell key={item.id}>
+                {item.safetyGrade && item.safetyGrade !== "C" ? (
+                  <SafetyBadge grade={item.safetyGrade} />
+                ) : (
+                  <span className="text-gray-400">-</span>
+                )}
+              </Cell>
+            ))}
           </CompareRow>
 
           <CompareRow label="프리미엄" gridCols={gridCols}>

@@ -16,6 +16,7 @@ import {
   BUSINESS_CATEGORY_LABELS,
   SAFETY_GRADE_CONFIG, PREMIUM_AD_CONFIG,
 } from "@/lib/utils/constants";
+import { SafetyBadge } from "@/components/listings/safety-badge";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 
 /* ─── CountUp ─── */
@@ -255,9 +256,9 @@ export default function HomePage() {
           <span className="absolute left-2 top-2 rounded bg-navy/80 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
             {BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}
           </span>
-          {item.safetyGrade && SAFETY_GRADE_CONFIG[item.safetyGrade] && (
-            <span className={`absolute right-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold backdrop-blur-sm border ${SAFETY_GRADE_CONFIG[item.safetyGrade].bg} ${SAFETY_GRADE_CONFIG[item.safetyGrade].color} ${SAFETY_GRADE_CONFIG[item.safetyGrade].border}`}>
-              {SAFETY_GRADE_CONFIG[item.safetyGrade].label}
+          {item.safetyGrade && item.safetyGrade !== "C" && (
+            <span className="absolute right-2 top-2">
+              <SafetyBadge grade={item.safetyGrade} />
             </span>
           )}
           {tc && (

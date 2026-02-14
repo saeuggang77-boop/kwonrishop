@@ -24,6 +24,8 @@ function sourceTypeEmoji(sourceType?: string): string {
       return "\u2764\uFE0F";
     case "inquiry":
       return "\uD83D\uDCE9";
+    case "grade_upgrade":
+      return "\uD83D\uDEE1\uFE0F";
     default:
       return "\uD83D\uDD14";
   }

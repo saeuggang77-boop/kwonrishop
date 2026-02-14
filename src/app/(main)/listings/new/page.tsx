@@ -16,6 +16,7 @@ import {
 } from "@/lib/utils/constants";
 import { ImageUploader } from "@/components/listings/image-uploader";
 import { useToast } from "@/components/ui/toast";
+import { calculateSafetyGrade } from "@/lib/utils/safety-grade";
 
 /* ─── Constants ─── */
 
@@ -333,6 +334,15 @@ export default function NewListingPage() {
       body.staffCount = totalStaff;
       if (uploadedImages.length > 0) body.images = uploadedImages;
       if (uploadedDocs.length > 0) body.documents = uploadedDocs;
+
+      // Auto-calculate safety grade
+      const gradeResult = calculateSafetyGrade({
+        hasHometaxIntegration: form.hometaxLinked,
+        hasCrefiaIntegration: form.creditCardLinked,
+        hasRevenueDocuments: uploadedDocs.length > 0,
+      });
+      body.safetyGrade = gradeResult.grade;
+      body.safetyComment = gradeResult.comment;
 
       const res = await fetch("/api/listings", {
         method: "POST",

@@ -7,6 +7,7 @@ import {
   ArrowRight, MapPinned, Footprints, Store, Shield, ShieldCheck,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { SafetyBadge, DiagnosisBadge } from "@/components/listings/safety-badge";
 import { ContactSection } from "@/components/listings/contact-section";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
 import {
@@ -232,15 +233,7 @@ export default async function ListingDetailPage({
           >
             {LISTING_STATUS_LABELS[listing.status] ?? listing.status}
           </span>
-          {listing.safetyGrade && SAFETY_GRADE_CONFIG[listing.safetyGrade] && (
-            <span
-              className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-bold ${SAFETY_GRADE_CONFIG[listing.safetyGrade].bg} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].color} ${SAFETY_GRADE_CONFIG[listing.safetyGrade].border}`}
-            >
-              <Shield className="h-4 w-4" />
-              안전 {SAFETY_GRADE_CONFIG[listing.safetyGrade].label}
-              <span className="hidden font-normal sm:inline">· {SAFETY_GRADE_CONFIG[listing.safetyGrade].description}</span>
-            </span>
-          )}
+          {listing.safetyGrade && <SafetyBadge grade={listing.safetyGrade} size="md" />}
           {premiumTierConfig && (
             <span
               className={`rounded-md border px-3 py-1.5 text-sm font-bold ${premiumTierConfig.bg} ${premiumTierConfig.color} ${premiumTierConfig.border}`}
@@ -254,11 +247,7 @@ export default async function ListingDetailPage({
               안심거래
             </span>
           )}
-          {listing.hasDiagnosisBadge && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-300">
-              권리진단 완료
-            </span>
-          )}
+          {listing.hasDiagnosisBadge && <DiagnosisBadge size="md" />}
         </div>
 
         <h1 className="mt-4 text-3xl font-bold text-navy">{listing.title}</h1>
@@ -487,42 +476,80 @@ export default async function ListingDetailPage({
               </div>
             </div>
 
-            {/* 권리 안전도 분석 */}
-            {listing.safetyGrade &&
-              SAFETY_GRADE_CONFIG[listing.safetyGrade] &&
-              (() => {
-                const gradeConfig =
-                  SAFETY_GRADE_CONFIG[listing.safetyGrade!];
-                return (
-                  <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
-                    <div
-                      className={`flex items-center gap-3 px-6 py-4 ${gradeConfig.bg}`}
-                    >
-                      <Shield className="h-5 w-5 text-navy" />
-                      <span
-                        className={`rounded-lg border px-3 py-1.5 text-lg font-bold ${gradeConfig.bg} ${gradeConfig.color} ${gradeConfig.border}`}
-                      >
-                        {gradeConfig.label}
-                      </span>
-                      <div>
-                        <h2 className="text-lg font-bold text-navy">
-                          권리 안전도
-                        </h2>
-                        <p className="text-sm text-gray-600">
-                          {gradeConfig.description}
-                        </p>
-                      </div>
+            {/* 매출 인증 등급 배너 */}
+            {listing.safetyGrade === "A" && (
+              <div className="mt-8 overflow-hidden rounded-xl border border-green-200 bg-green-50">
+                <div className="flex items-center gap-3 px-6 py-4">
+                  <span className="text-xl">✓</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <SafetyBadge grade="A" size="md" />
+                      <h2 className="text-base font-bold text-green-800">매출 검증 완료</h2>
                     </div>
-                    {listing.safetyComment && (
-                      <div className="px-6 py-4">
-                        <p className="text-sm text-gray-700">
-                          {listing.safetyComment}
-                        </p>
-                      </div>
-                    )}
+                    <p className="mt-1 text-sm text-green-700">이 매물은 홈택스/여신금융협회 연동으로 매출이 검증되었습니다.</p>
                   </div>
-                );
-              })()}
+                </div>
+                {listing.safetyComment && (
+                  <div className="border-t border-green-200 px-6 py-3">
+                    <p className="text-sm text-green-700">{listing.safetyComment}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {listing.safetyGrade === "B" && (
+              <div className="mt-8 overflow-hidden rounded-xl border border-amber-200 bg-amber-50">
+                <div className="flex items-center gap-3 px-6 py-4">
+                  <span className="text-xl">📄</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <SafetyBadge grade="B" size="md" />
+                      <h2 className="text-base font-bold text-amber-800">매출 증빙 제출</h2>
+                    </div>
+                    <p className="mt-1 text-sm text-amber-700">이 매물은 매출 증빙자료가 제출되었습니다. 상세 내용은 거래 시 확인하세요.</p>
+                  </div>
+                </div>
+                {listing.safetyComment && (
+                  <div className="border-t border-amber-200 px-6 py-3">
+                    <p className="text-sm text-amber-700">{listing.safetyComment}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {(!listing.safetyGrade || listing.safetyGrade === "C") && (
+              <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
+                <div className="flex items-center gap-3 px-6 py-4">
+                  <span className="text-xl">⚠️</span>
+                  <div className="flex-1">
+                    <h2 className="text-base font-bold text-gray-700">매출 증빙 없음</h2>
+                    <p className="mt-1 text-sm text-gray-600">이 매물은 매출 증빙이 없습니다. 거래 시 매출 자료를 직접 확인하시기 바랍니다.</p>
+                  </div>
+                  <a
+                    href="#comments"
+                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                  >
+                    판매자에게 매출자료 요청하기
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* 권리진단서 배너 */}
+            {listing.hasDiagnosisBadge && (
+              <div className="mt-4 overflow-hidden rounded-xl border border-purple-200 bg-purple-50">
+                <div className="flex items-center gap-3 px-6 py-4">
+                  <span className="text-xl">🛡️</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <DiagnosisBadge size="md" />
+                      <h2 className="text-base font-bold text-purple-800">권리금 검증 완료</h2>
+                    </div>
+                    <p className="mt-1 text-sm text-purple-700">권리진단서 발급 완료 - 권리금 적정성이 검증되었습니다.</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Diagnosis promotion banner for listings without badge */}
             {!listing.hasDiagnosisBadge && (
@@ -1077,7 +1104,7 @@ export default async function ListingDetailPage({
           </div>
 
             {/* ===== Comment Section ===== */}
-            <div className="mt-8">
+            <div id="comments" className="mt-8">
               <CommentSectionWrapper listingId={listing.id} sellerId={listing.sellerId} />
             </div>
         </div>
@@ -1221,7 +1248,6 @@ export default async function ListingDetailPage({
                 { A: { label: "A등급", color: "text-green-700", bg: "bg-green-100" },
                   B: { label: "B등급", color: "text-blue-700", bg: "bg-blue-100" },
                   C: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
-                  D: { label: "D등급", color: "text-red-700", bg: "bg-red-100" },
                 } as Record<string, { label: string; color: string; bg: string }>
               )[sl.safetyGrade] : null;
               return (

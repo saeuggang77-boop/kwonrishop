@@ -156,10 +156,9 @@ export const ALLOWED_DOCUMENT_TYPES = [
 ];
 
 export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; description: string }> = {
-  A: { label: "A등급", color: "text-green-700", bg: "bg-green-100", border: "border-green-300", description: "매출증빙 완료 + 권리금 적정" },
-  B: { label: "B등급", color: "text-blue-700", bg: "bg-blue-100", border: "border-blue-300", description: "일부 증빙 있음" },
-  C: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300", description: "증빙 부족" },
-  D: { label: "D등급", color: "text-red-700", bg: "bg-red-100", border: "border-red-300", description: "주의 필요" },
+  A: { label: "A등급", color: "text-green-700", bg: "bg-green-100", border: "border-green-300", description: "홈택스/여신금융 API 연동 인증" },
+  B: { label: "B등급", color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300", description: "매출 증빙자료 제출 완료" },
+  C: { label: "C등급", color: "text-gray-600", bg: "bg-gray-100", border: "border-gray-300", description: "매출 증빙 없음" },
 };
 
 export const FRANCHISE_CATEGORIES = ["외식", "도소매", "서비스"] as const;

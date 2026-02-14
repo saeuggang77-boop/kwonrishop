@@ -35,6 +35,8 @@ export const createListingSchema = z.object({
   contactPhone: z.string().optional(),
   contactEmail: z.string().email("올바른 이메일을 입력해주세요.").optional(),
   isPhonePublic: z.boolean().optional(),
+  safetyGrade: z.enum(["A", "B", "C"]).optional(),
+  safetyComment: z.string().optional(),
 });
 
 export const updateListingSchema = createListingSchema.partial();
@@ -58,7 +60,7 @@ export const searchListingsSchema = z.object({
   premiumOnly: z.coerce.boolean().optional(),
   trustedOnly: z.coerce.boolean().optional(),
   diagnosisOnly: z.coerce.boolean().optional(),
-  sortBy: z.enum(["createdAt", "price", "viewCount", "favoriteCount", "monthlyRevenue", "monthlyProfit"]).optional().default("createdAt"),
+  sortBy: z.enum(["createdAt", "price", "viewCount", "favoriteCount", "monthlyRevenue", "monthlyProfit", "safetyGrade", "premiumFee", "areaPyeong"]).optional().default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).optional().default(20),

@@ -386,8 +386,8 @@ async function main() {
       latitude: 37.6543,
       longitude: 127.0614,
       contactPhone: "010-1234-5678",
-      safetyGrade: "D" as const,
-      safetyComment: "매출증빙 없음, 권리금 적정성 미확인",
+      safetyGrade: "C" as const,
+      safetyComment: "매출증빙 미비, 권리금 적정성 미확인",
     },
     {
       title: "신촌 맘스터치 양도",

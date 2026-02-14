@@ -76,10 +76,14 @@ export async function GET(req: NextRequest) {
       where.hasDiagnosisBadge = true;
     }
 
-    const orderBy = [
+    const orderBy: Record<string, unknown>[] = [
       { premiumRank: "desc" as const },
-      { [parsed.sortBy]: parsed.sortOrder },
     ];
+    if (parsed.sortBy === "safetyGrade") {
+      orderBy.push({ safetyGrade: { sort: "asc", nulls: "last" } });
+    } else {
+      orderBy.push({ [parsed.sortBy]: parsed.sortOrder });
+    }
 
     const listings = await prisma.listing.findMany({
       where: {
@@ -208,6 +212,20 @@ export async function POST(req: NextRequest) {
 
     // Trigger fraud detection
     await fraudDetectionQueue.add("evaluate", { listingId: listing.id });
+
+    // Grade notification
+    if (listing.safetyGrade && listing.safetyGrade !== "C") {
+      try {
+        const { notifyGradeUpgrade } = await import("@/lib/utils/grade-notification");
+        await notifyGradeUpgrade(
+          session.user.id,
+          listing.id,
+          listing.title,
+          null,
+          listing.safetyGrade,
+        );
+      } catch {}
+    }
 
     return Response.json(
       {

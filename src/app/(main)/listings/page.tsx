@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { CompareButton } from "@/components/listings/compare-button";
+import { SafetyBadge, DiagnosisBadge } from "@/components/listings/safety-badge";
 import dynamic from "next/dynamic";
 const KakaoMap = dynamic(() => import("@/components/kakao-map").then(m => m.KakaoMap), { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" /></div> });
 import {
@@ -73,6 +74,7 @@ const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> =
 
 const SORT_OPTIONS = [
   { value: "createdAt-desc", label: "최신등록순" },
+  { value: "safetyGrade-asc", label: "신뢰도높은순" },
   { value: "premiumFee-asc", label: "권리금낮은순" },
   { value: "premiumFee-desc", label: "권리금높은순" },
   { value: "monthlyProfit-desc", label: "월순익높은순" },
@@ -708,7 +710,7 @@ function ListingCard({ listing }: { listing: ListingItem }) {
     <Link
       href={`/listings/${listing.id}`}
       className={`group flex gap-4 overflow-hidden rounded-xl border bg-white p-4 transition-shadow hover:shadow-md ${
-        tierConfig ? `border-2 ${tierConfig.border}` : "border-gray-100"
+        tierConfig ? `border-2 ${tierConfig.border}` : listing.safetyGrade === "A" ? "border border-gray-100 border-l-4 border-l-green-400" : "border border-gray-100"
       }`}
     >
       {/* Left: Thumbnail */}
@@ -735,14 +737,14 @@ function ListingCard({ listing }: { listing: ListingItem }) {
           {listing.businessSubtype ? ` | ${listing.businessSubtype}` : ""}
         </span>
         {/* Safety grade top-right */}
-        {gradeConfig && (
-          <span className={`absolute right-2 top-2 rounded px-2 py-0.5 text-[11px] font-bold leading-tight border ${gradeConfig.bg} ${gradeConfig.color} ${gradeConfig.border}`}>
-            {gradeConfig.label}
+        {listing.safetyGrade && listing.safetyGrade !== "C" && (
+          <span className="absolute right-2 top-2">
+            <SafetyBadge grade={listing.safetyGrade} />
           </span>
         )}
         {listing.hasDiagnosisBadge && (
-          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-300 absolute right-2 ${gradeConfig ? "top-8" : "top-2"}`}>
-            권리진단 완료
+          <span className={`absolute right-2 ${listing.safetyGrade && listing.safetyGrade !== "C" ? "top-8" : "top-2"}`}>
+            <DiagnosisBadge />
           </span>
         )}
         {/* Premium badge */}
@@ -784,6 +786,9 @@ function ListingCard({ listing }: { listing: ListingItem }) {
             <p className="text-right text-sm text-gray-500">{floorAreaParts.join(" · ")}</p>
           )}
           {/* Title */}
+          {listing.safetyGrade === "A" && (
+            <span className="text-[10px] font-bold text-green-600">&#10003; 매출 인증 완료</span>
+          )}
           <div className="flex items-center gap-1.5">
             <h3 className="truncate text-base font-bold text-[#1B3A5C] transition-colors group-hover:text-[#1B3A5C]/70">
               {listing.title}
