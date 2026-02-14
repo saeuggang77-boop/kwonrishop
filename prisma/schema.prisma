@@ -305,6 +305,7 @@ model User {
   expertReviews    ExpertReview[]
   listingLikes     ListingLike[]
   listingComments  ListingComment[]
+  salesIntegrations SalesIntegration[]
 
   @@index([role])
   @@index([accountStatus])
@@ -377,6 +378,7 @@ model Listing {
   expertInquiries  ExpertInquiry[]
   likes            ListingLike[]
   comments         ListingComment[]
+  salesIntegrations SalesIntegration[]
 
   @@index([sellerId])
   @@index([status])
@@ -1147,4 +1149,29 @@ model ExpertReview {
 
   @@index([expertId])
   @@map("expert_reviews")
+}
+
+// ============================================================
+// SALES INTEGRATION (매출 인증 연동)
+// ============================================================
+
+model SalesIntegration {
+  id           String    @id @default(cuid())
+  userId       String
+  listingId    String?
+  provider     String    // hometax, crefia, baemin, yogiyo, coupangeats
+  status       String    @default("pending") // pending, connected, failed, expired
+  accessToken  String?   // 암호화 저장 필요
+  refreshToken String?   // 암호화 저장 필요
+  lastSynced   DateTime?
+  salesData    Json?     // 연동된 매출 데이터
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, provider])
+  @@index([listingId])
+  @@map("sales_integrations")
 }

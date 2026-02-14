@@ -1402,12 +1402,12 @@ function Step6Photos({
    ═══════════════════════════════════════════════════ */
 
 function Step7Integration() {
-  const integrations: { label: string; desc: string; color: string; icon: string }[] = [
-    { label: "홈택스", desc: "매출/매입 세금계산서 자동 연동", color: "bg-blue-500", icon: "🏛️" },
-    { label: "여신금융협회", desc: "카드 매출 데이터 연동", color: "bg-green-600", icon: "💳" },
-    { label: "배달의민족", desc: "배민 매출 데이터 연동", color: "bg-sky-400", icon: "🛵" },
-    { label: "요기요", desc: "요기요 매출 데이터 연동", color: "bg-red-500", icon: "🍽️" },
-    { label: "쿠팡이츠", desc: "쿠팡이츠 매출 데이터 연동", color: "bg-yellow-500", icon: "📦" },
+  const integrations: { provider: string; label: string; desc: string; color: string; icon: string }[] = [
+    { provider: "hometax", label: "홈택스", desc: "매출/매입 세금계산서 자동 연동", color: "bg-blue-500", icon: "🏛️" },
+    { provider: "crefia", label: "여신금융협회", desc: "카드 매출 데이터 연동", color: "bg-green-600", icon: "💳" },
+    { provider: "baemin", label: "배달의민족", desc: "배민 매출 데이터 연동", color: "bg-sky-400", icon: "🛵" },
+    { provider: "yogiyo", label: "요기요", desc: "요기요 매출 데이터 연동", color: "bg-red-500", icon: "🍽️" },
+    { provider: "coupangeats", label: "쿠팡이츠", desc: "쿠팡이츠 매출 데이터 연동", color: "bg-yellow-500", icon: "📦" },
   ];
 
   return (
