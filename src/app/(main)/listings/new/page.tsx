@@ -7,6 +7,7 @@ import Link from "next/link";
 import {
   MapPin, Search, ChevronLeft, Check,
   Camera, FileText, Link2, Info, AlertTriangle, X,
+  Store, ClipboardList, Coins, PenLine,
 } from "lucide-react";
 import {
   BUSINESS_SUBCATEGORIES,
@@ -42,6 +43,8 @@ const CATEGORY_GROUPS = [
 const REGION_KEYS = Object.keys(REGIONS);
 
 const FLOOR_CHOICES = ["지하", "1층", "2층", "3층", "4층", "5층 이상"] as const;
+
+const STEP_ICON_COMPONENTS = [MapPin, Store, ClipboardList, Coins, PenLine, Camera, Link2];
 
 /* ─── External Library Types ─── */
 
@@ -364,6 +367,8 @@ export default function NewListingPage() {
     );
   }
 
+  const StepIcon = STEP_ICON_COMPONENTS[step - 1];
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
       {/* Progress Header */}
@@ -377,10 +382,38 @@ export default function NewListingPage() {
             <ChevronLeft className="h-4 w-4" />
             {step === 1 ? "돌아가기" : "이전"}
           </button>
-          <span className="text-sm font-bold text-purple">{step}/{TOTAL_STEPS}</span>
+          <span className="text-sm font-bold text-purple sm:hidden">{step}/{TOTAL_STEPS}</span>
         </div>
-        {/* Progress Bar */}
-        <div className="mt-3 h-1.5 w-full rounded-full bg-gray-200">
+
+        {/* Step Indicators - Desktop */}
+        <div className="mt-4 hidden items-center sm:flex">
+          {Array.from({ length: TOTAL_STEPS }, (_, i) => {
+            const s = i + 1;
+            const completed = s < step;
+            const current = s === step;
+            return (
+              <div key={s} className={`flex items-center ${s < TOTAL_STEPS ? "flex-1" : ""}`}>
+                <div
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all ${
+                    completed
+                      ? "bg-purple text-white"
+                      : current
+                        ? "bg-purple text-white ring-4 ring-purple/20"
+                        : "bg-gray-200 text-gray-400"
+                  }`}
+                >
+                  {completed ? <Check className="h-4 w-4" /> : s}
+                </div>
+                {s < TOTAL_STEPS && (
+                  <div className={`mx-1.5 h-0.5 flex-1 transition-colors ${s < step ? "bg-purple" : "bg-gray-200"}`} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Progress Bar - Mobile */}
+        <div className="mt-3 h-1.5 w-full rounded-full bg-gray-200 sm:hidden">
           <div
             className="h-full rounded-full bg-gradient-to-r from-purple to-purple-light transition-all duration-500"
             style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
@@ -388,10 +421,15 @@ export default function NewListingPage() {
         </div>
       </div>
 
-      {/* Step Title */}
-      <h1 className="mb-6 text-xl font-bold text-purple">
-        {STEP_TITLES[step - 1]}
-      </h1>
+      {/* Step Icon + Title */}
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple/10">
+          <StepIcon className="h-6 w-6 text-purple" />
+        </div>
+        <h1 className="text-xl font-bold text-purple">
+          {STEP_TITLES[step - 1]}
+        </h1>
+      </div>
 
       {/* Error Message */}
       {errorMsg && (
@@ -435,7 +473,7 @@ export default function NewListingPage() {
           <button
             type="button"
             onClick={goNext}
-            className="flex-[2] rounded-xl bg-gradient-to-r from-purple to-purple-light py-3.5 text-base font-bold text-white shadow-lg shadow-purple/25 transition-all duration-150 hover:shadow-xl hover:shadow-purple/30 active:scale-[0.98]"
+            className="flex-[2] rounded-xl bg-gradient-to-r from-purple to-purple-light py-3.5 text-base font-bold text-white shadow-lg shadow-purple/25 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple/30 active:scale-[0.98]"
           >
             다음
           </button>
@@ -444,7 +482,7 @@ export default function NewListingPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isLoading}
-            className="flex-[2] rounded-xl bg-[#F59E0B] py-3.5 text-base font-bold text-white shadow-lg shadow-[#F59E0B]/25 transition-all duration-150 hover:bg-[#D97706] hover:shadow-xl hover:shadow-[#F59E0B]/30 active:scale-[0.98] disabled:opacity-50"
+            className="flex-[2] rounded-xl bg-[#F59E0B] py-3.5 text-base font-bold text-white shadow-lg shadow-[#F59E0B]/25 transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#D97706] hover:shadow-xl hover:shadow-[#F59E0B]/30 active:scale-[0.98] disabled:opacity-50"
           >
             {isLoading ? "등록 중..." : "매물 등록 완료"}
           </button>
@@ -672,13 +710,14 @@ function Step2Business({
                     update("businessCategory", sub.key);
                     update("businessSubtype", sub.subtype ?? "");
                   }}
-                  className={`flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm transition-all ${
+                  className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition-all ${
                     isActive
                       ? "border-purple bg-purple text-white shadow-sm"
                       : "border-gray-200 bg-white text-gray-600 hover:border-purple/40 hover:bg-purple/5"
                   }`}
                 >
-                  <span>{sub.emoji}</span>
+                  {isActive && <Check className="h-3.5 w-3.5" />}
+                  <span className="text-base">{sub.emoji}</span>
                   <span className="font-medium">{sub.label}</span>
                 </button>
               );
@@ -1207,17 +1246,30 @@ function Step6Photos({
         <p className="mt-1 text-xs text-gray-500">
           외부/내부/주방/화장실 등 다양한 각도의 사진을 올려주세요. 첫 번째 사진이 대표 이미지가 됩니다.
         </p>
-        {/* Photo examples */}
-        <div className="mt-3 grid grid-cols-4 gap-2 rounded-lg bg-gray-50 p-3">
-          {["외부 전경", "내부 전경", "주방", "화장실"].map((label) => (
-            <div key={label} className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white">
-                <Camera className="h-4 w-4 text-gray-300" />
+        {/* Photo category guide */}
+        <div className="mt-3 grid grid-cols-4 gap-3 rounded-xl bg-gray-50 p-4">
+          {[
+            { label: "외부 전경", emoji: "🏢" },
+            { label: "내부 전경", emoji: "🏠" },
+            { label: "주방", emoji: "🍳" },
+            { label: "화장실", emoji: "🚿" },
+          ].map((item, i) => (
+            <div key={item.label} className="text-center">
+              <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white text-2xl">
+                {item.emoji}
+                {i === 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 rounded-full bg-purple px-1.5 py-0.5 text-[9px] font-bold text-white">
+                    대표
+                  </span>
+                )}
               </div>
-              <p className="mt-1 text-[10px] text-gray-400">{label}</p>
+              <p className="mt-1.5 text-xs font-medium text-gray-500">{item.label}</p>
             </div>
           ))}
         </div>
+        <p className="mt-2 text-center text-xs text-gray-400">
+          사진을 드래그하여 업로드하거나 아래 버튼을 클릭하세요
+        </p>
         <div className="mt-3">
           <ImageUploader listingId="new" onImagesChange={setUploadedImages} />
         </div>
