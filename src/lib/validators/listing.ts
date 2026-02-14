@@ -35,7 +35,7 @@ export const createListingSchema = z.object({
   contactPhone: z.string().optional(),
   contactEmail: z.string().email("올바른 이메일을 입력해주세요.").optional(),
   isPhonePublic: z.boolean().optional(),
-  safetyGrade: z.enum(["A", "B", "C"]).optional(),
+  safetyGrade: z.enum(["A", "B", "C", "D"]).optional(),
   safetyComment: z.string().optional(),
 });
 

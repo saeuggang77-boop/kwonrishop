@@ -159,6 +159,7 @@ export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string;
   A: { label: "A등급", color: "text-green-700", bg: "bg-green-100", border: "border-green-300", description: "홈택스/여신금융 API 연동 인증" },
   B: { label: "B등급", color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300", description: "매출 증빙자료 제출 완료" },
   C: { label: "C등급", color: "text-gray-600", bg: "bg-gray-100", border: "border-gray-300", description: "매출 증빙 없음" },
+  D: { label: "C등급", color: "text-gray-600", bg: "bg-gray-100", border: "border-gray-300", description: "매출 증빙 없음" },
 };
 
 export const FRANCHISE_CATEGORIES = ["외식", "도소매", "서비스"] as const;

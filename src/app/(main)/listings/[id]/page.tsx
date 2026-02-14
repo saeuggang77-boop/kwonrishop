@@ -497,7 +497,7 @@ export default async function ListingDetailPage({
               </div>
             )}
 
-            {(!listing.safetyGrade || listing.safetyGrade === "C") && (
+            {(!listing.safetyGrade || listing.safetyGrade === "C" || listing.safetyGrade === "D") && (
               <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
                 <div className="flex items-center gap-3 px-6 py-4">
                   <span className="text-xl">⚠️</span>
@@ -1228,6 +1228,7 @@ export default async function ListingDetailPage({
                 { A: { label: "A등급", color: "text-green-700", bg: "bg-green-100" },
                   B: { label: "B등급", color: "text-blue-700", bg: "bg-blue-100" },
                   C: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
+                  D: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
                 } as Record<string, { label: string; color: string; bg: string }>
               )[sl.safetyGrade] : null;
               return (

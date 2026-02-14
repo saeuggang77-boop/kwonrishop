@@ -6,8 +6,8 @@ interface SafetyBadgeProps {
 }
 
 export function SafetyBadge({ grade, size = "sm" }: SafetyBadgeProps) {
-  // C grade = no badge shown
-  if (grade === "C") return null;
+  // C/D grade = no badge shown
+  if (grade === "C" || grade === "D") return null;
 
   const config = grade === "A"
     ? { bg: "bg-green-100", color: "text-green-700", border: "border-green-300", label: "매출 인증", Icon: CheckCircle }

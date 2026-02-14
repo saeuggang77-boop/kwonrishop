@@ -116,6 +116,7 @@ enum SafetyGrade {
   A
   B
   C
+  D // deprecated: 프로덕션 DB 호환용, C와 동일 처리
 }
 
 enum FraudRuleType {
