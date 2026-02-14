@@ -31,11 +31,8 @@ const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> =
 
 export function ImageGallery({ images, title, businessCategory, showPhotoHint }: ImageGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState(-1);
-  const [mobileIndex, setMobileIndex] = useState(0);
-  const [imgLoaded, setImgLoaded] = useState<Record<number, boolean>>({});
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const lightboxOpen = lightboxIndex >= 0;
 
@@ -71,194 +68,120 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
     };
   }, [lightboxOpen, closeLightbox, goLightbox]);
 
-  // Mobile swipe handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = () => {
-    const diff = touchStartX.current - touchEndX.current;
-    if (diff > 50) setMobileIndex((p) => Math.min(p + 1, images.length - 1));
-    else if (diff < -50) setMobileIndex((p) => Math.max(p - 1, 0));
-  };
+  // Track active index via scroll position for dot indicators
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    const cardWidth = 300; // approximate card width including gap
+    const index = Math.round(scrollRef.current.scrollLeft / cardWidth);
+    setActiveIndex(index);
+  }, []);
 
-  // Scroll carousel on mobile index change
-  useEffect(() => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollTo({ left: mobileIndex * carouselRef.current.offsetWidth, behavior: "smooth" });
-    }
-  }, [mobileIndex]);
-
-  const onLoad = (i: number) => setImgLoaded((prev) => ({ ...prev, [i]: true }));
-
-  // Skeleton placeholder
-  const Skeleton = () => (
-    <div className="absolute inset-0 animate-pulse bg-gray-200" />
-  );
-
-  // Gray placeholder for missing slots
-  const Placeholder = () => (
-    <div className="flex h-full w-full items-center justify-center bg-gray-100">
-      <Camera className="h-8 w-8 text-gray-300" />
-    </div>
-  );
-
-  // ── No images ──
+  // 0 photos placeholder
   if (images.length === 0) {
     const cat = CATEGORY_PLACEHOLDER[businessCategory ?? ""] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
     return (
-      <div className={`relative flex h-[300px] items-center justify-center rounded-xl bg-gradient-to-br ${cat.gradient}`}>
+      <div className={`relative flex h-[200px] items-center justify-center rounded-xl bg-gradient-to-br ${cat.gradient}`}>
         <div className="text-center">
-          <span className="text-7xl drop-shadow-lg">{cat.icon}</span>
-          <p className="mt-3 text-sm font-medium text-white/80">등록된 사진이 없습니다</p>
+          <span className="text-5xl drop-shadow-lg">{cat.icon}</span>
+          <p className="mt-2 text-sm font-medium text-white/80">등록된 사진이 없습니다</p>
+          {showPhotoHint && (
+            <p className="mt-1 text-xs text-white/60">사진을 등록하면 문의율이 3배 높아집니다</p>
+          )}
         </div>
-        {showPhotoHint && (
-          <div className="absolute bottom-0 left-0 right-0 rounded-b-xl bg-black/40 px-4 py-3 text-center backdrop-blur-sm">
-            <p className="text-sm font-medium text-white">📸 사진을 등록하면 문의율이 3배 높아집니다</p>
-          </div>
-        )}
       </div>
     );
   }
 
-  const extraCount = images.length - 3;
-
   return (
     <>
-      {/* ── Desktop Grid (md+) ── */}
-      <div className="hidden md:block">
-        <div className="h-[400px] gap-2" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gridTemplateRows: "1fr 1fr" }}>
-          {/* Main image - spans 2 rows */}
-          <button
-            type="button"
-            onClick={() => openLightbox(0)}
-            className="relative row-span-2 overflow-hidden rounded-lg"
-          >
-            {!imgLoaded[0] && <Skeleton />}
-            <Image
-              src={images[0].url}
-              alt={`${title} - 1`}
-              fill
-              className="object-cover transition-transform duration-300 hover:scale-105"
-              priority
-              sizes="(min-width: 768px) 60vw, 100vw"
-              onLoad={() => onLoad(0)}
-            />
-          </button>
-
-          {/* Top-right */}
-          <button
-            type="button"
-            onClick={() => images.length > 1 ? openLightbox(1) : openLightbox(0)}
-            className="relative overflow-hidden rounded-lg"
-          >
-            {images.length > 1 ? (
-              <>
-                {!imgLoaded[1] && <Skeleton />}
-                <Image
-                  src={images[1].url}
-                  alt={`${title} - 2`}
-                  fill
-                  className="object-cover transition-transform duration-300 hover:scale-105"
-                  sizes="(min-width: 768px) 40vw, 100vw"
-                  onLoad={() => onLoad(1)}
-                />
-              </>
-            ) : (
-              <Placeholder />
-            )}
-          </button>
-
-          {/* Bottom-right */}
-          <button
-            type="button"
-            onClick={() => images.length > 2 ? openLightbox(2) : openLightbox(0)}
-            className="relative overflow-hidden rounded-lg"
-          >
-            {images.length > 2 ? (
-              <>
-                {!imgLoaded[2] && <Skeleton />}
-                <Image
-                  src={images[2].url}
-                  alt={`${title} - 3`}
-                  fill
-                  className="object-cover transition-transform duration-300 hover:scale-105"
-                  sizes="(min-width: 768px) 40vw, 100vw"
-                  onLoad={() => onLoad(2)}
-                />
-                {/* "전체보기 +N장" overlay */}
-                {extraCount > 0 && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-colors hover:bg-black/50">
-                    <span className="rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-gray-900">
-                      전체보기 +{extraCount}장
-                    </span>
-                  </div>
-                )}
-              </>
-            ) : (
-              <Placeholder />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* ── Mobile Carousel (< md) ── */}
-      <div className="md:hidden">
+      {/* Horizontal scroll strip */}
+      <div className="relative group">
         <div
-          ref={carouselRef}
-          className="relative flex h-[250px] snap-x snap-mandatory overflow-x-auto rounded-xl scrollbar-hide"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="h-[200px] flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-2 rounded-xl"
         >
           {images.map((image, index) => (
-            <button
+            <div
               key={image.id}
-              type="button"
               onClick={() => openLightbox(index)}
-              className="relative h-full w-full shrink-0 snap-center"
+              className="relative h-[200px] w-[280px] md:w-[300px] flex-shrink-0 snap-start rounded-lg overflow-hidden cursor-pointer"
             >
-              {!imgLoaded[index] && <Skeleton />}
               <Image
                 src={image.url}
                 alt={`${title} - ${index + 1}`}
                 fill
                 className="object-cover"
                 priority={index === 0}
-                sizes="100vw"
-                onLoad={() => onLoad(index)}
+                sizes="300px"
               />
-            </button>
+              {/* Bottom overlay with counter */}
+              <div className="absolute bottom-0 inset-x-0 bg-black/50 px-3 py-1 text-xs text-white">
+                {index + 1}/{images.length}
+              </div>
+            </div>
           ))}
-        </div>
-        {/* Dot indicators */}
-        {images.length > 1 && (
-          <div className="mt-2 flex justify-center gap-1.5">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setMobileIndex(i)}
-                className={`h-2 rounded-full transition-all ${
-                  i === mobileIndex ? "w-5 bg-navy" : "w-2 bg-gray-300"
-                }`}
-                aria-label={`사진 ${i + 1}`}
-              />
-            ))}
+
+          {/* Last card - view all */}
+          <div
+            onClick={() => openLightbox(0)}
+            className="flex items-center justify-center w-[280px] md:w-[300px] h-[200px] flex-shrink-0 snap-start rounded-lg bg-gray-100 cursor-pointer"
+          >
+            <div className="flex flex-col items-center gap-2 text-gray-500">
+              <Camera className="h-8 w-8" />
+              <span className="text-sm font-medium">전체보기</span>
+              <span className="text-xs text-gray-400">+{images.length}장</span>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* PC hover arrows */}
+        <button
+          type="button"
+          onClick={() => scrollRef.current?.scrollBy({ left: -300, behavior: "smooth" })}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+          aria-label="이전"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollRef.current?.scrollBy({ left: 300, behavior: "smooth" })}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+          aria-label="다음"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
 
-      {/* ── Lightbox Modal ── */}
+      {/* Mobile dot indicators */}
+      {images.length > 1 && (
+        <div className="mt-2 flex justify-center gap-1.5 md:hidden">
+          {images.map((_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 w-1.5 rounded-full ${
+                i === activeIndex ? "bg-navy" : "bg-gray-300"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Lightbox Modal */}
       {lightboxOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
           onClick={closeLightbox}
         >
-          {/* Close */}
+          {/* Counter */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
+            {lightboxIndex + 1} / {images.length}
+          </div>
+
+          {/* Close button */}
           <button
+            type="button"
             onClick={closeLightbox}
             className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
             aria-label="닫기"
@@ -266,29 +189,23 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
             <X className="h-6 w-6" />
           </button>
 
-          {/* Counter */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
-            {lightboxIndex + 1} / {images.length}
-          </div>
-
           {/* Image */}
-          <div
-            className="relative h-[80vh] w-[90vw] max-w-5xl"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div onClick={(e) => e.stopPropagation()}>
             <Image
               src={images[lightboxIndex].url}
               alt={`${title} - ${lightboxIndex + 1}`}
-              fill
-              className="object-contain"
+              width={1200}
+              height={800}
+              className="max-h-[80vh] max-w-[90vw] object-contain"
               sizes="90vw"
             />
           </div>
 
-          {/* Arrows */}
+          {/* Left/right arrows */}
           {images.length > 1 && (
             <>
               <button
+                type="button"
                 onClick={(e) => { e.stopPropagation(); goLightbox("prev"); }}
                 className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
                 aria-label="이전 이미지"
@@ -296,6 +213,7 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
                 <ChevronLeft className="h-8 w-8" />
               </button>
               <button
+                type="button"
                 onClick={(e) => { e.stopPropagation(); goLightbox("next"); }}
                 className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
                 aria-label="다음 이미지"
@@ -303,29 +221,6 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
                 <ChevronRight className="h-8 w-8" />
               </button>
             </>
-          )}
-
-          {/* Thumbnail strip */}
-          {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 overflow-x-auto rounded-xl bg-black/40 p-2 backdrop-blur-sm">
-              {images.map((image, index) => (
-                <button
-                  key={image.id}
-                  onClick={(e) => { e.stopPropagation(); setLightboxIndex(index); }}
-                  className={`relative h-12 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-all ${
-                    index === lightboxIndex ? "border-white" : "border-transparent opacity-50 hover:opacity-100"
-                  }`}
-                >
-                  <Image
-                    src={image.url}
-                    alt={`썸네일 ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="64px"
-                  />
-                </button>
-              ))}
-            </div>
           )}
         </div>
       )}

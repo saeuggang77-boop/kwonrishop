@@ -24,7 +24,7 @@ import { ImageGallery } from "./image-gallery";
 import { ShareButtons } from "./share-buttons";
 import { CompareSection } from "./compare-section";
 import { DetailTabs } from "./detail-tabs";
-import { RevenueBarChart, CostPieChart } from "./revenue-charts";
+import { CostPieChart, RevenueGradeMessage } from "./revenue-charts";
 import { MarketBarChart } from "./market-charts";
 import { LikeButton } from "@/components/listings/like-button";
 import { CommentSectionWrapper } from "@/components/listings/comment-section-wrapper";
@@ -86,7 +86,7 @@ export default async function ListingDetailPage({
     notFound();
   }
 
-  const [images, seller, marketPriceRaw, recommendedExperts, similarListingsRaw] =
+  const [images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw] =
     await Promise.all([
       prisma.listingImage.findMany({
         where: { listingId: id },
@@ -115,23 +115,33 @@ export default async function ListingDetailPage({
         where: {
           id: { not: id },
           status: "ACTIVE",
-          OR: [
-            { district: listingData.district },
-            { businessCategory: listingData.businessCategory },
-            { city: listingData.city },
-          ],
+          district: listingData.district,
         },
         include: {
           images: { take: 1, orderBy: { sortOrder: "asc" } },
         },
         orderBy: { viewCount: "desc" },
-        take: 6,
+        take: 4,
+      }),
+      prisma.listing.findMany({
+        where: {
+          id: { not: id },
+          status: "ACTIVE",
+          businessCategory: listingData.businessCategory,
+          district: { not: listingData.district },
+        },
+        include: {
+          images: { take: 1, orderBy: { sortOrder: "asc" } },
+        },
+        orderBy: { viewCount: "desc" },
+        take: 4,
       }),
     ]);
 
   // Convert all BigInt fields to Number (Prisma returns BigInt, RSC can't serialize it)
   const marketPrice = toSerializable(marketPriceRaw);
-  const similarListings = toSerializable(similarListingsRaw);
+  const districtListings = toSerializable(districtListingsRaw);
+  const categoryListings = toSerializable(categoryListingsRaw);
 
   // Check if current user has liked this listing
   let userLiked = false;
@@ -189,6 +199,18 @@ export default async function ListingDetailPage({
     numMonthlyProfit > 0
       ? Math.round(totalInvestment / numMonthlyProfit)
       : 0;
+  const annualROI =
+    totalInvestment > 0 && numMonthlyProfit > 0
+      ? ((numMonthlyProfit * 12) / totalInvestment) * 100
+      : 0;
+  const roiColorClass =
+    annualROI >= 20 ? "text-green-600" : annualROI >= 10 ? "text-orange-600" : "text-red-600";
+  const roiBgClass =
+    annualROI >= 20
+      ? "bg-green-50 border-green-200"
+      : annualROI >= 10
+        ? "bg-orange-50 border-orange-200"
+        : "bg-red-50 border-red-200";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -542,7 +564,10 @@ export default async function ListingDetailPage({
 
           {/* ===== TAB 2: 수익분석 ===== */}
           <section id="revenue-analysis" className="mt-12">
-            <h2 className="text-xl font-bold text-navy">수익 분석</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold text-navy">수익 분석</h2>
+              {listing.safetyGrade && <SafetyBadge grade={listing.safetyGrade} size="md" />}
+            </div>
 
             {/* Revenue/Profit Summary Cards */}
             {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) ? (
@@ -570,17 +595,13 @@ export default async function ListingDetailPage({
                   />
                 </div>
 
-                {/* Monthly Revenue/Profit Trend Chart */}
+                {/* Revenue Grade Message */}
                 <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
-                  <h3 className="mb-4 text-base font-semibold text-navy">
-                    월별 매출 추이 (예상)
-                  </h3>
-                  <RevenueBarChart
+                  <RevenueGradeMessage
+                    grade={listing.safetyGrade}
                     monthlyRevenue={numMonthlyRevenue}
+                    monthlyProfit={numMonthlyProfit}
                   />
-                  <p className="mt-2 text-xs text-gray-400">
-                    * 현재 매출/순이익 기준 예상 추이이며 실제와 다를 수 있습니다
-                  </p>
                 </div>
 
                 {/* Cost Structure */}
@@ -588,9 +609,24 @@ export default async function ListingDetailPage({
                   {/* Cost Table */}
                   <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                     <div className="border-b border-gray-100 px-6 py-4">
-                      <h3 className="text-base font-semibold text-navy">
-                        비용 구조 (추정)
-                      </h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-semibold text-navy">
+                          {listing.safetyGrade === "A"
+                            ? "월 지출 내역 (인증완료)"
+                            : listing.safetyGrade === "B"
+                              ? "월 지출 내역 (증빙제출)"
+                              : "월 지출 내역 (매도인 제출)"}
+                        </h3>
+                        {listing.safetyGrade === "A" && (
+                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-bold text-green-700">인증</span>
+                        )}
+                        {listing.safetyGrade === "B" && (
+                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">증빙</span>
+                        )}
+                      </div>
+                      {(!listing.safetyGrade || listing.safetyGrade === "C" || listing.safetyGrade === "D") && (
+                        <p className="mt-1 text-[11px] text-gray-400">* 매도인이 직접 입력한 정보이며, 실제와 다를 수 있습니다</p>
+                      )}
                     </div>
                     <div className="divide-y divide-gray-100">
                       <CostRow label="임대료 (월세+관리비)" value={totalRent} />
@@ -656,6 +692,17 @@ export default async function ListingDetailPage({
                         </p>
                       </div>
                     </div>
+                    {annualROI > 0 && (
+                      <div className={`mt-4 rounded-xl border p-4 text-center ${roiBgClass}`}>
+                        <p className="text-xs text-gray-500">연간 투자수익률 (ROI)</p>
+                        <p className={`mt-1 text-2xl font-bold ${roiColorClass}`}>
+                          {annualROI.toFixed(1)}%
+                        </p>
+                        <p className="mt-1 text-[11px] text-gray-400">
+                          (월수익 × 12) ÷ (보증금 + 권리금) × 100
+                        </p>
+                      </div>
+                    )}
                     {roiMonths > 0 && (
                       <div className="mt-4">
                         <div className="flex items-center justify-between text-xs text-gray-500">
@@ -672,7 +719,7 @@ export default async function ListingDetailPage({
                         </div>
                         <p className="mt-1 text-xs text-gray-500">
                           1년 기준 회수율:{" "}
-                          <span className="font-semibold text-purple">
+                          <span className={`font-semibold ${roiColorClass}`}>
                             {((12 / roiMonths) * 100).toFixed(1)}%
                           </span>
                         </p>
@@ -791,7 +838,7 @@ export default async function ListingDetailPage({
             )}
 
             {/* Nearby Listings Table */}
-            {similarListings.length > 0 && (
+            {districtListings.length > 0 && (
               <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
                 <div className="border-b border-gray-100 px-6 py-4">
                   <h3 className="text-base font-semibold text-navy">
@@ -820,8 +867,8 @@ export default async function ListingDetailPage({
                       <tr className="bg-navy/5">
                         <td className="px-4 py-3 font-semibold text-navy">
                           {listing.title}
-                          <span className="ml-1.5 text-[10px] font-bold text-navy">
-                            현재
+                          <span className="ml-2 inline-flex items-center rounded-full bg-navy px-2 py-0.5 text-[10px] font-bold text-white">
+                            이 매물
                           </span>
                         </td>
                         <td className="px-4 py-3 text-gray-600">
@@ -843,7 +890,7 @@ export default async function ListingDetailPage({
                             : "-"}
                         </td>
                       </tr>
-                      {similarListings.slice(0, 3).map((sl) => (
+                      {districtListings.slice(0, 3).map((sl) => (
                         <tr key={sl.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3">
                             <Link
@@ -1193,13 +1240,13 @@ export default async function ListingDetailPage({
         </div>
       </div>
 
-      {/* ===== Similar Listings Section ===== */}
-      {similarListings.length > 0 && (
+      {/* ===== District Similar Listings ===== */}
+      {districtListings.length > 0 && (
         <div className="mt-16 border-t border-gray-200 pt-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-navy">이 지역 다른 매물</h2>
+            <h2 className="text-xl font-bold text-navy">이 지역 유사 매물</h2>
             <Link
-              href={`/listings?businessCategory=${listing.businessCategory}&city=${listing.city}`}
+              href={`/listings?district=${listing.district}&city=${listing.city}`}
               className="flex items-center gap-1 text-sm font-medium text-navy hover:underline"
             >
               더보기
@@ -1207,81 +1254,30 @@ export default async function ListingDetailPage({
             </Link>
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {similarListings.slice(0, 4).map((sl) => {
-              const slThumb =
-                sl.images[0]?.thumbnailUrl ?? sl.images[0]?.url ?? null;
-              const slCat: Record<string, { gradient: string; icon: string }> = {
-                CAFE_BAKERY:   { gradient: "from-amber-800/70 to-amber-600/50", icon: "☕" },
-                CHICKEN:       { gradient: "from-orange-600/70 to-orange-400/50", icon: "🍗" },
-                KOREAN_FOOD:   { gradient: "from-red-700/70 to-red-500/50", icon: "🍚" },
-                PIZZA:         { gradient: "from-yellow-600/70 to-yellow-400/50", icon: "🍕" },
-                BUNSIK:        { gradient: "from-pink-600/70 to-pink-400/50", icon: "🍜" },
-                RETAIL:        { gradient: "from-blue-700/70 to-blue-500/50", icon: "🏪" },
-                BAR_PUB:       { gradient: "from-purple-700/70 to-purple-500/50", icon: "🍺" },
-                WESTERN_FOOD:  { gradient: "from-rose-700/70 to-rose-500/50", icon: "🍝" },
-                SERVICE:       { gradient: "from-blue-800/70 to-blue-600/50", icon: "✂️" },
-                ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
-                EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
-              };
-              const catInfo = slCat[sl.businessCategory] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
-              const gradeConfig = sl.safetyGrade ? (
-                { A: { label: "A등급", color: "text-green-700", bg: "bg-green-100" },
-                  B: { label: "B등급", color: "text-blue-700", bg: "bg-blue-100" },
-                  C: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
-                  D: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
-                } as Record<string, { label: string; color: string; bg: string }>
-              )[sl.safetyGrade] : null;
-              return (
-                <Link
-                  key={sl.id}
-                  href={`/listings/${sl.id}`}
-                  className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md"
-                >
-                  <div className="relative aspect-[4/3] bg-gray-100">
-                    {slThumb ? (
-                      <Image
-                        src={slThumb}
-                        alt={sl.title}
-                        fill
-                        className="object-cover transition-transform group-hover:scale-105"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                    ) : (
-                      <div className={`flex h-full items-center justify-center bg-gradient-to-br ${catInfo.gradient}`}>
-                        <span className="text-4xl drop-shadow-lg">{catInfo.icon}</span>
-                      </div>
-                    )}
-                    <span className="absolute left-2 top-2 rounded bg-navy/80 px-2 py-0.5 text-[11px] font-medium text-white">
-                      {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ??
-                        sl.businessCategory}
-                    </span>
-                    {gradeConfig && (
-                      <span className={`absolute right-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold ${gradeConfig.bg} ${gradeConfig.color}`}>
-                        {gradeConfig.label}
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-navy">
-                      {sl.title}
-                    </p>
-                    <p className="mt-1 text-xs text-gray-500">
-                      {sl.city} {sl.district}
-                    </p>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-sm font-bold text-orange-600">
-                        {sl.premiumFee && Number(sl.premiumFee) > 0
-                          ? formatKRW(sl.premiumFee)
-                          : "무권리"}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        보증금 {formatKRW(sl.price)}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
+            {districtListings.slice(0, 4).map((sl) => (
+              <SimilarListingCard key={sl.id} sl={sl} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ===== Category Similar Listings ===== */}
+      {categoryListings.length > 0 && (
+        <div className="mt-8 border-t border-gray-200 pt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-navy">같은 업종 추천 매물</h2>
+            <Link
+              href={`/listings?businessCategory=${listing.businessCategory}`}
+              className="flex items-center gap-1 text-sm font-medium text-navy hover:underline"
+            >
+              더보기
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {categoryListings.slice(0, 4).map((sl) => (
+              <SimilarListingCard key={sl.id} sl={sl} />
+            ))}
           </div>
         </div>
       )}
@@ -1290,6 +1286,80 @@ export default async function ListingDetailPage({
 }
 
 /* ===== Helper Components ===== */
+
+const SIMILAR_CAT_MAP: Record<string, { gradient: string; icon: string }> = {
+  CAFE_BAKERY:   { gradient: "from-amber-800/70 to-amber-600/50", icon: "☕" },
+  CHICKEN:       { gradient: "from-orange-600/70 to-orange-400/50", icon: "🍗" },
+  KOREAN_FOOD:   { gradient: "from-red-700/70 to-red-500/50", icon: "🍚" },
+  PIZZA:         { gradient: "from-yellow-600/70 to-yellow-400/50", icon: "🍕" },
+  BUNSIK:        { gradient: "from-pink-600/70 to-pink-400/50", icon: "🍜" },
+  RETAIL:        { gradient: "from-blue-700/70 to-blue-500/50", icon: "🏪" },
+  BAR_PUB:       { gradient: "from-purple-700/70 to-purple-500/50", icon: "🍺" },
+  WESTERN_FOOD:  { gradient: "from-rose-700/70 to-rose-500/50", icon: "🍝" },
+  SERVICE:       { gradient: "from-blue-800/70 to-blue-600/50", icon: "✂️" },
+  ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
+  EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
+};
+
+const SIMILAR_GRADE_MAP: Record<string, { label: string; color: string; bg: string }> = {
+  A: { label: "A등급", color: "text-green-700", bg: "bg-green-100" },
+  B: { label: "B등급", color: "text-blue-700", bg: "bg-blue-100" },
+  C: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
+  D: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
+};
+
+function SimilarListingCard({ sl }: { sl: { id: string; title: string; businessCategory: string; city: string; district: string; price: number | bigint; premiumFee?: number | bigint | null; safetyGrade?: string | null; images: { url: string; thumbnailUrl?: string | null }[] } }) {
+  const thumb = sl.images[0]?.thumbnailUrl ?? sl.images[0]?.url ?? null;
+  const catInfo = SIMILAR_CAT_MAP[sl.businessCategory] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
+  const gradeConfig = sl.safetyGrade ? SIMILAR_GRADE_MAP[sl.safetyGrade] ?? null : null;
+
+  return (
+    <Link
+      href={`/listings/${sl.id}`}
+      className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md"
+    >
+      <div className="relative aspect-[4/3] bg-gray-100">
+        {thumb ? (
+          <Image
+            src={thumb}
+            alt={sl.title}
+            fill
+            className="object-cover transition-transform group-hover:scale-105"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
+        ) : (
+          <div className={`flex h-full items-center justify-center bg-gradient-to-br ${catInfo.gradient}`}>
+            <span className="text-4xl drop-shadow-lg">{catInfo.icon}</span>
+          </div>
+        )}
+        <span className="absolute left-2 top-2 rounded bg-navy/80 px-2 py-0.5 text-[11px] font-medium text-white">
+          {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ?? sl.businessCategory}
+        </span>
+        {gradeConfig && (
+          <span className={`absolute right-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold ${gradeConfig.bg} ${gradeConfig.color}`}>
+            {gradeConfig.label}
+          </span>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-navy">
+          {sl.title}
+        </p>
+        <p className="mt-1 text-xs text-gray-500">
+          {sl.city} {sl.district}
+        </p>
+        <div className="mt-2 flex items-center gap-2">
+          <span className="text-sm font-bold text-orange-600">
+            {sl.premiumFee && Number(sl.premiumFee) > 0 ? formatKRW(sl.premiumFee) : "무권리"}
+          </span>
+          <span className="text-xs text-gray-400">
+            보증금 {formatKRW(sl.price)}
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 function PriceCard({
   emoji,
