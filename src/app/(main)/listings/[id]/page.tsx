@@ -226,6 +226,18 @@ export default async function ListingDetailPage({
           {listing.address}
           {listing.addressDetail ? ` ${listing.addressDetail}` : ""}
         </p>
+
+        {/* View count + date (prominent position) */}
+        <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
+          <span className="flex items-center gap-1.5">
+            <Eye className="h-4 w-4" />
+            조회 {formatNumber(listing.viewCount)}회
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4" />
+            {formatDateKR(listing.createdAt)}
+          </span>
+        </div>
       </div>
 
       {/* Sticky Tab Navigation */}
