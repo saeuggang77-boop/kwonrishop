@@ -69,7 +69,7 @@ export async function POST(
   // Check listing exists
   const listing = await prisma.listing.findUnique({
     where: { id },
-    select: { id: true },
+    select: { id: true, sellerId: true, title: true },
   });
 
   if (!listing) {
@@ -130,6 +130,20 @@ export async function POST(
       where: { id },
       select: { likeCount: true },
     });
+
+    // Send notification to listing seller (fire-and-forget, skip self-like)
+    if (listing.sellerId !== session.user.id) {
+      prisma.notification.create({
+        data: {
+          userId: listing.sellerId,
+          title: "매물 찜",
+          message: `누군가 "${listing.title}"을 찜했습니다`,
+          link: `/listings/${id}`,
+          sourceType: "like",
+          sourceId: id,
+        },
+      }).catch(() => {});
+    }
 
     return NextResponse.json({
       success: true,

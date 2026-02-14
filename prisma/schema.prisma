@@ -304,6 +304,7 @@ model User {
   expertInquiries  ExpertInquiry[]
   expertReviews    ExpertReview[]
   listingLikes     ListingLike[]
+  listingComments  ListingComment[]
 
   @@index([role])
   @@index([accountStatus])
@@ -375,6 +376,7 @@ model Listing {
   simulations      Simulation[]
   expertInquiries  ExpertInquiry[]
   likes            ListingLike[]
+  comments         ListingComment[]
 
   @@index([sellerId])
   @@index([status])
@@ -811,6 +813,30 @@ model Notification {
   @@index([userId, isRead])
   @@index([createdAt])
   @@map("notifications")
+}
+
+// ============================================================
+// LISTING COMMENTS
+// ============================================================
+
+model ListingComment {
+  id        String   @id @default(cuid())
+  listingId String
+  userId    String
+  content   String   @db.Text
+  isSecret  Boolean  @default(false)
+  parentId  String?
+  createdAt DateTime @default(now())
+
+  listing Listing          @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  ListingComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies ListingComment[] @relation("CommentReplies")
+
+  @@index([listingId, createdAt])
+  @@index([userId])
+  @@index([parentId])
+  @@map("listing_comments")
 }
 
 // ============================================================

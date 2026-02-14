@@ -12,6 +12,21 @@ interface Notification {
   link?: string;
   isRead: boolean;
   createdAt: string;
+  sourceType?: string;
+}
+
+function sourceTypeEmoji(sourceType?: string): string {
+  switch (sourceType) {
+    case "comment":
+    case "comment_reply":
+      return "\uD83D\uDCAC";
+    case "like":
+      return "\u2764\uFE0F";
+    case "inquiry":
+      return "\uD83D\uDCE9";
+    default:
+      return "\uD83D\uDD14";
+  }
 }
 
 function relativeTime(dateStr: string): string {
@@ -72,7 +87,7 @@ export function NotificationBell() {
   const fetchNotifications = useCallback(async () => {
     setLoadingNotifications(true);
     try {
-      const res = await fetch("/api/notifications?limit=5");
+      const res = await fetch("/api/notifications?limit=20");
       if (res.ok) {
         const data = await res.json();
         setNotifications(data.notifications ?? data.data ?? []);
@@ -171,7 +186,7 @@ export function NotificationBell() {
                   }`}
                 >
                   <p className="text-sm font-medium text-gray-900 truncate">
-                    {notification.title}
+                    {sourceTypeEmoji(notification.sourceType)} {notification.title}
                   </p>
                   <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
                     {notification.message}
