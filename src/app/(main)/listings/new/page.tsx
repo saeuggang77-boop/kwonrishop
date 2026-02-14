@@ -159,7 +159,7 @@ const initialForm: FormData = {
   expenseRent: "", expenseMaintenance: "", utilities: "", otherExpense: "",
   operatingYears: "", profitDescription: "",
   title: "", description: "",
-  contactVisible: true, contactPhone: "", contactEmail: "", isPhonePublic: true,
+  contactVisible: false, contactPhone: "", contactEmail: "", isPhonePublic: false,
   hometaxLinked: false, creditCardLinked: false, baeminLinked: false, yogiyoLinked: false, coupangLinked: false,
 };
 
@@ -197,8 +197,8 @@ export default function NewListingPage() {
   const [form, setForm] = useState<FormData>(initialForm);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [uploadedImages, setUploadedImages] = useState<{ key: string; url: string }[]>([]);
-  const [uploadedDocs, setUploadedDocs] = useState<{ name: string; key: string; url: string }[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<{ key: string; url: string; category?: string }[]>([]);
+  const [uploadedDocs, setUploadedDocs] = useState<{ name: string; key: string; url: string; previewUrl?: string; size?: number; mimeType?: string }[]>([]);
   const [showFairTradeModal, setShowFairTradeModal] = useState(false);
   const [categoryShake, setCategoryShake] = useState(false);
   const { toast } = useToast();
@@ -290,6 +290,15 @@ export default function NewListingPage() {
           return;
         }
         break;
+      case 6: { // Photos
+        const hasExterior = uploadedImages.some((img) => img.category === "exterior");
+        const hasInterior = uploadedImages.some((img) => img.category === "interior");
+        if (!hasExterior || !hasInterior) {
+          toast("info", "외부 전경과 내부 전경 사진은 필수입니다.");
+          return;
+        }
+        break;
+      }
     }
     setStep(step + 1);
   };
@@ -1267,11 +1276,26 @@ function Step6Photos({
 }: {
   form: FormData;
   update: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
-  setUploadedImages: (imgs: { key: string; url: string }[]) => void;
-  uploadedDocs: { name: string; key: string; url: string }[];
-  setUploadedDocs: (docs: { name: string; key: string; url: string }[]) => void;
+  setUploadedImages: (imgs: { key: string; url: string; category?: string }[]) => void;
+  uploadedDocs: { name: string; key: string; url: string; previewUrl?: string; size?: number; mimeType?: string }[];
+  setUploadedDocs: (docs: { name: string; key: string; url: string; previewUrl?: string; size?: number; mimeType?: string }[]) => void;
 }) {
   const { toast } = useToast();
+  const previewUrlsRef = useRef<string[]>([]);
+
+  // Cleanup preview URLs on unmount
+  useEffect(() => {
+    return () => {
+      previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes}B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)}KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+  };
+
   return (
     <div className="space-y-6">
       {/* Photo Upload */}
@@ -1281,31 +1305,7 @@ function Step6Photos({
           <SectionLabel>매물 사진</SectionLabel>
         </div>
         <p className="mt-1 text-xs text-gray-500">
-          외부/내부/주방/화장실 등 다양한 각도의 사진을 올려주세요. 첫 번째 사진이 대표 이미지가 됩니다.
-        </p>
-        {/* Photo category guide */}
-        <div className="mt-3 grid grid-cols-4 gap-3 rounded-xl bg-gray-50 p-4">
-          {[
-            { label: "외부 전경", emoji: "🏢" },
-            { label: "내부 전경", emoji: "🏠" },
-            { label: "주방", emoji: "🍳" },
-            { label: "화장실", emoji: "🚿" },
-          ].map((item, i) => (
-            <div key={item.label} className="text-center">
-              <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white text-2xl">
-                {item.emoji}
-                {i === 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 rounded-full bg-purple px-1.5 py-0.5 text-[9px] font-bold text-white">
-                    대표
-                  </span>
-                )}
-              </div>
-              <p className="mt-1.5 text-xs font-medium text-gray-500">{item.label}</p>
-            </div>
-          ))}
-        </div>
-        <p className="mt-2 text-center text-xs text-gray-400">
-          사진을 드래그하여 업로드하거나 아래 버튼을 클릭하세요
+          카테고리별로 사진을 올려주세요. 외부/내부 전경은 필수입니다.
         </p>
         <div className="mt-3">
           <ImageUploader listingId="new" onImagesChange={setUploadedImages} />
@@ -1326,7 +1326,7 @@ function Step6Photos({
           매출 증빙자료 업로드 (PDF, 이미지)
           <input
             type="file"
-            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+            accept=".pdf,.jpg,.jpeg,.png,.webp"
             className="hidden"
             onChange={async (e) => {
               const file = e.target.files?.[0];
@@ -1342,7 +1342,20 @@ function Step6Photos({
                 const res = await fetch("/api/upload/document", { method: "POST", body: fd });
                 const json = await res.json();
                 if (json.data) {
-                  setUploadedDocs([...uploadedDocs, { name: file.name, key: json.data.id as string, url: "" }]);
+                  const isImage = file.type.startsWith("image/");
+                  let previewUrl: string | undefined;
+                  if (isImage) {
+                    previewUrl = URL.createObjectURL(file);
+                    previewUrlsRef.current.push(previewUrl);
+                  }
+                  setUploadedDocs([...uploadedDocs, {
+                    name: file.name,
+                    key: json.data.id as string,
+                    url: "",
+                    previewUrl,
+                    size: file.size,
+                    mimeType: file.type,
+                  }]);
                 } else {
                   toast("error", json.error?.message ?? "업로드에 실패했습니다.");
                 }
@@ -1354,16 +1367,37 @@ function Step6Photos({
           />
         </label>
         {uploadedDocs.length > 0 && (
-          <div className="mt-2 space-y-1">
+          <div className="mt-3 flex flex-wrap gap-3">
             {uploadedDocs.map((doc, i) => (
-              <div key={doc.key} className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm">
-                <span className="text-gray-700">{doc.name}</span>
+              <div key={doc.key} className="group relative flex w-24 flex-col items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-2">
+                {/* Preview */}
+                {doc.previewUrl ? (
+                  <div className="relative h-20 w-20 overflow-hidden rounded-lg">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={doc.previewUrl} alt={doc.name} className="h-full w-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-gray-200">
+                    <FileText className="h-8 w-8 text-gray-400" />
+                  </div>
+                )}
+                {/* File info */}
+                <p className="w-full truncate text-center text-[10px] text-gray-600" title={doc.name}>
+                  {doc.name}
+                </p>
+                {doc.size && (
+                  <p className="text-[9px] text-gray-400">{formatFileSize(doc.size)}</p>
+                )}
+                {/* Remove button */}
                 <button
                   type="button"
-                  onClick={() => setUploadedDocs(uploadedDocs.filter((_, idx) => idx !== i))}
-                  className="text-gray-400 hover:text-red-500"
+                  onClick={() => {
+                    if (doc.previewUrl) URL.revokeObjectURL(doc.previewUrl);
+                    setUploadedDocs(uploadedDocs.filter((_, idx) => idx !== i));
+                  }}
+                  className="absolute -right-1.5 -top-1.5 rounded-full bg-black/60 p-0.5 text-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             ))}
@@ -1376,7 +1410,9 @@ function Step6Photos({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Info className="h-4 w-4 text-purple" />
-            <span className="text-sm font-medium text-gray-700">연락처 공개</span>
+            <span className="text-sm font-medium text-gray-700">
+              {form.contactVisible ? "연락처 공개" : "연락처 비공개"}
+            </span>
           </div>
           <button
             type="button"
@@ -1386,6 +1422,9 @@ function Step6Photos({
             <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.contactVisible ? "left-[22px]" : "left-0.5"}`} />
           </button>
         </div>
+        {!form.contactVisible && (
+          <p className="mt-2 text-xs text-gray-400">문의는 플랫폼 메시지로만 가능합니다</p>
+        )}
         {form.contactVisible && (
           <div className="mt-4 space-y-3">
             <div>
