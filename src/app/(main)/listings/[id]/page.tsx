@@ -31,6 +31,22 @@ import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+/** Recursively convert all BigInt values to Number to prevent RSC serialization errors */
+function toSerializable<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === "bigint") return Number(obj) as unknown as T;
+  if (Array.isArray(obj)) return obj.map(toSerializable) as unknown as T;
+  if (obj instanceof Date) return obj;
+  if (typeof obj === "object") {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      result[key] = toSerializable(value);
+    }
+    return result as T;
+  }
+  return obj;
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
   const id = decodeURIComponent(rawId);
@@ -112,25 +128,9 @@ export default async function ListingDetailPage({
       }),
     ]);
 
-  // Convert BigInt fields in marketPrice
-  const marketPrice = marketPriceRaw ? {
-    ...marketPriceRaw,
-    avgDeposit: Number(marketPriceRaw.avgDeposit),
-    avgMonthlyRent: Number(marketPriceRaw.avgMonthlyRent),
-    avgKeyMoney: Number(marketPriceRaw.avgKeyMoney),
-    avgMonthlySales: Number(marketPriceRaw.avgMonthlySales),
-  } : null;
-
-  // Convert BigInt fields in similarListings
-  const similarListings = similarListingsRaw.map((sl) => ({
-    ...sl,
-    price: Number(sl.price),
-    monthlyRent: sl.monthlyRent ? Number(sl.monthlyRent) : null,
-    premiumFee: sl.premiumFee ? Number(sl.premiumFee) : null,
-    managementFee: sl.managementFee ? Number(sl.managementFee) : null,
-    monthlyRevenue: sl.monthlyRevenue ? Number(sl.monthlyRevenue) : null,
-    monthlyProfit: sl.monthlyProfit ? Number(sl.monthlyProfit) : null,
-  }));
+  // Convert all BigInt fields to Number (Prisma returns BigInt, RSC can't serialize it)
+  const marketPrice = toSerializable(marketPriceRaw);
+  const similarListings = toSerializable(similarListingsRaw);
 
   // Check if current user has liked this listing
   let userLiked = false;
@@ -144,18 +144,7 @@ export default async function ListingDetailPage({
     console.error("[listing-detail] listingLike query failed:", e);
   }
 
-  // Convert BigInt fields to Number to prevent RSC serialization issues
-  const listing = {
-    ...listingData,
-    price: Number(listingData.price),
-    monthlyRent: listingData.monthlyRent ? Number(listingData.monthlyRent) : null,
-    premiumFee: listingData.premiumFee ? Number(listingData.premiumFee) : null,
-    managementFee: listingData.managementFee ? Number(listingData.managementFee) : null,
-    monthlyRevenue: listingData.monthlyRevenue ? Number(listingData.monthlyRevenue) : null,
-    monthlyProfit: listingData.monthlyProfit ? Number(listingData.monthlyProfit) : null,
-    images,
-    seller,
-  };
+  const listing = { ...toSerializable(listingData), images, seller };
 
   // Track view (fire-and-forget)
   prisma.listing
