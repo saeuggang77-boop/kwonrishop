@@ -69,7 +69,7 @@ export default async function ListingDetailPage({
     notFound();
   }
 
-  const [images, seller, marketPrice, recommendedExperts, similarListings] =
+  const [images, seller, marketPriceRaw, recommendedExperts, similarListingsRaw] =
     await Promise.all([
       prisma.listingImage.findMany({
         where: { listingId: id },
@@ -111,6 +111,26 @@ export default async function ListingDetailPage({
         take: 6,
       }),
     ]);
+
+  // Convert BigInt fields in marketPrice
+  const marketPrice = marketPriceRaw ? {
+    ...marketPriceRaw,
+    avgDeposit: Number(marketPriceRaw.avgDeposit),
+    avgMonthlyRent: Number(marketPriceRaw.avgMonthlyRent),
+    avgKeyMoney: Number(marketPriceRaw.avgKeyMoney),
+    avgMonthlySales: Number(marketPriceRaw.avgMonthlySales),
+  } : null;
+
+  // Convert BigInt fields in similarListings
+  const similarListings = similarListingsRaw.map((sl) => ({
+    ...sl,
+    price: Number(sl.price),
+    monthlyRent: sl.monthlyRent ? Number(sl.monthlyRent) : null,
+    premiumFee: sl.premiumFee ? Number(sl.premiumFee) : null,
+    managementFee: sl.managementFee ? Number(sl.managementFee) : null,
+    monthlyRevenue: sl.monthlyRevenue ? Number(sl.monthlyRevenue) : null,
+    monthlyProfit: sl.monthlyProfit ? Number(sl.monthlyProfit) : null,
+  }));
 
   // Check if current user has liked this listing
   let userLiked = false;
