@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -112,9 +112,18 @@ interface FormData {
   parkingCount: string;
   // Step 4
   monthlyRevenue: string;
-  monthlyExpenses: string;
-  staffCount: string;
+  materialCost: string;
+  laborCost: string;
+  soloOperation: boolean;
+  familyStaff: string;
+  fullTimeStaff: string;
+  partTimeStaff: string;
+  expenseRent: string;
+  expenseMaintenance: string;
+  utilities: string;
+  otherExpense: string;
   operatingYears: string;
+  profitDescription: string;
   // Step 5
   title: string;
   description: string;
@@ -141,7 +150,10 @@ const initialForm: FormData = {
   managementFee: "",
   isFranchise: false, storeName: "", franchiseName: "", storeType: "GENERAL_STORE",
   floor: "", areaPyeong: "", features: [], parkingAvailable: false, parkingCount: "",
-  monthlyRevenue: "", monthlyExpenses: "", staffCount: "", operatingYears: "",
+  monthlyRevenue: "", materialCost: "", laborCost: "", soloOperation: false,
+  familyStaff: "", fullTimeStaff: "", partTimeStaff: "",
+  expenseRent: "", expenseMaintenance: "", utilities: "", otherExpense: "",
+  operatingYears: "", profitDescription: "",
   title: "", description: "",
   contactVisible: true, contactPhone: "", contactEmail: "", isPhonePublic: true,
   hometaxLinked: false, creditCardLinked: false, baeminLinked: false, yogiyoLinked: false, coupangLinked: false,
@@ -199,18 +211,27 @@ export default function NewListingPage() {
     return d + p;
   }, [form.deposit, form.premiumFee, form.noPremium]);
 
+  const totalExpenses = useMemo(() => {
+    return (
+      (Number(form.materialCost) || 0) +
+      (Number(form.laborCost) || 0) +
+      (Number(form.expenseRent) || 0) +
+      (Number(form.expenseMaintenance) || 0) +
+      (Number(form.utilities) || 0) +
+      (Number(form.otherExpense) || 0)
+    );
+  }, [form.materialCost, form.laborCost, form.expenseRent, form.expenseMaintenance, form.utilities, form.otherExpense]);
+
   const netProfit = useMemo(() => {
     const rev = Number(form.monthlyRevenue) || 0;
-    const exp = Number(form.monthlyExpenses) || 0;
-    return rev - exp;
-  }, [form.monthlyRevenue, form.monthlyExpenses]);
+    return rev - totalExpenses;
+  }, [form.monthlyRevenue, totalExpenses]);
 
   const expensePercent = useMemo(() => {
     const rev = Number(form.monthlyRevenue) || 0;
-    const exp = Number(form.monthlyExpenses) || 0;
     if (rev === 0) return 0;
-    return Math.round((exp / rev) * 100);
-  }, [form.monthlyRevenue, form.monthlyExpenses]);
+    return Math.round((totalExpenses / rev) * 100);
+  }, [form.monthlyRevenue, totalExpenses]);
 
   const premiumBreakdownTotal = useMemo(() => {
     if (form.noPremium) return 0;
@@ -226,9 +247,12 @@ export default function NewListingPage() {
     // Step validation
     switch (step) {
       case 1: // Location
-        if (!form.city || !form.district || !form.address) {
+        if (!form.city || !form.district || (!form.address && !form.neighborhood)) {
           toast("info", "주소를 입력해주세요.");
           return;
+        }
+        if (!form.address) {
+          setForm((f) => ({ ...f, address: `${f.city} ${f.district} ${f.neighborhood}` }));
         }
         break;
       case 2: // Category
@@ -243,7 +267,13 @@ export default function NewListingPage() {
           return;
         }
         break;
-      case 4: // Details
+      case 4: // Additional
+        if (!form.monthlyRevenue) {
+          toast("info", "월 매출을 입력해주세요.");
+          return;
+        }
+        break;
+      case 5: // Description
         if (!form.title || !form.description) {
           toast("info", "제목과 설명을 입력해주세요.");
           return;
@@ -289,7 +319,8 @@ export default function NewListingPage() {
       if (form.storeName) body.storeName = form.storeName;
       if (form.franchiseName) body.franchiseName = form.franchiseName;
       if (form.features.length > 0) body.features = form.features;
-      if (form.staffCount) body.staffCount = Number(form.staffCount);
+      const totalStaff = form.soloOperation ? 1 : 1 + (Number(form.familyStaff) || 0) + (Number(form.fullTimeStaff) || 0) + (Number(form.partTimeStaff) || 0);
+      body.staffCount = totalStaff;
       if (uploadedImages.length > 0) body.images = uploadedImages;
       if (uploadedDocs.length > 0) body.documents = uploadedDocs;
 
@@ -375,7 +406,7 @@ export default function NewListingPage() {
         {step === 1 && <Step1Location form={form} update={update} districtOptions={districtOptions} showFairTradeModal={showFairTradeModal} setShowFairTradeModal={setShowFairTradeModal} />}
         {step === 2 && <Step2Business form={form} update={update} premiumBreakdownTotal={premiumBreakdownTotal} />}
         {step === 3 && <Step3Basic form={form} update={update} />}
-        {step === 4 && <Step4Additional form={form} update={update} investmentTotal={investmentTotal} netProfit={netProfit} expensePercent={expensePercent} />}
+        {step === 4 && <Step4Additional form={form} update={update} investmentTotal={investmentTotal} totalExpenses={totalExpenses} netProfit={netProfit} expensePercent={expensePercent} />}
         {step === 5 && <Step5Description form={form} update={update} />}
         {step === 6 && <Step6Photos form={form} update={update} setUploadedImages={setUploadedImages} uploadedDocs={uploadedDocs} setUploadedDocs={setUploadedDocs} />}
         {step === 7 && <Step7Integration />}
@@ -903,14 +934,36 @@ function Step3Basic({
    ═══════════════════════════════════════════════════ */
 
 function Step4Additional({
-  form, update, investmentTotal, netProfit, expensePercent,
+  form, update, investmentTotal, totalExpenses, netProfit, expensePercent,
 }: {
   form: FormData;
   update: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
   investmentTotal: number;
+  totalExpenses: number;
   netProfit: number;
   expensePercent: number;
 }) {
+  // Auto-fill rent/maintenance from step 2 values on first mount
+  const didAutoFill = useRef(false);
+  useEffect(() => {
+    if (didAutoFill.current) return;
+    didAutoFill.current = true;
+    if (!form.expenseRent && form.monthlyRent) {
+      update("expenseRent", form.monthlyRent);
+    }
+    if (!form.expenseMaintenance && form.managementFee) {
+      update("expenseMaintenance", form.managementFee);
+    }
+  }, [form.expenseRent, form.expenseMaintenance, form.monthlyRent, form.managementFee, update]);
+
+  const rev = Number(form.monthlyRevenue) || 0;
+  const pct = (val: string) => {
+    if (rev === 0) return null;
+    const n = Number(val) || 0;
+    if (n === 0) return null;
+    return Math.round((n / rev) * 100);
+  };
+
   return (
     <div className="space-y-5">
       {/* Investment Total (auto) */}
@@ -934,19 +987,99 @@ function Step4Additional({
         />
       </div>
 
-      {/* Monthly Expenses */}
+      {/* Monthly Expenses Breakdown */}
       <div>
-        <div className="flex items-center justify-between">
-          <SectionLabel>월 지출</SectionLabel>
-          {expensePercent > 0 && (
-            <span className="text-xs text-gray-500">매출 대비 {expensePercent}%</span>
-          )}
+        <SectionLabel>월 지출 세부항목</SectionLabel>
+        <div className="mt-2 space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          {/* 재료비 */}
+          <ExpenseRow
+            label="재료비"
+            value={form.materialCost}
+            onChange={(v) => update("materialCost", v)}
+            pct={pct(form.materialCost)}
+          />
+
+          {/* 인건비 */}
+          <div>
+            <ExpenseRow
+              label="인건비"
+              value={form.laborCost}
+              onChange={(v) => update("laborCost", v)}
+              pct={pct(form.laborCost)}
+            />
+            <div className="ml-2 mt-2 space-y-2 rounded-lg border border-gray-200 bg-white p-3">
+              <label className="flex items-center gap-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={form.soloOperation}
+                  onChange={(e) => update("soloOperation", e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 accent-purple"
+                />
+                혼자 운영 중
+              </label>
+              {!form.soloOperation && (
+                <div className="grid grid-cols-3 gap-2">
+                  <StaffInput label="가족/동업자" value={form.familyStaff} onChange={(v) => update("familyStaff", v)} />
+                  <StaffInput label="정직원" value={form.fullTimeStaff} onChange={(v) => update("fullTimeStaff", v)} />
+                  <StaffInput label="파트타임" value={form.partTimeStaff} onChange={(v) => update("partTimeStaff", v)} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 월세 */}
+          <ExpenseRow
+            label="월세"
+            value={form.expenseRent}
+            onChange={(v) => update("expenseRent", v)}
+            pct={pct(form.expenseRent)}
+          />
+
+          {/* 관리비 */}
+          <ExpenseRow
+            label="관리비"
+            value={form.expenseMaintenance}
+            onChange={(v) => update("expenseMaintenance", v)}
+            pct={pct(form.expenseMaintenance)}
+          />
+
+          {/* 공과금 */}
+          <div>
+            <ExpenseRow
+              label="공과금"
+              value={form.utilities}
+              onChange={(v) => update("utilities", v)}
+              pct={pct(form.utilities)}
+            />
+            <p className="ml-[4.5rem] mt-1 text-xs text-red-400">* 전기, 수도, 가스요금 등을 합산</p>
+          </div>
+
+          {/* 기타경비 */}
+          <div>
+            <ExpenseRow
+              label="기타경비"
+              value={form.otherExpense}
+              onChange={(v) => update("otherExpense", v)}
+              pct={pct(form.otherExpense)}
+            />
+            <p className="ml-[4.5rem] mt-1 text-xs text-red-400">* 배달대행비, 광고비, 수수료, 회계기장료, 보안/인터넷, 화재보험, 정수기 등 합산</p>
+          </div>
+
+          {/* Total */}
+          <div className="border-t border-gray-300 pt-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-purple">월 지출 합계</span>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-purple">
+                  {totalExpenses > 0 ? formatManwon(String(totalExpenses)) : "—"}
+                </span>
+                {expensePercent > 0 && (
+                  <span className="text-xs text-gray-400">매출 대비 {expensePercent}%</span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        <ManwonInput
-          value={form.monthlyExpenses}
-          onChange={(v) => update("monthlyExpenses", v)}
-          placeholder="1700"
-        />
       </div>
 
       {/* Net Profit (auto) */}
@@ -957,20 +1090,25 @@ function Step4Additional({
             {netProfit !== 0 ? formatManwon(String(Math.abs(netProfit))) : "—"}
             {netProfit < 0 && netProfit !== 0 && " (적자)"}
           </span>
-          <p className="mt-0.5 text-xs text-gray-500">월 매출 - 월 지출</p>
+          <p className="mt-0.5 text-xs text-gray-500">월 매출 - 월 지출 합계</p>
         </div>
       </div>
 
-      {/* Staff Count */}
-      <div>
-        <SectionLabel>직원 수 (본인 포함)</SectionLabel>
-        <input
-          type="number"
-          value={form.staffCount}
-          onChange={(e) => update("staffCount", e.target.value)}
-          placeholder="2"
-          className="step-input"
+      {/* Profit Description */}
+      <div className="rounded-xl border border-gray-200 bg-white p-4">
+        <p className="text-sm font-medium text-gray-700">순이익에 대한 추가정보를 입력해주세요</p>
+        <p className="mt-1 text-xs text-gray-500">
+          평균 순이익이 정말 맞으신가요? 매수자들께서 잘 이해할 수 있도록 부연설명을 해주세요.
+        </p>
+        <textarea
+          value={form.profitDescription}
+          onChange={(e) => update("profitDescription", e.target.value)}
+          placeholder="예: 여름 성수기 매출이 높고, 겨울에는 다소 낮습니다. 평균적으로..."
+          rows={4}
+          maxLength={500}
+          className="mt-3 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 placeholder:text-gray-400 resize-y"
         />
+        <p className="mt-1 text-right text-xs text-gray-400">{form.profitDescription.length}/500</p>
       </div>
 
       {/* Operating Years */}
@@ -1318,6 +1456,58 @@ function RadioCard({
       </div>
       {desc && <p className="mt-1 pl-7 text-xs text-gray-500">{desc}</p>}
     </button>
+  );
+}
+
+function ExpenseRow({
+  label, value, onChange, pct,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  pct: number | null;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-16 shrink-0 text-sm font-bold text-purple">{label}</span>
+      <input
+        type="text"
+        inputMode="numeric"
+        value={addCommas(value)}
+        onChange={(e) => onChange(stripCommas(e.target.value))}
+        placeholder="0"
+        className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-right text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20"
+      />
+      <span className="shrink-0 text-sm text-gray-500">만원</span>
+      <span className="w-10 shrink-0 text-right text-xs text-gray-400">
+        {pct !== null ? `${pct}%` : ""}
+      </span>
+    </div>
+  );
+}
+
+function StaffInput({
+  label, value, onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-1 text-xs text-gray-500">{label}</p>
+      <div className="relative">
+        <input
+          type="number"
+          min="0"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="0"
+          className="w-full rounded-lg border border-gray-200 px-3 py-1.5 pr-8 text-right text-sm outline-none focus:border-purple focus:ring-1 focus:ring-purple/20"
+        />
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">명</span>
+      </div>
+    </div>
   );
 }
 
