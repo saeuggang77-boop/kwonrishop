@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { CompareButton } from "@/components/listings/compare-button";
+import { KakaoMap } from "@/components/kakao-map";
 import {
   BUSINESS_CATEGORY_LABELS,
   BUSINESS_CATEGORY_GROUPS,
@@ -571,13 +572,9 @@ export default function ListingsPage() {
           </div>
         </div>
 
-        {/* Right: Map placeholder (desktop only) */}
+        {/* Right: Kakao Map (desktop only) */}
         <div className="hidden border-l border-gray-200 bg-gray-50 md:block md:w-[40%]">
-          <div id="map" className="flex h-full flex-col items-center justify-center text-gray-400">
-            <Map className="h-16 w-16 text-gray-300" />
-            <p className="mt-3 text-sm font-medium text-gray-400">지도 준비중</p>
-            <p className="mt-1 text-xs text-gray-300">카카오맵 연동 예정</p>
-          </div>
+          <KakaoMap listings={listings} />
         </div>
       </div>
     </div>
