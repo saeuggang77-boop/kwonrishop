@@ -26,12 +26,8 @@ import { DetailTabs } from "./detail-tabs";
 import { RevenueBarChart, CostPieChart } from "./revenue-charts";
 import { MarketBarChart } from "./market-charts";
 import { LikeButton } from "@/components/listings/like-button";
+import { CommentSectionWrapper } from "@/components/listings/comment-section-wrapper";
 import { auth } from "@/lib/auth";
-import nextDynamic from "next/dynamic";
-const CommentSection = nextDynamic(
-  () => import("@/components/listings/comment-section").then(m => m.CommentSection),
-  { ssr: false, loading: () => <div className="mt-8 flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" /></div> }
-);
 
 export const dynamic = "force-dynamic";
 
@@ -1051,7 +1047,7 @@ export default async function ListingDetailPage({
 
             {/* ===== Comment Section ===== */}
             <div className="mt-8">
-              <CommentSection listingId={listing.id} sellerId={listing.sellerId} />
+              <CommentSectionWrapper listingId={listing.id} sellerId={listing.sellerId} />
             </div>
         </div>
 
