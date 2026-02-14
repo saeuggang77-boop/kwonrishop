@@ -74,8 +74,8 @@ export function CommentSection({ listingId }: CommentSectionProps) {
     try {
       const res = await fetch(`/api/listings/${listingId}/comments`);
       if (res.ok) {
-        const data = await res.json();
-        setComments(data);
+        const json = await res.json();
+        setComments(json.data ?? []);
       }
     } catch {
       // silently fail
@@ -295,7 +295,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
         {!currentUser ? (
           <div className="rounded-lg bg-gray-50 px-4 py-3 text-center text-sm text-gray-500">
             <Link
-              href="/auth/login"
+              href="/login"
               className="font-medium text-navy hover:underline"
             >
               로그인
