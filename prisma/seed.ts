@@ -638,10 +638,18 @@ async function main() {
   }
   console.log("  Premium plans: 2");
 
-  // Set premium status on sample listings: 강남역 카페 → VIP, 홍대 치킨호프 → PREMIUM
+  // Set premium status on sample listings
+  // VIP(rank=3) 프리미엄 매물: 강남역 카페(0), 홍대 치킨(1)
+  // PREMIUM(rank=2) 오늘의 추천: 건대 빽다방(11), 목동 크린토피아(10), 역삼 이디야(9), 신촌 맘스터치(8), 왕십리 편의점(5), 마곡 피자(6)
   const premiumMappings = [
     { listingIdx: 0, planId: "plan-vip", rank: 3 },
-    { listingIdx: 1, planId: "plan-premium", rank: 2 },
+    { listingIdx: 1, planId: "plan-vip", rank: 3 },
+    { listingIdx: 11, planId: "plan-premium", rank: 2 },
+    { listingIdx: 10, planId: "plan-premium", rank: 2 },
+    { listingIdx: 9, planId: "plan-premium", rank: 2 },
+    { listingIdx: 8, planId: "plan-premium", rank: 2 },
+    { listingIdx: 5, planId: "plan-premium", rank: 2 },
+    { listingIdx: 6, planId: "plan-premium", rank: 2 },
   ];
 
   for (const mapping of premiumMappings) {
@@ -667,7 +675,7 @@ async function main() {
       },
     });
   }
-  console.log("  Premium listings: 2");
+  console.log(`  Premium listings: ${premiumMappings.length} (VIP×2, 추천×6)`);
 
   // ──────────────────────────────────────────────
   // 5. Sample Inquiries (with status)

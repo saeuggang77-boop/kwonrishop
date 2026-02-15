@@ -116,6 +116,24 @@ const CATEGORY_EMOJI: Record<string, string> = {
   ENTERTAINMENT: "🎮", EDUCATION: "📚", DELIVERY: "🛵", ACCOMMODATION: "🏨",
 };
 
+const CATEGORY_GRADIENT: Record<string, string> = {
+  CAFE_BAKERY: "from-[#FEF3C7] to-[#FDE68A]",
+  CHICKEN: "from-[#FFEDD5] to-[#FDBA74]",
+  KOREAN_FOOD: "from-[#FEF9C3] to-[#FDE047]",
+  PIZZA: "from-[#FFE4E6] to-[#FDA4AF]",
+  BUNSIK: "from-[#FEF3C7] to-[#FCD34D]",
+  RETAIL: "from-[#E0F2FE] to-[#7DD3FC]",
+  BAR_PUB: "from-[#EDE9FE] to-[#C4B5FD]",
+  WESTERN_FOOD: "from-[#FCE7F3] to-[#F9A8D4]",
+  JAPANESE_FOOD: "from-[#FFEDD5] to-[#FB923C]",
+  CHINESE_FOOD: "from-[#FEE2E2] to-[#FCA5A5]",
+  SERVICE: "from-[#DBEAFE] to-[#93C5FD]",
+  ENTERTAINMENT: "from-[#E0E7FF] to-[#A5B4FC]",
+  EDUCATION: "from-[#D1FAE5] to-[#6EE7B7]",
+  DELIVERY: "from-[#E0F2FE] to-[#7DD3FC]",
+  ACCOMMODATION: "from-[#F3E8FF] to-[#C084FC]",
+};
+
 function toCard(l: RawListingResponse): ListingCard {
   return {
     ...l,
@@ -157,42 +175,37 @@ export default function HomePage() {
 
   useEffect(() => {
     setLoadingPremium(true);
-    fetch("/api/listings?premiumOnly=true&limit=8").then(r => r.json())
-      .then(j => {
-        const all = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
-        const premium = all.filter((l: ListingCard) => l.premiumRank === 3);
-        if (premium.length < 4) {
-          fetch("/api/listings?limit=10&sort=latest").then(r2 => r2.json())
-            .then(j2 => {
-              const extra = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
-                .filter((e: ListingCard) => !premium.find((p: ListingCard) => p.id === e.id));
-              setPremiumListings([...premium, ...extra].slice(0, 4));
-            }).catch(() => setPremiumListings(premium));
-        } else {
-          setPremiumListings(premium);
-        }
-      })
-      .catch(() => {}).finally(() => setLoadingPremium(false));
-  }, []);
-
-  useEffect(() => {
     setLoadingRecommended(true);
-    fetch("/api/listings?premiumOnly=true&limit=8").then(r => r.json())
+    fetch("/api/listings?premiumOnly=true&limit=20").then(r => r.json())
       .then(j => {
         const all = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
-        const recommended = all.filter((l: ListingCard) => l.premiumRank === 2);
-        if (recommended.length < 4) {
-          fetch("/api/listings?limit=10&sort=latest").then(r2 => r2.json())
+        const vip = all.filter((l: ListingCard) => l.premiumRank === 3);
+        const rec = all.filter((l: ListingCard) => l.premiumRank === 2);
+        setPremiumListings(vip.slice(0, 4));
+        setRecommendedListings(rec.slice(0, 6));
+
+        // Fallback: 부족하면 일반 매물로 채우되 서로 겹치지 않게
+        const usedIds = new Set([...vip, ...rec].map(l => l.id));
+        const needExtraVip = vip.length < 4;
+        const needExtraRec = rec.length < 6;
+        if (needExtraVip || needExtraRec) {
+          fetch("/api/listings?limit=16&sort=latest").then(r2 => r2.json())
             .then(j2 => {
-              const extra = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
-                .filter((e: ListingCard) => !recommended.find((r: ListingCard) => r.id === e.id));
-              setRecommendedListings([...recommended, ...extra].slice(0, 4));
-            }).catch(() => setRecommendedListings(recommended));
-        } else {
-          setRecommendedListings(recommended);
+              const extras = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
+                .filter((e: ListingCard) => !usedIds.has(e.id));
+              if (needExtraVip) {
+                const fill = extras.splice(0, 4 - vip.length);
+                setPremiumListings([...vip, ...fill].slice(0, 4));
+              }
+              if (needExtraRec) {
+                const fill = extras.splice(0, 6 - rec.length);
+                setRecommendedListings([...rec, ...fill].slice(0, 6));
+              }
+            }).catch(() => {});
         }
       })
-      .catch(() => {}).finally(() => setLoadingRecommended(false));
+      .catch(() => {})
+      .finally(() => { setLoadingPremium(false); setLoadingRecommended(false); });
   }, []);
 
   /* floating bar scroll listener */
@@ -390,7 +403,7 @@ export default function HomePage() {
               premiumListings.length > 0 ? premiumListings.map(item => {
                 const tk = item.premiumRank === 3 ? "VIP" : item.premiumRank === 2 ? "PREMIUM" : "BASIC";
                 const tc = PREMIUM_AD_CONFIG[tk];
-                const tierBg = tk === "VIP" ? "from-[#FEF3C7] to-[#FDE68A]" : tk === "PREMIUM" ? "from-[#DBEAFE] to-[#BFDBFE]" : "from-[#F3F4F6] to-[#E5E7EB]";
+                const catGrad = CATEGORY_GRADIENT[item.businessCategory] ?? "from-[#F3F4F6] to-[#E5E7EB]";
                 const isTrusted = item.seller?.isTrustedSeller;
                 const pBadges: { label: string; cls: string; icon: React.ReactNode }[] = [];
                 if (item.safetyGrade === "A") pBadges.push({ label: "매출 인증", cls: "bg-green-100 text-green-700", icon: <Check className="h-2.5 w-2.5" /> });
@@ -403,9 +416,9 @@ export default function HomePage() {
                     <div className="relative aspect-[4/3] bg-gray-100">
                       {item.images?.[0] ? <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 256px, 25vw" loading="lazy" />
                         : (
-                          <div className={`flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${tierBg}`}>
+                          <div className={`flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${catGrad}`}>
                             <span className="text-5xl drop-shadow-sm">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
-                            <span className={`text-xs font-medium ${tk === "VIP" ? "text-amber-600" : tk === "PREMIUM" ? "text-blue-500" : "text-gray-500"}`}>{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
+                            <span className="text-xs font-medium text-gray-600">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
                           </div>
                         )}
                       <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
@@ -442,20 +455,63 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══ 5. Today's Recommended ═══ */}
+      {/* ═══ 5. Today's Recommended (compact 6-card grid) ═══ */}
       <RevealOnScroll>
-        <section className="py-6 md:py-12">
+        <section className="py-6 md:py-10">
           <div className="mx-auto max-w-7xl px-4">
             <div className="flex items-center justify-between">
               <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
               <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
             </div>
-            {/* Mobile: horizontal scroll / Desktop: 4-col grid */}
-            <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
-              {loadingRecommended ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />) :
+            {/* Mobile: horizontal scroll / Desktop: 6-col grid */}
+            <div className="mt-3 flex gap-2.5 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-6 md:gap-3 md:overflow-visible">
+              {loadingRecommended ? Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="w-36 flex-none snap-start overflow-hidden rounded-lg border border-gray-200 bg-white md:w-auto">
+                  <div className="h-[90px] animate-pulse bg-gray-200" />
+                  <div className="space-y-1.5 p-2"><div className="h-3 w-3/4 animate-pulse rounded bg-gray-200" /><div className="h-2.5 w-1/2 animate-pulse rounded bg-gray-200" /></div>
+                </div>
+              )) :
                 recommendedListings.length === 0 ? (
-                  <p className="col-span-4 py-8 text-center text-sm text-gray-400">추천 매물이 없습니다</p>
-                ) : recommendedListings.map(item => renderListingCard(item, true))
+                  <p className="col-span-6 py-6 text-center text-sm text-gray-400">추천 매물이 없습니다</p>
+                ) : recommendedListings.map(item => {
+                  const catGrad = CATEGORY_GRADIENT[item.businessCategory] ?? "from-[#F3F4F6] to-[#E5E7EB]";
+                  const tc = item.premiumRank === 2 ? PREMIUM_AD_CONFIG["PREMIUM"] : null;
+                  const badges: { label: string; cls: string }[] = [];
+                  if (item.safetyGrade === "A") badges.push({ label: "매출인증", cls: "bg-green-100 text-green-700" });
+                  if (item.hasDiagnosisBadge) badges.push({ label: "진단", cls: "bg-purple-100 text-purple-700" });
+                  return (
+                    <Link key={item.id} href={`/listings/${item.id}`}
+                      className={`group w-36 flex-none snap-start overflow-hidden rounded-lg border bg-white transition-all active:scale-[0.98] md:w-auto md:hover:-translate-y-0.5 md:hover:shadow-md ${tc ? `border-blue-200` : "border-gray-200"}`}>
+                      <div className="relative h-[90px] bg-gray-100">
+                        {item.images?.[0] ? (
+                          <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 144px, 16vw" loading="lazy" />
+                        ) : (
+                          <div className={`flex h-full flex-col items-center justify-center gap-1 bg-gradient-to-br ${catGrad}`}>
+                            <span className="text-3xl">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
+                            <span className="text-[9px] font-medium text-gray-500">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
+                          </div>
+                        )}
+                        <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1 py-0.5 text-[8px] font-medium text-white backdrop-blur-sm">
+                          {BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}
+                        </span>
+                        {tc && <span className="absolute right-1.5 bottom-1.5 rounded bg-blue-50 border border-blue-200 px-1 py-0.5 text-[8px] font-bold text-blue-700">추천</span>}
+                      </div>
+                      <div className="p-2">
+                        <h3 className="truncate text-[11px] font-bold text-navy">{item.title}</h3>
+                        <div className="mt-1 space-y-0.5 text-[10px]">
+                          <div className="flex gap-1.5"><span className="w-10 text-gray-400">보증금</span><span className="font-bold text-navy">{formatKRW(Number(item.price))}</span></div>
+                          <div className="flex gap-1.5"><span className="w-10 text-gray-400">권리금</span><span className={`font-bold ${Number(item.premiumFee) > 0 ? "text-orange-600" : "text-navy"}`}>{item.premiumFee && Number(item.premiumFee) > 0 ? formatKRW(Number(item.premiumFee)) : "무권리"}</span></div>
+                        </div>
+                        {badges.length > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {badges.map(b => <span key={b.label} className={`rounded-full px-1.5 py-0.5 text-[8px] font-medium ${b.cls}`}>{b.label}</span>)}
+                          </div>
+                        )}
+                        <p className="mt-1 flex items-center gap-0.5 text-[9px] text-gray-400 truncate"><MapPin className="h-2.5 w-2.5 shrink-0" />{item.city} {item.district}</p>
+                      </div>
+                    </Link>
+                  );
+                })
               }
             </div>
           </div>
@@ -587,44 +643,44 @@ export default function HomePage() {
 
             <div className="mx-auto mt-6 grid gap-4 md:mt-10 md:grid-cols-3">
               {/* 프리미엄 매물 광고 */}
-              <div className="relative rounded-xl border border-amber-200 bg-white p-4 md:p-5">
-                <span className="absolute -top-2.5 right-3 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
+              <div className="relative rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+                <span className="absolute -top-2.5 right-3 rounded-full bg-navy px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
                 <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">프리미엄 매물</span>
+                  <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-bold text-navy">프리미엄 매물</span>
                   <span className="text-base font-bold text-navy md:text-lg">&#8361;300,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
                 </div>
                 <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 캐러셀 + 최상단 고정</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />프리미엄 배지 + 골드 테두리</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 1회 무료 포함</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />홈페이지 캐러셀 + 최상단 고정</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />프리미엄 배지 + 골드 테두리</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />권리진단서 1회 무료 포함</li>
                 </ul>
                 <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
               </div>
 
               {/* 오늘의 추천 매물 광고 */}
-              <div className="rounded-xl border border-blue-200 bg-white p-4 md:p-5">
+              <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
                 <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">오늘의 추천</span>
+                  <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-bold text-navy">오늘의 추천</span>
                   <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
                 </div>
                 <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />매물 목록 상위 노출</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />오늘의 추천 배지 표시</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />기본 조회수 통계</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />매물 목록 상위 노출</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />오늘의 추천 배지 표시</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />기본 조회수 통계</li>
                 </ul>
                 <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
               </div>
 
               {/* 권리진단서 */}
-              <div className="rounded-xl border border-purple-200 bg-white p-4 md:p-5">
+              <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
                 <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-purple-50 px-2 py-0.5 text-xs font-bold text-purple-700 border border-purple-200">권리진단서</span>
+                  <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-bold text-navy">권리진단서</span>
                   <span className="text-base font-bold text-navy md:text-lg">&#8361;30,000<span className="text-xs font-normal text-gray-400">/건</span></span>
                 </div>
                 <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />적정 권리금 산정 + AI 진단</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />임대차 체크리스트 20항목</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />PDF 리포트 + 진단 배지 부여</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />적정 권리금 산정 + AI 진단</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />임대차 체크리스트 20항목</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />PDF 리포트 + 진단 배지 부여</li>
                 </ul>
                 <p className="mt-2 text-[10px] text-gray-400">(부가세 별도 · VAT 포함 ₩33,000)</p>
               </div>
