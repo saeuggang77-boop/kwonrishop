@@ -545,8 +545,8 @@ async function main() {
 
   // Set premium status on sample listings: 강남역 카페 → VIP, 홍대 치킨호프 → PREMIUM
   const premiumMappings = [
-    { listingIdx: 0, planId: "plan-vip", rank: 2 },
-    { listingIdx: 1, planId: "plan-premium", rank: 1 },
+    { listingIdx: 0, planId: "plan-vip", rank: 3 },
+    { listingIdx: 1, planId: "plan-premium", rank: 2 },
   ];
 
   for (const mapping of premiumMappings) {
