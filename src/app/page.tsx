@@ -772,63 +772,57 @@ export default function HomePage() {
       {/* ═══ 13. 서비스 요금 안내 ═══ */}
       <RevealOnScroll>
         <section className="border-t border-gray-200 bg-gray-50 py-6 md:py-12">
-          <div className="mx-auto max-w-7xl px-4">
+          <div className="mx-auto max-w-5xl px-4">
             <h2 className="text-center font-heading text-lg font-bold text-navy md:text-2xl">서비스 요금 안내</h2>
             <p className="mt-2 text-center text-xs text-gray-500 md:text-sm">매수자는 모든 매물 정보를 무료로 열람할 수 있습니다</p>
 
-            {/* 매도자 광고 */}
-            <div className="mx-auto mt-6 max-w-4xl md:mt-10">
-              <h3 className="text-sm font-bold text-navy md:text-base">매도자 광고</h3>
-              <div className="mt-3 grid gap-3 md:grid-cols-2">
-                <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">오늘의 추천 매물</span>
-                    <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
-                  </div>
-                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />매물 목록 상위 노출</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />오늘의 추천 배지 표시</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />기본 조회수 통계</li>
-                  </ul>
-                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+            <div className="mx-auto mt-6 grid gap-4 md:mt-10 md:grid-cols-3">
+              {/* 프리미엄 매물 광고 */}
+              <div className="relative rounded-xl border-2 border-amber-300 bg-white p-4 md:p-5">
+                <span className="absolute -top-2.5 right-3 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
+                <div className="flex items-center justify-between">
+                  <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">프리미엄 매물</span>
+                  <span className="text-base font-bold text-navy md:text-lg">&#8361;300,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
                 </div>
-                <div className="relative rounded-xl border-2 border-amber-300 bg-white p-4 md:p-5">
-                  <span className="absolute -top-2.5 right-3 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">프리미엄 매물</span>
-                    <span className="text-base font-bold text-navy md:text-lg">&#8361;300,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
-                  </div>
-                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 프리미엄 매물 캐러셀 노출</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />프리미엄 매물 배지 + 골드 테두리</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 1회 무료 포함</li>
-                  </ul>
-                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
-                </div>
+                <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 캐러셀 + 최상단 고정</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />프리미엄 배지 + 골드 테두리</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 1회 무료 포함</li>
+                </ul>
+                <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
               </div>
-            </div>
 
-            {/* 권리진단서 */}
-            <div className="mx-auto mt-6 max-w-4xl md:mt-8">
-              <h3 className="text-sm font-bold text-navy md:text-base">권리진단서</h3>
-              <div className="mt-3 mx-auto max-w-md">
-                <div className="rounded-xl border-2 border-purple-200 bg-white p-4 md:p-5">
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-purple-50 px-2 py-0.5 text-xs font-bold text-purple-700 border border-purple-200">권리진단서</span>
-                    <span className="text-base font-bold text-navy md:text-lg">&#8361;30,000<span className="text-xs font-normal text-gray-400">/건</span></span>
-                  </div>
-                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />적정 권리금 산정 + AI 종합 진단</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />임대차 체크리스트 20항목</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />PDF 리포트 + 권리진단 배지 부여</li>
-                  </ul>
-                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도 · VAT 포함 ₩33,000)</p>
+              {/* 오늘의 추천 매물 광고 */}
+              <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+                <div className="flex items-center justify-between">
+                  <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">오늘의 추천</span>
+                  <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
                 </div>
+                <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />매물 목록 상위 노출</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />오늘의 추천 배지 표시</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />기본 조회수 통계</li>
+                </ul>
+                <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+              </div>
+
+              {/* 권리진단서 */}
+              <div className="rounded-xl border-2 border-purple-200 bg-white p-4 md:p-5">
+                <div className="flex items-center justify-between">
+                  <span className="rounded-md bg-purple-50 px-2 py-0.5 text-xs font-bold text-purple-700 border border-purple-200">권리진단서</span>
+                  <span className="text-base font-bold text-navy md:text-lg">&#8361;30,000<span className="text-xs font-normal text-gray-400">/건</span></span>
+                </div>
+                <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />적정 권리금 산정 + AI 진단</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />임대차 체크리스트 20항목</li>
+                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />PDF 리포트 + 진단 배지 부여</li>
+                </ul>
+                <p className="mt-2 text-[10px] text-gray-400">(부가세 별도 · VAT 포함 ₩33,000)</p>
               </div>
             </div>
 
             <div className="mt-5 text-center md:mt-8">
-              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-navy hover:underline md:text-sm">자세히 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
+              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-navy hover:underline md:text-sm">전체 요금표 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
             </div>
           </div>
         </section>
