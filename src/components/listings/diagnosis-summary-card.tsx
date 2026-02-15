@@ -271,15 +271,15 @@ export function DiagnosisSummaryCard({
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Composition Pie */}
           <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
-            <p className="mb-2 text-[11px] font-medium text-gray-500">권리금 구성</p>
-            <div className="flex items-center gap-3">
-              <ResponsiveContainer width={100} height={100}>
+            <p className="mb-3 text-xs font-medium text-gray-500">권리금 구성</p>
+            <div className="flex items-center gap-4">
+              <ResponsiveContainer width={150} height={150}>
                 <PieChart>
                   <Pie
                     data={d.composition}
                     dataKey="value"
                     cx="50%" cy="50%"
-                    innerRadius={28} outerRadius={45}
+                    innerRadius={40} outerRadius={65}
                     paddingAngle={3}
                   >
                     {d.composition.map((_, i) => (
@@ -288,10 +288,10 @@ export function DiagnosisSummaryCard({
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
-              <div className="space-y-1.5">
+              <div className="space-y-2.5">
                 {d.composition.map((c, i) => (
-                  <div key={c.name} className="flex items-center gap-1.5 text-[11px]">
-                    <div className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: PIE_COLORS[i] }} />
+                  <div key={c.name} className="flex items-center gap-2 text-xs">
+                    <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: PIE_COLORS[i] }} />
                     <span className="text-gray-600">{c.name}</span>
                     <span className="ml-auto font-bold text-[#1B3A5C]">{c.pct}%</span>
                   </div>
@@ -302,8 +302,8 @@ export function DiagnosisSummaryCard({
 
           {/* 6-Month Trend */}
           <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
-            <p className="mb-2 text-[11px] font-medium text-gray-500">인근 권리금 추이</p>
-            <ResponsiveContainer width="100%" height={100}>
+            <p className="mb-3 text-xs font-medium text-gray-500">인근 권리금 추이</p>
+            <ResponsiveContainer width="100%" height={150}>
               <AreaChart data={d.trend}>
                 <defs>
                   <linearGradient id="summaryTrendGrad" x1="0" y1="0" x2="0" y2="1">
