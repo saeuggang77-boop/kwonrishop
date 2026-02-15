@@ -106,15 +106,15 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className={`group overflow-hidden rounded-xl border-2 bg-white transition-all active:scale-[0.98] md:hover:-translate-y-1 md:hover:shadow-lg ${isCarouselItem ? "w-56 flex-none snap-start md:w-full md:min-w-0" : "w-full"} ${tc?.border ?? "border-gray-200"}`}
+      className={`group overflow-hidden rounded-xl border-2 bg-white transition-all active:scale-[0.98] md:hover:-translate-y-1 md:hover:shadow-lg ${isCarouselItem ? "w-48 flex-none snap-start md:w-full md:min-w-0" : "w-full"} ${tc?.border ?? "border-gray-200"}`}
     >
       {tc && <div className={`h-1 bg-gradient-to-r ${tc.gradient}`} />}
-      <div className="relative aspect-[3/2] bg-gray-100">
+      <div className="relative aspect-[16/9] bg-gray-100">
         {listing.images?.[0] ? (
-          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 224px, 25vw" loading="lazy" />
+          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 200px, 20vw" loading="lazy" />
         ) : (
           <div className={`flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${catGrad}`}>
-            <span className="text-4xl drop-shadow-sm">{CATEGORY_EMOJI[listing.businessCategory] ?? "🏠"}</span>
+            <span className="text-3xl drop-shadow-sm">{CATEGORY_EMOJI[listing.businessCategory] ?? "🏠"}</span>
           </div>
         )}
         {/* 카테고리 뱃지 */}

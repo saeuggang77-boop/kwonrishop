@@ -51,8 +51,8 @@ function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
 /* ─── Skeleton Card ─── */
 function SkeletonCard() {
   return (
-    <div className="w-56 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white md:w-auto md:flex-1">
-      <div className="aspect-[3/2] animate-pulse bg-gray-200" />
+    <div className="w-48 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white md:w-auto md:flex-1">
+      <div className="aspect-[16/9] animate-pulse bg-gray-200" />
       <div className="space-y-1.5 p-3">
         <div className="h-3 w-3/4 animate-pulse rounded bg-gray-200" />
         <div className="h-3.5 w-1/2 animate-pulse rounded bg-gray-200" />
@@ -281,7 +281,7 @@ export default function HomePage() {
 
       {/* ═══ 4. Premium Listings ═══ */}
       <section className="border-t border-gray-200 bg-gradient-to-b from-amber-50/50 to-gray-50 py-6 md:py-10">
-        <div className="mx-auto max-w-[1400px] px-4">
+        <div className="mx-auto max-w-[1200px] px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-4 w-4 text-yellow-500 md:h-5 md:w-5" />
@@ -302,7 +302,7 @@ export default function HomePage() {
       {/* ═══ 5. Today's Recommended (compact 6-card grid) ═══ */}
       <RevealOnScroll>
         <section className="py-6 md:py-10">
-          <div className="mx-auto max-w-[1400px] px-4">
+          <div className="mx-auto max-w-[1200px] px-4">
             <div className="flex items-center justify-between">
               <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
               <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
