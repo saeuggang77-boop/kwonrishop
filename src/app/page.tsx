@@ -7,7 +7,7 @@ import {
   Store, TrendingUp, DollarSign, Search, FileEdit, Building,
   Paintbrush, Trash2, Sparkles, Signpost, MapPin, ChevronRight,
   ChevronLeft, Home, User, Users, Calculator, Check, Scale, Hammer,
-  ArrowRight, ShieldCheck, FileText, ClipboardList, BarChart3,
+  ArrowRight, ShieldCheck, Shield, Flame, FileText, ClipboardList, BarChart3,
   Receipt, Target, Calendar, ChevronDown, MessageCircle, Eye,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
@@ -16,7 +16,6 @@ import {
   BUSINESS_CATEGORY_LABELS,
   SAFETY_GRADE_CONFIG, PREMIUM_AD_CONFIG,
 } from "@/lib/utils/constants";
-import { SafetyBadge } from "@/components/listings/safety-badge";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 
 /* ─── CountUp ─── */
@@ -236,6 +235,11 @@ export default function HomePage() {
   const renderListingCard = (item: ListingCard, isMobileCarousel = false) => {
     const tierKey = item.premiumRank === 3 ? "VIP" : item.premiumRank === 2 ? "PREMIUM" : item.premiumRank === 1 ? "BASIC" : null;
     const tc = tierKey ? PREMIUM_AD_CONFIG[tierKey] : null;
+    const isTrusted = item.seller?.isTrustedSeller;
+    const badges: { label: string; cls: string; icon: React.ReactNode }[] = [];
+    if (item.safetyGrade === "A") badges.push({ label: "매출 인증", cls: "bg-green-100 text-green-700", icon: <Check className="h-2.5 w-2.5" /> });
+    if (item.hasDiagnosisBadge) badges.push({ label: "권리진단", cls: "bg-purple-100 text-purple-700", icon: <Shield className="h-2.5 w-2.5" /> });
+    if (isTrusted) badges.push({ label: "안심거래", cls: "bg-blue-100 text-blue-700", icon: <ShieldCheck className="h-2.5 w-2.5" /> });
     return (
       <Link
         key={item.id}
@@ -252,13 +256,12 @@ export default function HomePage() {
               <span className="text-xs font-medium text-navy/40">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
             </div>
           )}
-          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/30 to-transparent" />
-          <span className="absolute left-2 top-2 rounded bg-navy/80 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+          <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
             {BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}
           </span>
-          {item.safetyGrade && item.safetyGrade !== "C" && (
-            <span className="absolute right-2 top-2">
-              <SafetyBadge grade={item.safetyGrade} />
+          {(item.floor || item.areaPyeong) && (
+            <span className="absolute right-2 top-2 rounded bg-black/50 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+              {[item.floor, item.areaPyeong ? `${item.areaPyeong}평` : null].filter(Boolean).join(" · ")}
             </span>
           )}
           {tc && (
@@ -266,15 +269,7 @@ export default function HomePage() {
           )}
         </div>
         <div className="p-3">
-          <div className="flex items-center gap-1">
-            <h3 className="truncate text-[13px] font-bold text-navy">{item.title}</h3>
-            {item.seller?.isTrustedSeller && (
-              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
-                <ShieldCheck className="h-2.5 w-2.5" />
-                안심
-              </span>
-            )}
-          </div>
+          <h3 className="truncate text-[13px] font-bold text-navy">{item.title}</h3>
           <div className="mt-1.5 space-y-0.5 text-xs">
             <div className="flex gap-2">
               <span className="w-14 shrink-0 text-gray-400">보증금</span>
@@ -287,8 +282,18 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-          <p className="mt-1.5 flex items-center gap-1 text-[11px] text-gray-400">
-            <MapPin className="h-3 w-3" /> {item.city} {item.district}
+          {badges.length > 0 && (
+            <div className="mt-1.5 flex flex-row flex-wrap items-center gap-2">
+              {badges.map(b => (
+                <span key={b.label} className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${b.cls}`}>
+                  {b.icon}{b.label}
+                </span>
+              ))}
+            </div>
+          )}
+          <p className="mt-1.5 flex items-start gap-1 text-[11px] text-gray-400">
+            <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+            <span className="line-clamp-2">{item.city} {item.district}</span>
           </p>
         </div>
       </Link>
@@ -411,6 +416,11 @@ export default function HomePage() {
                 const tk = item.premiumRank === 3 ? "VIP" : item.premiumRank === 2 ? "PREMIUM" : "BASIC";
                 const tc = PREMIUM_AD_CONFIG[tk];
                 const tierBg = tk === "VIP" ? "from-[#FEF3C7] to-[#FDE68A]" : tk === "PREMIUM" ? "from-[#DBEAFE] to-[#BFDBFE]" : "from-[#F3F4F6] to-[#E5E7EB]";
+                const isTrusted = item.seller?.isTrustedSeller;
+                const pBadges: { label: string; cls: string; icon: React.ReactNode }[] = [];
+                if (item.safetyGrade === "A") pBadges.push({ label: "매출 인증", cls: "bg-green-100 text-green-700", icon: <Check className="h-2.5 w-2.5" /> });
+                if (item.hasDiagnosisBadge) pBadges.push({ label: "권리진단", cls: "bg-purple-100 text-purple-700", icon: <Shield className="h-2.5 w-2.5" /> });
+                if (isTrusted) pBadges.push({ label: "안심거래", cls: "bg-blue-100 text-blue-700", icon: <ShieldCheck className="h-2.5 w-2.5" /> });
                 return (
                   <Link key={item.id} href={`/listings/${item.id}`}
                     className={`group w-64 flex-none snap-start overflow-hidden rounded-xl border-2 bg-white transition-all active:scale-[0.98] md:w-auto md:flex-1 md:hover:-translate-y-1 md:hover:shadow-lg ${tc?.border ?? "border-gray-200"}`}>
@@ -423,6 +433,14 @@ export default function HomePage() {
                             <span className={`text-xs font-medium ${tk === "VIP" ? "text-amber-600" : tk === "PREMIUM" ? "text-blue-500" : "text-gray-500"}`}>{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
                           </div>
                         )}
+                      <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                        {BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}
+                      </span>
+                      {(item.floor || item.areaPyeong) && (
+                        <span className="absolute right-2 top-2 rounded bg-black/50 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                          {[item.floor, item.areaPyeong ? `${item.areaPyeong}평` : null].filter(Boolean).join(" · ")}
+                        </span>
+                      )}
                       <span className={`absolute left-2 bottom-2 rounded px-1.5 py-0.5 text-[10px] font-bold border ${tc?.bg} ${tc?.color} ${tc?.border}`}>{tc?.badge}</span>
                     </div>
                     <div className="p-3">
@@ -431,14 +449,16 @@ export default function HomePage() {
                         <div className="flex gap-2"><span className="w-14 text-gray-400">보증금</span><span className="font-bold text-navy">{formatKRW(Number(item.price))}</span></div>
                         <div className="flex gap-2"><span className="w-14 text-gray-400">권리금</span><span className={`font-bold ${Number(item.premiumFee) > 0 ? "text-orange-600" : "text-navy"}`}>{item.premiumFee && Number(item.premiumFee) > 0 ? formatKRW(Number(item.premiumFee)) : "무권리"}</span></div>
                       </div>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                        {item.hasDiagnosisBadge && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-300">
-                            권리진단 완료
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1.5 flex items-center gap-1 text-[11px] text-gray-400"><MapPin className="h-3 w-3" />{item.city} {item.district}</p>
+                      {pBadges.length > 0 && (
+                        <div className="mt-1.5 flex flex-row flex-wrap items-center gap-2">
+                          {pBadges.map(b => (
+                            <span key={b.label} className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${b.cls}`}>
+                              {b.icon}{b.label}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <p className="mt-1.5 flex items-start gap-1 text-[11px] text-gray-400"><MapPin className="mt-0.5 h-3 w-3 shrink-0" /><span className="line-clamp-2">{item.city} {item.district}</span></p>
                     </div>
                   </Link>
                 );
@@ -480,7 +500,7 @@ export default function HomePage() {
               <Link href="/reports/request" className="flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-[#1e40af] shadow-lg transition-all active:scale-95 md:w-auto md:px-10 md:hover:scale-105">
                 권리진단서 발급받기 <ArrowRight className="h-4 w-4" />
               </Link>
-              <p className="text-xs text-white/50">권리진단서 BASIC 20,000원~ | PREMIUM 40,000원~</p>
+              <p className="text-xs text-white/50">권리진단서 30,000원/건 (부가세 별도)</p>
             </div>
             <div className="mt-3 flex justify-center md:justify-start">
               <Link href="/reports/sample" className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm transition-all hover:bg-white/20 hover:text-white active:scale-95">
@@ -766,7 +786,7 @@ export default function HomePage() {
                   <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 캐러셀 노출</li>
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />VIP 배지 + 골드 테두리</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 BASIC 1회 무료</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 1회 무료 포함</li>
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />안심거래 배지 부여</li>
                   </ul>
                   <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
@@ -777,30 +797,18 @@ export default function HomePage() {
             {/* 권리진단서 */}
             <div className="mx-auto mt-6 max-w-4xl md:mt-8">
               <h3 className="text-sm font-bold text-navy md:text-base">권리진단서</h3>
-              <div className="mt-3 grid gap-3 md:grid-cols-2">
-                <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+              <div className="mt-3 mx-auto max-w-md">
+                <div className="rounded-xl border-2 border-purple-200 bg-white p-4 md:p-5">
                   <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">BASIC</span>
-                    <span className="text-base font-bold text-navy md:text-lg">&#8361;20,000<span className="text-xs font-normal text-gray-400">/건</span></span>
+                    <span className="rounded-md bg-purple-50 px-2 py-0.5 text-xs font-bold text-purple-700 border border-purple-200">권리진단서</span>
+                    <span className="text-base font-bold text-navy md:text-lg">&#8361;30,000<span className="text-xs font-normal text-gray-400">/건</span></span>
                   </div>
                   <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />권리금 적정성 평가</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />지역/업종 평균 비교</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />종합 위험 등급 판정</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />적정 권리금 산정 + AI 종합 진단</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />임대차 체크리스트 20항목</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-purple-500" />PDF 리포트 + 권리진단 배지 부여</li>
                   </ul>
-                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
-                </div>
-                <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">PREMIUM</span>
-                    <span className="text-base font-bold text-navy md:text-lg">&#8361;40,000<span className="text-xs font-normal text-gray-400">/건</span></span>
-                  </div>
-                  <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />BASIC 전체 항목 포함</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />임대차 체크리스트 20항목</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />PDF 리포트 다운로드</li>
-                  </ul>
-                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+                  <p className="mt-2 text-[10px] text-gray-400">(부가세 별도 · VAT 포함 ₩33,000)</p>
                 </div>
               </div>
             </div>

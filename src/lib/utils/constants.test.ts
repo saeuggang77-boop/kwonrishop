@@ -30,12 +30,9 @@ describe("Constants", () => {
     expect(LISTING_STATUS_LABELS.PENDING_VERIFICATION).toBe("검증 대기");
   });
 
-  it("REPORT_PLANS has BASIC and PREMIUM tiers", () => {
-    expect(REPORT_PLANS).toHaveLength(2);
-    expect(REPORT_PLANS[0].tier).toBe("BASIC");
-    expect(REPORT_PLANS[0].price).toBe(20_000);
-    expect(REPORT_PLANS[1].tier).toBe("PREMIUM");
-    expect(REPORT_PLANS[1].price).toBe(40_000);
+  it("REPORT_PLANS has single plan at 30,000", () => {
+    expect(REPORT_PLANS).toHaveLength(1);
+    expect(REPORT_PLANS[0].price).toBe(30_000);
   });
 
   it("SELLER_AD_PLANS has PREMIUM and VIP tiers", () => {

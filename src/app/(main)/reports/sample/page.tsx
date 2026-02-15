@@ -674,13 +674,8 @@ export default function ReportSamplePage() {
 
           <div className="mt-6 flex flex-col items-center justify-center gap-3 md:flex-row">
             <Link href="/reports/request"
-              className="flex min-h-[48px] w-full max-w-xs items-center justify-center gap-2 rounded-xl border-2 border-navy bg-white px-8 text-sm font-bold text-navy transition-all hover:bg-navy hover:text-white active:scale-[0.97] md:w-auto">
-              <FileText className="h-4 w-4" /> BASIC <span className="text-gray-400 font-normal">20,000원</span>
-            </Link>
-            <Link href="/reports/request"
-              className="flex min-h-[48px] w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-navy px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-navy-dark active:scale-[0.97] md:w-auto">
-              <Star className="h-4 w-4 text-accent" /> PREMIUM <span className="text-white/70 font-normal">40,000원</span>
-              <span className="ml-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
+              className="flex min-h-[48px] w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-purple-600 px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-purple-700 active:scale-[0.97] md:w-auto">
+              <Shield className="h-4 w-4" /> 권리진단서 신청하기 <span className="text-white/70 font-normal">30,000원</span>
             </Link>
           </div>
 

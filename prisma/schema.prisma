@@ -110,6 +110,7 @@ enum SubscriptionStatus {
   PAUSED
   CANCELLED
   EXPIRED
+  TRIAL
 }
 
 enum SafetyGrade {
@@ -203,6 +204,12 @@ enum PremiumAdStatus {
   ACTIVE
   EXPIRED
   CANCELLED
+}
+
+enum PaidServiceType {
+  JUMP_UP
+  URGENT_TAG
+  AUTO_REFRESH
 }
 
 enum ReportPlanTier {
@@ -306,6 +313,8 @@ model User {
   listingLikes     ListingLike[]
   listingComments  ListingComment[]
   salesIntegrations SalesIntegration[]
+  paidServices     PaidService[]
+  singlePurchases  SinglePurchase[]
 
   @@index([role])
   @@index([accountStatus])
@@ -379,6 +388,9 @@ model Listing {
   likes            ListingLike[]
   comments         ListingComment[]
   salesIntegrations SalesIntegration[]
+  diagnosisReport  DiagnosisReport?
+  paidServices     PaidService[]
+  singlePurchases  SinglePurchase[]
 
   @@index([sellerId])
   @@index([status])
@@ -1152,6 +1164,68 @@ model ExpertReview {
 }
 
 // ============================================================
+// PAID SERVICE (소액 유료 서비스)
+// ============================================================
+
+model PaidService {
+  id        String          @id @default(cuid())
+  userId    String
+  listingId String
+  type      PaidServiceType
+  status    String          @default("ACTIVE") // ACTIVE, EXPIRED
+  reason    String?         // 급매 사유 (URGENT_TAG용)
+  price     Int
+  startDate DateTime        @default(now())
+  endDate   DateTime
+  createdAt DateTime        @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@index([listingId, type, status])
+  @@index([userId])
+  @@index([endDate])
+  @@map("paid_services")
+}
+
+// ============================================================
+// DIAGNOSIS REPORT (권리진단서)
+// ============================================================
+
+model DiagnosisReport {
+  id                  String   @id @default(cuid())
+  listingId           String   @unique
+  fairPremiumBusiness Int      // 영업권리금
+  fairPremiumFacility Int      // 시설권리금
+  fairPremiumFloor    Int      // 바닥권리금
+  fairPremiumTotal    Int      // 적정 권리금 합계
+  premiumGap          Float    // (실제-적정)/적정 × 100
+  premiumVerdict      String   // 적정, 다소 높음, 매우 높음, 저평가
+  profitMargin        Float    // 영업이익률
+  avgProfitMargin     Float    // 업종 평균 영업이익률
+  roiMonths           Int      // 투자회수 기간(개월)
+  avgRoiMonths        Int      // 업종 평균 투자회수 기간
+  profitRating        Int      // 수익성 등급 (1-5)
+  footTraffic         String   // 유동인구 수준
+  competitorDensity   String   // 경쟁 밀도
+  stationDistance     String   // 역세권 여부
+  locationRating      Int      // 입지 등급 (1-5)
+  leaseRemaining      String   // 임대차 잔여기간
+  buildingAge         String   // 건물 연식
+  premiumProtection   Boolean  // 권리금 보호 대상 여부
+  riskRating          Int      // 리스크 등급 (1-5)
+  overallGrade        String   // 종합 등급 (A+, A, A-, B+, B, B-, C)
+  overallComment      String   // 종합 코멘트
+  diagnosisNumber     String   @unique // KR-2026-0001
+  createdAt           DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@index([listingId])
+  @@map("diagnosis_reports")
+}
+
+// ============================================================
 // SALES INTEGRATION (매출 인증 연동)
 // ============================================================
 
@@ -1174,4 +1248,23 @@ model SalesIntegration {
   @@unique([userId, provider])
   @@index([listingId])
   @@map("sales_integrations")
+}
+
+// ============================================================
+// SINGLE PURCHASE (건별 수익분석 열람)
+// ============================================================
+
+model SinglePurchase {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  expiresAt DateTime // 구매 후 7일
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@index([userId, listingId])
+  @@index([expiresAt])
+  @@map("single_purchases")
 }

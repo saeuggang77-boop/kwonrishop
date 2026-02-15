@@ -26,13 +26,14 @@ const createClient = () => {
  * access, so the module can be imported at build time without a database.
  */
 export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
-  get(_target, prop, receiver) {
+  get(_target, prop) {
     if (!globalForPrisma.prisma) {
       globalForPrisma.prisma = createClient();
     }
-    const value = Reflect.get(globalForPrisma.prisma, prop, receiver);
+    const client = globalForPrisma.prisma;
+    const value = Reflect.get(client, prop, client);
     if (typeof value === "function") {
-      return value.bind(globalForPrisma.prisma);
+      return value.bind(client);
     }
     return value;
   },

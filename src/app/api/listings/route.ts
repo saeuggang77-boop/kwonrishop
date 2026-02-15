@@ -76,8 +76,11 @@ export async function GET(req: NextRequest) {
       where.hasDiagnosisBadge = true;
     }
 
+    const urgentOnly = req.nextUrl.searchParams.get("urgentOnly") === "true";
+
     const orderBy: Record<string, unknown>[] = [
       { premiumRank: "desc" as const },
+      { hasDiagnosisBadge: "desc" as const },
     ];
     if (parsed.sortBy === "safetyGrade") {
       orderBy.push({ safetyGrade: { sort: "asc", nulls: "last" } });
@@ -101,8 +104,51 @@ export async function GET(req: NextRequest) {
     const hasMore = listings.length > parsed.limit;
     const data = hasMore ? listings.slice(0, -1) : listings;
 
+    // Fetch active paid services for these listings (JUMP_UP + AUTO_REFRESH)
+    const now = new Date();
+    const listingIds = data.map((l) => l.id);
+    const activeBoosts = await prisma.paidService.findMany({
+      where: {
+        listingId: { in: listingIds },
+        type: { in: ["JUMP_UP", "AUTO_REFRESH"] },
+        status: "ACTIVE",
+        endDate: { gt: now },
+      },
+      select: { listingId: true, startDate: true },
+      orderBy: { startDate: "desc" },
+    });
+
+    // Also fetch active URGENT_TAG services
+    const activeUrgent = await prisma.paidService.findMany({
+      where: {
+        listingId: { in: listingIds },
+        type: "URGENT_TAG",
+        status: "ACTIVE",
+        endDate: { gt: now },
+      },
+      select: { listingId: true, reason: true },
+    });
+
+    const boostSet = new Set(activeBoosts.map((b) => b.listingId));
+    const urgentMap = new Map(activeUrgent.map((u) => [u.listingId, u.reason]));
+
+    // Sort: boosted listings first (keeping premiumRank priority)
+    let sortedData = [...data].sort((a, b) => {
+      // PremiumRank already handled by query, so only re-sort within same rank
+      if (a.premiumRank !== b.premiumRank) return 0;
+      const aBoost = boostSet.has(a.id) ? 1 : 0;
+      const bBoost = boostSet.has(b.id) ? 1 : 0;
+      return bBoost - aBoost;
+    });
+
+    // Filter to urgent-only listings if requested
+    if (urgentOnly) {
+      const urgentIds = new Set(activeUrgent.map((u) => u.listingId));
+      sortedData = sortedData.filter((l) => urgentIds.has(l.id));
+    }
+
     return Response.json({
-      data: data.map((l) => ({
+      data: sortedData.map((l) => ({
         ...l,
         price: l.price.toString(),
         monthlyRent: l.monthlyRent?.toString() ?? null,
@@ -110,6 +156,10 @@ export async function GET(req: NextRequest) {
         premiumFee: l.premiumFee?.toString() ?? null,
         monthlyRevenue: l.monthlyRevenue?.toString() ?? null,
         monthlyProfit: l.monthlyProfit?.toString() ?? null,
+        isJumpUp: boostSet.has(l.id),
+        urgentTag: urgentMap.has(l.id)
+          ? { active: true, reason: urgentMap.get(l.id) ?? null }
+          : null,
       })),
       meta: {
         cursor: data[data.length - 1]?.id,

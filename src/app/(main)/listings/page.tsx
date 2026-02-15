@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck, Eye, Heart,
+  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck, Shield, Check, Eye, Heart,
 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { CompareButton } from "@/components/listings/compare-button";
@@ -53,6 +53,8 @@ interface ListingItem {
   isPremium: boolean;
   premiumRank: number;
   hasDiagnosisBadge: boolean;
+  isJumpUp?: boolean;
+  urgentTag?: { active: boolean; reason: string | null } | null;
 }
 
 type TabType = "direct" | "franchise";
@@ -116,6 +118,7 @@ export default function ListingsPage() {
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
 
   const [diagnosisOnly, setDiagnosisOnly] = useState(false);
+  const [urgentOnly, setUrgentOnly] = useState(false);
 
   const [filters, setFilters] = useState({
     query: searchParams.get("query") ?? "",
@@ -154,6 +157,7 @@ export default function ListingsPage() {
       if (activeTab === "franchise") params.set("storeType", "FRANCHISE");
       if (filters.trustedOnly) params.set("trustedOnly", "true");
       if (diagnosisOnly) params.set("diagnosisOnly", "true");
+      if (urgentOnly) params.set("urgentOnly", "true");
       params.set("sortBy", filters.sortBy);
       params.set("sortOrder", filters.sortOrder);
       params.set("limit", "12");
@@ -176,7 +180,7 @@ export default function ListingsPage() {
         setIsLoading(false);
       }
     },
-    [filters, cursor, activeTab, diagnosisOnly]
+    [filters, cursor, activeTab, diagnosisOnly, urgentOnly]
   );
 
   useEffect(() => {
@@ -187,7 +191,7 @@ export default function ListingsPage() {
     filters.businessCategory, filters.storeType, filters.city, filters.district,
     filters.totalCostMin, filters.totalCostMax, filters.floor,
     filters.areaMin, filters.areaMax, filters.sortBy, filters.sortOrder,
-    filters.revenueVerified, filters.trustedOnly, activeTab, diagnosisOnly,
+    filters.revenueVerified, filters.trustedOnly, activeTab, diagnosisOnly, urgentOnly,
   ]);
 
   // Infinite scroll
@@ -215,6 +219,7 @@ export default function ListingsPage() {
       revenueVerified: false, trustedOnly: false, sortBy: "createdAt", sortOrder: "desc",
     });
     setDiagnosisOnly(false);
+    setUrgentOnly(false);
     setOpenFilter(null);
   };
 
@@ -242,7 +247,7 @@ export default function ListingsPage() {
   const priceCount = filters.totalCostMin || filters.totalCostMax ? 1 : 0;
   const floorCount = filters.floor ? 1 : 0;
   const areaCount = filters.areaMin || filters.areaMax ? 1 : 0;
-  const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + floorCount + areaCount > 0 || filters.city || filters.trustedOnly || diagnosisOnly;
+  const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + floorCount + areaCount > 0 || filters.city || filters.trustedOnly || diagnosisOnly || urgentOnly;
 
   return (
     <div className="flex h-[calc(100vh-56px)] flex-col overflow-hidden md:h-[calc(100vh-64px)]">
@@ -344,6 +349,17 @@ export default function ListingsPage() {
                 />
                 권리진단 완료 매물만
               </label>
+
+              <button
+                onClick={() => setUrgentOnly(!urgentOnly)}
+                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  urgentOnly
+                    ? "border-red-400 bg-red-50 text-red-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-red-300"
+                }`}
+              >
+                🔥 급매만
+              </button>
 
               {hasActiveFilters && (
                 <button
@@ -706,12 +722,24 @@ function ListingCard({ listing }: { listing: ListingItem }) {
   const tierConfig = tierKey ? PREMIUM_AD_CONFIG[tierKey] : null;
   const gradeConfig = listing.safetyGrade ? SAFETY_GRADE_CONFIG[listing.safetyGrade] : null;
 
+  const imageCount = listing.images.length;
+  const borderClass = listing.urgentTag?.active
+    ? "border-2 border-red-400"
+    : tierConfig
+      ? `border-2 ${tierConfig.border}`
+      : "border border-gray-100";
+
+  // Collect badge pills for the badge row
+  const badges: { label: string; bg: string; icon?: string }[] = [];
+  if (listing.safetyGrade === "A") badges.push({ label: "매출 인증", bg: "bg-green-100 text-green-700", icon: "check" });
+  if (listing.hasDiagnosisBadge) badges.push({ label: "권리진단", bg: "bg-purple-100 text-purple-700", icon: "shield" });
+  if (listing.urgentTag?.active) badges.push({ label: "급매", bg: "bg-red-100 text-red-700", icon: "fire" });
+  if (isTrusted) badges.push({ label: "안심거래", bg: "bg-blue-100 text-blue-700", icon: "shieldcheck" });
+
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className={`group flex gap-4 overflow-hidden rounded-xl border bg-white p-4 transition-shadow hover:shadow-md ${
-        tierConfig ? `border-2 ${tierConfig.border}` : listing.safetyGrade === "A" ? "border border-gray-100 border-l-4 border-l-green-400" : "border border-gray-100"
-      }`}
+      className={`group flex gap-4 overflow-hidden rounded-xl border bg-white p-4 transition-shadow hover:shadow-md ${borderClass}`}
     >
       {/* Left: Thumbnail */}
       <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:h-44 sm:w-44">
@@ -731,26 +759,30 @@ function ListingCard({ listing }: { listing: ListingItem }) {
             </div>
           );
         })()}
-        {/* Category tag top-left */}
-        <span className="absolute left-2 top-2 rounded bg-[#1B3A5C]/80 px-2 py-0.5 text-[11px] font-medium leading-tight text-white">
+        {/* Top-left: category tag */}
+        <span className="absolute left-2 top-2 rounded bg-black/60 px-2 py-0.5 text-[11px] font-medium leading-tight text-white backdrop-blur-sm">
           {categoryLabel}
-          {listing.businessSubtype ? ` | ${listing.businessSubtype}` : ""}
         </span>
-        {/* Safety grade top-right */}
-        {listing.safetyGrade && listing.safetyGrade !== "C" && (
-          <span className="absolute right-2 top-2">
-            <SafetyBadge grade={listing.safetyGrade} />
+        {/* Top-right: floor · area */}
+        {floorAreaParts.length > 0 && (
+          <span className="absolute right-2 top-2 rounded bg-black/50 px-1.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
+            {floorAreaParts.join(" · ")}
           </span>
         )}
-        {listing.hasDiagnosisBadge && (
-          <span className={`absolute right-2 ${listing.safetyGrade && listing.safetyGrade !== "C" ? "top-8" : "top-2"}`}>
-            <DiagnosisBadge />
-          </span>
-        )}
-        {/* Premium badge */}
-        {tierConfig && (
+        {/* Bottom-left: premium/VIP badge or photo count */}
+        {tierConfig ? (
           <span className={`absolute bottom-2 left-2 rounded px-2 py-0.5 text-[11px] font-bold leading-tight border ${tierConfig.bg} ${tierConfig.color} ${tierConfig.border}`}>
             {tierConfig.badge}
+          </span>
+        ) : imageCount > 0 ? (
+          <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-black/50 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
+            📷 {imageCount}
+          </span>
+        ) : null}
+        {/* Jump-up indicator */}
+        {listing.isJumpUp && (
+          <span className="absolute bottom-2 right-2 rounded bg-blue-600/90 px-1.5 py-0.5 text-[10px] font-bold text-white">
+            ⬆️
           </span>
         )}
         <CompareButton
@@ -781,25 +813,10 @@ function ListingCard({ listing }: { listing: ListingItem }) {
       {/* Right: Info */}
       <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
         <div>
-          {/* Floor / area - top right */}
-          {floorAreaParts.length > 0 && (
-            <p className="text-right text-sm text-gray-500">{floorAreaParts.join(" · ")}</p>
-          )}
           {/* Title */}
-          {listing.safetyGrade === "A" && (
-            <span className="text-[10px] font-bold text-green-600">&#10003; 매출 인증 완료</span>
-          )}
-          <div className="flex items-center gap-1.5">
-            <h3 className="truncate text-base font-bold text-[#1B3A5C] transition-colors group-hover:text-[#1B3A5C]/70">
-              {listing.title}
-            </h3>
-            {isTrusted && (
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                <ShieldCheck className="h-3 w-3" />
-                안심거래
-              </span>
-            )}
-          </div>
+          <h3 className="truncate text-base font-bold text-[#1B3A5C] transition-colors group-hover:text-[#1B3A5C]/70">
+            {listing.title}
+          </h3>
           {/* Deposit / Monthly rent */}
           <p className="mt-1.5 text-sm font-semibold text-[#1B3A5C]">
             보증금 {formatKRW(Number(listing.price))} / 월세{" "}
@@ -823,12 +840,28 @@ function ListingCard({ listing }: { listing: ListingItem }) {
               {hasProfit && <>월수익 {formatKRW(Number(listing.monthlyProfit))}</>}
             </p>
           )}
+          {/* Badge row */}
+          {badges.length > 0 && (
+            <div className="mt-1.5 flex flex-row flex-wrap items-center gap-2">
+              {badges.map((b) => (
+                <span key={b.label} className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${b.bg}`}>
+                  {b.icon === "check" && <Check className="h-3 w-3" />}
+                  {b.icon === "shield" && <Shield className="h-3 w-3" />}
+                  {b.icon === "fire" && <span className="text-[10px]">🔥</span>}
+                  {b.icon === "shieldcheck" && <ShieldCheck className="h-3 w-3" />}
+                  {b.label}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
         {/* Location */}
-        <p className="mt-1.5 flex items-center gap-1 truncate text-sm text-gray-400">
-          <MapPin className="h-3.5 w-3.5 shrink-0" />
-          {listing.city} {listing.district}
-          {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
+        <p className="mt-1.5 flex items-start gap-1 text-sm text-gray-400">
+          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span className="line-clamp-2">
+            {listing.city} {listing.district}
+            {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
+          </span>
         </p>
         {/* Stats */}
         <div className="mt-1 flex items-center gap-3 text-xs text-gray-400">

@@ -11,6 +11,12 @@ interface ImageGalleryProps {
   showPhotoHint?: boolean;
 }
 
+/** 사진 순서 기반 카테고리 라벨 */
+const IMAGE_CATEGORY_LABELS = [
+  "외부전경", "내부전경", "주방", "홀", "화장실",
+  "간판", "주차장", "창고", "기타시설",
+];
+
 const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> = {
   CAFE_BAKERY:   { gradient: "from-amber-800/70 to-amber-600/50", icon: "☕" },
   CHICKEN:       { gradient: "from-orange-600/70 to-orange-400/50", icon: "🍗" },
@@ -115,9 +121,10 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
                 priority={index === 0}
                 sizes="300px"
               />
-              {/* Bottom overlay with counter */}
-              <div className="absolute bottom-0 inset-x-0 bg-black/50 px-3 py-1 text-xs text-white">
-                {index + 1}/{images.length}
+              {/* Bottom overlay: category label + counter */}
+              <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-black/50 px-3 py-1 text-xs text-white">
+                <span>{IMAGE_CATEGORY_LABELS[index] ?? `사진 ${index + 1}`}</span>
+                <span className="text-white/70">{index + 1}/{images.length}</span>
               </div>
             </div>
           ))}

@@ -809,7 +809,7 @@ async function main() {
         { text: "매물 비교 (최대 4개)", included: true },
         { text: "시세 비교 위젯 전체 이용", included: true },
         { text: "창업 시뮬레이터 전체 이용", included: true },
-        { text: "권리진단서 BASIC 1회/월 무료", included: true },
+        { text: "권리진단서 1회/월 무료", included: true },
         { text: "BASIC 광고 1회/월 무료", included: true },
       ],
       sortOrder: 1,
@@ -823,7 +823,7 @@ async function main() {
       features: [
         { text: "PRO 전체 포함", included: true },
         { text: "매물 등록 무제한", included: true },
-        { text: "권리진단서 PREMIUM 2회/월 무료", included: true },
+        { text: "권리진단서 2회/월 무료", included: true },
         { text: "PREMIUM 광고 1회/월 무료", included: true },
         { text: "전문가 상담 월 2회 무료", included: true },
         { text: "안심거래 배지 자동 부여", included: true },

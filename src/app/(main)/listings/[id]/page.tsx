@@ -31,6 +31,8 @@ import { CommentSectionWrapper } from "@/components/listings/comment-section-wra
 import { DiagnosisCard } from "@/components/listings/diagnosis-card";
 import { DiagnosisPurchaseButton } from "@/components/listings/diagnosis-purchase-button";
 import { DiagnosisSummaryCard, DiagnosisCTACard } from "@/components/listings/diagnosis-summary-card";
+import { PaywallOverlay } from "@/components/listings/paywall-overlay";
+import { canViewRevenueData } from "@/lib/utils/access-check";
 import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -161,6 +163,9 @@ export default async function ListingDetailPage({
   } catch (e) {
     console.error("[listing-detail] listingLike query failed:", e);
   }
+
+  // Check if user can view paid revenue data
+  const hasRevenueAccess = await canViewRevenueData(session?.user?.id, id);
 
   const listing = { ...toSerializable(listingData), images, seller };
 
@@ -341,6 +346,24 @@ export default async function ListingDetailPage({
                   />
                   <PriceCard emoji="🧾" label="관리비" value={numManagementFee > 0 ? formatKRW(numManagementFee) : null} />
                 </div>
+
+                {/* 권리금 세부 breakdown pills (진단서 데이터가 있을 때만) */}
+                {diagnosisReport && numPremiumFee > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2 px-1">
+                    {[
+                      { label: "영업", value: diagnosisReport.fairPremiumBusiness },
+                      { label: "시설", value: diagnosisReport.fairPremiumFacility },
+                      { label: "바닥", value: diagnosisReport.fairPremiumFloor },
+                    ].filter((p) => p.value > 0).map((p) => (
+                      <span
+                        key={p.label}
+                        className="rounded-full bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700"
+                      >
+                        {p.label} {formatKRW(p.value)}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 {/* Revenue row */}
                 {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) && (
@@ -581,129 +604,136 @@ export default async function ListingDetailPage({
                   />
                 </div>
 
-                {/* Cost Structure */}
-                <div className="mt-6 grid gap-6 lg:grid-cols-2">
-                  {/* Cost Table */}
-                  <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-                    <div className="border-b border-gray-100 px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base font-semibold text-navy">
-                          {listing.safetyGrade === "A"
-                            ? "월 지출 내역 (인증완료)"
-                            : listing.safetyGrade === "B"
-                              ? "월 지출 내역 (증빙제출)"
-                              : "월 지출 내역 (매도인 제출)"}
-                        </h3>
-                        {listing.safetyGrade === "A" && (
-                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-bold text-green-700">인증</span>
-                        )}
-                        {listing.safetyGrade === "B" && (
-                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">증빙</span>
+                {/* Paid Section: Cost Structure + ROI (wrapped in PaywallOverlay) */}
+                <PaywallOverlay
+                  listingId={listing.id}
+                  safetyGrade={listing.safetyGrade}
+                  hasAccess={hasRevenueAccess}
+                >
+                  {/* Cost Structure */}
+                  <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                    {/* Cost Table */}
+                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+                      <div className="border-b border-gray-100 px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-semibold text-navy">
+                            {listing.safetyGrade === "A"
+                              ? "월 지출 내역 (인증완료)"
+                              : listing.safetyGrade === "B"
+                                ? "월 지출 내역 (증빙제출)"
+                                : "월 지출 내역 (매도인 제출)"}
+                          </h3>
+                          {listing.safetyGrade === "A" && (
+                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-bold text-green-700">인증</span>
+                          )}
+                          {listing.safetyGrade === "B" && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">증빙</span>
+                          )}
+                        </div>
+                        {(!listing.safetyGrade || listing.safetyGrade === "C" || listing.safetyGrade === "D") && (
+                          <p className="mt-1 text-[11px] text-gray-400">* 매도인이 직접 입력한 정보이며, 실제와 다를 수 있습니다</p>
                         )}
                       </div>
-                      {(!listing.safetyGrade || listing.safetyGrade === "C" || listing.safetyGrade === "D") && (
-                        <p className="mt-1 text-[11px] text-gray-400">* 매도인이 직접 입력한 정보이며, 실제와 다를 수 있습니다</p>
+                      <div className="divide-y divide-gray-100">
+                        <CostRow label="임대료 (월세+관리비)" value={totalRent} />
+                        <CostRow label="인건비 (추정)" value={laborCost} />
+                        <CostRow label="재료비/원가 (추정)" value={materialCost} />
+                        <CostRow label="기타비용 (추정)" value={otherCost} />
+                        <div className="flex items-center justify-between bg-purple/5 px-6 py-3">
+                          <span className="text-sm font-bold text-navy">
+                            월 순수익
+                          </span>
+                          <span className="text-base font-bold text-purple">
+                            {formatKRW(numMonthlyProfit)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="border-t border-gray-100 px-6 py-2">
+                        <p className="text-[11px] text-gray-400">
+                          * 인건비/재료비는 업종 평균 기준 추정치입니다
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Cost Pie Chart */}
+                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
+                      <h3 className="mb-2 text-base font-semibold text-navy">
+                        매출 구성
+                      </h3>
+                      <CostPieChart
+                        rent={totalRent}
+                        laborCost={laborCost}
+                        materialCost={materialCost}
+                        otherCost={otherCost}
+                        profit={numMonthlyProfit}
+                      />
+                    </div>
+                  </div>
+
+                  {/* ROI Summary */}
+                  <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-r from-navy/5 to-navy/10">
+                    <div className="px-6 py-5">
+                      <h3 className="text-base font-semibold text-navy">
+                        투자 수익률 (ROI)
+                      </h3>
+                      <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <p className="text-xs text-gray-500">보증금</p>
+                          <p className="mt-1 text-sm font-bold text-navy">
+                            {formatKRW(numDeposit)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">권리금</p>
+                          <p className="mt-1 text-sm font-bold text-orange-600">
+                            {numPremiumFee > 0
+                              ? formatKRW(numPremiumFee)
+                              : "무권리"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">투자회수</p>
+                          <p className="mt-1 text-sm font-bold text-purple">
+                            {roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}
+                          </p>
+                        </div>
+                      </div>
+                      {annualROI > 0 && (
+                        <div className={`mt-4 rounded-xl border p-4 text-center ${roiBgClass}`}>
+                          <p className="text-xs text-gray-500">연간 투자수익률 (ROI)</p>
+                          <p className={`mt-1 text-2xl font-bold ${roiColorClass}`}>
+                            {annualROI.toFixed(1)}%
+                          </p>
+                          <p className="mt-1 text-[11px] text-gray-400">
+                            (월수익 × 12) ÷ (보증금 + 권리금) × 100
+                          </p>
+                        </div>
+                      )}
+                      {roiMonths > 0 && (
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>0개월</span>
+                            <span>{roiMonths}개월</span>
+                          </div>
+                          <div className="mt-1 h-3 overflow-hidden rounded-full bg-gray-200">
+                            <div
+                              className="h-full rounded-full bg-gradient-to-r from-purple to-navy transition-all"
+                              style={{
+                                width: `${Math.min(100, (12 / roiMonths) * 100)}%`,
+                              }}
+                            />
+                          </div>
+                          <p className="mt-1 text-xs text-gray-500">
+                            1년 기준 회수율:{" "}
+                            <span className={`font-semibold ${roiColorClass}`}>
+                              {((12 / roiMonths) * 100).toFixed(1)}%
+                            </span>
+                          </p>
+                        </div>
                       )}
                     </div>
-                    <div className="divide-y divide-gray-100">
-                      <CostRow label="임대료 (월세+관리비)" value={totalRent} />
-                      <CostRow label="인건비 (추정)" value={laborCost} />
-                      <CostRow label="재료비/원가 (추정)" value={materialCost} />
-                      <CostRow label="기타비용 (추정)" value={otherCost} />
-                      <div className="flex items-center justify-between bg-purple/5 px-6 py-3">
-                        <span className="text-sm font-bold text-navy">
-                          월 순수익
-                        </span>
-                        <span className="text-base font-bold text-purple">
-                          {formatKRW(numMonthlyProfit)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-100 px-6 py-2">
-                      <p className="text-[11px] text-gray-400">
-                        * 인건비/재료비는 업종 평균 기준 추정치입니다
-                      </p>
-                    </div>
                   </div>
-
-                  {/* Cost Pie Chart */}
-                  <div className="overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
-                    <h3 className="mb-2 text-base font-semibold text-navy">
-                      매출 구성
-                    </h3>
-                    <CostPieChart
-                      rent={totalRent}
-                      laborCost={laborCost}
-                      materialCost={materialCost}
-                      otherCost={otherCost}
-                      profit={numMonthlyProfit}
-                    />
-                  </div>
-                </div>
-
-                {/* ROI Summary */}
-                <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-r from-navy/5 to-navy/10">
-                  <div className="px-6 py-5">
-                    <h3 className="text-base font-semibold text-navy">
-                      투자 수익률 (ROI)
-                    </h3>
-                    <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <p className="text-xs text-gray-500">보증금</p>
-                        <p className="mt-1 text-sm font-bold text-navy">
-                          {formatKRW(numDeposit)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">권리금</p>
-                        <p className="mt-1 text-sm font-bold text-orange-600">
-                          {numPremiumFee > 0
-                            ? formatKRW(numPremiumFee)
-                            : "무권리"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">투자회수</p>
-                        <p className="mt-1 text-sm font-bold text-purple">
-                          {roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}
-                        </p>
-                      </div>
-                    </div>
-                    {annualROI > 0 && (
-                      <div className={`mt-4 rounded-xl border p-4 text-center ${roiBgClass}`}>
-                        <p className="text-xs text-gray-500">연간 투자수익률 (ROI)</p>
-                        <p className={`mt-1 text-2xl font-bold ${roiColorClass}`}>
-                          {annualROI.toFixed(1)}%
-                        </p>
-                        <p className="mt-1 text-[11px] text-gray-400">
-                          (월수익 × 12) ÷ (보증금 + 권리금) × 100
-                        </p>
-                      </div>
-                    )}
-                    {roiMonths > 0 && (
-                      <div className="mt-4">
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>0개월</span>
-                          <span>{roiMonths}개월</span>
-                        </div>
-                        <div className="mt-1 h-3 overflow-hidden rounded-full bg-gray-200">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-r from-purple to-navy transition-all"
-                            style={{
-                              width: `${Math.min(100, (12 / roiMonths) * 100)}%`,
-                            }}
-                          />
-                        </div>
-                        <p className="mt-1 text-xs text-gray-500">
-                          1년 기준 회수율:{" "}
-                          <span className={`font-semibold ${roiColorClass}`}>
-                            {((12 / roiMonths) * 100).toFixed(1)}%
-                          </span>
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                </PaywallOverlay>
               </>
             ) : (
               <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-6 py-12 text-center">

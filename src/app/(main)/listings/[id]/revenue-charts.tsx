@@ -33,16 +33,18 @@ export function CostPieChart({
     { name: "순수익", value: Math.round(profit / 10000) },
   ].filter((d) => d.value > 0);
 
+  const total = data.reduce((s, d) => s + d.value, 0);
+
   return (
     <div>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={160}>
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={45}
-            outerRadius={75}
+            innerRadius={35}
+            outerRadius={60}
             paddingAngle={3}
             dataKey="value"
           >
@@ -58,14 +60,13 @@ export function CostPieChart({
           />
         </PieChart>
       </ResponsiveContainer>
-      <div className="mt-4 space-y-2">
+      <div className="mt-3 space-y-1.5">
         {data.map((item, index) => {
-          const total = data.reduce((s, d) => s + d.value, 0);
           const pct = total > 0 ? ((item.value / total) * 100).toFixed(0) : "0";
           return (
             <div key={item.name} className="flex items-center gap-2 text-sm">
               <span className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
-              <span className="text-gray-600">{item.name}</span>
+              <span className="flex-1 text-gray-600">{item.name}</span>
               <span className="font-medium text-gray-800">{pct}%</span>
               <span className="text-xs text-gray-400">({item.value.toLocaleString()}만원)</span>
             </div>

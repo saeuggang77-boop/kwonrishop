@@ -98,7 +98,7 @@ export const SELLER_AD_PLANS = [
       "매물 목록 최상단 고정",
       "홈페이지 프리미엄 캐러셀 노출",
       "\"VIP\" 배지 + 골드 테두리 카드",
-      "권리진단서 BASIC 1회 무료 포함",
+      "권리진단서 1회 무료 포함",
       "안전도 등급 상세 표시",
       "상세 조회수 통계",
       "\"안심거래\" 배지 부여",
@@ -106,33 +106,24 @@ export const SELLER_AD_PLANS = [
   },
 ];
 
-// ── 매수자 권리진단서 요금 (건별 판매) ──
-export const REPORT_PLANS = [
-  {
-    tier: "BASIC" as const,
-    label: "BASIC 권리진단서",
-    price: 20_000,
-    priceWithVat: 22_000,
-    features: [
-      "권리금 적정성 평가",
-      "지역/업종 평균 비교",
-      "권리 위험요소 기본 분석",
-      "종합 위험 등급 판정",
-    ],
-  },
-  {
-    tier: "PREMIUM" as const,
-    label: "PREMIUM 권리진단서",
-    price: 40_000,
-    priceWithVat: 44_000,
-    features: [
-      "BASIC 전체 항목 포함",
-      "임대차 계약 체크리스트 20항목",
-      "상세 위험요소 분석",
-      "PDF 리포트 다운로드",
-    ],
-  },
-];
+// ── 권리진단서 요금 (건별 판매) ──
+export const REPORT_PLAN = {
+  label: "권리진단서",
+  price: 30_000,
+  priceWithVat: 33_000,
+  features: [
+    "적정 권리금 산정 (영업/시설/바닥)",
+    "수익성·입지·리스크 진단",
+    "종합 등급 + AI 코멘트",
+    "임대차 체크리스트 20항목",
+    "PDF 리포트 다운로드",
+    "매물 상세 페이지에 진단 결과 표시",
+    "권리진단 완료 배지 부여",
+  ],
+};
+
+/** @deprecated Use REPORT_PLAN instead */
+export const REPORT_PLANS = [REPORT_PLAN];
 
 // ── 매도자 무료 등록 제한 ──
 export const FREE_LISTING_LIMIT_PER_MONTH = 2;
@@ -178,7 +169,7 @@ export const DIAGNOSIS_BADGE_CONFIG = {
 
 export const PREMIUM_AD_PLANS = [
   { tier: "PREMIUM", price: 200_000, days: 30, features: ["매물 목록 상위 노출", "프리미엄 배지 표시", "그린 테두리 카드 디자인", "기본 조회수 통계"] },
-  { tier: "VIP",     price: 300_000, days: 30, features: ["매물 목록 최상단 고정", "홈페이지 프리미엄 캐러셀 노출", "VIP 배지 + 골드 테두리 카드", "권리진단서 BASIC 1회 무료", "안심거래 배지 부여", "상세 조회수 통계"] },
+  { tier: "VIP",     price: 300_000, days: 30, features: ["매물 목록 최상단 고정", "홈페이지 프리미엄 캐러셀 노출", "VIP 배지 + 골드 테두리 카드", "권리진단서 1회 무료", "안심거래 배지 부여", "상세 조회수 통계"] },
 ];
 
 // 업종 대분류 → 세부 카테고리 매핑 (레퍼런스 사이트 기준)

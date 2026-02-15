@@ -12,9 +12,14 @@ import {
   BarChart3,
   Users,
   Megaphone,
+  ArrowUp,
+  Flame,
+  RefreshCw,
+  Zap,
 } from "lucide-react";
 import { formatNumber } from "@/lib/utils/format";
-import { SELLER_AD_PLANS, REPORT_PLANS } from "@/lib/utils/constants";
+import { SELLER_AD_PLANS, REPORT_PLAN } from "@/lib/utils/constants";
+import { VIEWER_PLANS, FREE_FEATURES, PAID_FEATURES, GRADE_A_FEATURES } from "@/lib/utils/subscription";
 
 const BUYER_FREE_FEATURES = [
   { icon: Search, label: "매물 검색 & 조회" },
@@ -141,6 +146,134 @@ export default function PricingPage() {
         </div>
       </section>
 
+      {/* ── Section 1.5: 소액 부스트 서비스 ── */}
+      <section className="mt-16">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-purple-50 px-4 py-1.5 text-sm font-medium text-purple-700 border border-purple-200">
+            <Zap className="h-4 w-4" />
+            소액 부스트 서비스
+          </div>
+          <h2 className="mt-4 text-2xl font-bold text-[#1B3A5C]">
+            프리미엄 광고 없이도 매물 노출을 높일 수 있어요
+          </h2>
+          <p className="mt-2 text-gray-500">
+            소액으로 빠르게 매물 노출을 높여보세요
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {/* Jump Up */}
+          <div className="flex flex-col rounded-2xl border border-blue-200 bg-white p-6 shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+              <ArrowUp className="h-6 w-6 text-blue-600" />
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-[#1B3A5C]">점프업</h3>
+            <div className="mt-2">
+              <span className="text-2xl font-bold text-blue-600">₩5,000</span>
+              <span className="text-sm text-gray-500"> / 회</span>
+            </div>
+            <ul className="mt-4 flex-1 space-y-2">
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+                <span className="text-gray-700">24시간 검색 상단 노출</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+                <span className="text-gray-700">하루 최대 3회 구매 가능</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+                <span className="text-gray-700">해당 지역 검색에서 우선 표시</span>
+              </li>
+            </ul>
+            <Link
+              href="/my/ads"
+              className="mt-6 block w-full rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-medium text-white transition-all hover:bg-blue-700 active:scale-[0.97]"
+            >
+              구매하기
+            </Link>
+          </div>
+
+          {/* Urgent Tag */}
+          <div className="relative flex flex-col rounded-2xl border-2 border-red-300 bg-white p-6 shadow-lg">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-4 py-1 text-xs font-bold text-white">
+              인기
+            </span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100">
+              <Flame className="h-6 w-6 text-red-600" />
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-[#1B3A5C]">급매 태그</h3>
+            {/* Duration tabs */}
+            <div className="mt-3 flex gap-1.5 rounded-lg bg-gray-100 p-1">
+              <div className="flex-1 rounded-md bg-white px-3 py-2 text-center shadow-sm">
+                <p className="text-sm font-bold text-red-600">7일</p>
+                <p className="text-lg font-bold text-gray-900">₩9,900</p>
+              </div>
+              <div className="flex-1 relative rounded-md px-3 py-2 text-center hover:bg-gray-50 transition-colors">
+                <span className="absolute -top-2 right-0 rounded-full bg-red-500 px-1.5 py-0.5 text-[9px] font-bold text-white">
+                  27% 할인
+                </span>
+                <p className="text-sm font-bold text-red-600">30일</p>
+                <p className="text-lg font-bold text-gray-900">₩29,000</p>
+              </div>
+            </div>
+            <ul className="mt-4 flex-1 space-y-2">
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+                <span className="text-gray-700">빨간 &lsquo;급매&rsquo; 태그 매물에 표시</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+                <span className="text-gray-700">&lsquo;급매 매물만 보기&rsquo; 필터 노출</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+                <span className="text-gray-700">급매 사유 표시 (선택)</span>
+              </li>
+            </ul>
+            <Link
+              href="/my/ads"
+              className="mt-6 block w-full rounded-lg bg-red-600 px-4 py-3 text-center text-sm font-medium text-white transition-all hover:bg-red-700 active:scale-[0.97]"
+            >
+              구매하기
+            </Link>
+          </div>
+
+          {/* Auto Refresh */}
+          <div className="flex flex-col rounded-2xl border border-green-200 bg-white p-6 shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
+              <RefreshCw className="h-6 w-6 text-green-600" />
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-[#1B3A5C]">자동 갱신</h3>
+            <div className="mt-2">
+              <span className="text-2xl font-bold text-green-600">₩79,000</span>
+              <span className="text-sm text-gray-500"> / 30일</span>
+            </div>
+            <p className="mt-1 text-xs text-green-600 font-medium">개별 점프업 대비 47% 할인!</p>
+            <ul className="mt-4 flex-1 space-y-2">
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
+                <span className="text-gray-700">매일 자동 점프업 (30회)</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
+                <span className="text-gray-700">30일간 매일 상단 노출</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
+                <span className="text-gray-700">별도 클릭 없이 자동 실행</span>
+              </li>
+            </ul>
+            <Link
+              href="/my/ads"
+              className="mt-6 block w-full rounded-lg bg-green-600 px-4 py-3 text-center text-sm font-medium text-white transition-all hover:bg-green-700 active:scale-[0.97]"
+            >
+              구매하기
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── Section 2: 권리진단서 ── */}
       <section className="mt-20">
         <div className="text-center">
@@ -156,90 +289,53 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {REPORT_PLANS.map((plan) => {
-            const isPremium = plan.tier === "PREMIUM";
+        <div className="mt-10 mx-auto max-w-lg">
+          <div className="flex flex-col rounded-2xl border-2 border-purple-300 bg-white p-6 shadow-lg">
+            {/* Plan header */}
+            <div className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-purple-600" />
+              <span className="rounded-md bg-purple-100 px-2.5 py-0.5 text-xs font-bold text-purple-700">
+                {REPORT_PLAN.label}
+              </span>
+            </div>
 
-            return (
-              <div
-                key={plan.tier}
-                className={
-                  isPremium
-                    ? "relative flex flex-col rounded-2xl border-2 border-blue-400 bg-white p-6 shadow-lg"
-                    : "relative flex flex-col rounded-2xl border border-blue-200 bg-white p-6 shadow-sm"
-                }
-              >
-                {/* Plan header */}
-                <div className="flex items-center gap-2">
-                  {isPremium ? (
-                    <Shield className="h-5 w-5 text-blue-600" />
-                  ) : (
-                    <FileText className="h-5 w-5 text-blue-500" />
-                  )}
-                  <span
-                    className={
-                      isPremium
-                        ? "rounded-md bg-blue-100 px-2.5 py-0.5 text-xs font-bold text-blue-700"
-                        : "rounded-md bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-600"
-                    }
-                  >
-                    {plan.label}
-                  </span>
-                </div>
+            {/* Price */}
+            <div className="mt-4">
+              <span className="text-3xl font-bold text-purple-700">
+                ₩{formatNumber(REPORT_PLAN.price)}
+              </span>
+              <span className="text-sm text-gray-500"> / 건</span>
+              <p className="mt-1 text-xs text-gray-400">
+                (부가세 별도 · VAT 포함 ₩{formatNumber(REPORT_PLAN.priceWithVat)})
+              </p>
+            </div>
 
-                {/* Price */}
-                <div className="mt-4">
-                  <span
-                    className={
-                      isPremium
-                        ? "text-3xl font-bold text-blue-700"
-                        : "text-3xl font-bold text-blue-600"
-                    }
-                  >
-                    ₩{formatNumber(plan.price)}
-                  </span>
-                  <span className="text-sm text-gray-500"> / 건</span>
-                  <p className="mt-1 text-xs text-gray-400">
-                    (부가세 별도 · VAT 포함 ₩{formatNumber(plan.priceWithVat)})
-                  </p>
-                </div>
+            {/* Features */}
+            <ul className="mt-6 flex-1 space-y-3">
+              {REPORT_PLAN.features.map((feature) => (
+                <li key={feature} className="flex items-start gap-2 text-sm">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-purple-500" />
+                  <span className="text-gray-700">{feature}</span>
+                </li>
+              ))}
+            </ul>
 
-                {/* Features */}
-                <ul className="mt-6 flex-1 space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-sm">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+            {/* CTA */}
+            <Link
+              href="/reports/request"
+              className="mt-6 block w-full rounded-lg bg-purple-600 px-4 py-3 text-center text-sm font-medium text-white transition-all hover:bg-purple-700 active:scale-[0.97]"
+            >
+              권리진단서 신청하기
+            </Link>
 
-                {/* CTA */}
-                <Link
-                  href="/reports/request"
-                  className={
-                    isPremium
-                      ? "mt-6 block w-full rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-medium text-white transition-all hover:bg-blue-700 active:scale-[0.97]"
-                      : "mt-6 block w-full rounded-lg border border-blue-500 px-4 py-3 text-center text-sm font-medium text-blue-600 transition-all hover:bg-blue-50 active:scale-[0.97]"
-                  }
-                >
-                  {isPremium
-                    ? "PREMIUM 권리진단서 신청하기"
-                    : "권리진단서 신청하기"}
-                </Link>
-
-                {/* Sample preview link (BASIC only) */}
-                {!isPremium && (
-                  <Link
-                    href="/reports/sample"
-                    className="mt-3 block text-center text-xs text-blue-500 underline underline-offset-2 hover:text-blue-700"
-                  >
-                    샘플 미리보기
-                  </Link>
-                )}
-              </div>
-            );
-          })}
+            {/* Sample preview link */}
+            <Link
+              href="/reports/sample"
+              className="mt-3 block text-center text-xs text-purple-500 underline underline-offset-2 hover:text-purple-700"
+            >
+              샘플 미리보기
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -301,7 +397,181 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ── Section 3: 매수자 무료 기능 ── */}
+      {/* ── Section 3: 매물 수익분석 열람 ── */}
+      <section id="viewer" className="mt-20">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-sm font-medium text-teal-700 border border-teal-200">
+            <BarChart3 className="h-4 w-4" />
+            수익분석 열람
+          </div>
+          <h2 className="mt-4 text-2xl font-bold text-[#1B3A5C]">
+            매물 수익 데이터를 확인하세요
+          </h2>
+          <p className="mt-2 text-gray-500">
+            상세 비용 구조, 매출 차트, ROI 분석을 열람할 수 있습니다
+          </p>
+        </div>
+
+        {/* Free vs Paid comparison */}
+        <div className="mt-8 mx-auto max-w-2xl">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5">
+              <h3 className="text-sm font-bold text-gray-700">무료 공개 항목</h3>
+              <ul className="mt-3 space-y-2">
+                {FREE_FEATURES.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-xs">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-500" />
+                    <span className="text-gray-600">{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border-2 border-teal-300 bg-teal-50/50 p-5">
+              <h3 className="text-sm font-bold text-teal-700">유료 열람 항목</h3>
+              <ul className="mt-3 space-y-2">
+                {[...PAID_FEATURES, ...GRADE_A_FEATURES].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-xs">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" />
+                    <span className="text-gray-700">{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Plan cards */}
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {/* Single */}
+          <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <span className="w-fit rounded-md bg-gray-100 px-2.5 py-0.5 text-xs font-bold text-gray-600">
+              {VIEWER_PLANS.SINGLE.name}
+            </span>
+            <div className="mt-4">
+              <span className="text-3xl font-bold text-gray-800">
+                ₩{VIEWER_PLANS.SINGLE.price.toLocaleString()}
+              </span>
+              <span className="text-sm text-gray-500"> / 건</span>
+            </div>
+            <p className="mt-2 text-sm text-gray-500">{VIEWER_PLANS.SINGLE.description}</p>
+            <ul className="mt-6 flex-1 space-y-3">
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-gray-500" />
+                <span className="text-gray-700">매물 1개 수익 데이터 열람</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-gray-500" />
+                <span className="text-gray-700">구매 후 7일간 무제한 열람</span>
+              </li>
+            </ul>
+            <Link
+              href="/listings"
+              className="mt-6 block w-full rounded-lg border border-gray-300 px-4 py-3 text-center text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 active:scale-[0.97]"
+            >
+              매물에서 구매하기
+            </Link>
+          </div>
+
+          {/* Monthly (recommended) */}
+          <div className="relative flex flex-col rounded-2xl border-2 border-teal-400 bg-white p-6 shadow-lg">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-teal-500 px-4 py-1 text-xs font-bold text-white">
+              {VIEWER_PLANS.MONTHLY.badge}
+            </span>
+            <span className="w-fit rounded-md bg-teal-100 px-2.5 py-0.5 text-xs font-bold text-teal-700">
+              {VIEWER_PLANS.MONTHLY.name}
+            </span>
+            <div className="mt-4">
+              <span className="text-3xl font-bold text-teal-700">
+                ₩{VIEWER_PLANS.MONTHLY.price.toLocaleString()}
+              </span>
+              <span className="text-sm text-gray-500"> / 월</span>
+            </div>
+            <p className="mt-2 text-sm text-gray-500">{VIEWER_PLANS.MONTHLY.description}</p>
+            <ul className="mt-6 flex-1 space-y-3">
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
+                <span className="text-gray-700">모든 매물 수익 데이터 열람</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
+                <span className="text-gray-700">비용 구조 + 도넛 차트</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
+                <span className="text-gray-700">ROI 상세 분석</span>
+              </li>
+            </ul>
+            <Link
+              href="/api/payments/subscribe?planId=MONTHLY"
+              className="mt-6 block w-full rounded-lg bg-teal-600 px-4 py-3 text-center text-sm font-medium text-white transition-all hover:bg-teal-700 active:scale-[0.97]"
+            >
+              월 구독 시작하기
+            </Link>
+          </div>
+
+          {/* Yearly */}
+          <div className="flex flex-col rounded-2xl border border-teal-200 bg-white p-6 shadow-sm">
+            <span className="w-fit rounded-md bg-teal-100 px-2.5 py-0.5 text-xs font-bold text-teal-700">
+              {VIEWER_PLANS.YEARLY.name}
+            </span>
+            <div className="mt-4">
+              <span className="text-3xl font-bold text-teal-700">
+                ₩{VIEWER_PLANS.YEARLY.price.toLocaleString()}
+              </span>
+              <span className="text-sm text-gray-500"> / 년</span>
+            </div>
+            <p className="mt-1 text-xs font-medium text-teal-600">
+              월 {VIEWER_PLANS.YEARLY.monthlyEquivalent?.toLocaleString()}원 — {VIEWER_PLANS.YEARLY.discountPct}% 할인
+            </p>
+            <p className="mt-2 text-sm text-gray-500">{VIEWER_PLANS.YEARLY.description}</p>
+            <ul className="mt-6 flex-1 space-y-3">
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
+                <span className="text-gray-700">월 구독의 모든 기능</span>
+              </li>
+              <li className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
+                <span className="text-gray-700">연 결제 시 33% 할인</span>
+              </li>
+            </ul>
+            <Link
+              href="/api/payments/subscribe?planId=YEARLY"
+              className="mt-6 block w-full rounded-lg border border-teal-600 px-4 py-3 text-center text-sm font-medium text-teal-700 transition-all hover:bg-teal-50 active:scale-[0.97]"
+            >
+              연 구독 시작하기
+            </Link>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-12 mx-auto max-w-2xl">
+          <h3 className="text-lg font-bold text-[#1B3A5C]">자주 묻는 질문</h3>
+          <div className="mt-4 space-y-4">
+            <div className="rounded-xl border border-gray-200 bg-white p-5">
+              <p className="text-sm font-semibold text-gray-800">건별 열람과 월 구독의 차이점은?</p>
+              <p className="mt-2 text-sm text-gray-600">
+                건별 열람은 선택한 매물 1개의 수익 데이터를 7일간 볼 수 있습니다.
+                월 구독은 모든 매물의 수익 데이터를 무제한으로 열람할 수 있어, 여러 매물을 비교하실 때 유리합니다.
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-5">
+              <p className="text-sm font-semibold text-gray-800">구독은 언제든 해지할 수 있나요?</p>
+              <p className="mt-2 text-sm text-gray-600">
+                네, 언제든 해지 가능하며 남은 기간까지는 정상 이용 가능합니다. 위약금은 없습니다.
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-5">
+              <p className="text-sm font-semibold text-gray-800">무료로 볼 수 있는 정보는?</p>
+              <p className="mt-2 text-sm text-gray-600">
+                매물 사진, 가격정보(보증금/월세/권리금), 기본 매물정보, 월매출/월수익 숫자, 투자회수 기간,
+                주변시세 비교, 위치정보 등은 모두 무료입니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 4: 매수자 무료 기능 ── */}
       <section className="mt-20">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#1B3A5C]">

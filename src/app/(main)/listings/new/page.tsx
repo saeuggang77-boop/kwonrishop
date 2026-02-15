@@ -1321,6 +1321,32 @@ function Step6Photos({
         <p className="mt-1 text-xs text-gray-500">
           매출 증빙자료를 첨부하면 매물 신뢰도가 높아져 거래 성사율이 올라갑니다.
         </p>
+
+        {/* 개인정보 보호 안내 */}
+        <div className="mt-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+          <p className="text-sm font-medium text-yellow-800">
+            개인정보 보호 안내
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-yellow-700">
+            매출 증빙자료에 포함된 <strong>주민등록번호, 전화번호, 주소 등 개인정보</strong>는
+            업로드 전에 반드시 가려주세요. 가리지 않고 업로드할 경우 개인정보 유출의 책임은 업로더에게 있습니다.
+          </p>
+          <ul className="mt-2 space-y-1 text-xs text-yellow-700">
+            <li className="flex items-start gap-1.5">
+              <span className="mt-0.5 shrink-0">&#8226;</span>
+              사업자등록번호, 대표자명은 노출되어도 무방합니다
+            </li>
+            <li className="flex items-start gap-1.5">
+              <span className="mt-0.5 shrink-0">&#8226;</span>
+              홈택스 캡처 시 주민번호 뒷자리를 가려주세요
+            </li>
+            <li className="flex items-start gap-1.5">
+              <span className="mt-0.5 shrink-0">&#8226;</span>
+              PDF는 업로드 전 민감정보 영역을 흑색 박스로 처리해주세요
+            </li>
+          </ul>
+        </div>
+
         <label className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 py-6 text-sm text-gray-400 transition-colors hover:border-purple hover:text-purple">
           <FileText className="h-5 w-5" />
           매출 증빙자료 업로드 (PDF, 이미지)
