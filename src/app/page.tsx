@@ -11,12 +11,8 @@ import {
   Receipt, Target, ChevronDown, MessageCircle, Eye,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
-import { formatKRW } from "@/lib/utils/format";
-import {
-  BUSINESS_CATEGORY_LABELS,
-  PREMIUM_AD_CONFIG,
-} from "@/lib/utils/constants";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
+import { ListingCard, type ListingCardData } from "@/components/listings/listing-card";
 
 /* ─── CountUp ─── */
 function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
@@ -55,11 +51,11 @@ function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
 /* ─── Skeleton Card ─── */
 function SkeletonCard() {
   return (
-    <div className="w-64 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white md:w-auto md:flex-1">
+    <div className="w-72 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white md:w-auto md:flex-1">
       <div className="aspect-[4/3] animate-pulse bg-gray-200" />
-      <div className="space-y-2 p-3">
+      <div className="space-y-2 p-3.5">
         <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
-        <div className="h-3 w-1/2 animate-pulse rounded bg-gray-200" />
+        <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200" />
         <div className="h-3 w-2/3 animate-pulse rounded bg-gray-200" />
       </div>
     </div>
@@ -67,17 +63,6 @@ function SkeletonCard() {
 }
 
 /* ─── Interfaces ─── */
-interface ListingCard {
-  id: string; title: string; businessCategory: string; storeType: string;
-  price: string; monthlyRent: string | null; premiumFee: string | null;
-  monthlyRevenue: string | null; monthlyProfit: string | null;
-  areaPyeong: number | null; floor: string | null;
-  city: string; district: string;
-  images: { url: string; thumbnailUrl: string | null }[];
-  safetyGrade: string | null; isPremium: boolean; premiumRank: number;
-  hasDiagnosisBadge: boolean;
-  seller?: { isTrustedSeller?: boolean };
-}
 interface BannerItem { id: string; title: string; subtitle: string | null; ctaText: string | null; imageUrl: string; linkUrl: string | null; }
 interface RawListingResponse {
   id: string; title: string; businessCategory: string; storeType: string;
@@ -109,32 +94,8 @@ const HERO_SLIDES = [
   { title: "내 가게 권리금,\n적정한가요?", sub: "AI 권리진단서로 10분 안에 확인하세요", cta: "권리진단서 발급", ctaHref: "/reports/request" },
 ];
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  CAFE_BAKERY: "☕", CHICKEN: "🍗", KOREAN_FOOD: "🍚", PIZZA: "🍕",
-  BUNSIK: "🍜", RETAIL: "🏪", BAR_PUB: "🍺", WESTERN_FOOD: "🍝",
-  JAPANESE_FOOD: "🍣", CHINESE_FOOD: "🥟", SERVICE: "✂️",
-  ENTERTAINMENT: "🎮", EDUCATION: "📚", DELIVERY: "🛵", ACCOMMODATION: "🏨",
-};
 
-const CATEGORY_GRADIENT: Record<string, string> = {
-  CAFE_BAKERY: "from-[#FEF3C7] to-[#FDE68A]",
-  CHICKEN: "from-[#FFEDD5] to-[#FDBA74]",
-  KOREAN_FOOD: "from-[#FEF9C3] to-[#FDE047]",
-  PIZZA: "from-[#FFE4E6] to-[#FDA4AF]",
-  BUNSIK: "from-[#FEF3C7] to-[#FCD34D]",
-  RETAIL: "from-[#E0F2FE] to-[#7DD3FC]",
-  BAR_PUB: "from-[#EDE9FE] to-[#C4B5FD]",
-  WESTERN_FOOD: "from-[#FCE7F3] to-[#F9A8D4]",
-  JAPANESE_FOOD: "from-[#FFEDD5] to-[#FB923C]",
-  CHINESE_FOOD: "from-[#FEE2E2] to-[#FCA5A5]",
-  SERVICE: "from-[#DBEAFE] to-[#93C5FD]",
-  ENTERTAINMENT: "from-[#E0E7FF] to-[#A5B4FC]",
-  EDUCATION: "from-[#D1FAE5] to-[#6EE7B7]",
-  DELIVERY: "from-[#E0F2FE] to-[#7DD3FC]",
-  ACCOMMODATION: "from-[#F3E8FF] to-[#C084FC]",
-};
-
-function toCard(l: RawListingResponse): ListingCard {
+function toCard(l: RawListingResponse): ListingCardData {
   return {
     ...l,
     price: String(l.price ?? "0"),
@@ -151,8 +112,8 @@ function toCard(l: RawListingResponse): ListingCard {
 /* ═══════════════════════════════════════════════════════════ */
 export default function HomePage() {
   /* state */
-  const [recommendedListings, setRecommendedListings] = useState<ListingCard[]>([]);
-  const [premiumListings, setPremiumListings] = useState<ListingCard[]>([]);
+  const [recommendedListings, setRecommendedListings] = useState<ListingCardData[]>([]);
+  const [premiumListings, setPremiumListings] = useState<ListingCardData[]>([]);
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [bannerDir, setBannerDir] = useState<"left" | "right">("right");
@@ -179,8 +140,8 @@ export default function HomePage() {
     fetch("/api/listings?premiumOnly=true&limit=20").then(r => r.json())
       .then(j => {
         const all = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
-        const vip = all.filter((l: ListingCard) => l.premiumRank === 3);
-        const rec = all.filter((l: ListingCard) => l.premiumRank === 2);
+        const vip = all.filter((l: ListingCardData) => l.premiumRank === 3);
+        const rec = all.filter((l: ListingCardData) => l.premiumRank === 2);
         setPremiumListings(vip.slice(0, 4));
         setRecommendedListings(rec.slice(0, 6));
 
@@ -192,7 +153,7 @@ export default function HomePage() {
           fetch("/api/listings?limit=16&sort=latest").then(r2 => r2.json())
             .then(j2 => {
               const extras = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
-                .filter((e: ListingCard) => !usedIds.has(e.id));
+                .filter((e: ListingCardData) => !usedIds.has(e.id));
               if (needExtraVip) {
                 const fill = extras.splice(0, 4 - vip.length);
                 setPremiumListings([...vip, ...fill].slice(0, 4));
@@ -218,75 +179,6 @@ export default function HomePage() {
   const bannerCount = banners.length || HERO_SLIDES.length;
   const prevBanner = () => { setBannerDir("left"); setBannerIdx(i => (i - 1 + bannerCount) % bannerCount); };
   const nextBanner = () => { setBannerDir("right"); setBannerIdx(i => (i + 1) % bannerCount); };
-
-  /* ─── listing card renderer ─── */
-  const renderListingCard = (item: ListingCard, isMobileCarousel = false) => {
-    const tierKey = item.premiumRank === 3 ? "VIP" : item.premiumRank === 2 ? "PREMIUM" : item.premiumRank === 1 ? "BASIC" : null;
-    const tc = tierKey ? PREMIUM_AD_CONFIG[tierKey] : null;
-    const isTrusted = item.seller?.isTrustedSeller;
-    const badges: { label: string; cls: string; icon: React.ReactNode }[] = [];
-    if (item.safetyGrade === "A") badges.push({ label: "매출 인증", cls: "bg-green-100 text-green-700", icon: <Check className="h-2.5 w-2.5" /> });
-    if (item.hasDiagnosisBadge) badges.push({ label: "권리진단", cls: "bg-purple-100 text-purple-700", icon: <Shield className="h-2.5 w-2.5" /> });
-    if (isTrusted) badges.push({ label: "안심거래", cls: "bg-blue-100 text-blue-700", icon: <ShieldCheck className="h-2.5 w-2.5" /> });
-    return (
-      <Link
-        key={item.id}
-        href={`/listings/${item.id}`}
-        className={`group overflow-hidden rounded-xl border bg-white transition-all active:scale-[0.98] md:hover:-translate-y-1 md:hover:shadow-lg ${isMobileCarousel ? "w-64 flex-none snap-start" : ""} ${tc ? `border-2 ${tc.border}` : "border-gray-200"}`}
-      >
-        {tc && <div className={`h-1 bg-gradient-to-r ${tc.gradient}`} />}
-        <div className="relative aspect-[4/3] bg-gray-100">
-          {item.images?.[0] ? (
-            <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover md:transition-transform md:duration-300 md:group-hover:scale-105" sizes="(max-width:768px) 260px, 25vw" loading="lazy" />
-          ) : (
-            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-white via-[#F1F5F9] to-[#E2E8F0]">
-              <span className="text-5xl drop-shadow-sm">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
-              <span className="text-xs font-medium text-navy/40">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
-            </div>
-          )}
-          <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-            {BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}
-          </span>
-          {(item.floor || item.areaPyeong) && (
-            <span className="absolute right-2 top-2 rounded bg-black/50 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-              {[item.floor, item.areaPyeong ? `${item.areaPyeong}평` : null].filter(Boolean).join(" · ")}
-            </span>
-          )}
-          {tc && (
-            <span className={`absolute bottom-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-bold border ${tc.bg} ${tc.color} ${tc.border}`}>{tc.badge}</span>
-          )}
-        </div>
-        <div className="p-3">
-          <h3 className="truncate text-[13px] font-bold text-navy">{item.title}</h3>
-          <div className="mt-1.5 space-y-0.5 text-xs">
-            <div className="flex gap-2">
-              <span className="w-14 shrink-0 text-gray-400">보증금</span>
-              <span className="font-bold text-navy">{formatKRW(Number(item.price))}</span>
-            </div>
-            <div className="flex gap-2">
-              <span className="w-14 shrink-0 text-gray-400">권리금</span>
-              <span className={`font-bold ${Number(item.premiumFee) > 0 ? "text-orange-600" : "text-navy"}`}>
-                {item.premiumFee && Number(item.premiumFee) > 0 ? formatKRW(Number(item.premiumFee)) : "무권리"}
-              </span>
-            </div>
-          </div>
-          {badges.length > 0 && (
-            <div className="mt-1.5 flex flex-row flex-wrap items-center gap-2">
-              {badges.map(b => (
-                <span key={b.label} className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${b.cls}`}>
-                  {b.icon}{b.label}
-                </span>
-              ))}
-            </div>
-          )}
-          <p className="mt-1.5 flex items-start gap-1 text-[11px] text-gray-400">
-            <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
-            <span className="line-clamp-2">{item.city} {item.district}</span>
-          </p>
-        </div>
-      </Link>
-    );
-  };
 
   /* ═══════ RENDER ═══════ */
   return (
@@ -389,7 +281,7 @@ export default function HomePage() {
 
       {/* ═══ 4. Premium Listings ═══ */}
       <section className="border-t border-gray-200 bg-gradient-to-b from-amber-50/50 to-gray-50 py-6 md:py-10">
-        <div className="mx-auto max-w-7xl px-4">
+        <div className="mx-auto max-w-[1400px] px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-4 w-4 text-yellow-500 md:h-5 md:w-5" />
@@ -398,59 +290,11 @@ export default function HomePage() {
             <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
           </div>
           {/* Mobile: horizontal scroll / Desktop: grid */}
-          <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:mt-4 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible lg:grid-cols-4">
+          <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:mt-4 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible lg:grid-cols-4">
             {loadingPremium ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />) :
-              premiumListings.length > 0 ? premiumListings.map(item => {
-                const tk = item.premiumRank === 3 ? "VIP" : item.premiumRank === 2 ? "PREMIUM" : "BASIC";
-                const tc = PREMIUM_AD_CONFIG[tk];
-                const catGrad = CATEGORY_GRADIENT[item.businessCategory] ?? "from-[#F3F4F6] to-[#E5E7EB]";
-                const isTrusted = item.seller?.isTrustedSeller;
-                const pBadges: { label: string; cls: string; icon: React.ReactNode }[] = [];
-                if (item.safetyGrade === "A") pBadges.push({ label: "매출 인증", cls: "bg-green-100 text-green-700", icon: <Check className="h-2.5 w-2.5" /> });
-                if (item.hasDiagnosisBadge) pBadges.push({ label: "권리진단", cls: "bg-purple-100 text-purple-700", icon: <Shield className="h-2.5 w-2.5" /> });
-                if (isTrusted) pBadges.push({ label: "안심거래", cls: "bg-blue-100 text-blue-700", icon: <ShieldCheck className="h-2.5 w-2.5" /> });
-                return (
-                  <Link key={item.id} href={`/listings/${item.id}`}
-                    className={`group w-64 flex-none snap-start overflow-hidden rounded-xl border-2 bg-white transition-all active:scale-[0.98] md:w-auto md:flex-1 md:hover:-translate-y-1 md:hover:shadow-lg ${tc?.border ?? "border-gray-200"}`}>
-                    <div className={`h-1 bg-gradient-to-r ${tc?.gradient ?? ""}`} />
-                    <div className="relative aspect-[4/3] bg-gray-100">
-                      {item.images?.[0] ? <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 256px, 25vw" loading="lazy" />
-                        : (
-                          <div className={`flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${catGrad}`}>
-                            <span className="text-5xl drop-shadow-sm">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
-                            <span className="text-xs font-medium text-gray-600">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
-                          </div>
-                        )}
-                      <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-                        {BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}
-                      </span>
-                      {(item.floor || item.areaPyeong) && (
-                        <span className="absolute right-2 top-2 rounded bg-black/50 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-                          {[item.floor, item.areaPyeong ? `${item.areaPyeong}평` : null].filter(Boolean).join(" · ")}
-                        </span>
-                      )}
-                      <span className={`absolute left-2 bottom-2 rounded px-1.5 py-0.5 text-[10px] font-bold border ${tc?.bg} ${tc?.color} ${tc?.border}`}>{tc?.badge}</span>
-                    </div>
-                    <div className="p-3">
-                      <h3 className="truncate text-[13px] font-bold text-navy">{item.title}</h3>
-                      <div className="mt-1.5 space-y-0.5 text-xs">
-                        <div className="flex gap-2"><span className="w-14 text-gray-400">보증금</span><span className="font-bold text-navy">{formatKRW(Number(item.price))}</span></div>
-                        <div className="flex gap-2"><span className="w-14 text-gray-400">권리금</span><span className={`font-bold ${Number(item.premiumFee) > 0 ? "text-orange-600" : "text-navy"}`}>{item.premiumFee && Number(item.premiumFee) > 0 ? formatKRW(Number(item.premiumFee)) : "무권리"}</span></div>
-                      </div>
-                      {pBadges.length > 0 && (
-                        <div className="mt-1.5 flex flex-row flex-wrap items-center gap-2">
-                          {pBadges.map(b => (
-                            <span key={b.label} className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${b.cls}`}>
-                              {b.icon}{b.label}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <p className="mt-1.5 flex items-start gap-1 text-[11px] text-gray-400"><MapPin className="mt-0.5 h-3 w-3 shrink-0" /><span className="line-clamp-2">{item.city} {item.district}</span></p>
-                    </div>
-                  </Link>
-                );
-              }) : <p className="col-span-4 py-8 text-center text-sm text-gray-400">프리미엄 매물이 없습니다</p>}
+              premiumListings.length > 0 ? premiumListings.map(item => (
+                <ListingCard key={item.id} listing={item} variant="premium" isCarouselItem />
+              )) : <p className="col-span-4 py-8 text-center text-sm text-gray-400">프리미엄 매물이 없습니다</p>}
           </div>
         </div>
       </section>
@@ -458,60 +302,24 @@ export default function HomePage() {
       {/* ═══ 5. Today's Recommended (compact 6-card grid) ═══ */}
       <RevealOnScroll>
         <section className="py-6 md:py-10">
-          <div className="mx-auto max-w-7xl px-4">
+          <div className="mx-auto max-w-[1400px] px-4">
             <div className="flex items-center justify-between">
               <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
               <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
             </div>
             {/* Mobile: horizontal scroll / Desktop: 6-col grid */}
-            <div className="mt-3 flex gap-2.5 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-6 md:gap-3 md:overflow-visible">
+            <div className="mt-3 flex gap-2.5 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-6 md:gap-4 md:overflow-visible">
               {loadingRecommended ? Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="w-36 flex-none snap-start overflow-hidden rounded-lg border border-gray-200 bg-white md:w-auto">
-                  <div className="h-[90px] animate-pulse bg-gray-200" />
-                  <div className="space-y-1.5 p-2"><div className="h-3 w-3/4 animate-pulse rounded bg-gray-200" /><div className="h-2.5 w-1/2 animate-pulse rounded bg-gray-200" /></div>
+                <div key={i} className="w-44 flex-none snap-start overflow-hidden rounded-lg border border-gray-200 bg-white md:w-auto">
+                  <div className="h-[120px] animate-pulse bg-gray-200" />
+                  <div className="space-y-1.5 p-2.5"><div className="h-3.5 w-3/4 animate-pulse rounded bg-gray-200" /><div className="h-3 w-1/2 animate-pulse rounded bg-gray-200" /></div>
                 </div>
               )) :
                 recommendedListings.length === 0 ? (
                   <p className="col-span-6 py-6 text-center text-sm text-gray-400">추천 매물이 없습니다</p>
-                ) : recommendedListings.map(item => {
-                  const catGrad = CATEGORY_GRADIENT[item.businessCategory] ?? "from-[#F3F4F6] to-[#E5E7EB]";
-                  const tc = item.premiumRank === 2 ? PREMIUM_AD_CONFIG["PREMIUM"] : null;
-                  const badges: { label: string; cls: string }[] = [];
-                  if (item.safetyGrade === "A") badges.push({ label: "매출인증", cls: "bg-green-100 text-green-700" });
-                  if (item.hasDiagnosisBadge) badges.push({ label: "진단", cls: "bg-purple-100 text-purple-700" });
-                  return (
-                    <Link key={item.id} href={`/listings/${item.id}`}
-                      className={`group w-36 flex-none snap-start overflow-hidden rounded-lg border bg-white transition-all active:scale-[0.98] md:w-auto md:hover:-translate-y-0.5 md:hover:shadow-md ${tc ? `border-blue-200` : "border-gray-200"}`}>
-                      <div className="relative h-[90px] bg-gray-100">
-                        {item.images?.[0] ? (
-                          <Image src={item.images[0].thumbnailUrl ?? item.images[0].url} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 144px, 16vw" loading="lazy" />
-                        ) : (
-                          <div className={`flex h-full flex-col items-center justify-center gap-1 bg-gradient-to-br ${catGrad}`}>
-                            <span className="text-3xl">{CATEGORY_EMOJI[item.businessCategory] ?? "🏠"}</span>
-                            <span className="text-[9px] font-medium text-gray-500">{BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}</span>
-                          </div>
-                        )}
-                        <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1 py-0.5 text-[8px] font-medium text-white backdrop-blur-sm">
-                          {BUSINESS_CATEGORY_LABELS[item.businessCategory] ?? item.businessCategory}
-                        </span>
-                        {tc && <span className="absolute right-1.5 bottom-1.5 rounded bg-blue-50 border border-blue-200 px-1 py-0.5 text-[8px] font-bold text-blue-700">추천</span>}
-                      </div>
-                      <div className="p-2">
-                        <h3 className="truncate text-[11px] font-bold text-navy">{item.title}</h3>
-                        <div className="mt-1 space-y-0.5 text-[10px]">
-                          <div className="flex gap-1.5"><span className="w-10 text-gray-400">보증금</span><span className="font-bold text-navy">{formatKRW(Number(item.price))}</span></div>
-                          <div className="flex gap-1.5"><span className="w-10 text-gray-400">권리금</span><span className={`font-bold ${Number(item.premiumFee) > 0 ? "text-orange-600" : "text-navy"}`}>{item.premiumFee && Number(item.premiumFee) > 0 ? formatKRW(Number(item.premiumFee)) : "무권리"}</span></div>
-                        </div>
-                        {badges.length > 0 && (
-                          <div className="mt-1 flex flex-wrap gap-1">
-                            {badges.map(b => <span key={b.label} className={`rounded-full px-1.5 py-0.5 text-[8px] font-medium ${b.cls}`}>{b.label}</span>)}
-                          </div>
-                        )}
-                        <p className="mt-1 flex items-center gap-0.5 text-[9px] text-gray-400 truncate"><MapPin className="h-2.5 w-2.5 shrink-0" />{item.city} {item.district}</p>
-                      </div>
-                    </Link>
-                  );
-                })
+                ) : recommendedListings.map(item => (
+                  <ListingCard key={item.id} listing={item} variant="recommend" isCarouselItem />
+                ))
               }
             </div>
           </div>

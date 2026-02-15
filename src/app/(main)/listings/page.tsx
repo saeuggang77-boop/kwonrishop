@@ -3,13 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
-  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck, Shield, Check, Eye, Heart,
+  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck,
 } from "lucide-react";
-import { formatKRW } from "@/lib/utils/format";
-import { CompareButton } from "@/components/listings/compare-button";
-import { SafetyBadge, DiagnosisBadge } from "@/components/listings/safety-badge";
+import { ListingCard as ListingCardComponent } from "@/components/listings/listing-card";
 import dynamic from "next/dynamic";
 const KakaoMap = dynamic(() => import("@/components/kakao-map").then(m => m.KakaoMap), { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" /></div> });
 import {
@@ -17,8 +14,6 @@ import {
   BUSINESS_CATEGORY_GROUPS,
   FLOOR_OPTIONS,
   AREA_OPTIONS,
-  SAFETY_GRADE_CONFIG,
-  PREMIUM_AD_CONFIG,
   STORE_FEATURES,
 } from "@/lib/utils/constants";
 
@@ -60,19 +55,6 @@ interface ListingItem {
 type TabType = "direct" | "franchise";
 type FilterKey = "category" | "revenue" | "theme" | "price" | "floor" | "area";
 
-const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> = {
-  CAFE_BAKERY:   { gradient: "from-amber-800/70 to-amber-600/50", icon: "☕" },
-  CHICKEN:       { gradient: "from-orange-600/70 to-orange-400/50", icon: "🍗" },
-  KOREAN_FOOD:   { gradient: "from-red-700/70 to-red-500/50", icon: "🍚" },
-  PIZZA:         { gradient: "from-yellow-600/70 to-yellow-400/50", icon: "🍕" },
-  SNACK_BAR:     { gradient: "from-pink-600/70 to-pink-400/50", icon: "🍜" },
-  RETAIL:        { gradient: "from-blue-700/70 to-blue-500/50", icon: "🏪" },
-  BAR_PUB:       { gradient: "from-purple-700/70 to-purple-500/50", icon: "🍺" },
-  WESTERN_FOOD:  { gradient: "from-rose-700/70 to-rose-500/50", icon: "🍝" },
-  SERVICE:       { gradient: "from-blue-800/70 to-blue-600/50", icon: "✂️" },
-  ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
-  EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
-};
 
 const SORT_OPTIONS = [
   { value: "createdAt-desc", label: "최신등록순" },
@@ -561,7 +543,7 @@ export default function ListingsPage() {
                       {premium.length > 0 && (
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           {premium.map((listing) => (
-                            <ListingCard key={listing.id} listing={listing} />
+                            <ListingCardComponent key={listing.id} listing={listing} variant="search" />
                           ))}
                         </div>
                       )}
@@ -575,7 +557,7 @@ export default function ListingsPage() {
                       {normal.length > 0 && (
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           {normal.map((listing) => (
-                            <ListingCard key={listing.id} listing={listing} />
+                            <ListingCardComponent key={listing.id} listing={listing} variant="search" />
                           ))}
                         </div>
                       )}
@@ -701,180 +683,3 @@ function CategoryFilterDropdown({
   );
 }
 
-/* ================================================================
-   Listing Card (horizontal, 2-col grid)
-   ================================================================ */
-
-function ListingCard({ listing }: { listing: ListingItem }) {
-  const thumbnail = listing.images[0]?.thumbnailUrl ?? listing.images[0]?.url;
-  const categoryLabel = BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory;
-
-  const floorAreaParts: string[] = [];
-  if (listing.floor != null) floorAreaParts.push(`${listing.floor}층`);
-  if (listing.areaPyeong != null) floorAreaParts.push(`${listing.areaPyeong}평`);
-
-  const isTrusted = listing.seller?.isTrustedSeller ?? false;
-  const hasPremiumFee = listing.premiumFee != null && Number(listing.premiumFee) > 0;
-  const hasRevenue = listing.monthlyRevenue != null && Number(listing.monthlyRevenue) > 0;
-  const hasProfit = listing.monthlyProfit != null && Number(listing.monthlyProfit) > 0;
-
-  const tierKey = listing.premiumRank === 3 ? "VIP" : listing.premiumRank === 2 ? "PREMIUM" : listing.premiumRank === 1 ? "BASIC" : null;
-  const tierConfig = tierKey ? PREMIUM_AD_CONFIG[tierKey] : null;
-  const gradeConfig = listing.safetyGrade ? SAFETY_GRADE_CONFIG[listing.safetyGrade] : null;
-
-  const imageCount = listing.images.length;
-  const borderClass = listing.urgentTag?.active
-    ? "border-2 border-red-400"
-    : tierConfig
-      ? `border-2 ${tierConfig.border}`
-      : "border border-gray-100";
-
-  // Collect badge pills for the badge row
-  const badges: { label: string; bg: string; icon?: string }[] = [];
-  if (listing.safetyGrade === "A") badges.push({ label: "매출 인증", bg: "bg-green-100 text-green-700", icon: "check" });
-  if (listing.hasDiagnosisBadge) badges.push({ label: "권리진단", bg: "bg-purple-100 text-purple-700", icon: "shield" });
-  if (listing.urgentTag?.active) badges.push({ label: "급매", bg: "bg-red-100 text-red-700", icon: "fire" });
-  if (isTrusted) badges.push({ label: "안심거래", bg: "bg-blue-100 text-blue-700", icon: "shieldcheck" });
-
-  return (
-    <Link
-      href={`/listings/${listing.id}`}
-      className={`group flex gap-4 overflow-hidden rounded-xl border bg-white p-4 transition-shadow hover:shadow-md ${borderClass}`}
-    >
-      {/* Left: Thumbnail */}
-      <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:h-44 sm:w-44">
-        {thumbnail ? (
-          <Image
-            src={thumbnail}
-            alt={listing.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="176px"
-          />
-        ) : (() => {
-          const cat = CATEGORY_PLACEHOLDER[listing.businessCategory] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
-          return (
-            <div className={`flex h-full items-center justify-center bg-gradient-to-br ${cat.gradient}`}>
-              <span className="text-5xl drop-shadow-lg">{cat.icon}</span>
-            </div>
-          );
-        })()}
-        {/* Top-left: category tag */}
-        <span className="absolute left-2 top-2 rounded bg-black/60 px-2 py-0.5 text-[11px] font-medium leading-tight text-white backdrop-blur-sm">
-          {categoryLabel}
-        </span>
-        {/* Top-right: floor · area */}
-        {floorAreaParts.length > 0 && (
-          <span className="absolute right-2 top-2 rounded bg-black/50 px-1.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
-            {floorAreaParts.join(" · ")}
-          </span>
-        )}
-        {/* Bottom-left: premium/VIP badge or photo count */}
-        {tierConfig ? (
-          <span className={`absolute bottom-2 left-2 rounded px-2 py-0.5 text-[11px] font-bold leading-tight border ${tierConfig.bg} ${tierConfig.color} ${tierConfig.border}`}>
-            {tierConfig.badge}
-          </span>
-        ) : imageCount > 0 ? (
-          <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-black/50 px-1.5 py-0.5 text-[10px] text-white backdrop-blur-sm">
-            📷 {imageCount}
-          </span>
-        ) : null}
-        {/* Jump-up indicator */}
-        {listing.isJumpUp && (
-          <span className="absolute bottom-2 right-2 rounded bg-blue-600/90 px-1.5 py-0.5 text-[10px] font-bold text-white">
-            ⬆️
-          </span>
-        )}
-        <CompareButton
-          listing={{
-            id: listing.id,
-            title: listing.title,
-            businessCategory: listing.businessCategory,
-            city: listing.city,
-            district: listing.district,
-            thumbnail: listing.images[0]?.thumbnailUrl ?? listing.images[0]?.url ?? null,
-            price: listing.price,
-            monthlyRent: listing.monthlyRent,
-            premiumFee: listing.premiumFee,
-            monthlyRevenue: listing.monthlyRevenue,
-            monthlyProfit: listing.monthlyProfit,
-            areaM2: listing.areaM2,
-            areaPyeong: listing.areaPyeong,
-            floor: listing.floor,
-            safetyGrade: listing.safetyGrade,
-            isPremium: listing.isPremium,
-            premiumRank: listing.premiumRank,
-            storeType: listing.storeType,
-          }}
-          variant="card"
-        />
-      </div>
-
-      {/* Right: Info */}
-      <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
-        <div>
-          {/* Title */}
-          <h3 className="truncate text-base font-bold text-[#1B3A5C] transition-colors group-hover:text-[#1B3A5C]/70">
-            {listing.title}
-          </h3>
-          {/* Deposit / Monthly rent */}
-          <p className="mt-1.5 text-sm font-semibold text-[#1B3A5C]">
-            보증금 {formatKRW(Number(listing.price))} / 월세{" "}
-            {listing.monthlyRent && Number(listing.monthlyRent) > 0
-              ? formatKRW(Number(listing.monthlyRent))
-              : "0원"}
-          </p>
-          {/* Premium fee */}
-          {hasPremiumFee ? (
-            <p className="mt-1 text-[15px] font-bold text-red-500">
-              권리금 {formatKRW(Number(listing.premiumFee))}
-            </p>
-          ) : (
-            <p className="mt-1 text-[15px] font-bold text-[#1B3A5C]">무권리</p>
-          )}
-          {/* Revenue / Profit */}
-          {(hasRevenue || hasProfit) && (
-            <p className="mt-1 text-sm font-bold text-purple">
-              {hasRevenue && <>월매출 {formatKRW(Number(listing.monthlyRevenue))}</>}
-              {hasRevenue && hasProfit && <span className="mx-1.5 text-gray-300">|</span>}
-              {hasProfit && <>월수익 {formatKRW(Number(listing.monthlyProfit))}</>}
-            </p>
-          )}
-          {/* Badge row */}
-          {badges.length > 0 && (
-            <div className="mt-1.5 flex flex-row flex-wrap items-center gap-2">
-              {badges.map((b) => (
-                <span key={b.label} className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${b.bg}`}>
-                  {b.icon === "check" && <Check className="h-3 w-3" />}
-                  {b.icon === "shield" && <Shield className="h-3 w-3" />}
-                  {b.icon === "fire" && <span className="text-[10px]">🔥</span>}
-                  {b.icon === "shieldcheck" && <ShieldCheck className="h-3 w-3" />}
-                  {b.label}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-        {/* Location */}
-        <p className="mt-1.5 flex items-start gap-1 text-sm text-gray-400">
-          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          <span className="line-clamp-2">
-            {listing.city} {listing.district}
-            {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
-          </span>
-        </p>
-        {/* Stats */}
-        <div className="mt-1 flex items-center gap-3 text-xs text-gray-400">
-          <span className="flex items-center gap-1">
-            <Eye className="h-3 w-3" />
-            {listing.viewCount}
-          </span>
-          <span className="flex items-center gap-1">
-            <Heart className="h-3 w-3" />
-            {listing.likeCount}
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
-}
