@@ -284,7 +284,10 @@ function DirectInputTab({
     fetch("/api/report-plans")
       .then((r) => r.json())
       .then((json) => {
-        if (json.data) setPlans(json.data);
+        if (json.data) {
+          setPlans(json.data);
+          if (json.data.length > 0) setSelectedPlanId(json.data[0].id);
+        }
       })
       .catch(() => {});
   }, []);
@@ -454,55 +457,31 @@ function DirectInputTab({
         </div>
       </Section>
 
-      {/* 플랜 선택 */}
-      <Section icon={<Crown className="h-5 w-5" />} title="플랜 선택">
-        <div className="grid gap-4 sm:grid-cols-2">
-          {plans.map((plan) => {
-            const isPremium = plan.name === "PREMIUM";
-            const isSelected = selectedPlanId === plan.id;
-            return (
-              <div
-                key={plan.id}
-                onClick={() => setSelectedPlanId(plan.id)}
-                className={`relative cursor-pointer rounded-xl border-2 p-5 transition-all ${
-                  isSelected
-                    ? "border-[#1B3A5C] bg-[#1B3A5C]/5 shadow-lg"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                {isPremium && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#F59E0B] px-3 py-0.5 text-xs font-bold text-white">
-                    추천
-                  </span>
-                )}
-                <div className="flex items-center gap-2">
-                  <div className={`rounded-lg p-2 ${isPremium ? "bg-[#1B3A5C]/10 text-[#1B3A5C]" : "bg-gray-100 text-gray-700"}`}>
-                    {isPremium ? <Star className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
-                  </div>
-                  <h3 className="text-lg font-bold text-[#1B3A5C]">{plan.displayName}</h3>
-                </div>
-                <p className="mt-3 text-2xl font-bold text-[#1B3A5C]">
-                  {formatKRW(plan.price)}
-                </p>
-                <ul className="mt-4 space-y-2">
-                  {(plan.features as string[]).map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1B3A5C]" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+      {/* 결제 정보 */}
+      <Section icon={<Crown className="h-5 w-5" />} title="결제 정보">
+        {selectedPlan ? (
+          <div className="rounded-xl border-2 border-[#1B3A5C] bg-[#1B3A5C]/5 p-5">
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#1B3A5C]/10 p-2 text-[#1B3A5C]">
+                <FileText className="h-5 w-5" />
               </div>
-            );
-          })}
-        </div>
-
-        {selectedPlan && (
-          <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">결제 금액</span>
-              <span className="text-xl font-bold text-[#1B3A5C]">{formatKRW(selectedPlan.price)}</span>
+              <h3 className="text-lg font-bold text-[#1B3A5C]">{selectedPlan.displayName}</h3>
             </div>
+            <p className="mt-3 text-2xl font-bold text-[#1B3A5C]">
+              {formatKRW(selectedPlan.price)}
+            </p>
+            <ul className="mt-4 space-y-2">
+              {(selectedPlan.features as string[]).map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1B3A5C]" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-500">
+            플랜 정보를 불러오는 중...
           </div>
         )}
       </Section>

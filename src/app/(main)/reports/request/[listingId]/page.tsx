@@ -101,6 +101,7 @@ export default function ReportRequestPage({
         }
         if (plansRes.data) {
           setPlans(plansRes.data);
+          if (plansRes.data.length > 0) setSelectedPlanId(plansRes.data[0].id);
         }
       })
       .catch(() => {})
@@ -426,55 +427,31 @@ export default function ReportRequestPage({
         )}
 
         {step === 8 && (
-          <StepWrapper icon={<Crown className="h-6 w-6" />} title="플랜 선택 & 결제">
+          <StepWrapper icon={<Crown className="h-6 w-6" />} title="결제 정보">
             <div className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2">
-                {plans.map((plan) => {
-                  const isPremium = plan.name === "PREMIUM";
-                  const isSelected = selectedPlanId === plan.id;
-                  return (
-                    <div
-                      key={plan.id}
-                      onClick={() => setSelectedPlanId(plan.id)}
-                      className={`relative cursor-pointer rounded-xl border-2 p-6 transition-all ${
-                        isSelected
-                          ? "border-blue-600 bg-blue-50 shadow-lg scale-[1.02]"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
-                      {isPremium && (
-                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-0.5 text-xs font-bold text-white">
-                          추천
-                        </span>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <div className={`rounded-lg p-2 ${isPremium ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}>
-                          {isPremium ? <Star className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
-                        </div>
-                        <h3 className="text-lg font-bold text-blue-900">{plan.displayName}</h3>
-                      </div>
-                      <p className="mt-3 text-2xl font-bold text-blue-900">
-                        {formatKRW(plan.price)}
-                      </p>
-                      <ul className="mt-4 space-y-2">
-                        {(plan.features as string[]).map((f) => (
-                          <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-                            {f}
-                          </li>
-                        ))}
-                      </ul>
+              {selectedPlan ? (
+                <div className="rounded-xl border-2 border-blue-600 bg-blue-50 p-6">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-lg bg-blue-100 p-2 text-blue-700">
+                      <FileText className="h-5 w-5" />
                     </div>
-                  );
-                })}
-              </div>
-
-              {selectedPlan && (
-                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">결제 금액</span>
-                    <span className="text-xl font-bold text-blue-900">{formatKRW(selectedPlan.price)}</span>
+                    <h3 className="text-lg font-bold text-blue-900">{selectedPlan.displayName}</h3>
                   </div>
+                  <p className="mt-3 text-2xl font-bold text-blue-900">
+                    {formatKRW(selectedPlan.price)}
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    {(selectedPlan.features as string[]).map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-500">
+                  플랜 정보를 불러오는 중...
                 </div>
               )}
 

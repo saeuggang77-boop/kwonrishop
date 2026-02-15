@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
         listingId: listingId ?? null,
         inputData: (inputData ?? {}) as Prisma.InputJsonValue,
         analysisResult: analysisResult as unknown as Prisma.InputJsonValue,
-        pdfUrl: plan.name === "PREMIUM" ? `/reports/${purchase.id}/pdf` : null,
+        pdfUrl: `/reports/${purchase.id}/pdf`,
       },
     });
 
@@ -156,8 +156,8 @@ function generateAnalysis(inputData: Record<string, unknown>, planTier: string) 
     },
   };
 
-  // PREMIUM 전용 항목
-  if (planTier === "PREMIUM") {
+  // 임대차 체크리스트
+  {
     result.checklist = [
       { id: 1, item: "등기부등본 확인 (소유자, 근저당, 가압류)", checked: false },
       { id: 2, item: "건축물대장 확인 (용도, 위반건축물 여부)", checked: false },
@@ -183,4 +183,5 @@ function generateAnalysis(inputData: Record<string, unknown>, planTier: string) 
   }
 
   return result;
+
 }

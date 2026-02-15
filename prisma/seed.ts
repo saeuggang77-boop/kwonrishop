@@ -847,27 +847,22 @@ async function main() {
     {
       id: "rplan-basic",
       name: "BASIC" as const,
-      displayName: "BASIC 분석",
-      price: BigInt(20_000),
-      features: ["권리금 적정성 평가", "지역/업종 평균 비교", "권리 위험요소 기본 분석", "종합 위험 등급 판정"],
-    },
-    {
-      id: "rplan-premium",
-      name: "PREMIUM" as const,
-      displayName: "PREMIUM 분석",
-      price: BigInt(40_000),
-      features: ["BASIC 전체 항목 포함", "임대차 계약 체크리스트 20항목", "상세 위험요소 분석", "PDF 리포트 다운로드"],
+      displayName: "권리진단서",
+      price: BigInt(30_000),
+      features: ["적정 권리금 산정 (영업/시설/바닥)", "수익성·입지·리스크 진단", "종합 등급 + AI 코멘트", "임대차 체크리스트 20항목", "PDF 리포트 다운로드", "권리진단 완료 배지 부여"],
     },
   ];
 
   for (const plan of reportPlans) {
     await prisma.reportPlan.upsert({
       where: { id: plan.id },
-      update: {},
+      update: { displayName: plan.displayName, price: plan.price, features: plan.features },
       create: plan,
     });
   }
-  console.log("  Report plans: 2");
+  // Delete old PREMIUM plan if exists
+  await prisma.reportPlan.deleteMany({ where: { id: "rplan-premium" } });
+  console.log("  Report plans: 1 (unified)");
 
   // ──────────────────────────────────────────────
   // 10b. Subscription Plans (구독 플랜)

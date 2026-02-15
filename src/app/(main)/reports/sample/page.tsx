@@ -116,7 +116,7 @@ const MOCK = {
   reviews: [
     { name: "김**", text: "권리진단서 덕분에 안전하게 거래했습니다. 위험요소를 미리 파악할 수 있어서 큰 도움이 됐어요.", rating: 5 },
     { name: "이**", text: "권리금이 적정한지 객관적으로 확인할 수 있어서 좋았습니다. 협상에도 큰 도움이 됐어요.", rating: 5 },
-    { name: "박**", text: "PREMIUM으로 발급받았는데 상권 분석이 정말 상세해서 만족합니다. 강력 추천합니다.", rating: 5 },
+    { name: "박**", text: "권리진단서를 발급받았는데 상권 분석이 정말 상세해서 만족합니다. 강력 추천합니다.", rating: 5 },
   ],
 };
 
@@ -172,9 +172,9 @@ function BlurredSection({ children, label }: { children: React.ReactNode; label?
       <div className="pointer-events-none select-none blur-[6px]">{children}</div>
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[2px]">
         <Lock className="h-8 w-8 text-navy/50" />
-        <p className="mt-2 text-sm font-bold text-navy">{label ?? "PREMIUM에서 확인 가능"}</p>
+        <p className="mt-2 text-sm font-bold text-navy">{label ?? "권리진단서 발급 시 확인 가능"}</p>
         <Link href="/reports/request" className="mt-2 rounded-lg bg-navy px-4 py-1.5 text-xs font-medium text-white hover:bg-navy-dark">
-          PREMIUM 업그레이드
+          권리진단서 발급받기
         </Link>
       </div>
     </div>
@@ -536,7 +536,7 @@ export default function ReportSamplePage() {
           </div>
 
           {/* Hourly Traffic (BLURRED) */}
-          <BlurredSection label="시간대별 유동인구 — PREMIUM에서 확인 가능">
+          <BlurredSection label="시간대별 유동인구 — 권리진단서 발급 시 확인 가능">
             <div>
               <p className="mb-3 text-sm font-medium text-gray-700">시간대별 유동인구</p>
               <ResponsiveContainer width="100%" height={180}>
@@ -552,14 +552,14 @@ export default function ReportSamplePage() {
         </div>
       </section>
 
-      {/* ═══ PREMIUM Upgrade Banner ═══ */}
+      {/* ═══ 권리진단서 발급 배너 ═══ */}
       <section className="mb-8 overflow-hidden rounded-2xl border-2 border-navy/20 bg-gradient-to-r from-navy to-[#2D5F8A] p-6 text-center md:p-8">
         <Lock className="mx-auto h-8 w-8 text-white/60" />
-        <h3 className="mt-3 text-lg font-bold text-white">PREMIUM에서는 더 자세한 분석을 제공합니다</h3>
+        <h3 className="mt-3 text-lg font-bold text-white">권리진단서를 발급받으면 더 자세한 분석을 확인할 수 있습니다</h3>
         <p className="mt-1 text-sm text-white/60">상권 시간대 분석, 경쟁업체 상세, 임대료 인상률 추이 등</p>
         <div className="mt-4 flex justify-center gap-3">
           <Link href="/reports/request" className="rounded-lg bg-white px-6 py-2.5 text-sm font-bold text-navy hover:bg-gray-100">
-            PREMIUM 신청하기
+            권리진단서 발급받기
           </Link>
         </div>
       </section>
@@ -582,7 +582,7 @@ export default function ReportSamplePage() {
 
           {/* Blurred: Rent Increase Trend */}
           <div className="mt-6">
-            <BlurredSection label="임대료 인상률 추이 — PREMIUM에서 확인 가능">
+            <BlurredSection label="임대료 인상률 추이 — 권리진단서 발급 시 확인 가능">
               <div>
                 <p className="mb-3 text-sm font-medium text-gray-700">최근 3년 임대료 인상률</p>
                 <ResponsiveContainer width="100%" height={160}>
@@ -643,7 +643,7 @@ export default function ReportSamplePage() {
                 </div>
               );
               if (isBlurred) {
-                return <BlurredSection key={i} label="경쟁업체 분석 — PREMIUM에서 확인 가능">{content}</BlurredSection>;
+                return <BlurredSection key={i} label="경쟁업체 분석 — 권리진단서 발급 시 확인 가능">{content}</BlurredSection>;
               }
               return <div key={i}>{content}</div>;
             })}

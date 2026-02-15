@@ -4,7 +4,7 @@ import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import {
   Shield, AlertTriangle, CheckCircle, XCircle, TrendingUp, FileText,
-  Download, ArrowLeft, BarChart3, Target, Clock, Building,
+  Download, ArrowLeft, BarChart3, Clock, Building,
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
@@ -113,7 +113,6 @@ export default function ReportDetailPage({
   }
 
   const { valuation, risks } = report.data.analysisResult;
-  const isPremium = report.plan.name === "PREMIUM";
   const gradeStyle = GRADE_STYLES[risks.grade] ?? GRADE_STYLES.C;
   const checkedCount = checklist.filter((c) => c.checked).length;
 
@@ -132,9 +131,7 @@ export default function ReportDetailPage({
             <h1 className="text-2xl font-bold text-blue-900">권리진단서</h1>
             <p className="mt-1 text-gray-500">{report.listing.title} - {report.listing.address}</p>
           </div>
-          <span className={`rounded-lg px-3 py-1.5 text-sm font-bold ${
-            isPremium ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"
-          }`}>
+          <span className="rounded-lg bg-blue-100 px-3 py-1.5 text-sm font-bold text-blue-700">
             {report.plan.displayName}
           </span>
         </div>
@@ -283,8 +280,8 @@ export default function ReportDetailPage({
         </div>
       </section>
 
-      {/* 3. 임대차 계약 체크리스트 (PREMIUM only) */}
-      {isPremium && checklist.length > 0 && (
+      {/* 3. 임대차 계약 체크리스트 */}
+      {checklist.length > 0 && (
         <section className="mb-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white px-6 py-4">
             <div className="flex items-center gap-3">
@@ -329,48 +326,29 @@ export default function ReportDetailPage({
         </section>
       )}
 
-      {/* 4. PDF Download (PREMIUM only) */}
-      {isPremium && (
-        <section className="mb-8 overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white shadow-sm">
-          <div className="flex items-center justify-between px-6 py-6">
-            <div>
-              <h3 className="font-bold text-blue-900">진단서 PDF 다운로드</h3>
-              <p className="mt-1 text-sm text-gray-500">권리샵 로고 + 워터마크가 포함된 전체 권리진단서</p>
-            </div>
-            <button
-              onClick={() => {
-                const url = report.data?.pdfUrl;
-                if (url) {
-                  window.open(url, "_blank");
-                } else {
-                  toast("info", "PDF가 아직 생성되지 않았습니다. 잠시 후 다시 시도해주세요.");
-                }
-              }}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-            >
-              <Download className="h-4 w-4" />
-              진단서 PDF 다운로드
-            </button>
+      {/* 4. PDF Download */}
+      <section className="mb-8 overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white shadow-sm">
+        <div className="flex items-center justify-between px-6 py-6">
+          <div>
+            <h3 className="font-bold text-blue-900">진단서 PDF 다운로드</h3>
+            <p className="mt-1 text-sm text-gray-500">권리샵 로고 + 워터마크가 포함된 전체 권리진단서</p>
           </div>
-        </section>
-      )}
-
-      {/* Not premium upsell */}
-      {!isPremium && (
-        <section className="mb-8 overflow-hidden rounded-2xl border border-dashed border-blue-300 bg-blue-50 p-6 text-center">
-          <Target className="mx-auto h-8 w-8 text-blue-400" />
-          <h3 className="mt-3 font-bold text-blue-900">권리진단서 PREMIUM으로 업그레이드</h3>
-          <p className="mt-2 text-sm text-gray-600">
-            임대차 계약 체크리스트 20항목 + 상세 위험요소 분석 + PDF 다운로드
-          </p>
-          <Link
-            href={`/reports/request/${report.listing.id}`}
-            className="mt-4 inline-block rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+          <button
+            onClick={() => {
+              const url = report.data?.pdfUrl;
+              if (url) {
+                window.open(url, "_blank");
+              } else {
+                toast("info", "PDF가 아직 생성되지 않았습니다. 잠시 후 다시 시도해주세요.");
+              }
+            }}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"
           >
-            PREMIUM으로 업그레이드
-          </Link>
-        </section>
-      )}
+            <Download className="h-4 w-4" />
+            진단서 PDF 다운로드
+          </button>
+        </div>
+      </section>
 
       {/* Watermark */}
       <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50/50 p-3 text-center text-xs text-blue-600">
