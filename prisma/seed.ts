@@ -638,15 +638,25 @@ async function main() {
   }
   console.log("  Premium plans: 2");
 
+  // Reset all listings to non-premium first (clean slate)
+  await prisma.listing.updateMany({
+    where: { isPremium: true },
+    data: { isPremium: false, premiumRank: 0 },
+  });
+  await prisma.premiumListing.deleteMany({
+    where: { id: { startsWith: "seed-premium-" } },
+  });
+
   // Set premium status on sample listings
   // VIP(rank=3) 프리미엄 매물: 강남역 카페(0), 홍대 치킨(1)
-  // PREMIUM(rank=2) 오늘의 추천: 건대 빽다방(11), 목동 크린토피아(10), 역삼 이디야(9), 신촌 맘스터치(8), 왕십리 편의점(5), 마곡 피자(6)
+  // PREMIUM(rank=2) 오늘의 추천: 건대 빽다방(11), 목동 크린토피아(10), 노원 PC방(7), 신촌 맘스터치(8), 왕십리 편의점(5), 마곡 피자(6)
+  // NOTE: 인덱스 9(역삼 이디야)는 인덱스 0(강남역 카페)과 ID 충돌 (동일 강남구-CAFE_BAKERY)
   const premiumMappings = [
     { listingIdx: 0, planId: "plan-vip", rank: 3 },
     { listingIdx: 1, planId: "plan-vip", rank: 3 },
     { listingIdx: 11, planId: "plan-premium", rank: 2 },
     { listingIdx: 10, planId: "plan-premium", rank: 2 },
-    { listingIdx: 9, planId: "plan-premium", rank: 2 },
+    { listingIdx: 7, planId: "plan-premium", rank: 2 },
     { listingIdx: 8, planId: "plan-premium", rank: 2 },
     { listingIdx: 5, planId: "plan-premium", rank: 2 },
     { listingIdx: 6, planId: "plan-premium", rank: 2 },
