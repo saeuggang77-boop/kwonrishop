@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   MapPin, Calendar, Eye, Building, Layers,
-  FileSearch, TrendingUp, Calculator, Star, Users,
+  TrendingUp, Calculator, Star, Users,
   ArrowRight, MapPinned, Footprints, Store, Shield, ShieldCheck,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -28,6 +28,9 @@ import { CostPieChart, RevenueGradeMessage } from "./revenue-charts";
 import { MarketBarChart } from "./market-charts";
 import { LikeButton } from "@/components/listings/like-button";
 import { CommentSectionWrapper } from "@/components/listings/comment-section-wrapper";
+import { DiagnosisCard } from "@/components/listings/diagnosis-card";
+import { DiagnosisPurchaseButton } from "@/components/listings/diagnosis-purchase-button";
+import { DiagnosisSummaryCard, DiagnosisCTACard } from "@/components/listings/diagnosis-summary-card";
 import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -86,7 +89,7 @@ export default async function ListingDetailPage({
     notFound();
   }
 
-  const [images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw] =
+  const [images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw] =
     await Promise.all([
       prisma.listingImage.findMany({
         where: { listingId: id },
@@ -136,12 +139,16 @@ export default async function ListingDetailPage({
         orderBy: { viewCount: "desc" },
         take: 4,
       }),
+      prisma.diagnosisReport.findUnique({
+        where: { listingId: id },
+      }),
     ]);
 
   // Convert all BigInt fields to Number (Prisma returns BigInt, RSC can't serialize it)
   const marketPrice = toSerializable(marketPriceRaw);
   const districtListings = toSerializable(districtListingsRaw);
   const categoryListings = toSerializable(categoryListingsRaw);
+  const diagnosisReport = toSerializable(diagnosisReportRaw);
 
   // Check if current user has liked this listing
   let userLiked = false;
@@ -309,30 +316,12 @@ export default async function ListingDetailPage({
         <div className="lg:col-span-7">
           {/* ===== TAB 1: 매물정보 ===== */}
           <section id="listing-info">
-            {/* 권리진단서 CTA Banner (moved above price card for visibility) */}
-            <div className="mb-6 overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-blue-50">
-              <div className="flex items-center justify-between px-6 py-5">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                    <FileSearch className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-blue-900">
-                      이 매물의 권리진단서를 발급받으세요
-                    </p>
-                    <p className="mt-0.5 text-sm text-gray-600">
-                      권리금 적정성 + 위험요소까지 분석해드립니다
-                    </p>
-                  </div>
-                </div>
-                <Link
-                  href={`/reports/request/${listing.id}`}
-                  className="shrink-0 rounded-lg bg-[#F59E0B] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#D97706]"
-                >
-                  권리진단서 발급
-                </Link>
-              </div>
-            </div>
+            {/* 권리진단서 카드: 발급 완료 → 요약 카드, 미발급 → CTA 카드 */}
+            {listing.hasDiagnosisBadge ? (
+              <DiagnosisSummaryCard listingId={listing.id} />
+            ) : (
+              <DiagnosisCTACard listingId={listing.id} />
+            )}
 
             {/* Price Info Card - 2-Column Grid */}
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
@@ -537,28 +526,16 @@ export default async function ListingDetailPage({
               </div>
             )}
 
-            {/* 권리진단서 배너 */}
-            {listing.hasDiagnosisBadge && (
-              <div className="mt-4 overflow-hidden rounded-xl border border-purple-200 bg-purple-50">
-                <div className="flex items-center gap-3 px-6 py-4">
-                  <span className="text-xl">🛡️</span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <DiagnosisBadge size="md" />
-                      <h2 className="text-base font-bold text-purple-800">권리금 검증 완료</h2>
-                    </div>
-                    <p className="mt-1 text-sm text-purple-700">권리진단서 발급 완료 - 권리금 적정성이 검증되었습니다.</p>
-                  </div>
-                </div>
+            {/* 권리진단서 상세 카드 (DiagnosisSummaryCard가 상단에서 요약 표시) */}
+            {diagnosisReport && (
+              <div className="mt-4">
+                <DiagnosisCard diagnosis={diagnosisReport} />
               </div>
             )}
 
-            {/* Diagnosis promotion banner for listings without badge */}
-            {!listing.hasDiagnosisBadge && (
-              <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
-                <p className="text-sm font-semibold text-emerald-800">이 매물의 권리진단서를 발급받으세요</p>
-                <p className="text-xs text-emerald-600 mt-1">권리진단서를 발급받으면 &ldquo;권리진단 완료&rdquo; 배지가 자동으로 부여됩니다.</p>
-              </div>
+            {/* 매도인 전용: 진단서 발급 버튼 */}
+            {!diagnosisReport && session?.user?.id === listing.sellerId && (
+              <DiagnosisPurchaseButton listingId={listing.id} />
             )}
           </section>
 
