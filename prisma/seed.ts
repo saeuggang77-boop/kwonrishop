@@ -515,6 +515,101 @@ async function main() {
   }
   console.log(`  Listings: ${createdListings.length}`);
 
+  // ──────────────────────────────────────────────
+  // 4a. Listing Images (매물 사진)
+  // ──────────────────────────────────────────────
+  const listingImages: { listingIdx: number; images: { seed: string; isPrimary: boolean }[] }[] = [
+    { listingIdx: 0, images: [
+      { seed: "cafe-interior-1", isPrimary: true },
+      { seed: "cafe-counter-1", isPrimary: false },
+      { seed: "coffee-latte-1", isPrimary: false },
+    ]},
+    { listingIdx: 1, images: [
+      { seed: "chicken-restaurant-1", isPrimary: true },
+      { seed: "fried-chicken-1", isPrimary: false },
+      { seed: "beer-pub-1", isPrimary: false },
+    ]},
+    { listingIdx: 2, images: [
+      { seed: "korean-restaurant-1", isPrimary: true },
+      { seed: "korean-food-1", isPrimary: false },
+      { seed: "restaurant-hall-1", isPrimary: false },
+    ]},
+    { listingIdx: 3, images: [
+      { seed: "cocktail-bar-1", isPrimary: true },
+      { seed: "bar-interior-1", isPrimary: false },
+      { seed: "bar-night-1", isPrimary: false },
+    ]},
+    { listingIdx: 4, images: [
+      { seed: "hair-salon-1", isPrimary: true },
+      { seed: "salon-interior-1", isPrimary: false },
+      { seed: "salon-mirror-1", isPrimary: false },
+    ]},
+    { listingIdx: 5, images: [
+      { seed: "convenience-store-1", isPrimary: true },
+      { seed: "store-shelves-1", isPrimary: false },
+      { seed: "store-front-1", isPrimary: false },
+    ]},
+    { listingIdx: 6, images: [
+      { seed: "pizza-shop-1", isPrimary: true },
+      { seed: "pizza-oven-1", isPrimary: false },
+      { seed: "pizza-delivery-1", isPrimary: false },
+    ]},
+    { listingIdx: 7, images: [
+      { seed: "pc-gaming-room-1", isPrimary: true },
+      { seed: "pc-setup-1", isPrimary: false },
+      { seed: "gaming-cafe-1", isPrimary: false },
+    ]},
+    { listingIdx: 8, images: [
+      { seed: "fast-food-1", isPrimary: true },
+      { seed: "burger-shop-1", isPrimary: false },
+      { seed: "fast-food-counter-1", isPrimary: false },
+    ]},
+    { listingIdx: 9, images: [
+      { seed: "coffee-franchise-1", isPrimary: true },
+      { seed: "coffee-takeout-1", isPrimary: false },
+      { seed: "cafe-exterior-1", isPrimary: false },
+    ]},
+    { listingIdx: 10, images: [
+      { seed: "laundry-shop-1", isPrimary: true },
+      { seed: "washing-machine-1", isPrimary: false },
+      { seed: "laundry-interior-1", isPrimary: false },
+    ]},
+    { listingIdx: 11, images: [
+      { seed: "budget-cafe-1", isPrimary: true },
+      { seed: "iced-coffee-1", isPrimary: false },
+      { seed: "cafe-small-1", isPrimary: false },
+    ]},
+  ];
+
+  let imageCount = 0;
+  for (const entry of listingImages) {
+    const listing = createdListings[entry.listingIdx];
+    if (!listing) continue;
+    for (let i = 0; i < entry.images.length; i++) {
+      const img = entry.images[i];
+      const imageId = `seed-img-${entry.listingIdx}-${i}`;
+      await prisma.listingImage.upsert({
+        where: { id: imageId },
+        update: {},
+        create: {
+          id: imageId,
+          listingId: listing.id,
+          url: `https://picsum.photos/seed/${img.seed}/800/600`,
+          s3Key: `seed/${img.seed}.jpg`,
+          thumbnailUrl: `https://picsum.photos/seed/${img.seed}/400/300`,
+          sortOrder: i,
+          isPrimary: img.isPrimary,
+          width: 800,
+          height: 600,
+          sizeBytes: 150000,
+          mimeType: "image/jpeg",
+        },
+      });
+      imageCount++;
+    }
+  }
+  console.log(`  Listing images: ${imageCount}`);
+
   // Set half of listings to isPhonePublic: false
   for (let i = 0; i < createdListings.length; i++) {
     if (i % 2 === 1) {
