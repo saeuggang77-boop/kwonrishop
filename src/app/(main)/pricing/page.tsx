@@ -54,7 +54,7 @@ export default function PricingPage() {
             매물을 빨리 팔고 싶으신가요?
           </h2>
           <p className="mt-2 text-gray-500">
-            프리미엄 광고로 매물 노출을 극대화하세요
+            광고로 매물 노출을 극대화하세요
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export default function PricingPage() {
                       : "mt-6 block w-full rounded-lg border border-blue-600 px-4 py-3 text-center text-sm font-medium text-blue-700 transition-all hover:bg-blue-50 active:scale-[0.97]"
                   }
                 >
-                  {isVip ? "VIP 광고 신청하기" : "광고 신청하기"}
+                  {isVip ? "프리미엄 매물 광고 신청하기" : "오늘의 추천 매물 광고 신청하기"}
                 </Link>
               </div>
             );
@@ -154,7 +154,7 @@ export default function PricingPage() {
             소액 부스트 서비스
           </div>
           <h2 className="mt-4 text-2xl font-bold text-[#1B3A5C]">
-            프리미엄 광고 없이도 매물 노출을 높일 수 있어요
+            매물 광고 없이도 매물 노출을 높일 수 있어요
           </h2>
           <p className="mt-2 text-gray-500">
             소액으로 빠르게 매물 노출을 높여보세요

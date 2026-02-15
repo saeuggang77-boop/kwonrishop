@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
 
       await createNotification({
         userId: premium.listing.sellerId,
-        title: "프리미엄 광고가 만료되었습니다",
-        message: `"${premium.listing.title}" 매물의 프리미엄 광고 기간이 종료되었습니다. 재등록하시려면 광고 관리 페이지를 방문하세요.`,
+        title: "매물 광고가 만료되었습니다",
+        message: `"${premium.listing.title}" 매물의 광고 기간이 종료되었습니다. 재등록하시려면 광고 관리 페이지를 방문하세요.`,
         link: "/premium/listing-ad",
         sourceType: "PREMIUM_LISTING",
         sourceId: premium.id,

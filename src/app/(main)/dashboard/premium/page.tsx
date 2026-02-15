@@ -56,7 +56,7 @@ export default function DashboardPremiumPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Star className="h-6 w-6 text-yellow-500" />
-          <h1 className="text-2xl font-bold text-navy">프리미엄 광고 관리</h1>
+          <h1 className="text-2xl font-bold text-navy">매물 광고 관리</h1>
         </div>
         <Link
           href="/premium/listing-ad"
@@ -116,7 +116,7 @@ export default function DashboardPremiumPage() {
         ) : premiumListings.length === 0 ? (
           <div className="mt-6 rounded-xl border border-dashed border-gray-300 bg-gray-50 py-12 text-center">
             <TrendingUp className="mx-auto h-10 w-10 text-gray-300" />
-            <p className="mt-3 text-sm font-medium text-gray-500">등록된 프리미엄 광고가 없습니다</p>
+            <p className="mt-3 text-sm font-medium text-gray-500">등록된 매물 광고가 없습니다</p>
             <Link
               href="/premium/listing-ad"
               className="mt-4 inline-block rounded-lg bg-accent px-6 py-2 text-sm font-medium text-white hover:bg-accent-dark"

@@ -157,6 +157,7 @@ export default function HomePage() {
   const [regionTab, setRegionTab] = useState("서울");
   const [franchiseTab, setFranchiseTab] = useState("외식");
   const [listings, setListings] = useState<ListingCard[]>([]);
+  const [recommendedListings, setRecommendedListings] = useState<ListingCard[]>([]);
   const [premiumListings, setPremiumListings] = useState<ListingCard[]>([]);
   const [franchises, setFranchises] = useState<FranchiseCard[]>([]);
   const [posts, setPosts] = useState<BoardPostCard[]>([]);
@@ -164,6 +165,7 @@ export default function HomePage() {
   const [bannerIdx, setBannerIdx] = useState(0);
   const [bannerDir, setBannerDir] = useState<"left" | "right">("right");
   const [loadingListings, setLoadingListings] = useState(true);
+  const [loadingRecommended, setLoadingRecommended] = useState(true);
   const [loadingPremium, setLoadingPremium] = useState(true);
   const [loadingFranchises, setLoadingFranchises] = useState(true);
   const [showFloating, setShowFloating] = useState(false);
@@ -185,7 +187,8 @@ export default function HomePage() {
     setLoadingPremium(true);
     fetch("/api/listings?premiumOnly=true&limit=8").then(r => r.json())
       .then(j => {
-        const premium = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
+        const all = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
+        const premium = all.filter((l: ListingCard) => l.premiumRank === 3);
         if (premium.length < 4) {
           fetch("/api/listings?limit=10&sort=latest").then(r2 => r2.json())
             .then(j2 => {
@@ -198,6 +201,26 @@ export default function HomePage() {
         }
       })
       .catch(() => {}).finally(() => setLoadingPremium(false));
+  }, []);
+
+  useEffect(() => {
+    setLoadingRecommended(true);
+    fetch("/api/listings?premiumOnly=true&limit=8").then(r => r.json())
+      .then(j => {
+        const all = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
+        const recommended = all.filter((l: ListingCard) => l.premiumRank === 2);
+        if (recommended.length < 4) {
+          fetch("/api/listings?limit=10&sort=latest").then(r2 => r2.json())
+            .then(j2 => {
+              const extra = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
+                .filter((e: ListingCard) => !recommended.find((r: ListingCard) => r.id === e.id));
+              setRecommendedListings([...recommended, ...extra].slice(0, 4));
+            }).catch(() => setRecommendedListings(recommended));
+        } else {
+          setRecommendedListings(recommended);
+        }
+      })
+      .catch(() => {}).finally(() => setLoadingRecommended(false));
   }, []);
 
   useEffect(() => {
@@ -519,20 +542,12 @@ export default function HomePage() {
               <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
               <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
             </div>
-            <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide">
-              {REGION_TABS.map(t => (
-                <button key={t} onClick={() => setRegionTab(t)}
-                  className={`min-h-[36px] flex-none rounded-lg px-4 text-sm font-medium transition-all ${regionTab === t ? "bg-navy text-white" : "bg-gray-100 text-gray-600 active:bg-gray-200"}`}>
-                  {t}
-                </button>
-              ))}
-            </div>
             {/* Mobile: horizontal scroll / Desktop: 4-col grid */}
             <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
-              {loadingListings ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />) :
-                listings.length === 0 ? (
-                  <div className="hidden" />
-                ) : listings.map(item => renderListingCard(item, true))
+              {loadingRecommended ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />) :
+                recommendedListings.length === 0 ? (
+                  <p className="col-span-4 py-8 text-center text-sm text-gray-400">추천 매물이 없습니다</p>
+                ) : recommendedListings.map(item => renderListingCard(item, true))
               }
             </div>
           </div>
@@ -767,12 +782,12 @@ export default function HomePage() {
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
                   <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">프리미엄</span>
+                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">오늘의 추천 매물</span>
                     <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
                   </div>
                   <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />매물 목록 상위 노출</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />프리미엄 배지 표시</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />오늘의 추천 배지 표시</li>
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-blue-500" />기본 조회수 통계</li>
                   </ul>
                   <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
@@ -780,12 +795,12 @@ export default function HomePage() {
                 <div className="relative rounded-xl border-2 border-amber-300 bg-white p-4 md:p-5">
                   <span className="absolute -top-2.5 right-3 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
                   <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">VIP</span>
+                    <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">프리미엄 매물</span>
                     <span className="text-base font-bold text-navy md:text-lg">&#8361;300,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
                   </div>
                   <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 캐러셀 노출</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />VIP 배지 + 골드 테두리</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 프리미엄 매물 캐러셀 노출</li>
+                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />프리미엄 매물 배지 + 골드 테두리</li>
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 1회 무료 포함</li>
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />안심거래 배지 부여</li>
                   </ul>

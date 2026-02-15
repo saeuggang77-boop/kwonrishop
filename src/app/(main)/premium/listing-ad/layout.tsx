@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "프리미엄 광고 - 권리샵",
+  title: "매물 광고 - 권리샵",
   description: "매물을 상단에 노출하세요",
 };
 

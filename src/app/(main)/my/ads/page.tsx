@@ -122,7 +122,7 @@ export default function AdsPage() {
             현재 진행중인 광고가 없습니다
           </h3>
           <p className="mt-2 text-sm text-gray-500">
-            프리미엄 또는 VIP 광고를 신청하면 매물이 상위에 노출됩니다.
+            오늘의 추천 매물 또는 프리미엄 매물 광고를 신청하면 매물이 상위에 노출됩니다.
           </p>
           <Link
             href="/premium/listing-ad"
@@ -266,7 +266,7 @@ export default function AdsPage() {
                         className="flex items-center gap-1 rounded-lg bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-100"
                       >
                         <Crown className="h-3.5 w-3.5" />
-                        VIP 업그레이드
+                        프리미엄 매물 업그레이드
                       </Link>
                     )}
                   </div>
@@ -354,7 +354,7 @@ export default function AdsPage() {
 
       {/* Price info */}
       <p className="mt-6 text-center text-xs text-gray-400">
-        프리미엄 광고 ₩{formatNumber(200_000)}/30일 · VIP 광고 ₩
+        오늘의 추천 매물 광고 ₩{formatNumber(200_000)}/30일 · 프리미엄 매물 광고 ₩
         {formatNumber(300_000)}/30일 (부가세 별도)
       </p>
     </div>

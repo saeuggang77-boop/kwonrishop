@@ -76,28 +76,28 @@ export const SUBSCRIPTION_TIER_LABELS: Record<string, string> = {
 export const SELLER_AD_PLANS = [
   {
     tier: "PREMIUM" as const,
-    label: "프리미엄 광고",
+    label: "오늘의 추천 매물 광고",
     price: 200_000,
     priceWithVat: 220_000,
     days: 30,
     features: [
       "매물 목록 상위 노출",
-      "\"프리미엄\" 배지 표시",
+      "\"오늘의 추천\" 배지 표시",
       "그린 테두리 카드 디자인",
       "기본 조회수 통계",
     ],
   },
   {
     tier: "VIP" as const,
-    label: "VIP 광고",
+    label: "프리미엄 매물 광고",
     price: 300_000,
     priceWithVat: 330_000,
     days: 30,
     recommended: true,
     features: [
       "매물 목록 최상단 고정",
-      "홈페이지 프리미엄 캐러셀 노출",
-      "\"VIP\" 배지 + 골드 테두리 카드",
+      "홈페이지 프리미엄 매물 캐러셀 노출",
+      "\"프리미엄 매물\" 배지 + 골드 테두리 카드",
       "권리진단서 1회 무료 포함",
       "안전도 등급 상세 표시",
       "상세 조회수 통계",
@@ -156,8 +156,8 @@ export const SAFETY_GRADE_CONFIG: Record<string, { label: string; color: string;
 export const FRANCHISE_CATEGORIES = ["외식", "도소매", "서비스"] as const;
 
 export const PREMIUM_AD_CONFIG: Record<string, { label: string; badge: string; color: string; bg: string; border: string; gradient: string }> = {
-  PREMIUM: { label: "프리미엄", badge: "프리미엄", color: "text-blue-800",  bg: "bg-blue-50",    border: "border-blue-300", gradient: "from-blue-100 to-blue-50" },
-  VIP:     { label: "VIP",     badge: "VIP",     color: "text-amber-800",  bg: "bg-amber-50",    border: "border-amber-400", gradient: "from-amber-200 via-amber-100 to-amber-50" },
+  PREMIUM: { label: "오늘의 추천", badge: "오늘의 추천", color: "text-blue-800",  bg: "bg-blue-50",    border: "border-blue-300", gradient: "from-blue-100 to-blue-50" },
+  VIP:     { label: "프리미엄 매물",     badge: "프리미엄 매물",     color: "text-amber-800",  bg: "bg-amber-50",    border: "border-amber-400", gradient: "from-amber-200 via-amber-100 to-amber-50" },
 };
 
 export const DIAGNOSIS_BADGE_CONFIG = {
@@ -168,8 +168,8 @@ export const DIAGNOSIS_BADGE_CONFIG = {
 } as const;
 
 export const PREMIUM_AD_PLANS = [
-  { tier: "PREMIUM", price: 200_000, days: 30, features: ["매물 목록 상위 노출", "프리미엄 배지 표시", "그린 테두리 카드 디자인", "기본 조회수 통계"] },
-  { tier: "VIP",     price: 300_000, days: 30, features: ["매물 목록 최상단 고정", "홈페이지 프리미엄 캐러셀 노출", "VIP 배지 + 골드 테두리 카드", "권리진단서 1회 무료", "안심거래 배지 부여", "상세 조회수 통계"] },
+  { tier: "PREMIUM", price: 200_000, days: 30, features: ["매물 목록 상위 노출", "오늘의 추천 배지 표시", "그린 테두리 카드 디자인", "기본 조회수 통계"] },
+  { tier: "VIP",     price: 300_000, days: 30, features: ["매물 목록 최상단 고정", "홈페이지 프리미엄 매물 캐러셀 노출", "프리미엄 매물 배지 + 골드 테두리 카드", "권리진단서 1회 무료", "안심거래 배지 부여", "상세 조회수 통계"] },
 ];
 
 // 업종 대분류 → 세부 카테고리 매핑 (레퍼런스 사이트 기준)

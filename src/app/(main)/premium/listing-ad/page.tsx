@@ -150,7 +150,7 @@ function PremiumListingAdContent() {
                 <div className={`rounded-lg p-2 ${style.badge}`}>
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-lg font-bold text-navy">{plan.tier}</h3>
+                <h3 className="text-lg font-bold text-navy">{plan.tier === "VIP" ? "프리미엄 매물" : "오늘의 추천 매물"}</h3>
               </div>
               <p className="mt-4 text-3xl font-bold text-navy">
                 {formatKRW(plan.price)}
@@ -223,7 +223,7 @@ function PremiumListingAdContent() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500">선택 플랜</p>
-            <p className="mt-1 text-lg font-bold text-navy">{selectedPlan?.tier} ({selectedPlan?.days}일)</p>
+            <p className="mt-1 text-lg font-bold text-navy">{selectedPlan?.tier === "VIP" ? "프리미엄 매물" : "오늘의 추천 매물"} ({selectedPlan?.days}일)</p>
           </div>
           <p className="text-2xl font-bold text-navy">{formatKRW(selectedPlan?.price ?? 0)}</p>
         </div>

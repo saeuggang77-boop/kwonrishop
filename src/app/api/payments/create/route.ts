@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
           return Response.json({ error: { message: "유효하지 않은 광고 플랜입니다." } }, { status: 400 });
         }
         amount = adPlan.price;
-        orderName = `프리미엄 광고 (${adPlan.tier})`;
+        orderName = adPlan.tier === "VIP" ? "프리미엄 매물 광고" : "오늘의 추천 매물 광고";
         metadata.listingId = listingId;
         metadata.tier = adPlan.tier;
         break;

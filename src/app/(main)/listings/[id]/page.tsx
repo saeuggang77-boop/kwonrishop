@@ -226,15 +226,15 @@ export default async function ListingDetailPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      {/* VIP Premium Banner */}
+      {/* Premium Listing Banner */}
       {premiumTierKey === "VIP" && (
         <div className="mb-6 overflow-hidden rounded-xl bg-gradient-to-r from-yellow-200 via-amber-100 to-yellow-50 px-6 py-4 shadow-sm">
           <div className="flex items-center gap-3">
             <span className="rounded-lg bg-yellow-400 px-3 py-1 text-sm font-bold text-yellow-900">
-              VIP
+              프리미엄 매물
             </span>
             <span className="text-lg font-bold text-yellow-900">
-              VIP 프리미엄 매물
+              프리미엄 매물 광고
             </span>
           </div>
         </div>
