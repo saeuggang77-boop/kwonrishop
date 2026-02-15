@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { errorToResponse, NotFoundError } from "@/lib/utils/errors";
+import { updateTrustedSellerStatus } from "@/lib/utils/trusted-seller";
 
 export async function GET() {
   try {
@@ -82,6 +83,8 @@ export async function POST(req: NextRequest) {
         where: { id: listing.id },
         data: { hasDiagnosisBadge: true },
       });
+      // 안심거래 배지 자동 부여 체크 (safetyGrade=A + hasDiagnosisBadge=true)
+      await updateTrustedSellerStatus(listing.id);
     }
 
     return Response.json({ data: { purchaseId: purchase.id } });

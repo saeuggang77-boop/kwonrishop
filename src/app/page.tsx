@@ -802,7 +802,6 @@ export default function HomePage() {
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />홈페이지 프리미엄 매물 캐러셀 노출</li>
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />프리미엄 매물 배지 + 골드 테두리</li>
                     <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />권리진단서 1회 무료 포함</li>
-                    <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-500" />안심거래 배지 부여</li>
                   </ul>
                   <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
                 </div>
