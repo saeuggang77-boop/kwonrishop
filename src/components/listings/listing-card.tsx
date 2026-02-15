@@ -106,15 +106,15 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className={`group overflow-hidden rounded-xl border-2 bg-white transition-all active:scale-[0.98] md:hover:-translate-y-1 md:hover:shadow-lg ${isCarouselItem ? "w-72 flex-none snap-start md:w-full md:min-w-0" : "w-full"} ${tc?.border ?? "border-gray-200"}`}
+      className={`group overflow-hidden rounded-xl border-2 bg-white transition-all active:scale-[0.98] md:hover:-translate-y-1 md:hover:shadow-lg ${isCarouselItem ? "w-56 flex-none snap-start md:w-full md:min-w-0" : "w-full"} ${tc?.border ?? "border-gray-200"}`}
     >
       {tc && <div className={`h-1 bg-gradient-to-r ${tc.gradient}`} />}
-      <div className="relative aspect-[4/3] bg-gray-100">
+      <div className="relative aspect-[3/2] bg-gray-100">
         {listing.images?.[0] ? (
-          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 256px, 25vw" loading="lazy" />
+          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 224px, 25vw" loading="lazy" />
         ) : (
           <div className={`flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${catGrad}`}>
-            <span className="text-5xl drop-shadow-sm">{CATEGORY_EMOJI[listing.businessCategory] ?? "🏠"}</span>
+            <span className="text-4xl drop-shadow-sm">{CATEGORY_EMOJI[listing.businessCategory] ?? "🏠"}</span>
           </div>
         )}
         {/* 카테고리 뱃지 */}
@@ -130,11 +130,11 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
           <span className={`absolute left-2 bottom-2 rounded px-1.5 py-0.5 text-[10px] font-bold border ${tc.bg} ${tc.color} ${tc.border}`}>{tc.badge}</span>
         )}
       </div>
-      <div className="p-3.5 space-y-1.5">
+      <div className="p-3 space-y-1">
         {/* 매물명 */}
-        <h3 className="text-sm font-bold text-gray-900 truncate">{listing.title}</h3>
+        <h3 className="text-xs font-bold text-gray-900 truncate">{listing.title}</h3>
         {/* 1줄: 보증금 / 월세 */}
-        <div className="flex items-baseline gap-1 text-sm">
+        <div className="flex items-baseline gap-1 text-xs">
           <span className="text-gray-400">보증금</span>
           <span className="font-bold text-[#1B3A5C]">{formatKRW(Number(listing.price))}</span>
           <span className="text-gray-300">/</span>
@@ -142,12 +142,12 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
           <span className="font-bold text-[#1B3A5C]">{listing.monthlyRent && Number(listing.monthlyRent) > 0 ? formatKRW(Number(listing.monthlyRent)) : "0원"}</span>
         </div>
         {/* 2줄: 권리금 */}
-        <p className={`text-[15px] font-bold ${hasPremiumFee ? "text-red-500" : "text-[#1B3A5C]"}`}>
+        <p className={`text-sm font-bold ${hasPremiumFee ? "text-red-500" : "text-[#1B3A5C]"}`}>
           {hasPremiumFee ? `권리금 ${formatKRW(Number(listing.premiumFee))}` : "무권리"}
         </p>
         {/* 3줄: 월매출 / 월수익 */}
         {(hasRevenue || hasProfit) && (
-          <p className="text-xs text-gray-500">
+          <p className="text-[11px] text-gray-500">
             {hasRevenue && <>월매출 {formatKRW(Number(listing.monthlyRevenue))}</>}
             {hasRevenue && hasProfit && <span className="mx-1 text-gray-300">|</span>}
             {hasProfit && <>월수익 {formatKRW(Number(listing.monthlyProfit))}</>}
@@ -155,15 +155,15 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
         )}
         {/* 배지 */}
         {badges.length > 0 && (
-          <div className="flex flex-wrap gap-1 pt-0.5">
+          <div className="flex flex-wrap gap-1">
             {badges.map(b => (
-              <span key={b.label} className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${b.cls}`}>{b.label}</span>
+              <span key={b.label} className={`rounded-full px-1.5 py-0.5 text-[9px] font-medium ${b.cls}`}>{b.label}</span>
             ))}
           </div>
         )}
-        {/* 위치: 구까지만 */}
-        <p className="flex items-center gap-0.5 text-[11px] text-gray-400 pt-0.5">
-          <MapPin className="h-3 w-3 shrink-0" />{formatLocation(listing.city, listing.district)}
+        {/* 위치 */}
+        <p className="flex items-center gap-0.5 text-[10px] text-gray-400">
+          <MapPin className="h-2.5 w-2.5 shrink-0" />{formatLocation(listing.city, listing.district)}
         </p>
       </div>
     </Link>

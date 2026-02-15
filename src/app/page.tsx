@@ -51,11 +51,11 @@ function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
 /* ─── Skeleton Card ─── */
 function SkeletonCard() {
   return (
-    <div className="w-72 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white md:w-auto md:flex-1">
-      <div className="aspect-[4/3] animate-pulse bg-gray-200" />
-      <div className="space-y-2 p-3.5">
-        <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
-        <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200" />
+    <div className="w-56 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white md:w-auto md:flex-1">
+      <div className="aspect-[3/2] animate-pulse bg-gray-200" />
+      <div className="space-y-1.5 p-3">
+        <div className="h-3 w-3/4 animate-pulse rounded bg-gray-200" />
+        <div className="h-3.5 w-1/2 animate-pulse rounded bg-gray-200" />
         <div className="h-3 w-2/3 animate-pulse rounded bg-gray-200" />
       </div>
     </div>
