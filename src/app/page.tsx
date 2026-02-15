@@ -4,17 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import {
-  Store, TrendingUp, DollarSign, Search, FileEdit, Building,
+  Store, Search, FileEdit, Building,
   Paintbrush, Trash2, Sparkles, Signpost, MapPin, ChevronRight,
-  ChevronLeft, Home, User, Users, Calculator, Check, Scale, Hammer,
-  ArrowRight, ShieldCheck, Shield, Flame, FileText, ClipboardList, BarChart3,
-  Receipt, Target, Calendar, ChevronDown, MessageCircle, Eye,
+  ChevronLeft, Home, User, Users, Calculator, Check,
+  ArrowRight, ShieldCheck, Shield, FileText, ClipboardList, BarChart3,
+  Receipt, Target, ChevronDown, MessageCircle, Eye,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
 import { formatKRW } from "@/lib/utils/format";
 import {
   BUSINESS_CATEGORY_LABELS,
-  SAFETY_GRADE_CONFIG, PREMIUM_AD_CONFIG,
+  PREMIUM_AD_CONFIG,
 } from "@/lib/utils/constants";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 
@@ -78,15 +78,6 @@ interface ListingCard {
   hasDiagnosisBadge: boolean;
   seller?: { isTrustedSeller?: boolean };
 }
-interface FranchiseCard {
-  id: string; brandName: string; subcategory: string;
-  monthlyAvgSales: string | null; startupCost: string | null;
-  storeCount: number | null; isPromoting: boolean;
-}
-interface BoardPostCard {
-  id: string; category: string; title: string;
-  thumbnailUrl: string | null; createdAt: string;
-}
 interface BannerItem { id: string; title: string; subtitle: string | null; ctaText: string | null; imageUrl: string; linkUrl: string | null; }
 interface RawListingResponse {
   id: string; title: string; businessCategory: string; storeType: string;
@@ -102,9 +93,6 @@ interface RawListingResponse {
 }
 
 /* ─── Constants ─── */
-const REGION_TABS = ["서울", "경기", "그 외"];
-const FRANCHISE_TABS = ["외식", "도소매", "서비스"];
-
 const CATEGORY_ICONS = [
   { icon: Store, label: "점포 찾기", href: "/listings" },
   { icon: FileEdit, label: "점포 팔기", href: "/listings/new" },
@@ -118,8 +106,7 @@ const CATEGORY_ICONS = [
 
 const HERO_SLIDES = [
   { title: "안전한 점포거래,\n권리샵과 함께", sub: "검증된 매물만 거래하는 프리미엄 플랫폼", cta: "매물 보러가기", ctaHref: "/listings" },
-  { title: "권리진단서로\n안전한 거래", sub: "권리금 적정성 분석부터 위험요소 체크까지", cta: "권리진단서 발급", ctaHref: "/reports/request" },
-  { title: "내 매물, 프리미엄 광고로\n빠르게", sub: "상위 노출과 프리미엄 배지로 빠른 매도", cta: "서비스 요금 보기", ctaHref: "/pricing" },
+  { title: "내 가게 권리금,\n적정한가요?", sub: "AI 권리진단서로 10분 안에 확인하세요", cta: "권리진단서 발급", ctaHref: "/reports/request" },
 ];
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -128,14 +115,6 @@ const CATEGORY_EMOJI: Record<string, string> = {
   JAPANESE_FOOD: "🍣", CHINESE_FOOD: "🥟", SERVICE: "✂️",
   ENTERTAINMENT: "🎮", EDUCATION: "📚", DELIVERY: "🛵", ACCOMMODATION: "🏨",
 };
-
-const MARKET_BARS = [
-  { area: "강남", value: 18000, max: 18000 },
-  { area: "홍대", value: 14500, max: 18000 },
-  { area: "잠실", value: 12500, max: 18000 },
-  { area: "신촌", value: 11000, max: 18000 },
-  { area: "건대", value: 10500, max: 18000 },
-];
 
 function toCard(l: RawListingResponse): ListingCard {
   return {
@@ -154,20 +133,13 @@ function toCard(l: RawListingResponse): ListingCard {
 /* ═══════════════════════════════════════════════════════════ */
 export default function HomePage() {
   /* state */
-  const [regionTab, setRegionTab] = useState("서울");
-  const [franchiseTab, setFranchiseTab] = useState("외식");
-  const [listings, setListings] = useState<ListingCard[]>([]);
   const [recommendedListings, setRecommendedListings] = useState<ListingCard[]>([]);
   const [premiumListings, setPremiumListings] = useState<ListingCard[]>([]);
-  const [franchises, setFranchises] = useState<FranchiseCard[]>([]);
-  const [posts, setPosts] = useState<BoardPostCard[]>([]);
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [bannerDir, setBannerDir] = useState<"left" | "right">("right");
-  const [loadingListings, setLoadingListings] = useState(true);
   const [loadingRecommended, setLoadingRecommended] = useState(true);
   const [loadingPremium, setLoadingPremium] = useState(true);
-  const [loadingFranchises, setLoadingFranchises] = useState(true);
   const [showFloating, setShowFloating] = useState(false);
   const [footerOpen, setFooterOpen] = useState<string | null>(null);
 
@@ -222,26 +194,6 @@ export default function HomePage() {
       })
       .catch(() => {}).finally(() => setLoadingRecommended(false));
   }, []);
-
-  useEffect(() => {
-    fetch("/api/bbs?limit=4").then(r => r.json())
-      .then(j => setPosts(j.data?.slice(0, 4) ?? [])).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    setLoadingListings(true);
-    const q = regionTab === "그 외" ? "" : regionTab;
-    fetch(`/api/listings?query=${encodeURIComponent(q)}&limit=4`).then(r => r.json())
-      .then(j => setListings((j.data ?? []).map((l: RawListingResponse) => toCard(l))))
-      .catch(() => {}).finally(() => setLoadingListings(false));
-  }, [regionTab]);
-
-  useEffect(() => {
-    setLoadingFranchises(true);
-    fetch(`/api/franchise?category=${encodeURIComponent(franchiseTab)}`).then(r => r.json())
-      .then(j => setFranchises(j.data?.slice(0, 4) ?? []))
-      .catch(() => {}).finally(() => setLoadingFranchises(false));
-  }, [franchiseTab]);
 
   /* floating bar scroll listener */
   useEffect(() => {
@@ -346,7 +298,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ═══ 1. Hero Banner ═══ */}
+      {/* ═══ 1. Hero Banner (2 slides) ═══ */}
       <section className="relative overflow-hidden">
         <div className="relative h-[200px] md:h-[350px]">
           {(banners.length > 0 ? banners.map(b => ({ title: b.title, sub: b.subtitle || "", cta: b.ctaText || "자세히 보기", ctaHref: b.linkUrl || "/listings", imageUrl: b.imageUrl })) : HERO_SLIDES).map((s, i) => (
@@ -403,7 +355,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══ 4. Category Icons ═══ */}
+      {/* ═══ 3. Category Icons ═══ */}
       <RevealOnScroll>
         <section className="bg-gray-50 py-5 md:py-8">
           <div className="mx-auto max-w-7xl px-4">
@@ -422,7 +374,7 @@ export default function HomePage() {
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 5. Premium Listings ═══ */}
+      {/* ═══ 4. Premium Listings ═══ */}
       <section className="border-t border-gray-200 bg-gradient-to-b from-amber-50/50 to-gray-50 py-6 md:py-10">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-center justify-between">
@@ -490,6 +442,26 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ═══ 5. Today's Recommended ═══ */}
+      <RevealOnScroll>
+        <section className="py-6 md:py-12">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
+              <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
+            </div>
+            {/* Mobile: horizontal scroll / Desktop: 4-col grid */}
+            <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
+              {loadingRecommended ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />) :
+                recommendedListings.length === 0 ? (
+                  <p className="col-span-4 py-8 text-center text-sm text-gray-400">추천 매물이 없습니다</p>
+                ) : recommendedListings.map(item => renderListingCard(item, true))
+              }
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
       {/* ═══ 6. Report Promo ═══ */}
       <RevealOnScroll>
         <section className="relative overflow-hidden bg-gradient-to-br from-[#1e3a5f] via-[#1e40af] to-[#3b82f6] py-10 md:py-16">
@@ -534,27 +506,7 @@ export default function HomePage() {
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 7. Today's Recommended ═══ */}
-      <RevealOnScroll>
-        <section className="py-6 md:py-12">
-          <div className="mx-auto max-w-7xl px-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
-              <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
-            </div>
-            {/* Mobile: horizontal scroll / Desktop: 4-col grid */}
-            <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
-              {loadingRecommended ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />) :
-                recommendedListings.length === 0 ? (
-                  <p className="col-span-4 py-8 text-center text-sm text-gray-400">추천 매물이 없습니다</p>
-                ) : recommendedListings.map(item => renderListingCard(item, true))
-              }
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 8. Simulator Promo ═══ */}
+      {/* ═══ 7. Simulator Promo ═══ */}
       <RevealOnScroll>
         <section className="bg-gradient-to-br from-[#e8eef5] to-[#f0f4f9] py-8 md:py-16">
           <div className="mx-auto max-w-7xl px-4">
@@ -626,150 +578,7 @@ export default function HomePage() {
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 9. Recommended Franchises ═══ */}
-      <RevealOnScroll>
-        <section className="border-t border-gray-200 bg-white py-6 md:py-12">
-          <div className="mx-auto max-w-7xl px-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-heading text-base font-bold text-navy md:text-xl">추천 프랜차이즈</h2>
-              <Link href="/franchise" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
-            </div>
-            <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide">
-              {FRANCHISE_TABS.map(t => (
-                <button key={t} onClick={() => setFranchiseTab(t)}
-                  className={`min-h-[36px] flex-none rounded-lg px-4 text-sm font-medium transition-all ${franchiseTab === t ? "bg-navy text-white" : "bg-gray-100 text-gray-600 active:bg-gray-200"}`}>
-                  {t}
-                </button>
-              ))}
-            </div>
-            <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-3 md:gap-4 md:overflow-visible lg:grid-cols-4">
-              {loadingFranchises ? Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="w-56 flex-none snap-start rounded-xl border border-gray-200 bg-white p-4 md:w-auto md:flex-1">
-                  <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200" />
-                  <div className="mt-3 h-3 w-3/4 animate-pulse rounded bg-gray-200" />
-                  <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-gray-200" />
-                </div>
-              )) : franchises.length === 0 ? (
-                <p className="col-span-4 py-8 text-center text-sm text-gray-400">프랜차이즈 정보가 없습니다</p>
-              ) : franchises.map(b => (
-                <div key={b.id} className="w-56 flex-none snap-start rounded-xl border border-gray-200 border-l-4 border-l-navy bg-white p-4 transition-all active:scale-[0.98] md:w-auto md:flex-1 md:p-5 md:hover:-translate-y-0.5 md:hover:shadow-md">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-[11px] font-medium text-navy">{b.subcategory}</span>
-                      <h3 className="mt-0.5 text-sm font-bold text-navy md:text-base">{b.brandName}</h3>
-                    </div>
-                    {b.isPromoting && <span className="rounded-full bg-orange-100 px-1.5 py-0.5 text-[10px] font-medium text-orange-600">프로모션</span>}
-                  </div>
-                  <div className="mt-2 space-y-1">
-                    {b.monthlyAvgSales && <div className="flex items-center gap-1.5 text-xs"><TrendingUp className="h-3 w-3 text-purple" /><span className="text-gray-500">월매출</span><span className="ml-auto font-bold text-purple">{formatKRW(Number(b.monthlyAvgSales))}</span></div>}
-                    {b.startupCost && <div className="flex items-center gap-1.5 text-xs"><DollarSign className="h-3 w-3 text-navy-light" /><span className="text-gray-500">창업비</span><span className="ml-auto font-bold text-navy">{formatKRW(Number(b.startupCost))}</span></div>}
-                    {b.storeCount != null && <div className="flex items-center gap-1.5 text-xs"><Store className="h-3 w-3 text-gray-400" /><span className="text-gray-500">가맹점</span><span className="ml-auto font-bold text-navy">{b.storeCount.toLocaleString()}개</span></div>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 10. Expert Consultation ═══ */}
-      <RevealOnScroll>
-        <section className="py-6 md:py-12">
-          <div className="mx-auto max-w-7xl px-4">
-            <h2 className="text-center font-heading text-lg font-bold text-navy md:text-2xl">전문 분야별 전문가와 직접 상담하세요</h2>
-            <p className="mt-1.5 text-center text-xs text-gray-500 md:mt-2 md:text-sm">법률, 인테리어, 철거, 세무 전문가가 도와드립니다</p>
-            <div className="mt-5 space-y-3 md:mt-8 md:grid md:grid-cols-3 md:gap-5 md:space-y-0">
-              {[
-                { icon: Scale, title: "법률 / 세무 전문가", desc: "계약서 검토, 세무 신고, 사업자 등록 등", color: "text-navy", bg: "bg-navy/10" },
-                { icon: Paintbrush, title: "인테리어 전문가", desc: "업종 맞춤 인테리어 설계부터 시공까지", color: "text-navy", bg: "bg-navy/10" },
-                { icon: Hammer, title: "철거 / 부동산 전문가", desc: "원상복구, 철거 견적, 상권 분석까지", color: "text-navy", bg: "bg-navy/10" },
-              ].map(c => (
-                <div key={c.title} className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-all active:scale-[0.98] md:flex-col md:items-start md:gap-0 md:p-6 md:hover:-translate-y-1 md:hover:shadow-lg">
-                  <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${c.bg} md:h-12 md:w-12`}>
-                    <c.icon className={`h-5 w-5 ${c.color} md:h-6 md:w-6`} />
-                  </div>
-                  <div className="md:mt-4">
-                    <h3 className="text-sm font-bold text-navy md:text-lg">{c.title}</h3>
-                    <p className="mt-0.5 text-xs text-gray-500 md:mt-2 md:text-sm">{c.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 text-center md:mt-8">
-              <Link href="/experts" className="inline-flex min-h-[48px] items-center gap-2 rounded-lg bg-navy px-8 font-medium text-white shadow-lg transition-all active:scale-[0.97] md:hover:bg-navy-dark">
-                전문가 찾기 <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 11. Market Price Widget ═══ */}
-      <RevealOnScroll>
-        <section className="border-t border-gray-200 bg-white py-6 md:py-12">
-          <div className="mx-auto max-w-7xl px-4">
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-5 md:p-8">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="font-heading text-base font-bold text-navy md:text-xl">우리 동네 권리금 시세는?</h2>
-                  <p className="mt-0.5 text-[11px] text-gray-500 md:text-sm">인기 지역 평균 권리금 (만원)</p>
-                </div>
-                <Link href="/market-price" className="flex shrink-0 items-center gap-1 text-xs font-medium text-navy md:text-sm">시세 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
-              </div>
-              <div className="mt-6 flex items-end gap-3 md:gap-5">
-                {MARKET_BARS.map(b => (
-                  <div key={b.area} className="flex flex-1 flex-col items-center gap-1.5">
-                    <span className="text-[10px] font-bold text-navy md:text-xs">{b.value.toLocaleString()}</span>
-                    <div className="relative w-full overflow-hidden rounded-t-md bg-gray-100" style={{ height: "90px" }}>
-                      <div className="absolute bottom-0 w-full rounded-t-md bg-gradient-to-t from-[#1B3A5C] to-[#3B82F6] transition-all duration-700" style={{ height: `${(b.value / b.max) * 100}%` }} />
-                    </div>
-                    <span className="text-[10px] font-medium text-gray-600 md:text-xs">{b.area}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-3 text-center text-[10px] text-gray-400 md:text-xs">시세 비교 위젯에서 전체 지역의 상세 시세를 확인할 수 있습니다</p>
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 12. Startup Info (Card Carousel) ═══ */}
-      <RevealOnScroll>
-        <section className="py-6 md:py-12">
-          <div className="mx-auto max-w-7xl px-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-heading text-base font-bold text-navy md:text-xl">창업정보</h2>
-              <Link href="/bbs" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
-            </div>
-            <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
-              {posts.length === 0 ? <p className="col-span-4 py-8 text-center text-sm text-gray-400">게시글이 없습니다</p>
-                : posts.map(p => {
-                  const catStyle = p.category === "이용가이드" ? { bg: "from-[#E2E8F0] to-[#CBD5E1]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
-                    : p.category === "알림공지" ? { bg: "from-[#CBD5E1] to-[#94A3B8]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
-                    : p.category === "창업정보" ? { bg: "from-[#F1F5F9] to-[#E2E8F0]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
-                    : p.category === "이벤트" ? { bg: "from-[#D5DCE6] to-[#B8C4D0]", icon: "text-navy", badge: "bg-navy/10 text-navy" }
-                    : { bg: "from-[#E8F0FE] to-[#DBEAFE]", icon: "text-navy", badge: "bg-navy/10 text-navy" };
-                  return (
-                    <Link key={p.id} href={`/bbs/${p.id}`}
-                      className="group w-56 flex-none snap-start overflow-hidden rounded-xl border border-gray-200 bg-white transition-all active:scale-[0.98] md:w-auto md:flex-1 md:hover:-translate-y-1 md:hover:shadow-lg">
-                      <div className={`relative h-28 bg-gradient-to-br ${catStyle.bg} md:h-36`}>
-                        {p.thumbnailUrl ? <Image src={p.thumbnailUrl} alt={p.title} fill className="object-cover" sizes="(max-width:768px) 224px, 25vw" loading="lazy" />
-                          : <div className="flex h-full items-center justify-center"><FileText className={`h-8 w-8 ${catStyle.icon}`} /></div>}
-                      </div>
-                      <div className="p-3 md:p-4">
-                        <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-medium ${catStyle.badge}`}>{p.category}</span>
-                        <h3 className="mt-1.5 line-clamp-2 text-[13px] font-bold text-navy transition-colors md:group-hover:text-navy-light">{p.title}</h3>
-                        <p className="mt-1.5 flex items-center gap-1 text-[10px] text-gray-400"><Calendar className="h-3 w-3" />{new Date(p.createdAt).toLocaleDateString("ko-KR")}</p>
-                      </div>
-                    </Link>
-                  );
-                })}
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 13. 서비스 요금 안내 ═══ */}
+      {/* ═══ 8. 서비스 요금 안내 + CTA ═══ */}
       <RevealOnScroll>
         <section className="border-t border-gray-200 bg-gray-50 py-6 md:py-12">
           <div className="mx-auto max-w-5xl px-4">
@@ -778,7 +587,7 @@ export default function HomePage() {
 
             <div className="mx-auto mt-6 grid gap-4 md:mt-10 md:grid-cols-3">
               {/* 프리미엄 매물 광고 */}
-              <div className="relative rounded-xl border-2 border-amber-300 bg-white p-4 md:p-5">
+              <div className="relative rounded-xl border border-amber-200 bg-white p-4 md:p-5">
                 <span className="absolute -top-2.5 right-3 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
                 <div className="flex items-center justify-between">
                   <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">프리미엄 매물</span>
@@ -793,7 +602,7 @@ export default function HomePage() {
               </div>
 
               {/* 오늘의 추천 매물 광고 */}
-              <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+              <div className="rounded-xl border border-blue-200 bg-white p-4 md:p-5">
                 <div className="flex items-center justify-between">
                   <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">오늘의 추천</span>
                   <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
@@ -807,7 +616,7 @@ export default function HomePage() {
               </div>
 
               {/* 권리진단서 */}
-              <div className="rounded-xl border-2 border-purple-200 bg-white p-4 md:p-5">
+              <div className="rounded-xl border border-purple-200 bg-white p-4 md:p-5">
                 <div className="flex items-center justify-between">
                   <span className="rounded-md bg-purple-50 px-2 py-0.5 text-xs font-bold text-purple-700 border border-purple-200">권리진단서</span>
                   <span className="text-base font-bold text-navy md:text-lg">&#8361;30,000<span className="text-xs font-normal text-gray-400">/건</span></span>
@@ -822,30 +631,30 @@ export default function HomePage() {
             </div>
 
             <div className="mt-5 text-center md:mt-8">
-              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-navy hover:underline md:text-sm">전체 요금표 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
+              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-navy hover:underline md:text-sm">자세히 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
+            </div>
+
+            {/* CTA */}
+            <div className="relative mt-8 overflow-hidden rounded-2xl bg-navy p-6 text-center md:mt-12 md:p-10">
+              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px,white 1px,transparent 0)", backgroundSize: "32px 32px" }} />
+              <div className="relative">
+                <h2 className="font-heading text-lg font-bold text-white md:text-2xl">내 점포, 지금 등록하세요</h2>
+                <p className="mt-2 text-xs text-gray-300 md:text-sm">무료로 점포를 등록하고 빠르게 양도·양수하세요.</p>
+                <div className="mt-5 flex flex-col gap-3 md:mt-6 md:flex-row md:justify-center md:gap-4">
+                  <Link href="/listings/new" className="flex min-h-[48px] items-center justify-center rounded-lg bg-accent px-8 font-medium text-white shadow-lg transition-all active:scale-[0.97] hover:bg-accent-dark">
+                    점포 등록하기
+                  </Link>
+                  <Link href="/register" className="flex min-h-[48px] items-center justify-center rounded-lg border border-white/30 px-8 font-medium text-white transition-all active:scale-[0.97] md:hover:bg-white/10">
+                    무료 가입
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 14. Register CTA ═══ */}
-      <section className="relative overflow-hidden bg-navy py-10 md:py-16">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px,white 1px,transparent 0)", backgroundSize: "32px 32px" }} />
-        <div className="relative mx-auto max-w-3xl px-4 text-center">
-          <h2 className="font-heading text-lg font-bold text-white md:text-3xl">내 점포, 지금 등록하세요</h2>
-          <p className="mt-2 text-xs text-gray-300 md:text-base">무료로 점포를 등록하고 빠르게 양도·양수하세요.</p>
-          <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:justify-center md:gap-4">
-            <Link href="/listings/new" className="flex min-h-[48px] items-center justify-center rounded-lg bg-accent px-8 font-medium text-white shadow-lg transition-all active:scale-[0.97] hover:bg-accent-dark">
-              점포 등록하기
-            </Link>
-            <Link href="/register" className="flex min-h-[48px] items-center justify-center rounded-lg border border-white/30 px-8 font-medium text-white transition-all active:scale-[0.97] md:hover:bg-white/10">
-              무료 가입
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ 15. Mobile Floating CTA ═══ */}
+      {/* ═══ Mobile Floating CTA ═══ */}
       <div
         className={`fixed bottom-14 left-0 right-0 z-40 px-4 transition-all duration-300 md:hidden ${showFloating ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none"}`}
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
@@ -860,7 +669,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ 16. Footer ═══ */}
+      {/* ═══ Footer ═══ */}
       <footer className="border-t border-gray-200 bg-white py-6 md:py-10">
         <div className="mx-auto max-w-7xl px-4">
           {/* Mobile: accordion / Desktop: inline */}
