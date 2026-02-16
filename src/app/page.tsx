@@ -122,9 +122,44 @@ export default function HomePage() {
   const [showFloating, setShowFloating] = useState(false);
   const [footerOpen, setFooterOpen] = useState<string | null>(null);
 
-  /* ─── fetch ─── */
+  /* ─── fetch (배너 + 매물 병렬) ─── */
   useEffect(() => {
-    fetch("/api/admin/banners").then(r => r.json()).then(j => { if (j.data?.length) setBanners(j.data); }).catch(() => {});
+    setLoadingPremium(true);
+    setLoadingRecommended(true);
+
+    const bannerP = fetch("/api/admin/banners").then(r => r.json()).catch(() => ({ data: [] }));
+    const premiumP = fetch("/api/listings?premiumOnly=true&limit=20").then(r => r.json()).catch(() => ({ data: [] }));
+    const latestP = fetch("/api/listings?limit=16&sort=latest").then(r => r.json()).catch(() => ({ data: [] }));
+
+    Promise.all([bannerP, premiumP, latestP]).then(([bannerJ, premiumJ, latestJ]) => {
+      // 배너
+      if (bannerJ.data?.length) setBanners(bannerJ.data);
+
+      // 프리미엄 + 추천
+      const all = (premiumJ.data ?? []).map((l: RawListingResponse) => toCard(l));
+      const vip = all.filter((l: ListingCardData) => l.premiumRank === 3);
+      const rec = all.filter((l: ListingCardData) => l.premiumRank === 2);
+
+      const usedIds = new Set([...vip, ...rec].map(l => l.id));
+      const extras = (latestJ.data ?? []).map((l: RawListingResponse) => toCard(l))
+        .filter((e: ListingCardData) => !usedIds.has(e.id));
+
+      // VIP 부족하면 extras에서 채움
+      if (vip.length < 4) {
+        const fill = extras.splice(0, 4 - vip.length);
+        setPremiumListings([...vip, ...fill].slice(0, 4));
+      } else {
+        setPremiumListings(vip.slice(0, 4));
+      }
+
+      // 추천 부족하면 extras에서 채움
+      if (rec.length < 6) {
+        const fill = extras.splice(0, 6 - rec.length);
+        setRecommendedListings([...rec, ...fill].slice(0, 6));
+      } else {
+        setRecommendedListings(rec.slice(0, 6));
+      }
+    }).finally(() => { setLoadingPremium(false); setLoadingRecommended(false); });
   }, []);
 
   useEffect(() => {
@@ -133,41 +168,6 @@ export default function HomePage() {
     const t = setInterval(() => { setBannerDir("right"); setBannerIdx(i => (i + 1) % n); }, 5000);
     return () => clearInterval(t);
   }, [banners.length]);
-
-  useEffect(() => {
-    setLoadingPremium(true);
-    setLoadingRecommended(true);
-    fetch("/api/listings?premiumOnly=true&limit=20").then(r => r.json())
-      .then(j => {
-        const all = (j.data ?? []).map((l: RawListingResponse) => toCard(l));
-        const vip = all.filter((l: ListingCardData) => l.premiumRank === 3);
-        const rec = all.filter((l: ListingCardData) => l.premiumRank === 2);
-        setPremiumListings(vip.slice(0, 4));
-        setRecommendedListings(rec.slice(0, 6));
-
-        // Fallback: 부족하면 일반 매물로 채우되 서로 겹치지 않게
-        const usedIds = new Set([...vip, ...rec].map(l => l.id));
-        const needExtraVip = vip.length < 4;
-        const needExtraRec = rec.length < 6;
-        if (needExtraVip || needExtraRec) {
-          fetch("/api/listings?limit=16&sort=latest").then(r2 => r2.json())
-            .then(j2 => {
-              const extras = (j2.data ?? []).map((l: RawListingResponse) => toCard(l))
-                .filter((e: ListingCardData) => !usedIds.has(e.id));
-              if (needExtraVip) {
-                const fill = extras.splice(0, 4 - vip.length);
-                setPremiumListings([...vip, ...fill].slice(0, 4));
-              }
-              if (needExtraRec) {
-                const fill = extras.splice(0, 6 - rec.length);
-                setRecommendedListings([...rec, ...fill].slice(0, 6));
-              }
-            }).catch(() => {});
-        }
-      })
-      .catch(() => {})
-      .finally(() => { setLoadingPremium(false); setLoadingRecommended(false); });
-  }, []);
 
   /* floating bar scroll listener */
   useEffect(() => {
