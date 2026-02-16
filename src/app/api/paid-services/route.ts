@@ -27,9 +27,10 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-    if (session.user.role !== "SELLER" && session.user.role !== "ADMIN") {
+    // 결제 연동 전까지 관리자만 활성화 가능
+    if (session.user.role !== "ADMIN") {
       return Response.json(
-        { error: { message: "판매자만 유료 서비스를 구매할 수 있습니다." } },
+        { error: { message: "서비스 준비 중입니다. 곧 오픈됩니다." } },
         { status: 403 }
       );
     }
