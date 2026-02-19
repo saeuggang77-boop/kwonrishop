@@ -9,6 +9,28 @@ const connectionString =
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
+/** 업종별 Unsplash 이미지 ID 매핑 */
+const CATEGORY_UNSPLASH: Record<string, string> = {
+  KOREAN_FOOD:   "photo-1498654896293-37aacf113fd9",
+  BUNSIK:        "photo-1498654896293-37aacf113fd9",
+  CAFE_BAKERY:   "photo-1554118811-1e0d58224f24",
+  CHICKEN:       "photo-1626645738196-c2a7c87a8f58",
+  SERVICE:       "photo-1560066984-138dadb4c035",
+  RETAIL:        "photo-1604719312566-8912e9227c6a",
+  ENTERTAINMENT: "photo-1534438327276-14e5300c3a48",
+  PIZZA:         "photo-1565299624946-b28f40a0ae38",
+  BAR_PUB:       "photo-1514933651103-005eec06c04b",
+  EDUCATION:     "photo-1580582932707-520aed937b7b",
+  WESTERN_FOOD:  "photo-1550966871-3ed3cdb51f3a",
+  CHINESE_FOOD:  "photo-1525755662778-989d0524087e",
+  JAPANESE_FOOD: "photo-1579871494447-9811cf80d66c",
+};
+
+function unsplashUrl(category: string, w: number, h: number): string {
+  const id = CATEGORY_UNSPLASH[category] ?? "photo-1498654896293-37aacf113fd9";
+  return `https://images.unsplash.com/${id}?w=${w}&h=${h}&fit=crop`;
+}
+
 async function main() {
   console.log("Seeding database...\n");
 
@@ -617,16 +639,18 @@ async function main() {
     });
     createdExtraListings.push(created);
 
-    // 이미지 1장씩
+    // 이미지 1장씩 (Unsplash 업종별 이미지)
+    const imgUrl = unsplashUrl(listing.businessCategory, 800, 600);
+    const thumbUrl = unsplashUrl(listing.businessCategory, 400, 300);
     await prisma.listingImage.upsert({
       where: { id: `${id}-img` },
-      update: {},
+      update: { url: imgUrl, thumbnailUrl: thumbUrl },
       create: {
         id: `${id}-img`,
         listingId: id,
-        url: `https://picsum.photos/seed/${imageSeed}/800/600`,
+        url: imgUrl,
         s3Key: `seed/${imageSeed}.jpg`,
-        thumbnailUrl: `https://picsum.photos/seed/${imageSeed}/400/300`,
+        thumbnailUrl: thumbUrl,
         sortOrder: 0,
         isPrimary: true,
         width: 800,
@@ -709,18 +733,21 @@ async function main() {
   for (const entry of listingImages) {
     const listing = createdListings[entry.listingIdx];
     if (!listing) continue;
+    const cat = sampleListings[entry.listingIdx]?.businessCategory ?? "KOREAN_FOOD";
     for (let i = 0; i < entry.images.length; i++) {
       const img = entry.images[i];
       const imageId = `seed-img-${entry.listingIdx}-${i}`;
+      const imgUrl = unsplashUrl(cat, 800, 600);
+      const thumbUrl = unsplashUrl(cat, 400, 300);
       await prisma.listingImage.upsert({
         where: { id: imageId },
-        update: {},
+        update: { url: imgUrl, thumbnailUrl: thumbUrl },
         create: {
           id: imageId,
           listingId: listing.id,
-          url: `https://picsum.photos/seed/${img.seed}/800/600`,
+          url: imgUrl,
           s3Key: `seed/${img.seed}.jpg`,
-          thumbnailUrl: `https://picsum.photos/seed/${img.seed}/400/300`,
+          thumbnailUrl: thumbUrl,
           sortOrder: i,
           isPrimary: img.isPrimary,
           width: 800,
