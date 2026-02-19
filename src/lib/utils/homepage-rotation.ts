@@ -32,18 +32,23 @@ export async function getRotatedGroup<T extends { id: string }>(
   // 그룹 수 계산
   const totalGroups = Math.ceil(items.length / slotCount);
 
-  // Redis INCR로 원자적 카운터 증가
+  // Redis INCR로 원자적 카운터 증가 (2초 타임아웃)
   let groupIndex = 0;
   try {
     const redis = getRedis();
-    const counter = await redis.incr(redisKey);
+    const counter = await Promise.race([
+      redis.incr(redisKey),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Redis timeout")), 2000),
+      ),
+    ]);
     // 첫 생성 시 24시간 TTL (매일 리셋하여 순환 공정성 보장)
     if (counter === 1) {
-      await redis.expire(redisKey, 86400);
+      redis.expire(redisKey, 86400).catch(() => {});
     }
     groupIndex = (counter - 1) % totalGroups;
   } catch {
-    // Redis 장애 시 그룹 0 fallback
+    // Redis 장애·타임아웃 시 그룹 0 fallback
     groupIndex = 0;
   }
 
