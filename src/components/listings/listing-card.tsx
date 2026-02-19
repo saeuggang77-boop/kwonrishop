@@ -134,7 +134,7 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
         {/* 매물명 */}
         <h3 className="text-xs font-bold text-gray-900 truncate">{listing.title}</h3>
         {/* 1줄: 보증금 / 월세 */}
-        <div className="flex items-baseline gap-1 text-xs">
+        <div className="flex items-baseline gap-1 text-sm">
           <span className="text-gray-400">보증금</span>
           <span className="font-bold text-[#1B3A5C]">{formatKRW(Number(listing.price))}</span>
           <span className="text-gray-300">/</span>
@@ -142,7 +142,7 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
           <span className="font-bold text-[#1B3A5C]">{listing.monthlyRent && Number(listing.monthlyRent) > 0 ? formatKRW(Number(listing.monthlyRent)) : "0원"}</span>
         </div>
         {/* 2줄: 권리금 */}
-        <p className={`text-sm font-bold ${hasPremiumFee ? "text-red-500" : "text-[#1B3A5C]"}`}>
+        <p className={`text-base font-bold ${hasPremiumFee ? "text-red-500" : "text-[#1B3A5C]"}`}>
           {hasPremiumFee ? `권리금 ${formatKRW(Number(listing.premiumFee))}` : "무권리"}
         </p>
         {/* 3줄: 월매출 / 월수익 */}
@@ -202,12 +202,12 @@ function RecommendCard({ listing, isCarouselItem }: { listing: ListingCardData; 
         {/* 매물명 */}
         <h3 className="text-[11px] font-bold text-gray-900 truncate">{listing.title}</h3>
         {/* 1줄: 보증금 / 월세 */}
-        <div className="flex items-baseline gap-1 text-[11px]">
+        <div className="flex items-baseline gap-1 text-xs">
           <span className="text-gray-400">보증금</span>
           <span className="font-bold text-[#1B3A5C]">{formatKRW(Number(listing.price))}</span>
         </div>
         {/* 2줄: 권리금 */}
-        <p className={`text-xs font-bold ${hasPremiumFee ? "text-red-500" : "text-[#1B3A5C]"}`}>
+        <p className={`text-sm font-bold ${hasPremiumFee ? "text-red-500" : "text-[#1B3A5C]"}`}>
           {hasPremiumFee ? `권리금 ${formatKRW(Number(listing.premiumFee))}` : "무권리"}
         </p>
         {/* 배지 */}

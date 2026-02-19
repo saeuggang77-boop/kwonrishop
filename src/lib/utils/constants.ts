@@ -330,3 +330,14 @@ export const INQUIRY_STATUS_BADGE: Record<string, { bg: string; text: string }> 
   REPLIED: { bg: "bg-green-100", text: "text-green-700" },
   CANCELLED: { bg: "bg-gray-100", text: "text-gray-500" },
 };
+
+// ── 홈페이지 매물 표시 설정 ──
+export const HOMEPAGE_SLOTS = {
+  PREMIUM: 10,   // 2행 × 5열
+  RECOMMEND: 12, // 2행 × 6열
+} as const;
+
+export const HOMEPAGE_ROTATION_KEY = {
+  PREMIUM: "homepage:rotation:premium",
+  RECOMMEND: "homepage:rotation:recommend",
+} as const;

@@ -128,37 +128,17 @@ export default function HomePage() {
     setLoadingRecommended(true);
 
     const bannerP = fetch("/api/admin/banners").then(r => r.json()).catch(() => ({ data: [] }));
-    const premiumP = fetch("/api/listings?premiumOnly=true&limit=20").then(r => r.json()).catch(() => ({ data: [] }));
-    const latestP = fetch("/api/listings?limit=16&sort=latest").then(r => r.json()).catch(() => ({ data: [] }));
+    const listingsP = fetch("/api/homepage/listings").then(r => r.json()).catch(() => ({ premium: [], recommend: [] }));
 
-    Promise.all([bannerP, premiumP, latestP]).then(([bannerJ, premiumJ, latestJ]) => {
-      // 배너
+    Promise.all([bannerP, listingsP]).then(([bannerJ, listingsJ]) => {
       if (bannerJ.data?.length) setBanners(bannerJ.data);
 
-      // 프리미엄 + 추천
-      const all = (premiumJ.data ?? []).map((l: RawListingResponse) => toCard(l));
-      const vip = all.filter((l: ListingCardData) => l.premiumRank === 3);
-      const rec = all.filter((l: ListingCardData) => l.premiumRank === 2);
-
-      const usedIds = new Set([...vip, ...rec].map(l => l.id));
-      const extras = (latestJ.data ?? []).map((l: RawListingResponse) => toCard(l))
-        .filter((e: ListingCardData) => !usedIds.has(e.id));
-
-      // VIP 부족하면 extras에서 채움
-      if (vip.length < 4) {
-        const fill = extras.splice(0, 4 - vip.length);
-        setPremiumListings([...vip, ...fill].slice(0, 4));
-      } else {
-        setPremiumListings(vip.slice(0, 4));
-      }
-
-      // 추천 부족하면 extras에서 채움
-      if (rec.length < 6) {
-        const fill = extras.splice(0, 6 - rec.length);
-        setRecommendedListings([...rec, ...fill].slice(0, 6));
-      } else {
-        setRecommendedListings(rec.slice(0, 6));
-      }
+      setPremiumListings(
+        (listingsJ.premium ?? []).map((l: RawListingResponse) => toCard(l))
+      );
+      setRecommendedListings(
+        (listingsJ.recommend ?? []).map((l: RawListingResponse) => toCard(l))
+      );
     }).finally(() => { setLoadingPremium(false); setLoadingRecommended(false); });
   }, []);
 
@@ -238,7 +218,8 @@ export default function HomePage() {
         </>)}
       </section>
 
-      {/* ═══ 2. Stats Counter Bar ═══ */}
+      {/* ═══ 2. Stats Counter Bar (숨김 처리 — 추후 실데이터 연동 시 복원) ═══ */}
+      {/*
       <section className="bg-navy py-4 md:py-5">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 px-4 md:grid-cols-4 md:gap-0">
           {[
@@ -259,6 +240,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      */}
 
       {/* ═══ 3. Category Icons ═══ */}
       <RevealOnScroll>
@@ -290,11 +272,11 @@ export default function HomePage() {
             <Link href="/listings" className="flex items-center text-xs text-gray-500 md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
           </div>
           {/* Mobile: horizontal scroll / Desktop: grid */}
-          <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:mt-4 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible lg:grid-cols-4">
-            {loadingPremium ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />) :
+          <div className="mt-3 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:mt-4 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible">
+            {loadingPremium ? Array.from({ length: 10 }).map((_, i) => <SkeletonCard key={i} />) :
               premiumListings.length > 0 ? premiumListings.map(item => (
                 <ListingCard key={item.id} listing={item} variant="premium" isCarouselItem />
-              )) : <p className="col-span-4 py-8 text-center text-sm text-gray-400">프리미엄 매물이 없습니다</p>}
+              )) : <p className="col-span-5 py-8 text-center text-sm text-gray-400">프리미엄 매물이 없습니다</p>}
           </div>
         </div>
       </section>
@@ -309,7 +291,7 @@ export default function HomePage() {
             </div>
             {/* Mobile: horizontal scroll / Desktop: 6-col grid */}
             <div className="mt-3 flex gap-2.5 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-6 md:gap-4 md:overflow-visible">
-              {loadingRecommended ? Array.from({ length: 6 }).map((_, i) => (
+              {loadingRecommended ? Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="w-44 flex-none snap-start overflow-hidden rounded-lg border border-gray-200 bg-white md:w-auto">
                   <div className="h-[120px] animate-pulse bg-gray-200" />
                   <div className="space-y-1.5 p-2.5"><div className="h-3.5 w-3/4 animate-pulse rounded bg-gray-200" /><div className="h-3 w-1/2 animate-pulse rounded bg-gray-200" /></div>
@@ -326,123 +308,7 @@ export default function HomePage() {
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 6. Report Promo ═══ */}
-      <RevealOnScroll>
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#1e3a5f] via-[#1e40af] to-[#3b82f6] py-10 md:py-16">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px,white 1px,transparent 0)", backgroundSize: "20px 20px" }} />
-          <div className="relative mx-auto max-w-7xl px-4">
-            <div className="md:flex md:items-center md:gap-12">
-              {/* text */}
-              <div className="flex-1 text-center md:text-left">
-                <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white">권리진단서</span>
-                <h2 className="mt-3 font-heading text-xl font-bold text-white md:text-3xl">내 가게 권리금,<br />적정한가요?</h2>
-                <p className="mt-2 text-xs text-white/70 md:text-sm">권리진단서로 안전한 거래를 시작하세요</p>
-              </div>
-              {/* feature cards */}
-              <div className="mt-6 space-y-3 md:mt-0 md:flex md:flex-1 md:gap-4 md:space-y-0">
-                {[
-                  { icon: BarChart3, title: "권리금 적정성 평가", desc: "주변 시세 대비 AI 분석" },
-                  { icon: ShieldCheck, title: "위험요소 분석", desc: "임대차·건물·상권 점검" },
-                  { icon: ClipboardList, title: "임대차 체크리스트", desc: "거래 전 필수 확인 항목" },
-                ].map(c => (
-                  <div key={c.title} className="flex items-start gap-3 rounded-xl bg-white/10 p-4 backdrop-blur-sm md:flex-1 md:flex-col md:items-start md:gap-0 md:p-5">
-                    <c.icon className="h-6 w-6 shrink-0 text-white md:h-7 md:w-7" />
-                    <div className="md:mt-3">
-                      <h3 className="text-sm font-bold text-white">{c.title}</h3>
-                      <p className="mt-0.5 text-xs text-white/60">{c.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:justify-start">
-              <Link href="/reports/request" className="flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-[#1e40af] shadow-lg transition-all active:scale-95 md:w-auto md:px-10 md:hover:scale-105">
-                권리진단서 발급받기 <ArrowRight className="h-4 w-4" />
-              </Link>
-              <p className="text-xs text-white/50">권리진단서 30,000원/건 (부가세 별도)</p>
-            </div>
-            <div className="mt-3 flex justify-center md:justify-start">
-              <Link href="/reports/sample" className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm transition-all hover:bg-white/20 hover:text-white active:scale-95">
-                <Eye className="h-3.5 w-3.5" /> 샘플 미리보기
-              </Link>
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 7. Simulator Promo ═══ */}
-      <RevealOnScroll>
-        <section className="bg-gradient-to-br from-[#e8eef5] to-[#f0f4f9] py-8 md:py-16">
-          <div className="mx-auto max-w-7xl px-4">
-            <div className="overflow-hidden rounded-2xl bg-white shadow-md md:flex">
-              <div className="p-6 md:flex-1 md:p-10">
-                <h2 className="font-heading text-lg font-bold text-navy md:text-2xl">창업 수익성을 미리 계산해보세요</h2>
-                <p className="mt-2 text-xs text-gray-500 md:text-sm">업종별 예상 수익과 초기 투자비를 분석하세요.</p>
-                <div className="mt-5 space-y-3 md:mt-6 md:space-y-4">
-                  {[
-                    { icon: BarChart3, label: "초기투자 분석", desc: "보증금, 권리금, 인테리어 등 총 창업비용" },
-                    { icon: Receipt, label: "월 손익 시뮬레이션", desc: "매출 데이터 기반 월별 손익 추이" },
-                    { icon: Target, label: "투자금 회수기간", desc: "투자 원금 회수 시점 예측" },
-                  ].map(f => (
-                    <div key={f.label} className="flex items-start gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy/10 md:h-10 md:w-10">
-                        <f.icon className="h-4 w-4 text-navy md:h-5 md:w-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-[13px] font-bold text-navy md:text-sm">{f.label}</h3>
-                        <p className="text-[11px] text-gray-500 md:text-xs">{f.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {/* Mobile: mini chart inline */}
-                <div className="mt-5 flex items-end justify-center gap-2 md:hidden">
-                  {[50, 70, 40, 60, 80].map((h, i) => (
-                    <div key={i} className="flex flex-col items-center gap-1">
-                      <div className="w-7 rounded-t bg-gradient-to-t from-navy to-navy/50" style={{ height: `${h}px` }} />
-                      <span className="text-[9px] text-gray-400">{["1월", "2월", "3월", "4월", "5월"][i]}</span>
-                    </div>
-                  ))}
-                </div>
-                <Link href="/simulator"
-                  className="mt-5 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-accent font-medium text-white shadow-lg transition-all active:scale-[0.97] hover:bg-accent-dark md:mt-8 md:w-auto md:px-8">
-                  시뮬레이터 시작하기 <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-              {/* Desktop: Simulator Preview */}
-              <div className="hidden flex-col items-center justify-center gap-6 bg-gradient-to-br from-[#E8F0FE] to-[#DBEAFE] p-10 lg:flex lg:w-[400px]">
-                <div className="w-full rounded-xl bg-white p-5 shadow-sm">
-                  <p className="text-xs font-medium text-gray-400">시뮬레이션 결과 미리보기</p>
-                  <div className="mt-4 grid grid-cols-3 gap-3">
-                    <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">
-                      <p className="text-[10px] text-gray-500">총 투자금</p>
-                      <p className="mt-1 text-lg font-bold text-navy">1.2억</p>
-                    </div>
-                    <div className="rounded-lg bg-[#FEF3C7] p-3 text-center">
-                      <p className="text-[10px] text-gray-500">예상 월수익</p>
-                      <p className="mt-1 text-lg font-bold text-accent-dark">850만</p>
-                    </div>
-                    <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">
-                      <p className="text-[10px] text-gray-500">회수기간</p>
-                      <p className="mt-1 text-lg font-bold text-navy">14개월</p>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-end justify-between gap-1.5">
-                    {[40, 55, 35, 65, 50, 75, 60].map((h, i) => (
-                      <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                        <div className="w-full rounded-t bg-gradient-to-t from-navy to-[#3B82F6]" style={{ height: `${h}px` }} />
-                        <span className="text-[8px] text-gray-400">{["1월", "2월", "3월", "4월", "5월", "6월", "7월"][i]}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 8. 서비스 요금 안내 + CTA ═══ */}
+      {/* ═══ 6. 서비스 요금 안내 + CTA ═══ */}
       <RevealOnScroll>
         <section className="border-t border-gray-200 bg-gray-50 py-6 md:py-12">
           <div className="mx-auto max-w-5xl px-4">
@@ -511,6 +377,122 @@ export default function HomePage() {
                   <Link href="/register" className="flex min-h-[48px] items-center justify-center rounded-lg border border-white/30 px-8 font-medium text-white transition-all active:scale-[0.97] md:hover:bg-white/10">
                     무료 가입
                   </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      {/* ═══ 7. Report Promo ═══ */}
+      <RevealOnScroll>
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#1e3a5f] via-[#1e40af] to-[#3b82f6] py-10 md:py-16">
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px,white 1px,transparent 0)", backgroundSize: "20px 20px" }} />
+          <div className="relative mx-auto max-w-7xl px-4">
+            <div className="md:flex md:items-center md:gap-12">
+              {/* text */}
+              <div className="flex-1 text-center md:text-left">
+                <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white">권리진단서</span>
+                <h2 className="mt-3 font-heading text-xl font-bold text-white md:text-3xl">내 가게 권리금,<br />적정한가요?</h2>
+                <p className="mt-2 text-xs text-white/70 md:text-sm">권리진단서로 안전한 거래를 시작하세요</p>
+              </div>
+              {/* feature cards */}
+              <div className="mt-6 space-y-3 md:mt-0 md:flex md:flex-1 md:gap-4 md:space-y-0">
+                {[
+                  { icon: BarChart3, title: "권리금 적정성 평가", desc: "주변 시세 대비 AI 분석" },
+                  { icon: ShieldCheck, title: "위험요소 분석", desc: "임대차·건물·상권 점검" },
+                  { icon: ClipboardList, title: "임대차 체크리스트", desc: "거래 전 필수 확인 항목" },
+                ].map(c => (
+                  <div key={c.title} className="flex items-start gap-3 rounded-xl bg-white/10 p-4 backdrop-blur-sm md:flex-1 md:flex-col md:items-start md:gap-0 md:p-5">
+                    <c.icon className="h-6 w-6 shrink-0 text-white md:h-7 md:w-7" />
+                    <div className="md:mt-3">
+                      <h3 className="text-sm font-bold text-white">{c.title}</h3>
+                      <p className="mt-0.5 text-xs text-white/60">{c.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:justify-start">
+              <Link href="/reports/request" className="flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-[#1e40af] shadow-lg transition-all active:scale-95 md:w-auto md:px-10 md:hover:scale-105">
+                권리진단서 발급받기 <ArrowRight className="h-4 w-4" />
+              </Link>
+              <p className="text-xs text-white/50">권리진단서 30,000원/건 (부가세 별도)</p>
+            </div>
+            <div className="mt-3 flex justify-center md:justify-start">
+              <Link href="/reports/sample" className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm transition-all hover:bg-white/20 hover:text-white active:scale-95">
+                <Eye className="h-3.5 w-3.5" /> 샘플 미리보기
+              </Link>
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      {/* ═══ 8. Simulator Promo ═══ */}
+      <RevealOnScroll>
+        <section className="bg-gradient-to-br from-[#e8eef5] to-[#f0f4f9] py-8 md:py-16">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="overflow-hidden rounded-2xl bg-white shadow-md md:flex">
+              <div className="p-6 md:flex-1 md:p-10">
+                <h2 className="font-heading text-lg font-bold text-navy md:text-2xl">창업 수익성을 미리 계산해보세요</h2>
+                <p className="mt-2 text-xs text-gray-500 md:text-sm">업종별 예상 수익과 초기 투자비를 분석하세요.</p>
+                <div className="mt-5 space-y-3 md:mt-6 md:space-y-4">
+                  {[
+                    { icon: BarChart3, label: "초기투자 분석", desc: "보증금, 권리금, 인테리어 등 총 창업비용" },
+                    { icon: Receipt, label: "월 손익 시뮬레이션", desc: "매출 데이터 기반 월별 손익 추이" },
+                    { icon: Target, label: "투자금 회수기간", desc: "투자 원금 회수 시점 예측" },
+                  ].map(f => (
+                    <div key={f.label} className="flex items-start gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy/10 md:h-10 md:w-10">
+                        <f.icon className="h-4 w-4 text-navy md:h-5 md:w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-[13px] font-bold text-navy md:text-sm">{f.label}</h3>
+                        <p className="text-[11px] text-gray-500 md:text-xs">{f.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Mobile: mini chart inline */}
+                <div className="mt-5 flex items-end justify-center gap-2 md:hidden">
+                  {[50, 70, 40, 60, 80].map((h, i) => (
+                    <div key={i} className="flex flex-col items-center gap-1">
+                      <div className="w-7 rounded-t bg-gradient-to-t from-navy to-navy/50" style={{ height: `${h}px` }} />
+                      <span className="text-[9px] text-gray-400">{["1월", "2월", "3월", "4월", "5월"][i]}</span>
+                    </div>
+                  ))}
+                </div>
+                <Link href="/simulator"
+                  className="mt-5 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-accent font-medium text-white shadow-lg transition-all active:scale-[0.97] hover:bg-accent-dark md:mt-8 md:w-auto md:px-8">
+                  시뮬레이터 시작하기 <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+              {/* Desktop: Simulator Preview */}
+              <div className="hidden flex-col items-center justify-center gap-6 bg-gradient-to-br from-[#E8F0FE] to-[#DBEAFE] p-10 lg:flex lg:w-[400px]">
+                <div className="w-full rounded-xl bg-white p-5 shadow-sm">
+                  <p className="text-xs font-medium text-gray-400">시뮬레이션 결과 미리보기</p>
+                  <div className="mt-4 grid grid-cols-3 gap-3">
+                    <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">
+                      <p className="text-[10px] text-gray-500">총 투자금</p>
+                      <p className="mt-1 text-lg font-bold text-navy">1.2억</p>
+                    </div>
+                    <div className="rounded-lg bg-[#FEF3C7] p-3 text-center">
+                      <p className="text-[10px] text-gray-500">예상 월수익</p>
+                      <p className="mt-1 text-lg font-bold text-accent-dark">850만</p>
+                    </div>
+                    <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">
+                      <p className="text-[10px] text-gray-500">회수기간</p>
+                      <p className="mt-1 text-lg font-bold text-navy">14개월</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-end justify-between gap-1.5">
+                    {[40, 55, 35, 65, 50, 75, 60].map((h, i) => (
+                      <div key={i} className="flex flex-1 flex-col items-center gap-1">
+                        <div className="w-full rounded-t bg-gradient-to-t from-navy to-[#3B82F6]" style={{ height: `${h}px` }} />
+                        <span className="text-[8px] text-gray-400">{["1월", "2월", "3월", "4월", "5월", "6월", "7월"][i]}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

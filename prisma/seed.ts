@@ -110,7 +110,41 @@ async function main() {
     },
   });
 
-  console.log("  Users: admin, seller, buyer, agent, franchise, expert");
+  const seller2 = await prisma.user.upsert({
+    where: { email: "seller2@test.com" },
+    update: {},
+    create: {
+      email: "seller2@test.com",
+      name: "박점주",
+      hashedPassword: password,
+      role: "SELLER",
+      accountStatus: "ACTIVE",
+      emailVerified: new Date(),
+      phone: "010-2222-3333",
+      businessName: "서울부동산중개",
+      businessNumber: "234-56-78901",
+      subscriptionTier: "FREE",
+    },
+  });
+
+  const seller3 = await prisma.user.upsert({
+    where: { email: "seller3@test.com" },
+    update: {},
+    create: {
+      email: "seller3@test.com",
+      name: "최가게",
+      hashedPassword: password,
+      role: "SELLER",
+      accountStatus: "ACTIVE",
+      emailVerified: new Date(),
+      phone: "010-3333-4444",
+      businessName: "경기상가중개",
+      businessNumber: "345-67-89012",
+      subscriptionTier: "FREE",
+    },
+  });
+
+  console.log("  Users: admin, seller, seller2, seller3, buyer, agent, franchise, expert");
 
   // ──────────────────────────────────────────────
   // 2. Fraud Rules
@@ -513,6 +547,96 @@ async function main() {
     });
     createdListings.push(created);
   }
+
+  // ──────────────────────────────────────────────
+  // 4-extra. 추가 매물 34개 (프리미엄 16 + 추천 18)
+  // ──────────────────────────────────────────────
+  const extraListings: {
+    id: string; sellerId: string; title: string; description: string;
+    businessCategory: string; storeType: string; businessSubtype?: string;
+    price: bigint; monthlyRent: bigint; premiumFee: bigint; managementFee: bigint;
+    monthlyRevenue: bigint; monthlyProfit: bigint; operatingYears: number;
+    address: string; city: string; district: string; neighborhood: string;
+    areaM2: number; areaPyeong: number; floor: number;
+    latitude: number; longitude: number; contactPhone: string;
+    safetyGrade: string; safetyComment: string;
+    imageSeed: string;
+  }[] = [
+    // ─── VIP 추가 16개 (기존 2개 + 16 = 총 20개) ───
+    { id: "seed-extra-vip-01", sellerId: seller.id, title: "분당 카페거리 대형 카페", description: "정자역 카페거리 1층 대형카페. 좌석 60석, 테라스 포함. 브런치+디저트 매출 높음.", businessCategory: "CAFE_BAKERY", storeType: "GENERAL_STORE", businessSubtype: "브런치카페", price: BigInt(70_000_000), monthlyRent: BigInt(4_000_000), premiumFee: BigInt(150_000_000), managementFee: BigInt(250_000), monthlyRevenue: BigInt(30_000_000), monthlyProfit: BigInt(10_000_000), operatingYears: 4, address: "정자일로 200", city: "경기도", district: "성남시", neighborhood: "정자동", areaM2: 99.0, areaPyeong: 30.0, floor: 1, latitude: 37.3595, longitude: 127.1086, contactPhone: "010-2222-3333", safetyGrade: "A", safetyComment: "매출증빙 완료, 프리미엄 입지", imageSeed: "brunch-cafe-1" },
+    { id: "seed-extra-vip-02", sellerId: seller2.id, title: "수원역 치킨 프랜차이즈", description: "수원역 도보 3분 BBQ 매장. 배달+홀 매출 안정. 본사 계약 잔여 4년.", businessCategory: "CHICKEN", storeType: "FRANCHISE", businessSubtype: "BBQ", price: BigInt(35_000_000), monthlyRent: BigInt(2_800_000), premiumFee: BigInt(90_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(40_000_000), monthlyProfit: BigInt(11_000_000), operatingYears: 3, address: "매산로 123", city: "경기도", district: "수원시", neighborhood: "매산동", areaM2: 82.5, areaPyeong: 25.0, floor: 1, latitude: 37.2636, longitude: 127.0286, contactPhone: "010-2222-3333", safetyGrade: "A", safetyComment: "프랜차이즈 인증, 매출증빙 완료", imageSeed: "bbq-chicken-1" },
+    { id: "seed-extra-vip-03", sellerId: seller3.id, title: "해운대 오션뷰 술집", description: "해운대 해변 앞 2층 오션뷰 이자카야. 관광객+지역 주민 고정 매출.", businessCategory: "BAR_PUB", storeType: "GENERAL_STORE", businessSubtype: "이자카야", price: BigInt(60_000_000), monthlyRent: BigInt(5_000_000), premiumFee: BigInt(200_000_000), managementFee: BigInt(300_000), monthlyRevenue: BigInt(45_000_000), monthlyProfit: BigInt(13_000_000), operatingYears: 5, address: "해운대해변로 264", city: "부산광역시", district: "해운대구", neighborhood: "우동", areaM2: 99.0, areaPyeong: 30.0, floor: 2, latitude: 35.1587, longitude: 129.1604, contactPhone: "010-3333-4444", safetyGrade: "A", safetyComment: "매출증빙 완료, 해운대 핵심 입지", imageSeed: "ocean-view-bar-1" },
+    { id: "seed-extra-vip-04", sellerId: seller.id, title: "강동구 피자 배달전문점", description: "명일역 인근 도미노피자 배달전문. 배달 90% 비중, 안정 매출.", businessCategory: "PIZZA", storeType: "FRANCHISE", businessSubtype: "도미노피자", price: BigInt(25_000_000), monthlyRent: BigInt(1_800_000), premiumFee: BigInt(60_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(32_000_000), monthlyProfit: BigInt(8_000_000), operatingYears: 2, address: "명일로 300", city: "서울특별시", district: "강동구", neighborhood: "명일동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.5554, longitude: 127.1453, contactPhone: "010-1234-5678", safetyGrade: "B", safetyComment: "프랜차이즈 확인, 매출증빙 일부", imageSeed: "pizza-delivery-shop-1" },
+    { id: "seed-extra-vip-05", sellerId: seller2.id, title: "대전 둔산동 미용실", description: "둔산동 핵심상권 대형 미용실. 고정 고객 500명+, 디자이너 5명 운영.", businessCategory: "SERVICE", storeType: "GENERAL_STORE", businessSubtype: "미용실", price: BigInt(30_000_000), monthlyRent: BigInt(2_500_000), premiumFee: BigInt(80_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(25_000_000), monthlyProfit: BigInt(9_000_000), operatingYears: 6, address: "둔산중로 50", city: "대전광역시", district: "서구", neighborhood: "둔산동", areaM2: 82.5, areaPyeong: 25.0, floor: 2, latitude: 36.3515, longitude: 127.3786, contactPhone: "010-2222-3333", safetyGrade: "A", safetyComment: "매출증빙 완료, 안정 고객 확보", imageSeed: "hair-salon-premium-1" },
+    { id: "seed-extra-vip-06", sellerId: seller3.id, title: "일산 헬스장 양도", description: "일산 라페스타 인근 대형 헬스장. 200평 규모, PT실+GX룸 완비. 회원 800명.", businessCategory: "ENTERTAINMENT", storeType: "GENERAL_STORE", businessSubtype: "헬스장", price: BigInt(100_000_000), monthlyRent: BigInt(7_000_000), premiumFee: BigInt(250_000_000), managementFee: BigInt(500_000), monthlyRevenue: BigInt(55_000_000), monthlyProfit: BigInt(15_000_000), operatingYears: 4, address: "중앙로 1256", city: "경기도", district: "고양시", neighborhood: "일산동", areaM2: 660.0, areaPyeong: 200.0, floor: 2, latitude: 37.6584, longitude: 126.7714, contactPhone: "010-3333-4444", safetyGrade: "A", safetyComment: "매출증빙 완료, 대형 시설", imageSeed: "gym-interior-1" },
+    { id: "seed-extra-vip-07", sellerId: seller.id, title: "종로 한옥카페", description: "종로 익선동 한옥 카페. SNS 맛집, 외국인 관광객 방문 다수. 분위기 최상.", businessCategory: "CAFE_BAKERY", storeType: "GENERAL_STORE", businessSubtype: "한옥카페", price: BigInt(40_000_000), monthlyRent: BigInt(3_000_000), premiumFee: BigInt(100_000_000), managementFee: BigInt(200_000), monthlyRevenue: BigInt(22_000_000), monthlyProfit: BigInt(7_000_000), operatingYears: 3, address: "돈화문로11나길 28", city: "서울특별시", district: "종로구", neighborhood: "익선동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.5740, longitude: 126.9908, contactPhone: "010-1234-5678", safetyGrade: "A", safetyComment: "매출증빙 완료, 관광 특수 입지", imageSeed: "hanok-cafe-1" },
+    { id: "seed-extra-vip-08", sellerId: seller2.id, title: "영등포 편의점 양도", description: "영등포역 바로 앞 CU 편의점. 유동인구 최상, 24시간 안정 매출.", businessCategory: "RETAIL", storeType: "FRANCHISE", businessSubtype: "CU편의점", price: BigInt(40_000_000), monthlyRent: BigInt(3_000_000), premiumFee: BigInt(70_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(55_000_000), monthlyProfit: BigInt(7_000_000), operatingYears: 3, address: "영등포로 180", city: "서울특별시", district: "영등포구", neighborhood: "영등포동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.5159, longitude: 126.9074, contactPhone: "010-2222-3333", safetyGrade: "B", safetyComment: "프랜차이즈 확인, 매출증빙 일부", imageSeed: "convenience-store-premium-1" },
+    { id: "seed-extra-vip-09", sellerId: seller3.id, title: "대구 동성로 네일샵", description: "동성로 중심 네일샵. 예약 풀 관리, 고정 고객 200명+. 인테리어 최신.", businessCategory: "SERVICE", storeType: "GENERAL_STORE", businessSubtype: "네일아트", price: BigInt(15_000_000), monthlyRent: BigInt(1_500_000), premiumFee: BigInt(40_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(12_000_000), monthlyProfit: BigInt(5_000_000), operatingYears: 2, address: "동성로2길 55", city: "대구광역시", district: "중구", neighborhood: "동성로", areaM2: 33.0, areaPyeong: 10.0, floor: 2, latitude: 35.8695, longitude: 128.5963, contactPhone: "010-3333-4444", safetyGrade: "B", safetyComment: "매출증빙 일부, 상권 양호", imageSeed: "nail-shop-1" },
+    { id: "seed-extra-vip-10", sellerId: seller.id, title: "관악구 분식집 급매", description: "서울대입구역 도보 2분 분식집. 학생 수요 탄탄, 떡볶이+김밥 배달 매출 높음.", businessCategory: "BUNSIK", storeType: "GENERAL_STORE", businessSubtype: "분식전문", price: BigInt(15_000_000), monthlyRent: BigInt(1_200_000), premiumFee: BigInt(30_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(18_000_000), monthlyProfit: BigInt(6_000_000), operatingYears: 5, address: "관악로 188", city: "서울특별시", district: "관악구", neighborhood: "봉천동", areaM2: 33.0, areaPyeong: 10.0, floor: 1, latitude: 37.4813, longitude: 126.9527, contactPhone: "010-1234-5678", safetyGrade: "A", safetyComment: "매출증빙 완료, 대학가 안정 상권", imageSeed: "bunsik-shop-1" },
+    { id: "seed-extra-vip-11", sellerId: seller2.id, title: "을지로 일식당", description: "을지로3가역 인근 정통 일식당. 런치 오마카세 인기, 직장인 예약 풀.", businessCategory: "JAPANESE_FOOD", storeType: "GENERAL_STORE", businessSubtype: "오마카세", price: BigInt(80_000_000), monthlyRent: BigInt(5_500_000), premiumFee: BigInt(180_000_000), managementFee: BigInt(300_000), monthlyRevenue: BigInt(45_000_000), monthlyProfit: BigInt(12_000_000), operatingYears: 3, address: "을지로 100", city: "서울특별시", district: "중구", neighborhood: "을지로3가", areaM2: 66.0, areaPyeong: 20.0, floor: 1, latitude: 37.5660, longitude: 126.9920, contactPhone: "010-2222-3333", safetyGrade: "A", safetyComment: "매출증빙 완료, 높은 객단가", imageSeed: "japanese-restaurant-1" },
+    { id: "seed-extra-vip-12", sellerId: seller3.id, title: "부산 서면 꽃집", description: "서면역 인근 플라워샵. 꽃다발+화분+구독 서비스 운영. 인스타 팔로워 2만.", businessCategory: "RETAIL", storeType: "GENERAL_STORE", businessSubtype: "꽃집", price: BigInt(10_000_000), monthlyRent: BigInt(1_200_000), premiumFee: BigInt(25_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(10_000_000), monthlyProfit: BigInt(4_000_000), operatingYears: 2, address: "서면로 68", city: "부산광역시", district: "부산진구", neighborhood: "부전동", areaM2: 33.0, areaPyeong: 10.0, floor: 1, latitude: 35.1570, longitude: 129.0596, contactPhone: "010-3333-4444", safetyGrade: "B", safetyComment: "매출증빙 일부, SNS 마케팅 활발", imageSeed: "flower-shop-1" },
+    { id: "seed-extra-vip-13", sellerId: seller.id, title: "강북구 배달 중식당", description: "수유역 인근 배달 전문 중식당. 짜장면+짬뽕 배달 90% 비중.", businessCategory: "CHINESE_FOOD", storeType: "GENERAL_STORE", businessSubtype: "중화요리", price: BigInt(20_000_000), monthlyRent: BigInt(1_500_000), premiumFee: BigInt(50_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(28_000_000), monthlyProfit: BigInt(8_000_000), operatingYears: 4, address: "도봉로 310", city: "서울특별시", district: "강북구", neighborhood: "수유동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.6388, longitude: 127.0256, contactPhone: "010-1234-5678", safetyGrade: "B", safetyComment: "매출증빙 일부, 배달앱 평점 4.8", imageSeed: "chinese-restaurant-1" },
+    { id: "seed-extra-vip-14", sellerId: seller2.id, title: "동작구 학원 양도", description: "사당역 도보 3분 영어학원. 초등~중등 학생 80명. 강사 4명 운영중.", businessCategory: "EDUCATION", storeType: "GENERAL_STORE", businessSubtype: "영어학원", price: BigInt(30_000_000), monthlyRent: BigInt(2_200_000), premiumFee: BigInt(60_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(20_000_000), monthlyProfit: BigInt(7_000_000), operatingYears: 5, address: "사당로 170", city: "서울특별시", district: "동작구", neighborhood: "사당동", areaM2: 99.0, areaPyeong: 30.0, floor: 3, latitude: 37.4765, longitude: 126.9816, contactPhone: "010-2222-3333", safetyGrade: "A", safetyComment: "매출증빙 완료, 학원 인허가 확인", imageSeed: "academy-interior-1" },
+    { id: "seed-extra-vip-15", sellerId: seller3.id, title: "수원 양식 레스토랑", description: "광교 카페거리 양식 레스토랑. 파스타+스테이크 전문, 주말 예약 풀.", businessCategory: "WESTERN_FOOD", storeType: "GENERAL_STORE", businessSubtype: "이탈리안", price: BigInt(50_000_000), monthlyRent: BigInt(3_500_000), premiumFee: BigInt(120_000_000), managementFee: BigInt(200_000), monthlyRevenue: BigInt(32_000_000), monthlyProfit: BigInt(9_000_000), operatingYears: 3, address: "광교중앙로 145", city: "경기도", district: "수원시", neighborhood: "광교동", areaM2: 82.5, areaPyeong: 25.0, floor: 1, latitude: 37.2850, longitude: 127.0475, contactPhone: "010-3333-4444", safetyGrade: "A", safetyComment: "매출증빙 완료, 신도시 핵심 상권", imageSeed: "italian-restaurant-1" },
+    { id: "seed-extra-vip-16", sellerId: seller.id, title: "은평구 세탁소", description: "연신내역 인근 대형 세탁소. 아파트 밀집 지역, 고정 고객 다수. 무인+유인 병행.", businessCategory: "SERVICE", storeType: "GENERAL_STORE", businessSubtype: "세탁소", price: BigInt(15_000_000), monthlyRent: BigInt(1_000_000), premiumFee: BigInt(30_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(10_000_000), monthlyProfit: BigInt(4_500_000), operatingYears: 7, address: "통일로 855", city: "서울특별시", district: "은평구", neighborhood: "대조동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.6195, longitude: 126.9215, contactPhone: "010-1234-5678", safetyGrade: "A", safetyComment: "매출증빙 완료, 안정적 고정 수입", imageSeed: "laundry-premium-1" },
+
+    // ─── 추천(PREMIUM) 추가 18개 (기존 6개 + 18 = 총 24개) ───
+    { id: "seed-extra-rec-01", sellerId: seller2.id, title: "구로디지털단지 도시락 전문점", description: "구로디지털단지역 도시락 배달 전문. 직장인 점심 수요 탄탄.", businessCategory: "KOREAN_FOOD", storeType: "GENERAL_STORE", businessSubtype: "도시락전문", price: BigInt(15_000_000), monthlyRent: BigInt(1_500_000), premiumFee: BigInt(35_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(22_000_000), monthlyProfit: BigInt(6_000_000), operatingYears: 2, address: "디지털로 288", city: "서울특별시", district: "구로구", neighborhood: "구로동", areaM2: 33.0, areaPyeong: 10.0, floor: 1, latitude: 37.4848, longitude: 126.9015, contactPhone: "010-2222-3333", safetyGrade: "B", safetyComment: "매출증빙 일부, 안정적 수요", imageSeed: "lunchbox-shop-1" },
+    { id: "seed-extra-rec-02", sellerId: seller3.id, title: "성남 분당 약국", description: "서현역 인근 약국. 주변 병원 3개 밀집, 처방전 매출 안정.", businessCategory: "RETAIL", storeType: "GENERAL_STORE", businessSubtype: "약국", price: BigInt(50_000_000), monthlyRent: BigInt(3_000_000), premiumFee: BigInt(100_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(40_000_000), monthlyProfit: BigInt(12_000_000), operatingYears: 8, address: "분당내곡로 117", city: "경기도", district: "성남시", neighborhood: "서현동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.3840, longitude: 127.1230, contactPhone: "010-3333-4444", safetyGrade: "A", safetyComment: "매출증빙 완료, 병원 밀집 상권", imageSeed: "pharmacy-1" },
+    { id: "seed-extra-rec-03", sellerId: seller.id, title: "합정 베이커리 양도", description: "합정역 도보 2분 수제 베이커리. 빵+케이크 인기, SNS 맛집.", businessCategory: "CAFE_BAKERY", storeType: "GENERAL_STORE", businessSubtype: "베이커리", price: BigInt(30_000_000), monthlyRent: BigInt(2_500_000), premiumFee: BigInt(70_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(20_000_000), monthlyProfit: BigInt(6_500_000), operatingYears: 3, address: "양화로 45", city: "서울특별시", district: "마포구", neighborhood: "합정동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.5505, longitude: 126.9139, contactPhone: "010-1234-5678", safetyGrade: "B", safetyComment: "매출증빙 일부, 인기 맛집", imageSeed: "bakery-shop-1" },
+    { id: "seed-extra-rec-04", sellerId: seller2.id, title: "논현동 스터디카페", description: "논현역 인근 100석 스터디카페. 무인 운영, 24시간 영업. 직장인+학생 수요.", businessCategory: "ENTERTAINMENT", storeType: "GENERAL_STORE", businessSubtype: "스터디카페", price: BigInt(40_000_000), monthlyRent: BigInt(3_500_000), premiumFee: BigInt(80_000_000), managementFee: BigInt(200_000), monthlyRevenue: BigInt(18_000_000), monthlyProfit: BigInt(5_000_000), operatingYears: 2, address: "논현로 525", city: "서울특별시", district: "강남구", neighborhood: "논현동", areaM2: 132.0, areaPyeong: 40.0, floor: 3, latitude: 37.5109, longitude: 127.0299, contactPhone: "010-2222-3333", safetyGrade: "B", safetyComment: "무인 시스템, 매출증빙 일부", imageSeed: "study-cafe-1" },
+    { id: "seed-extra-rec-05", sellerId: seller3.id, title: "부산 남포동 떡볶이집", description: "남포동 BIFF광장 인근 분식집. 관광객+지역 주민 핵심 상권.", businessCategory: "BUNSIK", storeType: "GENERAL_STORE", businessSubtype: "떡볶이전문", price: BigInt(10_000_000), monthlyRent: BigInt(1_200_000), premiumFee: BigInt(25_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(15_000_000), monthlyProfit: BigInt(5_000_000), operatingYears: 6, address: "광복로 40", city: "부산광역시", district: "중구", neighborhood: "남포동", areaM2: 33.0, areaPyeong: 10.0, floor: 1, latitude: 35.0977, longitude: 129.0327, contactPhone: "010-3333-4444", safetyGrade: "A", safetyComment: "매출증빙 완료, 관광 특수", imageSeed: "tteokbokki-shop-1" },
+    { id: "seed-extra-rec-06", sellerId: seller.id, title: "도봉구 태권도 학원", description: "방학역 인근 태권도장. 아파트 단지 밀집, 원생 120명. 강사 3명.", businessCategory: "EDUCATION", storeType: "GENERAL_STORE", businessSubtype: "태권도장", price: BigInt(20_000_000), monthlyRent: BigInt(1_800_000), premiumFee: BigInt(45_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(15_000_000), monthlyProfit: BigInt(5_500_000), operatingYears: 8, address: "방학로 77", city: "서울특별시", district: "도봉구", neighborhood: "방학동", areaM2: 132.0, areaPyeong: 40.0, floor: 2, latitude: 37.6689, longitude: 127.0445, contactPhone: "010-1234-5678", safetyGrade: "A", safetyComment: "매출증빙 완료, 안정적 원생 수", imageSeed: "taekwondo-gym-1" },
+    { id: "seed-extra-rec-07", sellerId: seller2.id, title: "대전 유성구 PC방", description: "충남대 앞 120석 PC방. RTX4090 풀옵, 학생 수요 높음.", businessCategory: "ENTERTAINMENT", storeType: "GENERAL_STORE", businessSubtype: "PC방", price: BigInt(60_000_000), monthlyRent: BigInt(4_000_000), premiumFee: BigInt(150_000_000), managementFee: BigInt(300_000), monthlyRevenue: BigInt(30_000_000), monthlyProfit: BigInt(8_000_000), operatingYears: 2, address: "대학로 99", city: "대전광역시", district: "유성구", neighborhood: "궁동", areaM2: 198.0, areaPyeong: 60.0, floor: 2, latitude: 36.3620, longitude: 127.3449, contactPhone: "010-2222-3333", safetyGrade: "C", safetyComment: "매출증빙 미비, 대학가 상권", imageSeed: "pc-bang-premium-1" },
+    { id: "seed-extra-rec-08", sellerId: seller3.id, title: "고양 일산 꽃집", description: "일산 호수공원 앞 플라워카페. 꽃+음료 복합 매장, MZ세대 인기.", businessCategory: "RETAIL", storeType: "GENERAL_STORE", businessSubtype: "플라워카페", price: BigInt(20_000_000), monthlyRent: BigInt(2_000_000), premiumFee: BigInt(50_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(15_000_000), monthlyProfit: BigInt(5_000_000), operatingYears: 2, address: "호수로 560", city: "경기도", district: "고양시", neighborhood: "일산동구", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.6633, longitude: 126.7727, contactPhone: "010-3333-4444", safetyGrade: "B", safetyComment: "매출증빙 일부, SNS 마케팅 활발", imageSeed: "flower-cafe-1" },
+    { id: "seed-extra-rec-09", sellerId: seller.id, title: "금천구 중국집 양도", description: "가산디지털단지역 인근 중국집. 직장인 점심+배달 매출 높음.", businessCategory: "CHINESE_FOOD", storeType: "GENERAL_STORE", businessSubtype: "중화요리", price: BigInt(20_000_000), monthlyRent: BigInt(1_800_000), premiumFee: BigInt(45_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(25_000_000), monthlyProfit: BigInt(7_000_000), operatingYears: 4, address: "가산디지털1로 70", city: "서울특별시", district: "금천구", neighborhood: "가산동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.4812, longitude: 126.8827, contactPhone: "010-1234-5678", safetyGrade: "B", safetyComment: "매출증빙 일부, IT단지 수요", imageSeed: "chinese-food-shop-1" },
+    { id: "seed-extra-rec-10", sellerId: seller2.id, title: "송파구 필라테스 스튜디오", description: "석촌역 인근 필라테스 스튜디오. 기구 20대, 회원 150명. 1:1 PT 위주.", businessCategory: "ENTERTAINMENT", storeType: "GENERAL_STORE", businessSubtype: "필라테스", price: BigInt(25_000_000), monthlyRent: BigInt(2_500_000), premiumFee: BigInt(55_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(18_000_000), monthlyProfit: BigInt(6_000_000), operatingYears: 3, address: "석촌호수로 200", city: "서울특별시", district: "송파구", neighborhood: "석촌동", areaM2: 82.5, areaPyeong: 25.0, floor: 3, latitude: 37.5068, longitude: 127.1057, contactPhone: "010-2222-3333", safetyGrade: "A", safetyComment: "매출증빙 완료, 프리미엄 시설", imageSeed: "pilates-studio-1" },
+    { id: "seed-extra-rec-11", sellerId: seller3.id, title: "대구 수성구 삼겹살집", description: "수성못 인근 숯불 삼겹살 전문점. 단체 예약 많음, 주말 만석.", businessCategory: "KOREAN_FOOD", storeType: "GENERAL_STORE", businessSubtype: "삼겹살전문", price: BigInt(35_000_000), monthlyRent: BigInt(2_500_000), premiumFee: BigInt(70_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(30_000_000), monthlyProfit: BigInt(9_000_000), operatingYears: 5, address: "달구벌대로 2500", city: "대구광역시", district: "수성구", neighborhood: "범어동", areaM2: 99.0, areaPyeong: 30.0, floor: 1, latitude: 35.8580, longitude: 128.6255, contactPhone: "010-3333-4444", safetyGrade: "A", safetyComment: "매출증빙 완료, 안정 매출", imageSeed: "samgyeopsal-1" },
+    { id: "seed-extra-rec-12", sellerId: seller.id, title: "성북구 빈티지 카페", description: "성신여대입구역 빈티지 인테리어 카페. 디저트 인기, 대학생 단골 많음.", businessCategory: "CAFE_BAKERY", storeType: "GENERAL_STORE", businessSubtype: "디저트카페", price: BigInt(20_000_000), monthlyRent: BigInt(1_500_000), premiumFee: BigInt(40_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(14_000_000), monthlyProfit: BigInt(4_500_000), operatingYears: 2, address: "보문로 132", city: "서울특별시", district: "성북구", neighborhood: "동선동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.5926, longitude: 127.0179, contactPhone: "010-1234-5678", safetyGrade: "C", safetyComment: "매출증빙 미비, 대학가 상권", imageSeed: "vintage-cafe-1" },
+    { id: "seed-extra-rec-13", sellerId: seller2.id, title: "구리시 배달 치킨집", description: "구리시 인창동 교촌치킨. 배달 80%, 아파트 단지 밀집 지역.", businessCategory: "CHICKEN", storeType: "FRANCHISE", businessSubtype: "교촌치킨", price: BigInt(20_000_000), monthlyRent: BigInt(1_500_000), premiumFee: BigInt(50_000_000), managementFee: BigInt(100_000), monthlyRevenue: BigInt(28_000_000), monthlyProfit: BigInt(7_000_000), operatingYears: 3, address: "건원대로 170", city: "경기도", district: "구리시", neighborhood: "인창동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.5920, longitude: 127.1296, contactPhone: "010-2222-3333", safetyGrade: "B", safetyComment: "프랜차이즈 인증, 매출증빙 일부", imageSeed: "kyochon-chicken-1" },
+    { id: "seed-extra-rec-14", sellerId: seller3.id, title: "동대문구 세탁소", description: "회기역 인근 크린토피아 세탁소. 대학가+원룸 밀집, 무인 24시간.", businessCategory: "SERVICE", storeType: "FRANCHISE", businessSubtype: "크린토피아", price: BigInt(12_000_000), monthlyRent: BigInt(900_000), premiumFee: BigInt(25_000_000), managementFee: BigInt(60_000), monthlyRevenue: BigInt(8_000_000), monthlyProfit: BigInt(3_500_000), operatingYears: 2, address: "회기로 90", city: "서울특별시", district: "동대문구", neighborhood: "회기동", areaM2: 33.0, areaPyeong: 10.0, floor: 1, latitude: 37.5894, longitude: 127.0583, contactPhone: "010-3333-4444", safetyGrade: "A", safetyComment: "무인 운영, 매출증빙 완료", imageSeed: "laundry-shop-premium-1" },
+    { id: "seed-extra-rec-15", sellerId: seller.id, title: "중랑구 숯불갈비", description: "망우역 인근 숯불갈비 전문점. 가족 단위 손님 다수, 주말 만석.", businessCategory: "KOREAN_FOOD", storeType: "GENERAL_STORE", businessSubtype: "갈비전문", price: BigInt(40_000_000), monthlyRent: BigInt(2_800_000), premiumFee: BigInt(80_000_000), managementFee: BigInt(200_000), monthlyRevenue: BigInt(28_000_000), monthlyProfit: BigInt(8_000_000), operatingYears: 6, address: "망우로 390", city: "서울특별시", district: "중랑구", neighborhood: "망우동", areaM2: 99.0, areaPyeong: 30.0, floor: 1, latitude: 37.5978, longitude: 127.0929, contactPhone: "010-1234-5678", safetyGrade: "A", safetyComment: "매출증빙 완료, 안정 가족 상권", imageSeed: "galbi-restaurant-1" },
+    { id: "seed-extra-rec-16", sellerId: seller2.id, title: "강서구 GS25 편의점", description: "화곡역 인근 GS25. 역세권+아파트 단지, 매출 안정적.", businessCategory: "RETAIL", storeType: "FRANCHISE", businessSubtype: "GS25", price: BigInt(35_000_000), monthlyRent: BigInt(2_000_000), premiumFee: BigInt(55_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(48_000_000), monthlyProfit: BigInt(5_500_000), operatingYears: 4, address: "화곡로 268", city: "서울특별시", district: "강서구", neighborhood: "화곡동", areaM2: 49.5, areaPyeong: 15.0, floor: 1, latitude: 37.5414, longitude: 126.8396, contactPhone: "010-2222-3333", safetyGrade: "B", safetyComment: "프랜차이즈 확인, 매출증빙 일부", imageSeed: "gs25-store-1" },
+    { id: "seed-extra-rec-17", sellerId: seller3.id, title: "부산 해운대 네일샵", description: "해운대역 인근 프리미엄 네일샵. 관광객+지역민 수요 높음.", businessCategory: "SERVICE", storeType: "GENERAL_STORE", businessSubtype: "네일아트", price: BigInt(12_000_000), monthlyRent: BigInt(1_300_000), premiumFee: BigInt(30_000_000), managementFee: BigInt(80_000), monthlyRevenue: BigInt(10_000_000), monthlyProfit: BigInt(4_000_000), operatingYears: 2, address: "해운대로 570", city: "부산광역시", district: "해운대구", neighborhood: "해운대동", areaM2: 33.0, areaPyeong: 10.0, floor: 2, latitude: 35.1631, longitude: 129.1639, contactPhone: "010-3333-4444", safetyGrade: "B", safetyComment: "매출증빙 일부, 관광 상권", imageSeed: "nail-salon-busan-1" },
+    { id: "seed-extra-rec-18", sellerId: seller.id, title: "양천구 코인노래방", description: "목동역 인근 코인노래방. 30룸, 무인 운영. 주말 매출 높음.", businessCategory: "ENTERTAINMENT", storeType: "GENERAL_STORE", businessSubtype: "코인노래방", price: BigInt(30_000_000), monthlyRent: BigInt(2_500_000), premiumFee: BigInt(60_000_000), managementFee: BigInt(150_000), monthlyRevenue: BigInt(16_000_000), monthlyProfit: BigInt(5_500_000), operatingYears: 3, address: "목동서로 120", city: "서울특별시", district: "양천구", neighborhood: "목동", areaM2: 82.5, areaPyeong: 25.0, floor: 2, latitude: 37.5243, longitude: 126.8746, contactPhone: "010-1234-5678", safetyGrade: "B", safetyComment: "무인 운영, 매출증빙 일부", imageSeed: "coin-karaoke-1" },
+  ];
+
+  const createdExtraListings = [];
+  for (const listing of extraListings) {
+    const { id, imageSeed, ...data } = listing;
+    const created = await prisma.listing.upsert({
+      where: { id },
+      update: {},
+      create: {
+        id,
+        ...data,
+        status: "ACTIVE",
+        publishedAt: new Date(),
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      },
+    });
+    createdExtraListings.push(created);
+
+    // 이미지 1장씩
+    await prisma.listingImage.upsert({
+      where: { id: `${id}-img` },
+      update: {},
+      create: {
+        id: `${id}-img`,
+        listingId: id,
+        url: `https://picsum.photos/seed/${imageSeed}/800/600`,
+        s3Key: `seed/${imageSeed}.jpg`,
+        thumbnailUrl: `https://picsum.photos/seed/${imageSeed}/400/300`,
+        sortOrder: 0,
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        sizeBytes: 150000,
+        mimeType: "image/jpeg",
+      },
+    });
+  }
+  console.log(`  Extra listings: ${createdExtraListings.length} (VIP 16 + 추천 18)`);
   console.log(`  Listings: ${createdListings.length}`);
 
   // ──────────────────────────────────────────────
@@ -685,7 +809,52 @@ async function main() {
       },
     });
   }
-  console.log(`  Premium listings: ${premiumMappings.length} (VIP×2, 추천×6)`);
+  console.log(`  Premium listings (original): ${premiumMappings.length} (VIP×2, 추천×6)`);
+
+  // 추가 매물 프리미엄 설정
+  const extraVipIds = extraListings.filter((_, i) => i < 16).map(l => l.id);
+  const extraRecIds = extraListings.filter((_, i) => i >= 16).map(l => l.id);
+
+  for (const id of extraVipIds) {
+    await prisma.listing.update({
+      where: { id },
+      data: { isPremium: true, premiumRank: 3 },
+    });
+    await prisma.premiumListing.upsert({
+      where: { id: `${id}-premium` },
+      update: {},
+      create: {
+        id: `${id}-premium`,
+        listingId: id,
+        planId: "plan-vip",
+        status: "ACTIVE",
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        paymentStatus: "PAID",
+      },
+    });
+  }
+
+  for (const id of extraRecIds) {
+    await prisma.listing.update({
+      where: { id },
+      data: { isPremium: true, premiumRank: 2 },
+    });
+    await prisma.premiumListing.upsert({
+      where: { id: `${id}-premium` },
+      update: {},
+      create: {
+        id: `${id}-premium`,
+        listingId: id,
+        planId: "plan-premium",
+        status: "ACTIVE",
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        paymentStatus: "PAID",
+      },
+    });
+  }
+  console.log(`  Premium listings (extra): VIP×${extraVipIds.length}, 추천×${extraRecIds.length}`);
 
   // ──────────────────────────────────────────────
   // 5. Sample Inquiries (with status)

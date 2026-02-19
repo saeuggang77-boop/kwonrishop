@@ -27,6 +27,7 @@ export default auth((req) => {
   const isPublicApi =
     pathname.startsWith("/api/auth") ||
     (pathname.startsWith("/api/listings") && req.method === "GET") ||
+    (pathname.startsWith("/api/homepage/listings") && req.method === "GET") ||
     (pathname.startsWith("/api/franchise") && req.method === "GET") ||
     (pathname.startsWith("/api/bbs") && req.method === "GET") ||
     (pathname === "/api/admin/banners" && req.method === "GET") ||
