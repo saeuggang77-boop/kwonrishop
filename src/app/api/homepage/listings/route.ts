@@ -1,96 +1,140 @@
 import { prisma } from "@/lib/prisma";
 import { errorToResponse } from "@/lib/utils/errors";
-import { HOMEPAGE_SLOTS, HOMEPAGE_ROTATION_KEY } from "@/lib/utils/constants";
-import { getRotatedGroup } from "@/lib/utils/homepage-rotation";
+import { HOMEPAGE_SLOTS } from "@/lib/utils/constants";
+
+/**
+ * 홈페이지 매물 필드 — 카드 렌더에 필요한 것만 select
+ */
+const CARD_SELECT = {
+  id: true,
+  title: true,
+  businessCategory: true,
+  storeType: true,
+  price: true,
+  monthlyRent: true,
+  premiumFee: true,
+  monthlyRevenue: true,
+  monthlyProfit: true,
+  areaPyeong: true,
+  floor: true,
+  city: true,
+  district: true,
+  safetyGrade: true,
+  isPremium: true,
+  premiumRank: true,
+  hasDiagnosisBadge: true,
+  images: {
+    where: { isPrimary: true },
+    take: 1,
+    select: { url: true, thumbnailUrl: true },
+  },
+  seller: {
+    select: { name: true, image: true, isTrustedSeller: true },
+  },
+} as const;
+
+/**
+ * 시간 기반 균등 순환 — Redis 불필요.
+ * 5분 간격으로 그룹이 변경되어 광고 공정성 유지.
+ */
+function pickGroup<T extends { id: string }>(
+  items: T[],
+  slotCount: number,
+  fillItems: T[],
+): T[] {
+  if (items.length === 0) return fillItems.slice(0, slotCount);
+
+  if (items.length <= slotCount) {
+    if (items.length < slotCount) {
+      const usedIds = new Set(items.map((i) => i.id));
+      const padding = fillItems
+        .filter((i) => !usedIds.has(i.id))
+        .slice(0, slotCount - items.length);
+      return [...items, ...padding];
+    }
+    return items;
+  }
+
+  const totalGroups = Math.ceil(items.length / slotCount);
+  const groupIndex = Math.floor(Date.now() / 300_000) % totalGroups; // 5분 간격
+  const start = groupIndex * slotCount;
+  const group = items.slice(start, start + slotCount);
+
+  if (group.length < slotCount) {
+    const usedIds = new Set(group.map((i) => i.id));
+    const padding = fillItems
+      .filter((i) => !usedIds.has(i.id))
+      .slice(0, slotCount - group.length);
+    return [...group, ...padding];
+  }
+
+  return group;
+}
 
 export async function GET() {
   try {
-    // 활성 프리미엄 매물 전체 조회 (VIP + 추천)
-    const allPremium = await prisma.listing.findMany({
-      where: {
-        status: "ACTIVE",
-        isPremium: true,
-        premiumRank: { gte: 2 },
-      },
-      include: {
-        images: { where: { isPrimary: true }, take: 1 },
-        seller: { select: { name: true, image: true, isTrustedSeller: true } },
-      },
-      orderBy: [
-        { premiumRank: "desc" },
-        { createdAt: "desc" },
-      ],
-    });
+    // 두 쿼리를 병렬 실행 (fill 쿼리가 premium 결과에 의존하지 않도록 변경)
+    const [allPremium, latestFill] = await Promise.all([
+      prisma.listing.findMany({
+        where: {
+          status: "ACTIVE",
+          isPremium: true,
+          premiumRank: { gte: 2 },
+        },
+        select: CARD_SELECT,
+        orderBy: [{ premiumRank: "desc" }, { createdAt: "desc" }],
+      }),
+      prisma.listing.findMany({
+        where: {
+          status: "ACTIVE",
+          OR: [{ isPremium: false }, { premiumRank: { lt: 2 } }],
+        },
+        select: CARD_SELECT,
+        orderBy: { createdAt: "desc" },
+        take: Math.max(HOMEPAGE_SLOTS.PREMIUM, HOMEPAGE_SLOTS.RECOMMEND),
+      }),
+    ]);
 
-    // VIP(rank=3)와 추천(rank=2) 분리
     const vipListings = allPremium.filter((l) => l.premiumRank === 3);
     const recListings = allPremium.filter((l) => l.premiumRank === 2);
 
-    // 채움용 최신 일반 매물 조회 (프리미엄 제외)
-    const premiumIds = new Set(allPremium.map((l) => l.id));
-    const fillCount = Math.max(HOMEPAGE_SLOTS.PREMIUM, HOMEPAGE_SLOTS.RECOMMEND);
-    const latestFill = await prisma.listing.findMany({
-      where: {
-        status: "ACTIVE",
-        id: { notIn: [...premiumIds] },
-      },
-      include: {
-        images: { where: { isPrimary: true }, take: 1 },
-        seller: { select: { name: true, image: true, isTrustedSeller: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: fillCount,
-    });
-
-    // 프리미엄 순환 적용
-    const premiumGroup = await getRotatedGroup(
+    const premiumGroup = pickGroup(
       vipListings,
       HOMEPAGE_SLOTS.PREMIUM,
-      HOMEPAGE_ROTATION_KEY.PREMIUM,
       latestFill,
     );
 
-    // 추천 순환 적용 (프리미엄에 이미 사용된 채움 매물 제외)
     const usedIds = new Set(premiumGroup.map((l) => l.id));
     const recFill = latestFill.filter((l) => !usedIds.has(l.id));
 
-    const recommendGroup = await getRotatedGroup(
+    const recommendGroup = pickGroup(
       recListings,
       HOMEPAGE_SLOTS.RECOMMEND,
-      HOMEPAGE_ROTATION_KEY.RECOMMEND,
       recFill,
     );
 
     // BigInt → string 직렬화
-    const serialize = (l: typeof allPremium[number]) => ({
-      id: l.id,
-      title: l.title,
-      businessCategory: l.businessCategory,
-      storeType: l.storeType,
+    const serialize = (l: (typeof allPremium)[number]) => ({
+      ...l,
       price: l.price.toString(),
       monthlyRent: l.monthlyRent?.toString() ?? null,
       premiumFee: l.premiumFee?.toString() ?? null,
       monthlyRevenue: l.monthlyRevenue?.toString() ?? null,
       monthlyProfit: l.monthlyProfit?.toString() ?? null,
-      areaPyeong: l.areaPyeong,
-      floor: l.floor,
-      city: l.city,
-      district: l.district,
-      images: l.images.map((img) => ({
-        url: img.url,
-        thumbnailUrl: img.thumbnailUrl,
-      })),
-      safetyGrade: l.safetyGrade,
-      isPremium: l.isPremium,
-      premiumRank: l.premiumRank,
-      hasDiagnosisBadge: l.hasDiagnosisBadge,
-      seller: l.seller,
     });
 
-    return Response.json({
-      premium: premiumGroup.map(serialize),
-      recommend: recommendGroup.map(serialize),
-    });
+    return new Response(
+      JSON.stringify({
+        premium: premiumGroup.map(serialize),
+        recommend: recommendGroup.map(serialize),
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        },
+      },
+    );
   } catch (error) {
     return errorToResponse(error);
   }

@@ -337,7 +337,3 @@ export const HOMEPAGE_SLOTS = {
   RECOMMEND: 12, // 2행 × 6열
 } as const;
 
-export const HOMEPAGE_ROTATION_KEY = {
-  PREMIUM: "homepage:rotation:premium",
-  RECOMMEND: "homepage:rotation:recommend",
-} as const;
