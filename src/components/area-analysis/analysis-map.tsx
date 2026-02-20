@@ -1,15 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { MapPin } from "lucide-react";
 import type { NearbyPlace } from "@/lib/utils/area-analysis";
 import { KAKAO_CATEGORY_MAP } from "@/lib/utils/area-analysis";
-
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
+import { Map, MapMarker, Circle, CustomOverlayMap, useKakaoLoader, useMap } from "react-kakao-maps-sdk";
 
 interface AnalysisMapProps {
   center: { lat: number; lng: number } | null;
@@ -18,119 +13,39 @@ interface AnalysisMapProps {
   selectedCategory: string | null;
 }
 
-export function AnalysisMap({ center, radius, places, selectedCategory }: AnalysisMapProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [error, setError] = useState(false);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const circleRef = useRef<any>(null);
-  const infoWindowRef = useRef<any>(null);
+function MapCenterUpdater({ center, radius }: { center: { lat: number; lng: number }; radius: number }) {
+  const map = useMap();
 
-  // Load SDK (same pattern as kakao-map.tsx)
   useEffect(() => {
-    const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
-    if (!KEY) {
-      setError(true);
-      return;
-    }
-    if (window.kakao?.maps) {
-      setMapLoaded(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KEY}&autoload=false&libraries=services`;
-    script.async = true;
-    script.onload = () => {
-      window.kakao.maps.load(() => setMapLoaded(true));
-    };
-    script.onerror = () => setError(true);
-    document.head.appendChild(script);
-  }, []);
-
-  // Initialize map
-  useEffect(() => {
-    if (!mapLoaded || !mapRef.current) return;
-    if (mapInstanceRef.current) return; // already init
-
-    mapInstanceRef.current = new window.kakao.maps.Map(mapRef.current, {
-      center: new window.kakao.maps.LatLng(37.5665, 126.978),
-      level: 5,
-    });
-  }, [mapLoaded]);
-
-  // Update center, circle, and markers
-  useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map || !center) return;
-
-    const pos = new window.kakao.maps.LatLng(center.lat, center.lng);
-    map.setCenter(pos);
+    if (!map) return;
+    map.setCenter(new window.kakao.maps.LatLng(center.lat, center.lng));
 
     // Adjust zoom level based on radius
     if (radius <= 300) map.setLevel(4);
     else if (radius <= 500) map.setLevel(5);
     else map.setLevel(6);
+  }, [map, center, radius]);
 
-    // Clear old markers
-    markersRef.current.forEach((m) => m.setMap(null));
-    markersRef.current = [];
-    if (circleRef.current) circleRef.current.setMap(null);
-    if (infoWindowRef.current) infoWindowRef.current.close();
+  return null;
+}
 
-    // Center marker
-    const centerMarker = new window.kakao.maps.Marker({
-      map,
-      position: pos,
-      zIndex: 10,
-    });
-    markersRef.current.push(centerMarker);
+export function AnalysisMap({ center, radius, places, selectedCategory }: AnalysisMapProps) {
+  const [error, setError] = useState(false);
+  const [clickedPlace, setClickedPlace] = useState<NearbyPlace | null>(null);
 
-    // Radius circle
-    circleRef.current = new window.kakao.maps.Circle({
-      map,
-      center: pos,
-      radius,
-      strokeWeight: 2,
-      strokeColor: "#1B3A5C",
-      strokeOpacity: 0.8,
-      fillColor: "#1B3A5C",
-      fillOpacity: 0.08,
-    });
+  const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+  const [loading, sdkError] = useKakaoLoader({
+    appkey: KEY ?? "",
+    libraries: ["services"],
+  });
 
-    // Place markers
-    const filtered = selectedCategory
-      ? places.filter((p) => p.categoryKey === selectedCategory)
-      : places;
+  useEffect(() => {
+    if (!KEY || sdkError) setError(true);
+  }, [KEY, sdkError]);
 
-    const iw = new window.kakao.maps.InfoWindow({ zIndex: 1 });
-    infoWindowRef.current = iw;
-
-    filtered.forEach((place) => {
-      const catConfig = KAKAO_CATEGORY_MAP[place.categoryKey];
-      const markerPos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
-
-      const marker = new window.kakao.maps.Marker({
-        map,
-        position: markerPos,
-        title: place.name,
-      });
-
-      window.kakao.maps.event.addListener(marker, "click", () => {
-        iw.setContent(
-          `<div style="padding:8px 12px;font-size:13px;min-width:180px;line-height:1.5;">
-            <strong style="color:#1B3A5C;">${place.name}</strong><br/>
-            <span style="color:#888;font-size:11px;">${catConfig?.label ?? place.category}</span>
-            <span style="color:#aaa;font-size:11px;margin-left:4px;">${place.distance}m</span>
-          </div>`,
-        );
-        iw.open(map, marker);
-      });
-
-      markersRef.current.push(marker);
-    });
-  }, [center, radius, places, selectedCategory, mapLoaded]);
+  const filtered = selectedCategory
+    ? places.filter((p) => p.categoryKey === selectedCategory)
+    : places;
 
   if (error) {
     return (
@@ -141,15 +56,89 @@ export function AnalysisMap({ center, radius, places, selectedCategory }: Analys
     );
   }
 
+  if (loading) {
+    return (
+      <div className="relative h-full w-full overflow-hidden rounded-xl border border-gray-200">
+        <div className="flex h-full items-center justify-center" style={{ minHeight: "400px" }}>
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative h-full w-full overflow-hidden rounded-xl border border-gray-200">
-      <div ref={mapRef} className="h-full w-full" style={{ minHeight: "400px" }}>
-        {!mapLoaded && (
-          <div className="flex h-full items-center justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" />
-          </div>
+      <Map
+        center={center ?? { lat: 37.5665, lng: 126.978 }}
+        style={{ width: "100%", height: "100%", minHeight: "400px" }}
+        level={5}
+        onClick={() => setClickedPlace(null)}
+      >
+        {center && <MapCenterUpdater center={center} radius={radius} />}
+
+        {/* Center marker */}
+        {center && (
+          <MapMarker
+            position={center}
+            zIndex={10}
+          />
         )}
-      </div>
+
+        {/* Radius circle */}
+        {center && (
+          <Circle
+            center={center}
+            radius={radius}
+            strokeWeight={2}
+            strokeColor="#1B3A5C"
+            strokeOpacity={0.8}
+            fillColor="#1B3A5C"
+            fillOpacity={0.08}
+          />
+        )}
+
+        {/* Place markers */}
+        {filtered.map((place) => {
+          const catConfig = KAKAO_CATEGORY_MAP[place.categoryKey];
+          const pos = { lat: Number(place.y), lng: Number(place.x) };
+
+          return (
+            <MapMarker
+              key={place.id}
+              position={pos}
+              title={place.name}
+              onClick={() => setClickedPlace(clickedPlace?.id === place.id ? null : place)}
+            />
+          );
+        })}
+
+        {/* Info window for clicked place */}
+        {clickedPlace && (
+          <CustomOverlayMap
+            position={{ lat: Number(clickedPlace.y), lng: Number(clickedPlace.x) }}
+            yAnchor={1.4}
+            zIndex={2}
+          >
+            <div style={{
+              padding: "8px 12px",
+              fontSize: "13px",
+              minWidth: "180px",
+              lineHeight: "1.5",
+              background: "white",
+              borderRadius: "4px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+            }}>
+              <strong style={{ color: "#1B3A5C" }}>{clickedPlace.name}</strong><br/>
+              <span style={{ color: "#888", fontSize: "11px" }}>
+                {KAKAO_CATEGORY_MAP[clickedPlace.categoryKey]?.label ?? clickedPlace.category}
+              </span>
+              <span style={{ color: "#aaa", fontSize: "11px", marginLeft: "4px" }}>
+                {clickedPlace.distance}m
+              </span>
+            </div>
+          </CustomOverlayMap>
+        )}
+      </Map>
     </div>
   );
 }

@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
           return NextResponse.json({
             lat: parseFloat(kwDoc.y),
             lng: parseFloat(kwDoc.x),
+            address: kwDoc.road_address_name || kwDoc.address_name || address,
           }, {
             headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=3600" },
           });
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       lat: parseFloat(doc.y),
       lng: parseFloat(doc.x),
+      address: doc.road_address?.address_name || doc.address_name || address,
     }, {
       headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=3600" },
     });

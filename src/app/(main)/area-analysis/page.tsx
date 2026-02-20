@@ -48,65 +48,22 @@ export default function AreaAnalysisPage() {
     setAnalyzed(false);
 
     try {
-      // Use Kakao geocoding to get coordinates
-      const waitForKakao = () =>
-        new Promise<void>((resolve) => {
-          if (window.kakao?.maps?.services) {
-            resolve();
-            return;
-          }
-          const check = setInterval(() => {
-            if (window.kakao?.maps?.services) {
-              clearInterval(check);
-              resolve();
-            }
-          }, 100);
-          setTimeout(() => {
-            clearInterval(check);
-            resolve();
-          }, 5000);
-        });
+      // Use REST API for geocoding (no client-side SDK dependency)
+      const geocodeRes = await fetch(`/api/geocode?address=${encodeURIComponent(address)}`);
+      const result: { lat: number; lng: number; address?: string } | null = geocodeRes.ok
+        ? await geocodeRes.json()
+        : null;
 
-      await waitForKakao();
-
-      const geocoder = new window.kakao.maps.services.Geocoder();
-      const places = new window.kakao.maps.services.Places();
-
-      // Try keyword search first (more flexible), fallback to address search
-      const result = await new Promise<{ lat: number; lng: number; address: string } | null>((resolve) => {
-        places.keywordSearch(address, (data: any, status: any) => {
-          if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
-            resolve({
-              lat: Number(data[0].y),
-              lng: Number(data[0].x),
-              address: data[0].road_address_name || data[0].address_name || address,
-            });
-          } else {
-            // Fallback: address search
-            geocoder.addressSearch(address, (data2: any, status2: any) => {
-              if (status2 === window.kakao.maps.services.Status.OK && data2.length > 0) {
-                resolve({
-                  lat: Number(data2[0].y),
-                  lng: Number(data2[0].x),
-                  address: data2[0].road_address?.address_name || data2[0].address_name || address,
-                });
-              } else {
-                resolve(null);
-              }
-            });
-          }
-        });
-      });
-
-      if (!result) {
+      if (!result || !result.lat || !result.lng) {
         toast("error", "주소를 찾을 수 없습니다. 다시 입력해주세요.");
         setIsLoading(false);
         return;
       }
 
       setCoords({ lat: result.lat, lng: result.lng });
-      setAddress(result.address);
-      const seoul = isSeoulAddress(result.address);
+      const resolvedAddress = result.address ?? address;
+      setAddress(resolvedAddress);
+      const seoul = isSeoulAddress(resolvedAddress);
       setIsSeoul(seoul);
 
       // Fetch all data in parallel

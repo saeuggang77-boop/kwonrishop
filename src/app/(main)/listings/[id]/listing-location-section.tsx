@@ -1,10 +1,11 @@
 "use client";
 
-import { Component, useEffect, useRef, useState } from "react";
+import { Component, useEffect, useState } from "react";
 import type { ReactNode, ErrorInfo } from "react";
 import { MapPinned, Store, Footprints, Loader2 } from "lucide-react";
 import type { NearbyResult, SeoulData } from "@/lib/utils/area-analysis";
 import { isSeoulAddress } from "@/lib/utils/area-analysis";
+import { Map, MapMarker, CustomOverlayMap, useKakaoLoader } from "react-kakao-maps-sdk";
 
 // ── Error Boundary: isolate map/location errors from the rest of the page ──
 interface MapErrorBoundaryProps { children: ReactNode; address: string; }
@@ -44,12 +45,6 @@ export function ListingLocationSectionSafe(props: LocationSectionProps) {
       <ListingLocationSection {...props} />
     </MapErrorBoundary>
   );
-}
-
-declare global {
-  interface Window {
-    kakao: any;
-  }
 }
 
 interface LocationSectionProps {
@@ -95,11 +90,7 @@ export function ListingLocationSection({
   neighborhood,
   postalCode,
 }: LocationSectionProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState(false);
-  const [sdkFailed, setSdkFailed] = useState(false);
-  const mapInstanceRef = useRef<any>(null);
 
   const [resolvedLat, setResolvedLat] = useState<number | null>(lat);
   const [resolvedLng, setResolvedLng] = useState<number | null>(lng);
@@ -117,6 +108,21 @@ export function ListingLocationSection({
   const [dailyFootTraffic, setDailyFootTraffic] = useState<string | null>(null);
 
   const isSeoul = isSeoulAddress(`${city} ${district}`);
+
+  // ── Kakao SDK via react-kakao-maps-sdk ──
+  const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+  const [loading, sdkError] = useKakaoLoader({
+    appkey: KEY ?? "",
+    libraries: ["services"],
+  });
+
+  useEffect(() => {
+    if (!KEY) setMapError(true);
+  }, [KEY]);
+
+  useEffect(() => {
+    if (sdkError) setMapError(true);
+  }, [sdkError]);
 
   // ── Geocode fallback when lat/lng missing ──
   useEffect(() => {
@@ -139,74 +145,6 @@ export function ListingLocationSection({
       .catch(err => console.error("Geocode error:", err))
       .finally(() => setGeocoding(false));
   }, [lat, lng, address]);
-
-  // ── Load Kakao SDK ──
-  useEffect(() => {
-    const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
-    if (!KEY) { setMapError(true); return; }
-
-    // SDK already fully loaded (LatLng constructor exists)
-    if (window.kakao?.maps?.LatLng) { setMapLoaded(true); return; }
-
-    // SDK script loaded but maps API not initialized (autoload=false)
-    if (window.kakao?.maps?.load) {
-      try {
-        window.kakao.maps.load(() => setMapLoaded(true));
-      } catch { setMapError(true); }
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KEY}&autoload=false&libraries=services`;
-    script.async = true;
-    script.onload = () => {
-      try {
-        window.kakao.maps.load(() => setMapLoaded(true));
-      } catch { setMapError(true); }
-    };
-    script.onerror = () => setMapError(true);
-    document.head.appendChild(script);
-
-    // Timeout: if SDK doesn't load in 8 seconds, mark as failed
-    const timeout = setTimeout(() => {
-      if (!mapLoaded) setSdkFailed(true);
-    }, 8000);
-
-    return () => clearTimeout(timeout);
-  }, [mapLoaded]);
-
-  // ── Render map ──
-  useEffect(() => {
-    if (!mapLoaded || !mapRef.current || !resolvedLat || !resolvedLng) return;
-    if (mapInstanceRef.current) return;
-
-    // Defensive: ensure SDK constructors are ready
-    if (!window.kakao?.maps?.LatLng || !window.kakao?.maps?.Map) {
-      setMapError(true);
-      return;
-    }
-
-    try {
-      const pos = new window.kakao.maps.LatLng(resolvedLat, resolvedLng);
-      const map = new window.kakao.maps.Map(mapRef.current, {
-        center: pos,
-        level: 4,
-      });
-      mapInstanceRef.current = map;
-
-      // Marker
-      const marker = new window.kakao.maps.Marker({ map, position: pos });
-
-      // InfoWindow
-      const iw = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:6px 10px;font-size:13px;font-weight:600;color:#1B3A5C;white-space:nowrap;">${address}</div>`,
-      });
-      iw.open(map, marker);
-    } catch (err) {
-      console.error("Kakao map render error:", err);
-      setMapError(true);
-    }
-  }, [mapLoaded, resolvedLat, resolvedLng, address]);
 
   // ── Fetch facilities via REST API fallback ──
   useEffect(() => {
@@ -327,7 +265,7 @@ export function ListingLocationSection({
       {/* ── Map ── */}
       <div className="mt-4 overflow-hidden rounded-xl border border-gray-200">
         {resolvedLat && resolvedLng ? (
-          (mapError || (sdkFailed && !mapLoaded)) ? (
+          mapError ? (
             <div className="flex aspect-[16/9] flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
               <MapPinned className="h-12 w-12 text-navy/40" />
               <p className="mt-3 text-sm font-semibold text-gray-600">{address}</p>
@@ -340,13 +278,24 @@ export function ListingLocationSection({
                 카카오맵에서 보기
               </a>
             </div>
+          ) : loading ? (
+            <div className="flex aspect-[16/9] items-center justify-center bg-gray-100">
+              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            </div>
           ) : (
-            <div ref={mapRef} className="aspect-[16/9] w-full">
-              {!mapLoaded && (
-                <div className="flex h-full items-center justify-center bg-gray-100">
-                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-                </div>
-              )}
+            <div className="aspect-[16/9] w-full">
+              <Map
+                center={{ lat: resolvedLat, lng: resolvedLng }}
+                style={{ width: "100%", height: "100%" }}
+                level={4}
+              >
+                <MapMarker position={{ lat: resolvedLat, lng: resolvedLng }} />
+                <CustomOverlayMap position={{ lat: resolvedLat, lng: resolvedLng }} yAnchor={2.2}>
+                  <div style={{ padding: "6px 10px", fontSize: "13px", fontWeight: 600, color: "#1B3A5C", whiteSpace: "nowrap", background: "white", borderRadius: "4px", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}>
+                    {address}
+                  </div>
+                </CustomOverlayMap>
+              </Map>
             </div>
           )
         ) : geocoding ? (
