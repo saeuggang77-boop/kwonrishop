@@ -283,7 +283,7 @@ export function ListingLocationSection({
               <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
             </div>
           ) : (
-            <div className="aspect-[16/9] w-full">
+            <div style={{ width: "100%", aspectRatio: "16/9", minHeight: "300px" }}>
               <Map
                 center={{ lat: resolvedLat, lng: resolvedLng }}
                 style={{ width: "100%", height: "100%" }}
