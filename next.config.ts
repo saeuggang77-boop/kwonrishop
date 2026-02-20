@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -62,7 +61,7 @@ const nextConfig: NextConfig = {
         {
           key: "Content-Security-Policy",
           value:
-            "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.tosspayments.com dapi.kakao.com *.daumcdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob: *.daumcdn.net *.kakao.com; connect-src 'self' https://api.tosspayments.com https://*.amazonaws.com dapi.kakao.com *.kakao.com *.daumcdn.net https://*.ingest.us.sentry.io; frame-src https://js.tosspayments.com; worker-src 'self' blob:;",
+            "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.tosspayments.com dapi.kakao.com *.daumcdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob: *.daumcdn.net *.kakao.com; connect-src 'self' https://api.tosspayments.com https://*.amazonaws.com dapi.kakao.com *.kakao.com *.daumcdn.net; frame-src https://js.tosspayments.com; worker-src 'self' blob:;",
         },
       ],
     },
@@ -70,10 +69,4 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp", "bullmq"],
 };
 
-export default withSentryConfig(nextConfig, {
-  org: "park-ze",
-  project: "kwonrishop",
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  tunnelRoute: "/monitoring",
-});
+export default nextConfig;
