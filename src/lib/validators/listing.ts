@@ -8,6 +8,7 @@ export const createListingSchema = z.object({
     "CHICKEN", "PIZZA", "CAFE_BAKERY", "BAR_PUB", "BUNSIK",
     "DELIVERY", "OTHER_FOOD", "SERVICE", "RETAIL", "ENTERTAINMENT",
     "EDUCATION", "ACCOMMODATION", "OTHER",
+    "ASIAN_FOOD", "MEAT", "BURGER", "NIGHTCLUB",
   ]),
   storeType: z.enum([
     "GENERAL_STORE", "FRANCHISE", "FOOD_STREET", "OFFICE", "COMPLEX_MALL", "OTHER",
@@ -44,6 +45,7 @@ export const updateListingSchema = createListingSchema.partial();
 export const searchListingsSchema = z.object({
   query: z.string().optional(),
   businessCategory: z.string().optional(),
+  businessSubtype: z.string().optional(),
   storeType: z.string().optional(),
   city: z.string().optional(),
   district: z.string().optional(),
@@ -57,6 +59,8 @@ export const searchListingsSchema = z.object({
   rentMax: z.coerce.number().int().positive().optional(),
   areaMin: z.coerce.number().nonnegative().optional(),
   areaMax: z.coerce.number().positive().optional(),
+  monthlyProfitMin: z.coerce.number().int().nonnegative().optional(),
+  monthlyProfitMax: z.coerce.number().int().positive().optional(),
   premiumOnly: z.coerce.boolean().optional(),
   trustedOnly: z.coerce.boolean().optional(),
   diagnosisOnly: z.coerce.boolean().optional(),

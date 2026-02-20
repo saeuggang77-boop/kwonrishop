@@ -67,7 +67,8 @@ function floorAreaStr(floor: string | number | null, pyeong: number | null): str
   return parts.length ? parts.join(" · ") : null;
 }
 
-function catLabel(cat: string) {
+function catLabel(cat: string, subtype?: string | null) {
+  if (subtype) return subtype;
   return BUSINESS_CATEGORY_LABELS[cat] ?? cat;
 }
 
@@ -97,6 +98,12 @@ const CATEGORY_UNSPLASH: Record<string, string> = {
   WESTERN_FOOD:  "https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=400&h=300&fit=crop",
   CHINESE_FOOD:  "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400&h=300&fit=crop",
   JAPANESE_FOOD: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&h=300&fit=crop",
+  ASIAN_FOOD:    "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop",
+  MEAT:          "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop",
+  BURGER:        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+  NIGHTCLUB:     "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=400&h=300&fit=crop",
+  ACCOMMODATION: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop",
+  OTHER:         "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop",
 };
 
 /** 업종별 아이콘 + 파스텔 배경 + 진한 아이콘색 매핑 */
@@ -116,6 +123,11 @@ const CATEGORY_ICON_MAP: Record<string, { icon: LucideIcon; bg: string; iconColo
   CHINESE_FOOD:  { icon: Flame,           bg: "bg-[#FFEBEE]", iconColor: "text-[#B71C1C]", label: "중식" },
   DELIVERY:      { icon: Truck,           bg: "bg-[#E3F2FD]", iconColor: "text-[#1565C0]", label: "배달" },
   ACCOMMODATION: { icon: Bed,             bg: "bg-[#F3E5F5]", iconColor: "text-[#6A1B9A]", label: "숙박" },
+  ASIAN_FOOD:    { icon: UtensilsCrossed, bg: "bg-[#FFF3E0]", iconColor: "text-[#E65100]", label: "아시안" },
+  MEAT:          { icon: Flame,           bg: "bg-[#FFEBEE]", iconColor: "text-[#B71C1C]", label: "육류" },
+  BURGER:        { icon: UtensilsCrossed, bg: "bg-[#FFF8E1]", iconColor: "text-[#F57F17]", label: "버거류" },
+  NIGHTCLUB:     { icon: Wine,            bg: "bg-[#F3E5F5]", iconColor: "text-[#6A1B9A]", label: "유흥주점" },
+  OTHER:         { icon: Store,           bg: "bg-[#F5F5F5]", iconColor: "text-[#616161]", label: "기타" },
 };
 
 /** 업종별 placeholder 이미지 컴포넌트 */
@@ -182,7 +194,7 @@ function PremiumCard({ listing, isCarouselItem, priority = false }: { listing: L
           <CategoryPlaceholder category={listing.businessCategory} size="md" />
         )}
         <span className="absolute left-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-          {catLabel(listing.businessCategory)}
+          {catLabel(listing.businessCategory, listing.businessSubtype)}
         </span>
         {fa && (
           <span className="absolute right-2 top-2 rounded bg-black/50 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">{fa}</span>
@@ -248,7 +260,7 @@ function RecommendCard({ listing, isCarouselItem, priority = false }: { listing:
           <CategoryPlaceholder category={listing.businessCategory} size="sm" />
         )}
         <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-medium text-white backdrop-blur-sm">
-          {catLabel(listing.businessCategory)}
+          {catLabel(listing.businessCategory, listing.businessSubtype)}
         </span>
         {isRecommend && <span className="absolute right-1.5 bottom-1.5 rounded bg-blue-50 border border-blue-200 px-1.5 py-0.5 text-[9px] font-bold text-blue-700">추천</span>}
       </div>
@@ -321,7 +333,7 @@ function SearchCard({ listing }: { listing: ListingCardData }) {
           <CategoryPlaceholder category={listing.businessCategory} size="lg" />
         )}
         <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-          {catLabel(listing.businessCategory)}
+          {catLabel(listing.businessCategory, listing.businessSubtype)}
         </span>
         {fa && (
           <span className="absolute right-1.5 top-1.5 rounded bg-black/50 px-1 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">{fa}</span>

@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
       ];
     }
     if (parsed.businessCategory) where.businessCategory = parsed.businessCategory;
+    if (parsed.businessSubtype) where.businessSubtype = parsed.businessSubtype;
     if (parsed.storeType) where.storeType = parsed.storeType;
     if (parsed.city) where.city = parsed.city;
     if (parsed.district) where.district = parsed.district;
@@ -65,6 +66,11 @@ export async function GET(req: NextRequest) {
       );
       if (!where.AND) where.AND = [];
       (where.AND as unknown[]).push({ id: { in: rows.map((r) => r.id) } });
+    }
+    if (parsed.monthlyProfitMin !== undefined || parsed.monthlyProfitMax !== undefined) {
+      where.monthlyProfit = {};
+      if (parsed.monthlyProfitMin !== undefined) (where.monthlyProfit as Record<string, unknown>).gte = BigInt(parsed.monthlyProfitMin);
+      if (parsed.monthlyProfitMax !== undefined) (where.monthlyProfit as Record<string, unknown>).lte = BigInt(parsed.monthlyProfitMax);
     }
     if (parsed.premiumOnly) {
       where.isPremium = true;

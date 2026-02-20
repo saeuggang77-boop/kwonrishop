@@ -5,6 +5,7 @@ export const CATEGORY_EMOJI: Record<string, string> = {
   BUNSIK: "🍜", RETAIL: "🏪", BAR_PUB: "🍺", WESTERN_FOOD: "🍝",
   JAPANESE_FOOD: "🍣", CHINESE_FOOD: "🥟", SERVICE: "✂️",
   ENTERTAINMENT: "🎮", EDUCATION: "📚", DELIVERY: "🛵", ACCOMMODATION: "🏨",
+  ASIAN_FOOD: "🍜", MEAT: "🥩", BURGER: "🍔", NIGHTCLUB: "🍸", OTHER: "🔖",
 };
 
 /** Light gradients for premium/recommended card no-image fallback */
@@ -24,6 +25,11 @@ export const CATEGORY_GRADIENT: Record<string, string> = {
   EDUCATION: "from-[#D1FAE5] to-[#6EE7B7]",
   DELIVERY: "from-[#E0F2FE] to-[#7DD3FC]",
   ACCOMMODATION: "from-[#F3E8FF] to-[#C084FC]",
+  ASIAN_FOOD: "from-[#FFF3E0] to-[#FFE0B2]",
+  MEAT: "from-[#FFEBEE] to-[#FFCDD2]",
+  BURGER: "from-[#FFF8E1] to-[#FFECB3]",
+  NIGHTCLUB: "from-[#F3E5F5] to-[#E1BEE7]",
+  OTHER: "from-[#F5F5F5] to-[#E0E0E0]",
 };
 
 /** Dark gradient overlays for horizontal card no-image fallback */
@@ -39,4 +45,10 @@ export const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: stri
   SERVICE:       { gradient: "from-blue-800/70 to-blue-600/50", icon: "✂️" },
   ENTERTAINMENT: { gradient: "from-indigo-700/70 to-indigo-500/50", icon: "🎮" },
   EDUCATION:     { gradient: "from-cyan-700/70 to-cyan-500/50", icon: "📚" },
+  ASIAN_FOOD:    { gradient: "from-orange-700/70 to-orange-500/50", icon: "🍜" },
+  MEAT:          { gradient: "from-red-800/70 to-red-600/50", icon: "🥩" },
+  BURGER:        { gradient: "from-yellow-700/70 to-yellow-500/50", icon: "🍔" },
+  NIGHTCLUB:     { gradient: "from-purple-800/70 to-purple-600/50", icon: "🍸" },
+  ACCOMMODATION: { gradient: "from-violet-700/70 to-violet-500/50", icon: "🏨" },
+  OTHER:         { gradient: "from-gray-600/70 to-gray-400/50", icon: "🔖" },
 };

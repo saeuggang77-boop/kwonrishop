@@ -12,9 +12,12 @@ const KakaoMap = dynamic(() => import("@/components/kakao-map").then(m => m.Kaka
 import {
   BUSINESS_CATEGORY_LABELS,
   BUSINESS_CATEGORY_GROUPS,
+  BUSINESS_SUBCATEGORIES,
   FLOOR_OPTIONS,
   AREA_OPTIONS,
   STORE_FEATURES,
+  REGION_DATA,
+  MONTHLY_PROFIT_OPTIONS,
 } from "@/lib/utils/constants";
 
 /* ================================================================
@@ -53,7 +56,7 @@ interface ListingItem {
 }
 
 type TabType = "direct" | "franchise";
-type FilterKey = "category" | "revenue" | "theme" | "price" | "floor" | "area";
+type FilterKey = "region" | "category" | "revenue" | "theme" | "price" | "profit" | "floor" | "area";
 
 
 const SORT_OPTIONS = [
@@ -102,14 +105,37 @@ export default function ListingsPage() {
   const [diagnosisOnly, setDiagnosisOnly] = useState(false);
   const [urgentOnly, setUrgentOnly] = useState(false);
 
+  // Lock body scroll & hide footer for full-screen layout
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+
+    const footer = document.querySelector("footer");
+    const main = document.querySelector("main");
+    if (footer) (footer as HTMLElement).style.display = "none";
+    if (main) (main as HTMLElement).style.paddingBottom = "0";
+
+    return () => {
+      html.style.overflow = "";
+      body.style.overflow = "";
+      if (footer) (footer as HTMLElement).style.display = "";
+      if (main) (main as HTMLElement).style.paddingBottom = "";
+    };
+  }, []);
+
   const [filters, setFilters] = useState({
     query: searchParams.get("query") ?? "",
     businessCategory: searchParams.get("businessCategory") ?? "",
+    businessSubtype: searchParams.get("businessSubtype") ?? "",
     storeType: searchParams.get("storeType") ?? "",
     city: "",
     district: "",
     totalCostMin: "",
     totalCostMax: "",
+    monthlyProfitMin: "",
+    monthlyProfitMax: "",
     floor: "",
     areaMin: "",
     areaMax: "",
@@ -127,11 +153,14 @@ export default function ListingsPage() {
       const params = new URLSearchParams();
       if (filters.query) params.set("query", filters.query);
       if (filters.businessCategory) params.set("businessCategory", filters.businessCategory);
+      if (filters.businessSubtype) params.set("businessSubtype", filters.businessSubtype);
       if (filters.storeType) params.set("storeType", filters.storeType);
       if (filters.city) params.set("city", filters.city);
       if (filters.district) params.set("district", filters.district);
       if (filters.totalCostMin) params.set("totalCostMin", filters.totalCostMin);
       if (filters.totalCostMax) params.set("totalCostMax", filters.totalCostMax);
+      if (filters.monthlyProfitMin) params.set("monthlyProfitMin", filters.monthlyProfitMin);
+      if (filters.monthlyProfitMax) params.set("monthlyProfitMax", filters.monthlyProfitMax);
       if (filters.theme === "무권리") params.set("premiumFeeMax", "0");
       if (filters.floor) params.set("floor", filters.floor);
       if (filters.areaMin) params.set("areaMin", filters.areaMin);
@@ -170,8 +199,8 @@ export default function ListingsPage() {
     fetchListings(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    filters.businessCategory, filters.storeType, filters.city, filters.district,
-    filters.totalCostMin, filters.totalCostMax, filters.floor,
+    filters.businessCategory, filters.businessSubtype, filters.storeType, filters.city, filters.district,
+    filters.totalCostMin, filters.totalCostMax, filters.monthlyProfitMin, filters.monthlyProfitMax, filters.floor,
     filters.areaMin, filters.areaMax, filters.sortBy, filters.sortOrder,
     filters.revenueVerified, filters.trustedOnly, activeTab, diagnosisOnly, urgentOnly,
   ]);
@@ -195,8 +224,9 @@ export default function ListingsPage() {
 
   const handleReset = () => {
     setFilters({
-      query: "", businessCategory: "", storeType: "",
+      query: "", businessCategory: "", businessSubtype: "", storeType: "",
       city: "", district: "", totalCostMin: "", totalCostMax: "",
+      monthlyProfitMin: "", monthlyProfitMax: "",
       floor: "", areaMin: "", areaMax: "", theme: "",
       revenueVerified: false, trustedOnly: false, sortBy: "createdAt", sortOrder: "desc",
     });
@@ -223,16 +253,18 @@ export default function ListingsPage() {
   }, [openFilter]);
 
   /* ---- Filter badge counts ---- */
-  const categoryCount = filters.businessCategory ? 1 : 0;
+  const categoryCount = (filters.businessCategory || filters.businessSubtype) ? 1 : 0;
   const revenueCount = filters.revenueVerified ? 1 : 0;
   const themeCount = filters.theme ? 1 : 0;
   const priceCount = filters.totalCostMin || filters.totalCostMax ? 1 : 0;
   const floorCount = filters.floor ? 1 : 0;
   const areaCount = filters.areaMin || filters.areaMax ? 1 : 0;
-  const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + floorCount + areaCount > 0 || filters.city || filters.trustedOnly || diagnosisOnly || urgentOnly;
+  const regionCount = filters.city ? 1 : 0;
+  const profitCount = (filters.monthlyProfitMin || filters.monthlyProfitMax) ? 1 : 0;
+  const hasActiveFilters = categoryCount + revenueCount + themeCount + priceCount + profitCount + floorCount + areaCount + regionCount > 0 || filters.trustedOnly || diagnosisOnly || urgentOnly;
 
   return (
-    <div className="flex h-[calc(100vh-56px)] flex-col overflow-hidden md:h-[calc(100vh-64px)]">
+    <div className="flex h-[calc(100dvh-57px)] flex-col overflow-hidden">
       {/* ======== Top Bar ======== */}
       <div className="shrink-0 border-b border-gray-200 bg-white">
         {/* Tabs */}
@@ -287,10 +319,12 @@ export default function ListingsPage() {
           {/* Filter buttons row + dropdown */}
           <div ref={filterAreaRef}>
             <div className="mt-2.5 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              <FilterButton label={filters.city ? `지역: ${filters.city}${filters.district ? ` ${filters.district}` : ""}` : "지역"} count={regionCount} isOpen={openFilter === "region"} onClick={() => toggleFilter("region")} />
               <FilterButton label="업종" count={categoryCount} isOpen={openFilter === "category"} onClick={() => toggleFilter("category")} />
               <FilterButton label="매출증빙" count={revenueCount} isOpen={openFilter === "revenue"} onClick={() => toggleFilter("revenue")} />
               <FilterButton label="테마" count={themeCount} isOpen={openFilter === "theme"} onClick={() => toggleFilter("theme")} />
               <FilterButton label="금액" count={priceCount} isOpen={openFilter === "price"} onClick={() => toggleFilter("price")} />
+              <FilterButton label={filters.monthlyProfitMin || filters.monthlyProfitMax ? `수익: ${MONTHLY_PROFIT_OPTIONS.find(o => o.min === filters.monthlyProfitMin && o.max === filters.monthlyProfitMax)?.label ?? "선택됨"}` : "수익"} count={profitCount} isOpen={openFilter === "profit"} onClick={() => toggleFilter("profit")} />
               <FilterButton label="층수" count={floorCount} isOpen={openFilter === "floor"} onClick={() => toggleFilter("floor")} />
               <FilterButton label="면적" count={areaCount} isOpen={openFilter === "area"} onClick={() => toggleFilter("area")} />
 
@@ -358,10 +392,18 @@ export default function ListingsPage() {
             {openFilter && (
               <div className="relative mt-2">
                 <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
+                {openFilter === "region" && (
+                  <RegionFilterDropdown
+                    city={filters.city}
+                    district={filters.district}
+                    onChange={(city, district) => setFilters((f) => ({ ...f, city, district }))}
+                  />
+                )}
                 {openFilter === "category" && (
                   <CategoryFilterDropdown
                     value={filters.businessCategory}
-                    onChange={(v) => setFilters((f) => ({ ...f, businessCategory: v }))}
+                    subtype={filters.businessSubtype}
+                    onChange={(cat, sub) => setFilters((f) => ({ ...f, businessCategory: cat, businessSubtype: sub }))}
                   />
                 )}
                 {openFilter === "revenue" && (
@@ -433,6 +475,33 @@ export default function ListingsPage() {
                               ...f,
                               totalCostMin: isActive ? "" : opt.min,
                               totalCostMax: isActive ? "" : opt.max,
+                            }))}
+                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                              isActive
+                                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                                : "border-gray-200 text-gray-600 hover:border-gray-300"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                {openFilter === "profit" && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700">월수익</p>
+                    <div className="flex flex-wrap gap-2">
+                      {MONTHLY_PROFIT_OPTIONS.map((opt) => {
+                        const isActive = filters.monthlyProfitMin === opt.min && filters.monthlyProfitMax === opt.max;
+                        return (
+                          <button
+                            key={opt.label}
+                            onClick={() => setFilters((f) => ({
+                              ...f,
+                              monthlyProfitMin: isActive ? "" : opt.min,
+                              monthlyProfitMax: isActive ? "" : opt.max,
                             }))}
                             className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
                               isActive
@@ -625,10 +694,12 @@ function FilterButton({
 
 function CategoryFilterDropdown({
   value,
+  subtype,
   onChange,
 }: {
   value: string;
-  onChange: (v: string) => void;
+  subtype: string;
+  onChange: (category: string, subtype: string) => void;
 }) {
   const [activeGroup, setActiveGroup] = useState<string>("");
 
@@ -637,7 +708,7 @@ function CategoryFilterDropdown({
       <p className="text-sm font-medium text-gray-700">업종</p>
       {/* Group tabs */}
       <div className="flex flex-wrap gap-1.5">
-        {Object.keys(BUSINESS_CATEGORY_GROUPS).map((group) => (
+        {Object.keys(BUSINESS_SUBCATEGORIES).map((group) => (
           <button
             key={group}
             onClick={() => setActiveGroup(activeGroup === group ? "" : group)}
@@ -652,10 +723,10 @@ function CategoryFilterDropdown({
         ))}
       </div>
       {/* Sub-categories */}
-      {activeGroup && (
+      {activeGroup && BUSINESS_SUBCATEGORIES[activeGroup] && (
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => onChange("")}
+            onClick={() => onChange("", "")}
             className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
               !value
                 ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
@@ -664,17 +735,100 @@ function CategoryFilterDropdown({
           >
             전체
           </button>
-          {BUSINESS_CATEGORY_GROUPS[activeGroup].map((cat) => (
+          {BUSINESS_SUBCATEGORIES[activeGroup].map((sub) => {
+            const isActive = value === sub.key && (sub.subtype ? subtype === sub.subtype : !subtype);
+            return (
+              <button
+                key={sub.subtype ?? sub.key}
+                onClick={() => {
+                  if (isActive) {
+                    onChange("", "");
+                  } else {
+                    onChange(sub.key, sub.subtype ?? "");
+                  }
+                }}
+                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  isActive
+                    ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                {sub.emoji} {sub.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ================================================================
+   Region Filter Dropdown
+   ================================================================ */
+
+function RegionFilterDropdown({
+  city,
+  district,
+  onChange,
+}: {
+  city: string;
+  district: string;
+  onChange: (city: string, district: string) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <p className="text-sm font-medium text-gray-700">지역</p>
+      {/* City buttons */}
+      <div className="flex flex-wrap gap-1.5">
+        <button
+          onClick={() => onChange("", "")}
+          className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
+            !city
+              ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+              : "border-gray-200 text-gray-500 hover:border-gray-300"
+          }`}
+        >
+          전체
+        </button>
+        {Object.keys(REGION_DATA).map((c) => (
+          <button
+            key={c}
+            onClick={() => onChange(city === c ? "" : c, "")}
+            className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
+              city === c
+                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                : "border-gray-200 text-gray-500 hover:border-gray-300"
+            }`}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+      {/* District buttons */}
+      {city && REGION_DATA[city] && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => onChange(city, "")}
+            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+              !district
+                ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+                : "border-gray-200 text-gray-600 hover:border-gray-300"
+            }`}
+          >
+            전체
+          </button>
+          {REGION_DATA[city].map((d) => (
             <button
-              key={cat}
-              onClick={() => onChange(value === cat ? "" : cat)}
+              key={d}
+              onClick={() => onChange(city, district === d ? "" : d)}
               className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
-                value === cat
+                district === d
                   ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
                   : "border-gray-200 text-gray-600 hover:border-gray-300"
               }`}
             >
-              {BUSINESS_CATEGORY_LABELS[cat]}
+              {d}
             </button>
           ))}
         </div>

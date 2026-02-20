@@ -22,6 +22,9 @@ export function MobileTabBar() {
     return pathname.startsWith(href);
   };
 
+  // /listings 페이지: 네이버부동산 스타일 전체화면 레이아웃이므로 탭바 숨김
+  if (pathname === "/listings") return null;
+
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-gray-200 bg-white/95 backdrop-blur-sm md:hidden"

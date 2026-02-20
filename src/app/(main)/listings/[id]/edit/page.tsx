@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { BUSINESS_CATEGORY_LABELS, STORE_TYPE_LABELS } from "@/lib/utils/constants";
+import { BUSINESS_CATEGORY_LABELS, BUSINESS_SUBCATEGORIES, STORE_TYPE_LABELS } from "@/lib/utils/constants";
 import { useToast } from "@/components/ui/toast";
 
 export default function EditListingPage() {
@@ -109,11 +109,59 @@ export default function EditListingPage() {
             <label className="mb-1 block text-sm font-medium text-gray-700">제목</label>
             <input value={form.title} onChange={(e) => update("title", e.target.value)} className="input-field" />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">업종</label>
-              <select value={form.businessCategory} onChange={(e) => update("businessCategory", e.target.value)} className="input-field">
-                {Object.entries(BUSINESS_CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              <label className="mb-1 block text-sm font-medium text-gray-700">업종 대분류</label>
+              <select
+                value={Object.entries(BUSINESS_SUBCATEGORIES).find(([, subs]) =>
+                  subs.some((s) => s.key === form.businessCategory && (s.subtype ? s.subtype === form.businessSubtype : true))
+                )?.[0] ?? ""}
+                onChange={(e) => {
+                  const group = e.target.value;
+                  const firstSub = BUSINESS_SUBCATEGORIES[group]?.[0];
+                  if (firstSub) {
+                    update("businessCategory", firstSub.key);
+                    update("businessSubtype", firstSub.subtype ?? "");
+                  }
+                }}
+                className="input-field"
+              >
+                <option value="">선택</option>
+                {Object.keys(BUSINESS_SUBCATEGORIES).map((group) => (
+                  <option key={group} value={group}>{group}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">세부업종</label>
+              <select
+                value={form.businessSubtype ? `${form.businessCategory}::${form.businessSubtype}` : form.businessCategory}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val.includes("::")) {
+                    const [cat, sub] = val.split("::");
+                    update("businessCategory", cat);
+                    update("businessSubtype", sub);
+                  } else {
+                    update("businessCategory", val);
+                    update("businessSubtype", "");
+                  }
+                }}
+                className="input-field"
+              >
+                <option value="">선택</option>
+                {Object.values(BUSINESS_SUBCATEGORIES).flat().filter((sub) => {
+                  // Show all if no group selected, or filter by matching category
+                  const currentGroup = Object.entries(BUSINESS_SUBCATEGORIES).find(([, subs]) =>
+                    subs.some((s) => s.key === form.businessCategory && (s.subtype ? s.subtype === form.businessSubtype : true))
+                  )?.[0];
+                  if (!currentGroup) return true;
+                  return BUSINESS_SUBCATEGORIES[currentGroup]?.includes(sub);
+                }).map((sub) => (
+                  <option key={sub.subtype ?? sub.key} value={sub.subtype ? `${sub.key}::${sub.subtype}` : sub.key}>
+                    {sub.emoji} {sub.label}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -122,10 +170,6 @@ export default function EditListingPage() {
                 {Object.entries(STORE_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">세부업종</label>
-            <input value={form.businessSubtype} onChange={(e) => update("businessSubtype", e.target.value)} className="input-field" placeholder="예: 삼겹살, 카페" />
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>

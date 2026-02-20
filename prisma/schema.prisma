@@ -54,6 +54,11 @@ enum BusinessCategory {
   EDUCATION
   ACCOMMODATION
   OTHER
+  // 2026-02 추가
+  ASIAN_FOOD
+  MEAT
+  BURGER
+  NIGHTCLUB
 }
 
 enum StoreType {

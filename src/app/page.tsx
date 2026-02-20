@@ -92,12 +92,14 @@ interface HeroSlide {
   sub: string;
   gradient: string;
   patternStyle: CSSProperties;
+  image: string;
 }
 
 const HERO_SLIDES: HeroSlide[] = [
   {
-    title: "권리샵 그랜드 오픈",
-    sub: "상가 권리금 분석부터 안전한 거래까지",
+    title: "상가 권리금,\n비싸게 사고 있진 않나요?",
+    sub: "AI가 분석한 적정 권리금으로 안전한 거래를 시작하세요",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=600&fit=crop",
     gradient: "linear-gradient(135deg, #1B3A5C 0%, #234B73 40%, #2D6A9F 70%, #3B82B0 100%)",
     patternStyle: {
       backgroundImage: [
@@ -110,8 +112,9 @@ const HERO_SLIDES: HeroSlide[] = [
     },
   },
   {
-    title: "프리미엄 회원 혜택",
-    sub: "매물 최상단 노출과 권리진단서 무료 제공",
+    title: "권리금 진단서 무료 발급",
+    sub: "주변 시세 대비 권리금 적정성을 AI가 판단해드립니다",
+    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&h=600&fit=crop",
     gradient: "linear-gradient(135deg, #78350F 0%, #92400E 25%, #B45309 55%, #D97706 100%)",
     patternStyle: {
       backgroundImage: [
@@ -123,8 +126,9 @@ const HERO_SLIDES: HeroSlide[] = [
     },
   },
   {
-    title: "안전한 거래,\n권리샵과 함께",
-    sub: "AI 기반 권리금 진단으로 위험요소를 미리 확인하세요",
+    title: "점포 매물 등록은 무료!",
+    sub: "사진만 올리면 전국 매수자에게 노출됩니다",
+    image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=1200&h=600&fit=crop",
     gradient: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 35%, #1E40AF 75%, #2563EB 100%)",
     patternStyle: {
       backgroundImage: [
@@ -279,6 +283,8 @@ export default function HomePage() {
             >
               {/* Background layer */}
               <div className="absolute inset-0" style={{ background: s.gradient }} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={s.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />
               <div className="absolute inset-0" style={s.patternStyle} />
               {/* Decorative elements per slide */}
               {i === 0 && (
@@ -447,16 +453,26 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mt-8 flex flex-col items-center gap-3 md:flex-row md:justify-start">
-              <Link href="/reports/request" className="flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-[#1e40af] shadow-lg transition-all duration-200 active:scale-95 md:w-auto md:px-10 md:hover:scale-105 md:hover:shadow-xl">
-                권리진단서 발급받기 <ArrowRight className="h-4 w-4" />
+              <Link href="/reports/sample" className="flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-[#1e40af] shadow-lg transition-all duration-200 active:scale-95 md:w-auto md:px-10 md:hover:scale-105 md:hover:shadow-xl">
+                <Eye className="h-4 w-4" /> 샘플 미리보기
               </Link>
-              <Link href="/reports/sample" className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-medium text-white/80 backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:text-white active:scale-95">
-                <Eye className="h-3.5 w-3.5" /> 샘플 미리보기
+              <Link href="/reports/request" className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-medium text-white/80 backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:text-white active:scale-95">
+                권리진단서 발급받기 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           </div>
         </section>
       </RevealOnScroll>
+
+      {/* ═══ 5.5 Mid-page CTA ═══ */}
+      <section className="bg-[#EBF5FF] py-6 md:py-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 md:flex-row md:justify-between">
+          <p className="text-sm font-bold text-navy md:text-base">내 점포도 무료로 등록해보세요</p>
+          <Link href="/listings/new" className="flex min-h-[40px] items-center gap-2 rounded-lg bg-navy px-6 text-sm font-bold text-white transition-all duration-200 active:scale-95 md:hover:bg-navy-dark">
+            점포 등록하기 <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
 
       {/* ═══ 6. Simulator Promo ═══ */}
       <RevealOnScroll>
@@ -507,6 +523,7 @@ export default function HomePage() {
                       </div>
                     ))}
                   </div>
+                  <p className="mt-2 text-center text-[9px] text-gray-400">* 실제 결과는 입력 조건에 따라 달라집니다</p>
                 </div>
                 <Link href="/simulator"
                   className="mt-6 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-accent font-medium text-white shadow-lg transition-all duration-200 active:scale-[0.97] hover:bg-accent-dark hover:shadow-xl md:mt-8 md:w-auto md:px-8">
@@ -516,7 +533,10 @@ export default function HomePage() {
               {/* Desktop: Simulator Preview */}
               <div className="hidden flex-col items-center justify-center gap-6 bg-gradient-to-br from-[#E8F0FE] to-[#DBEAFE] p-6 md:flex md:w-[320px] lg:w-[400px] lg:p-10">
                 <div className="w-full rounded-xl bg-white p-5 shadow-sm">
-                  <p className="text-xs font-medium text-gray-400">시뮬레이션 결과 미리보기</p>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500">📌 카페 창업 예시</span>
+                  </div>
+                  <p className="mt-1.5 text-xs font-medium text-gray-400">시뮬레이션 결과 미리보기</p>
                   <div className="mt-4 grid grid-cols-3 gap-3">
                     <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">
                       <p className="text-[10px] text-gray-500">총 투자금</p>
@@ -539,6 +559,7 @@ export default function HomePage() {
                       </div>
                     ))}
                   </div>
+                  <p className="mt-3 text-center text-[9px] text-gray-400">* 실제 결과는 입력 조건에 따라 달라집니다</p>
                 </div>
               </div>
             </div>
@@ -546,60 +567,38 @@ export default function HomePage() {
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 7. Pricing ═══ */}
+      {/* ═══ 7. Free for Buyers ═══ */}
       <RevealOnScroll>
         <section className="border-t border-gray-200 bg-white py-12 md:py-20">
           <div className="mx-auto max-w-5xl px-4">
-            <h2 className="text-center font-heading text-lg font-bold text-navy md:text-2xl">서비스 요금 안내</h2>
-            <p className="mt-2 text-center text-xs text-gray-500 md:text-sm">매수자는 모든 매물 정보를 무료로 열람할 수 있습니다</p>
+            <h2 className="text-center font-heading text-lg font-bold text-navy md:text-2xl">매수자는 모든 매물 정보를 무료로 열람할 수 있습니다</h2>
 
             <div className="mx-auto mt-8 grid gap-4 md:mt-10 md:grid-cols-3">
-              {/* 프리미엄 매물 광고 */}
-              <div className="relative rounded-xl border border-gray-200 bg-white p-5 transition-all duration-200 md:hover:-translate-y-1 md:hover:shadow-lg">
-                <span className="absolute -top-2.5 right-3 rounded-full bg-navy px-2 py-0.5 text-[10px] font-bold text-white">추천</span>
-                <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-bold text-navy">프리미엄 매물</span>
-                  <span className="text-base font-bold text-navy md:text-lg">&#8361;300,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
+              <div className="rounded-xl border border-gray-200 bg-white p-6 text-center transition-all duration-200 md:hover:-translate-y-1 md:hover:shadow-lg">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-navy/10">
+                  <Search className="h-6 w-6 text-navy" />
                 </div>
-                <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />홈페이지 캐러셀 + 최상단 고정</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />프리미엄 배지 + 골드 테두리</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />권리진단서 1회 무료 포함</li>
-                </ul>
-                <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+                <h3 className="mt-4 text-sm font-bold text-navy">매물 검색 무료</h3>
+                <p className="mt-1.5 text-xs text-gray-500">전국 상가 매물을 자유롭게 검색하세요</p>
               </div>
-
-              {/* 오늘의 추천 매물 광고 */}
-              <div className="rounded-xl border border-gray-200 bg-white p-5 transition-all duration-200 md:hover:-translate-y-1 md:hover:shadow-lg">
-                <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-bold text-navy">오늘의 추천</span>
-                  <span className="text-base font-bold text-navy md:text-lg">&#8361;200,000<span className="text-xs font-normal text-gray-400">/30일</span></span>
+              <div className="rounded-xl border border-gray-200 bg-white p-6 text-center transition-all duration-200 md:hover:-translate-y-1 md:hover:shadow-lg">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-navy/10">
+                  <BarChart3 className="h-6 w-6 text-navy" />
                 </div>
-                <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />매물 목록 상위 노출</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />오늘의 추천 배지 표시</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />기본 조회수 통계</li>
-                </ul>
-                <p className="mt-2 text-[10px] text-gray-400">(부가세 별도)</p>
+                <h3 className="mt-4 text-sm font-bold text-navy">시세 분석 무료</h3>
+                <p className="mt-1.5 text-xs text-gray-500">권리금·월매출 데이터를 확인하세요</p>
               </div>
-
-              {/* 권리진단서 */}
-              <div className="rounded-xl border border-gray-200 bg-white p-5 transition-all duration-200 md:hover:-translate-y-1 md:hover:shadow-lg">
-                <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-bold text-navy">권리진단서</span>
-                  <span className="text-base font-bold text-navy md:text-lg">&#8361;30,000<span className="text-xs font-normal text-gray-400">/건</span></span>
+              <div className="rounded-xl border border-gray-200 bg-white p-6 text-center transition-all duration-200 md:hover:-translate-y-1 md:hover:shadow-lg">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-navy/10">
+                  <ClipboardList className="h-6 w-6 text-navy" />
                 </div>
-                <ul className="mt-3 space-y-1.5 text-xs text-gray-600 md:text-sm">
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />적정 권리금 산정 + AI 진단</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />임대차 체크리스트 20항목</li>
-                  <li className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-navy" />PDF 리포트 + 진단 배지 부여</li>
-                </ul>
-                <p className="mt-2 text-[10px] text-gray-400">(부가세 별도 · VAT 포함 ₩33,000)</p>
+                <h3 className="mt-4 text-sm font-bold text-navy">권리진단서 1건 무료</h3>
+                <p className="mt-1.5 text-xs text-gray-500">첫 거래는 무료 진단서로 안전하게</p>
               </div>
             </div>
 
             <div className="mt-5 text-center md:mt-8">
-              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-navy transition-colors hover:text-navy-dark hover:underline md:text-sm">자세히 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
+              <Link href="/pricing" className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-navy hover:underline md:text-sm">매도자·광고주 요금은 자세히 보기 <ArrowRight className="h-3.5 w-3.5" /></Link>
             </div>
           </div>
         </section>
