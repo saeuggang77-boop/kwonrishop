@@ -100,7 +100,15 @@ export async function GET(
       }),
     ]).catch(() => {});
 
-    return Response.json({ data: serializeListing(listing as unknown as Record<string, unknown>) });
+    return new Response(
+      JSON.stringify({ data: serializeListing(listing as unknown as Record<string, unknown>) }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=5, stale-while-revalidate=15",
+        },
+      },
+    );
   } catch (error) {
     return errorToResponse(error);
   }
