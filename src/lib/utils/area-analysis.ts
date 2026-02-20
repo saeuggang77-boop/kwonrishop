@@ -54,19 +54,27 @@ export interface AnalysisResult {
   isSeoul: boolean;
 }
 
-// Helper: Get current quarter string for Seoul API (e.g., "20254" for 2025 Q4)
-// Seoul API data is usually 2 quarters behind
-export function getSeoulQuarter(): string {
+// Helper: Get array of quarter strings to try for Seoul API (e.g., ["20252", "20251", "20244"])
+// Seoul API data availability lags significantly, so we try multiple quarters
+export function getSeoulQuarters(): string[] {
   const now = new Date();
-  let year = now.getFullYear();
-  let quarter = Math.ceil((now.getMonth() + 1) / 3);
-  // Go back 2 quarters for data availability
-  quarter -= 2;
-  if (quarter <= 0) {
-    quarter += 4;
-    year -= 1;
+  const quarters: string[] = [];
+
+  // Try quarters going back 3, 4, 5 quarters
+  for (let lagQuarters of [3, 4, 5]) {
+    let year = now.getFullYear();
+    let quarter = Math.ceil((now.getMonth() + 1) / 3);
+    quarter -= lagQuarters;
+
+    while (quarter <= 0) {
+      quarter += 4;
+      year -= 1;
+    }
+
+    quarters.push(`${year}${quarter}`);
   }
-  return `${year}${quarter}`;
+
+  return quarters;
 }
 
 // Helper: Check if address is in Seoul

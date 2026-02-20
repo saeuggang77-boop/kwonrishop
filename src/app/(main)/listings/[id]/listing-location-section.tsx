@@ -198,7 +198,9 @@ export function ListingLocationSection({
     const fetchTraffic = async () => {
       try {
         if (isSeoul) {
-          const res = await fetch(`/api/area-analysis/seoul?lat=${lat}&lng=${lng}`);
+          // Pass neighborhood (dong) parameter for location filtering
+          const dongParam = neighborhood ? `&dong=${encodeURIComponent(neighborhood)}` : "";
+          const res = await fetch(`/api/area-analysis/seoul?lat=${lat}&lng=${lng}${dongParam}`);
           if (res.ok) {
             const data: SeoulData = await res.json();
             if (data.footTraffic.length > 0) {
@@ -251,7 +253,7 @@ export function ListingLocationSection({
     };
 
     fetchTraffic();
-  }, [lat, lng, isSeoul]);
+  }, [lat, lng, isSeoul, neighborhood]);
 
   return (
     <section id="location-info" className="mt-12">
