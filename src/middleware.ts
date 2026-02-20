@@ -53,6 +53,11 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
+  // Sentry monitoring tunnel
+  if (pathname.startsWith("/monitoring")) {
+    return NextResponse.next();
+  }
+
   // Auth-required sub-paths under public routes
   const authRequiredSubPaths = ["/listings/new", "/listings/compare"];
   const needsAuth = authRequiredSubPaths.some(
