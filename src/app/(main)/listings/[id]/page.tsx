@@ -4,7 +4,7 @@ import Image from "next/image";
 import {
   MapPin, Calendar, Eye, Building, Layers,
   TrendingUp, Calculator, Star, Users,
-  ArrowRight, Shield, ShieldCheck,
+  ArrowRight, Shield, ShieldCheck, Lock,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { SafetyBadge, DiagnosisBadge } from "@/components/listings/safety-badge";
@@ -19,6 +19,7 @@ import {
   EXPERT_CATEGORY_LABELS,
   DIAGNOSIS_BADGE_CONFIG,
 } from "@/lib/utils/constants";
+import { VIEWER_PLANS } from "@/lib/utils/subscription";
 import { m2ToPyeong } from "@/lib/utils/area";
 import { ImageGallery } from "./image-gallery";
 import { ShareButtons } from "./share-buttons";
@@ -197,6 +198,24 @@ export default async function ListingDetailPage({
   const numManagementFee = Number(listing.managementFee ?? 0);
   const numDeposit = Number(listing.price);
   const avgPremium = marketPrice ? Number(marketPrice.avgKeyMoney) : 0;
+
+  // Real market stats from actual listings in the same district + category
+  const sameCategoryDistrictListings = [...districtListings, ...categoryListings].filter(
+    (l) => l.businessCategory === listingData.businessCategory && l.district === listingData.district
+  );
+  const realListingsForStats = [
+    ...sameCategoryDistrictListings,
+    // Include current listing in stats for comparison
+  ];
+  const realAvgDeposit = realListingsForStats.length > 0
+    ? Math.round(realListingsForStats.reduce((s, l) => s + Number(l.price), 0) / realListingsForStats.length)
+    : 0;
+  const realAvgPremium = realListingsForStats.length > 0
+    ? Math.round(realListingsForStats.filter(l => l.premiumFee && Number(l.premiumFee) > 0).reduce((s, l) => s + Number(l.premiumFee!), 0) / Math.max(1, realListingsForStats.filter(l => l.premiumFee && Number(l.premiumFee) > 0).length))
+    : 0;
+  const realAvgRent = realListingsForStats.length > 0
+    ? Math.round(realListingsForStats.filter(l => l.monthlyRent && Number(l.monthlyRent) > 0).reduce((s, l) => s + Number(l.monthlyRent!), 0) / Math.max(1, realListingsForStats.filter(l => l.monthlyRent && Number(l.monthlyRent) > 0).length))
+    : 0;
 
   // Cost breakdown estimates
   const totalRent = numMonthlyRent + numManagementFee;
@@ -487,50 +506,13 @@ export default async function ListingDetailPage({
             <div className="mt-8">
               <h2 className="text-xl font-bold text-navy">상세 설명</h2>
               <div className="mt-4 whitespace-pre-wrap rounded-lg bg-gray-50 p-6 leading-relaxed text-gray-700">
-                {listing.description}
+                {listing.description || (
+                  <span className="text-gray-400">상세 설명이 아직 등록되지 않았습니다.</span>
+                )}
               </div>
             </div>
 
-            {/* 매출 인증 등급 배너 */}
-            {listing.safetyGrade === "A" && (
-              <div className="mt-8 overflow-hidden rounded-xl border border-green-200 bg-green-50">
-                <div className="flex items-center gap-3 px-6 py-4">
-                  <span className="text-xl">✓</span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <SafetyBadge grade="A" size="md" />
-                      <h2 className="text-base font-bold text-green-800">매출 검증 완료</h2>
-                    </div>
-                    <p className="mt-1 text-sm text-green-700">이 매물은 홈택스/여신금융협회 연동으로 매출이 검증되었습니다.</p>
-                  </div>
-                </div>
-                {listing.safetyComment && (
-                  <div className="border-t border-green-200 px-6 py-3">
-                    <p className="text-sm text-green-700">{listing.safetyComment}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {listing.safetyGrade === "B" && (
-              <div className="mt-8 overflow-hidden rounded-xl border border-amber-200 bg-amber-50">
-                <div className="flex items-center gap-3 px-6 py-4">
-                  <span className="text-xl">📄</span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <SafetyBadge grade="B" size="md" />
-                      <h2 className="text-base font-bold text-amber-800">매출 증빙 제출</h2>
-                    </div>
-                    <p className="mt-1 text-sm text-amber-700">이 매물은 매출 증빙자료가 제출되었습니다. 상세 내용은 거래 시 확인하세요.</p>
-                  </div>
-                </div>
-                {listing.safetyComment && (
-                  <div className="border-t border-amber-200 px-6 py-3">
-                    <p className="text-sm text-amber-700">{listing.safetyComment}</p>
-                  </div>
-                )}
-              </div>
-            )}
+            {/* 매출 증빙 없음 (C/D/null) — 매물정보 탭에만 표시 */}
 
             {(!listing.safetyGrade || listing.safetyGrade === "C" || listing.safetyGrade === "D") && (
               <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
@@ -570,6 +552,45 @@ export default async function ListingDetailPage({
               {listing.safetyGrade && <SafetyBadge grade={listing.safetyGrade} size="md" />}
             </div>
 
+            {/* 매출 인증/증빙 통합 카드 (A/B등급만) */}
+            {(listing.safetyGrade === "A" || listing.safetyGrade === "B") && (
+              <div className={`mt-4 flex flex-wrap items-center gap-3 rounded-xl border px-5 py-3 ${
+                listing.safetyGrade === "A"
+                  ? "border-green-200 bg-green-50"
+                  : "border-amber-200 bg-amber-50"
+              }`}>
+                <SafetyBadge grade={listing.safetyGrade} size="md" />
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-semibold ${listing.safetyGrade === "A" ? "text-green-800" : "text-amber-800"}`}>
+                    {listing.safetyGrade === "A"
+                      ? "홈택스/여신금융협회 매출 검증 완료"
+                      : "매출 증빙자료 제출 완료"}
+                  </p>
+                  {listing.safetyComment && (
+                    <p className={`mt-0.5 text-xs ${listing.safetyGrade === "A" ? "text-green-600" : "text-amber-600"}`}>
+                      {listing.safetyComment}
+                    </p>
+                  )}
+                </div>
+                {!hasRevenueAccess && (
+                  <div className="flex shrink-0 gap-2">
+                    <Link
+                      href={`/api/payments/single?listingId=${listing.id}`}
+                      className="rounded-lg border border-navy px-3 py-1.5 text-xs font-bold text-navy transition-colors hover:bg-navy/5"
+                    >
+                      증빙 열람 {VIEWER_PLANS.SINGLE.price.toLocaleString()}원
+                    </Link>
+                    <Link
+                      href="/pricing#viewer"
+                      className="rounded-lg bg-navy px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-navy/90"
+                    >
+                      월 구독
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Revenue/Profit Summary Cards */}
             {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) ? (
               <>
@@ -605,35 +626,18 @@ export default async function ListingDetailPage({
                   />
                 </div>
 
-                {/* Paid Section: Cost Structure + ROI (wrapped in PaywallOverlay) */}
-                <PaywallOverlay
-                  listingId={listing.id}
-                  safetyGrade={listing.safetyGrade}
-                  hasAccess={hasRevenueAccess}
-                >
-                  {/* Cost Structure */}
-                  <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                {/* Cost Structure (Free) */}
+                <div className="mt-6 grid gap-6 lg:grid-cols-2">
                     {/* Cost Table */}
                     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                       <div className="border-b border-gray-100 px-6 py-4">
                         <div className="flex items-center gap-2">
                           <h3 className="text-base font-semibold text-navy">
-                            {listing.safetyGrade === "A"
-                              ? "월 지출 내역 (인증완료)"
-                              : listing.safetyGrade === "B"
-                                ? "월 지출 내역 (증빙제출)"
-                                : "월 지출 내역 (매도인 제출)"}
+                            월 지출 내역 (판매자 입력)
                           </h3>
-                          {listing.safetyGrade === "A" && (
-                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-bold text-green-700">인증</span>
-                          )}
-                          {listing.safetyGrade === "B" && (
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">증빙</span>
-                          )}
+                          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">판매자 제공</span>
                         </div>
-                        {(!listing.safetyGrade || listing.safetyGrade === "C" || listing.safetyGrade === "D") && (
-                          <p className="mt-1 text-[11px] text-gray-400">* 매도인이 직접 입력한 정보이며, 실제와 다를 수 있습니다</p>
-                        )}
+                        <p className="mt-1 text-[11px] text-gray-400">* 판매자가 직접 입력한 정보이며, 실제와 다를 수 있습니다</p>
                       </div>
                       <div className="divide-y divide-gray-100">
                         <CostRow label="임대료 (월세+관리비)" value={totalRent} />
@@ -734,7 +738,7 @@ export default async function ListingDetailPage({
                       )}
                     </div>
                   </div>
-                </PaywallOverlay>
+
               </>
             ) : (
               <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-6 py-12 text-center">
@@ -750,10 +754,10 @@ export default async function ListingDetailPage({
           <section id="market-comparison" className="mt-12">
             <h2 className="text-xl font-bold text-navy">주변 시세</h2>
 
-            {marketPrice ? (
+            {(marketPrice || districtListings.length > 0) ? (
               <>
                 {/* Market Price Chart */}
-                {numPremiumFee > 0 && (
+                {numPremiumFee > 0 && (avgPremium > 0 || realAvgPremium > 0) && (
                   <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-6">
                     <div className="mb-4 flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-navy" />
@@ -767,7 +771,7 @@ export default async function ListingDetailPage({
                     </div>
                     <MarketBarChart
                       currentPremium={numPremiumFee}
-                      avgPremium={avgPremium}
+                      avgPremium={avgPremium || realAvgPremium}
                       district={listing.district}
                     />
                     {(() => {
@@ -819,19 +823,31 @@ export default async function ListingDetailPage({
                   <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
                     <MarketStat
                       label="평균 권리금"
-                      value={formatKRW(marketPrice.avgKeyMoney)}
+                      value={
+                        (marketPrice?.avgKeyMoney ?? realAvgPremium) > 0
+                          ? formatKRW(marketPrice ? marketPrice.avgKeyMoney : realAvgPremium)
+                          : "데이터 부족"
+                      }
                     />
                     <MarketStat
                       label="평균 보증금"
-                      value={formatKRW(marketPrice.avgDeposit)}
+                      value={
+                        (marketPrice?.avgDeposit ?? realAvgDeposit) > 0
+                          ? formatKRW(marketPrice ? marketPrice.avgDeposit : realAvgDeposit)
+                          : "데이터 부족"
+                      }
                     />
                     <MarketStat
                       label="평균 월세"
-                      value={formatKRW(marketPrice.avgMonthlyRent)}
+                      value={
+                        (marketPrice?.avgMonthlyRent ?? realAvgRent) > 0
+                          ? formatKRW(marketPrice ? marketPrice.avgMonthlyRent : realAvgRent)
+                          : "데이터 부족"
+                      }
                     />
                     <MarketStat
-                      label="샘플 수"
-                      value={`${marketPrice.sampleCount}건`}
+                      label="비교 매물"
+                      value={`${marketPrice ? marketPrice.sampleCount : districtListings.length}건`}
                     />
                   </div>
                 </div>

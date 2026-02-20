@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
       // Parse foot traffic
       if (footTrafficRes?.ok) {
         const ftData = await footTrafficRes.json();
+        // Seoul API returns errors inside 200 response body
+        if (ftData?.RESULT?.CODE) continue; // API error, try next quarter
         let rows = ftData?.VwsmTrdarFlpop?.row ?? [];
 
         // Filter by dong (neighborhood) if provided

@@ -14,6 +14,7 @@ import {
   type SeoulData,
   type NearbyPlace,
 } from "@/lib/utils/area-analysis";
+import { useToast } from "@/components/ui/toast";
 
 // Dynamic Recharts imports (avoid SSR)
 const ResponsiveContainer = dynamic(() => import("recharts").then((m) => m.ResponsiveContainer), { ssr: false });
@@ -28,6 +29,7 @@ const CartesianGrid = dynamic(() => import("recharts").then((m) => m.CartesianGr
 const Tooltip = dynamic(() => import("recharts").then((m) => m.Tooltip), { ssr: false });
 
 export default function AreaAnalysisPage() {
+  const { toast } = useToast();
   const [address, setAddress] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -97,7 +99,7 @@ export default function AreaAnalysisPage() {
       });
 
       if (!result) {
-        alert("주소를 찾을 수 없습니다. 다시 입력해주세요.");
+        toast("error", "주소를 찾을 수 없습니다. 다시 입력해주세요.");
         setIsLoading(false);
         return;
       }
@@ -127,7 +129,7 @@ export default function AreaAnalysisPage() {
       setAnalyzed(true);
     } catch (err) {
       console.error("Analysis error:", err);
-      alert("분석 중 오류가 발생했습니다.");
+      toast("error", "분석 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -364,6 +366,13 @@ export default function AreaAnalysisPage() {
                   </span>
                 </div>
 
+                {seoulData.footTraffic.length === 0 && seoulData.estimatedSales.length === 0 ? (
+                  <div className="mt-4 flex flex-col items-center py-6 text-center">
+                    <Users className="h-10 w-10 text-blue-300" />
+                    <p className="mt-2 text-sm font-medium text-blue-800">서울 공공데이터를 불러올 수 없습니다</p>
+                    <p className="mt-1 text-xs text-blue-500">서울 열린데이터 광장 서비스 점검 중이거나, 해당 상권 데이터가 아직 제공되지 않습니다</p>
+                  </div>
+                ) : (
                 <div className="mt-4 grid gap-6 md:grid-cols-2">
                   {/* Foot traffic */}
                   {seoulData.footTraffic.length > 0 && (
@@ -416,6 +425,7 @@ export default function AreaAnalysisPage() {
                     </div>
                   )}
                 </div>
+                )}
               </div>
             ) : isSeoul === false && analyzed ? (
               <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-500">

@@ -32,7 +32,7 @@ interface DiagnosisSummaryData {
 }
 
 /* ═══════════════════════════════════════════════════════════════ */
-/*  Mock Data — TODO: 실제 API 연결 시 props로 교체                   */
+/*  Mock Data — Placeholder data for UI development                */
 /* ═══════════════════════════════════════════════════════════════ */
 
 const MOCK_DIAGNOSIS: DiagnosisSummaryData = {
@@ -170,15 +170,24 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
 
 export function DiagnosisSummaryCard({
   listingId,
-  // TODO: 실제 진단서 데이터를 props로 받도록 변경
-  // data,
 }: {
   listingId: string;
-  // data?: DiagnosisSummaryData;
 }) {
-  // TODO: props.data가 있으면 사용, 없으면 mock
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  // Note: Currently using placeholder data for UI development
+  // Real diagnosis data will be fetched from the API when available
   const d = MOCK_DIAGNOSIS;
   const gc = GRADE_STYLE[d.grade] ?? GRADE_STYLE.C;
+
+  if (!mounted) {
+    return (
+      <div className="mb-6 flex h-[200px] items-center justify-center rounded-2xl border border-gray-200 bg-white">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
+      </div>
+    );
+  }
 
   return (
     <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -189,9 +198,14 @@ export function DiagnosisSummaryCard({
             <ShieldCheck className="h-5 w-5 text-white/80" />
             <h3 className="text-base font-bold text-white">권리진단서 결과</h3>
           </div>
-          <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-semibold text-white/90">
-            진단 완료
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-semibold text-amber-700">
+              샘플 진단 결과
+            </span>
+            <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-semibold text-white/90">
+              진단 완료
+            </span>
+          </div>
         </div>
       </div>
 

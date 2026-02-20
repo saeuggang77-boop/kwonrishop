@@ -1376,7 +1376,7 @@ function Step6Photos({
                   }
                   setUploadedDocs([...uploadedDocs, {
                     name: file.name,
-                    key: json.data.id as string,
+                    key: json.data.key as string,
                     url: "",
                     previewUrl,
                     size: file.size,

@@ -1140,8 +1140,8 @@ async function main() {
   for (const plan of subscriptionPlans) {
     await prisma.subscriptionPlan.upsert({
       where: { id: plan.id },
-      update: { isActive: false },
-      create: { ...plan, isActive: false },
+      update: { isActive: true },
+      create: { ...plan, isActive: true },
     });
   }
   console.log("  Subscription plans: 3");

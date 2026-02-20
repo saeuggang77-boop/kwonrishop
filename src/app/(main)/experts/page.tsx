@@ -19,6 +19,7 @@ import {
   EXPERT_CATEGORY_COLORS,
   REGIONS,
 } from "@/lib/utils/constants";
+import { useToast } from "@/components/ui/toast";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -270,6 +271,7 @@ function ExpertCard({ expert }: { expert: ExpertItem }) {
 function ExpertsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [experts, setExperts] = useState<ExpertItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -315,6 +317,7 @@ function ExpertsPageContent() {
         setPage(pageNum);
       } catch {
         if (reset) setExperts([]);
+        toast("error", "전문가 목록을 불러오는데 실패했습니다.");
       } finally {
         setIsLoading(false);
         setIsLoadingMore(false);

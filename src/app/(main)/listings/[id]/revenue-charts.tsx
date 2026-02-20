@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -16,7 +17,41 @@ interface CostPieProps {
   profit: number;        // 순수익
 }
 
-const PIE_COLORS = ["#FF6B6B", "#FFA94D", "#51CF66", "#868E96", "#1B3A5C"];
+/** 비용은 채도 낮은 색, 순수익은 강조색 */
+const SLICE_COLORS: Record<string, string> = {
+  "임대료": "#94A3B8",   // slate-400
+  "인건비": "#C4B5A0",   // warm muted
+  "재료비": "#A3BFAB",   // sage muted
+  "기타비용": "#B8B0C8", // lavender muted
+  "순수익": "#2EC4B6",   // brand accent
+};
+
+const RADIAN = Math.PI / 180;
+
+/** 각 조각 위에 항목명 + 퍼센트 직접 표시 */
+function renderSliceLabel(props: any) {
+  const { cx, cy, midAngle, outerRadius, name, percent } = props;
+  if (!midAngle && midAngle !== 0) return null;
+  if ((percent ?? 0) < 0.06) return null; // 6% 미만 슬라이스는 라벨 생략
+  const isProfit = name === "순수익";
+  const radius = (outerRadius ?? 78) + (isProfit ? 24 : 20);
+  const x = (cx ?? 0) + radius * Math.cos(-midAngle * RADIAN);
+  const y = (cy ?? 0) + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor={x > (cx ?? 0) ? "start" : "end"}
+      dominantBaseline="central"
+      fontSize={isProfit ? 12 : 11}
+      fontWeight={isProfit ? 700 : 500}
+      fill={isProfit ? "#2EC4B6" : "#6B7280"}
+    >
+      {name} {((percent ?? 0) * 100).toFixed(0)}%
+    </text>
+  );
+}
 
 export function CostPieChart({
   rent,
@@ -25,6 +60,9 @@ export function CostPieChart({
   otherCost,
   profit,
 }: CostPieProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const data = [
     { name: "임대료", value: Math.round(rent / 10000) },
     { name: "인건비", value: Math.round(laborCost / 10000) },
@@ -33,25 +71,36 @@ export function CostPieChart({
     { name: "순수익", value: Math.round(profit / 10000) },
   ].filter((d) => d.value > 0);
 
-  const total = data.reduce((s, d) => s + d.value, 0);
+  const profitMan = Math.round(profit / 10000);
+
+  if (!mounted) {
+    return (
+      <div className="flex h-[220px] items-center justify-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <ResponsiveContainer width="100%" height={160}>
+    <div className="relative">
+      <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={35}
-            outerRadius={60}
-            paddingAngle={3}
+            innerRadius={50}
+            outerRadius={78}
+            paddingAngle={2}
             dataKey="value"
+            label={renderSliceLabel}
+            labelLine={false}
+            strokeWidth={0}
           >
-            {data.map((_, index) => (
+            {data.map((entry) => (
               <Cell
-                key={`cell-${index}`}
-                fill={PIE_COLORS[index % PIE_COLORS.length]}
+                key={entry.name}
+                fill={SLICE_COLORS[entry.name] ?? "#CBD5E1"}
               />
             ))}
           </Pie>
@@ -60,18 +109,15 @@ export function CostPieChart({
           />
         </PieChart>
       </ResponsiveContainer>
-      <div className="mt-3 space-y-1.5">
-        {data.map((item, index) => {
-          const pct = total > 0 ? ((item.value / total) * 100).toFixed(0) : "0";
-          return (
-            <div key={item.name} className="flex items-center gap-2 text-sm">
-              <span className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
-              <span className="flex-1 text-gray-600">{item.name}</span>
-              <span className="font-medium text-gray-800">{pct}%</span>
-              <span className="text-xs text-gray-400">({item.value.toLocaleString()}만원)</span>
-            </div>
-          );
-        })}
+
+      {/* 도넛 가운데: 순수익 강조 표시 */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-[10px] font-medium text-gray-400">순수익</p>
+          <p className="text-lg font-bold text-[#2EC4B6]">
+            {profitMan.toLocaleString()}만원
+          </p>
+        </div>
       </div>
     </div>
   );

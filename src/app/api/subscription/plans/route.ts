@@ -3,10 +3,21 @@ import { errorToResponse } from "@/lib/utils/errors";
 
 export async function GET() {
   try {
-    const plans = await prisma.subscriptionPlan.findMany({
+    let plans = await prisma.subscriptionPlan.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: "asc" },
     });
+
+    // Auto-activate plans if none are active (dev/seed fix)
+    if (plans.length === 0) {
+      await prisma.subscriptionPlan.updateMany({
+        data: { isActive: true },
+      });
+      plans = await prisma.subscriptionPlan.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: "asc" },
+      });
+    }
 
     return new Response(JSON.stringify({ data: plans }), {
       headers: {

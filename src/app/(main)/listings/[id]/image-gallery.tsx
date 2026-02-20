@@ -13,8 +13,8 @@ interface ImageGalleryProps {
 
 /** 사진 순서 기반 카테고리 라벨 */
 const IMAGE_CATEGORY_LABELS = [
-  "외부전경", "내부전경", "주방", "홀", "화장실",
-  "간판", "주차장", "창고", "기타시설",
+  "외부전경", "내부전경", "주방", "화장실", "간판/외관",
+  "홀/좌석", "주차장", "기타",
 ];
 
 const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> = {

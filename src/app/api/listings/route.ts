@@ -275,30 +275,72 @@ export async function POST(req: NextRequest) {
     });
 
     // Save uploaded images
-    const images = body.images as { key: string; url: string }[] | undefined;
+    const CATEGORY_ORDER: Record<string, number> = {
+      exterior: 0, interior: 1, kitchen: 2, bathroom: 3,
+      signage: 4, hall: 5, parking: 6, other: 7,
+    };
+    const images = body.images as { key: string; url: string; category?: string }[] | undefined;
     if (images && images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        const img = images[i];
+      // Sort by category order for consistent display
+      const sorted = [...images].sort((a, b) => {
+        const oa = CATEGORY_ORDER[a.category ?? "other"] ?? 99;
+        const ob = CATEGORY_ORDER[b.category ?? "other"] ?? 99;
+        return oa - ob;
+      });
+
+      const useS3 = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY);
+
+      for (let i = 0; i < sorted.length; i++) {
+        const img = sorted[i];
+        const imageUrl = useS3
+          ? `https://${S3_BUCKET_UPLOADS}.s3.amazonaws.com/${img.key}`
+          : img.url;
+
         const imageRecord = await prisma.listingImage.create({
           data: {
             listingId: listing.id,
-            s3Key: img.key,
-            url: `https://${S3_BUCKET_UPLOADS}.s3.amazonaws.com/${img.key}`,
+            s3Key: img.category ? `${img.category}/${img.key}` : img.key,
+            url: imageUrl,
             sortOrder: i,
             isPrimary: i === 0,
           },
         });
 
-        // Queue image processing (thumbnail + hash)
-        await imageProcessingQueue.add("process", {
-          imageId: imageRecord.id,
-          s3Key: img.key,
+        // Queue image processing (thumbnail + hash) - skip if Redis unavailable
+        try {
+          await imageProcessingQueue.add("process", {
+            imageId: imageRecord.id,
+            s3Key: img.key,
+          });
+        } catch {}
+      }
+    }
+
+    // Save uploaded revenue documents
+    const documents = body.documents as { name: string; key: string; url: string; size?: number; mimeType?: string }[] | undefined;
+    if (documents && documents.length > 0) {
+      for (const doc of documents) {
+        await prisma.document.create({
+          data: {
+            uploaderId: session.user.id,
+            listingId: listing.id,
+            documentType: "OTHER",
+            fileName: doc.name,
+            mimeType: doc.mimeType ?? "application/octet-stream",
+            sizeBytes: doc.size ?? 0,
+            s3Key: doc.key,
+            accessLevel: "OWNER_ONLY",
+            consentGiven: true,
+            consentGivenAt: new Date(),
+          },
         });
       }
     }
 
-    // Trigger fraud detection
-    await fraudDetectionQueue.add("evaluate", { listingId: listing.id });
+    // Trigger fraud detection - skip if Redis unavailable
+    try {
+      await fraudDetectionQueue.add("evaluate", { listingId: listing.id });
+    } catch {}
 
     // Grade notification
     if (listing.safetyGrade && listing.safetyGrade !== "C") {

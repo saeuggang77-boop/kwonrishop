@@ -427,7 +427,7 @@ function BuyerTab() {
                 <span className="text-gray-700">ROI 상세 분석</span>
               </li>
             </ul>
-            <Link href="/api/payments/subscribe?planId=MONTHLY" className="mt-5 block w-full rounded-lg bg-teal-600 py-2.5 text-center text-sm font-medium text-white hover:bg-teal-700 active:scale-[0.97]">
+            <Link href="/premium" className="mt-5 block w-full rounded-lg bg-teal-600 py-2.5 text-center text-sm font-medium text-white hover:bg-teal-700 active:scale-[0.97]">
               월 구독 시작하기
             </Link>
           </div>
@@ -455,7 +455,7 @@ function BuyerTab() {
                 <span className="text-gray-700">연 결제 시 33% 할인</span>
               </li>
             </ul>
-            <Link href="/api/payments/subscribe?planId=YEARLY" className="mt-5 block w-full rounded-lg border border-teal-600 py-2.5 text-center text-sm font-medium text-teal-700 hover:bg-teal-50 active:scale-[0.97]">
+            <Link href="/premium" className="mt-5 block w-full rounded-lg border border-teal-600 py-2.5 text-center text-sm font-medium text-teal-700 hover:bg-teal-50 active:scale-[0.97]">
               연 구독 시작하기
             </Link>
           </div>

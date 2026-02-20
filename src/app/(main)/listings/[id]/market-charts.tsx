@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -24,10 +25,21 @@ export function MarketBarChart({
   avgPremium,
   district,
 }: MarketBarChartProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const data = [
     { name: "이 매물", 권리금: Math.round(currentPremium / 10000) },
     { name: `${district} 평균`, 권리금: Math.round(avgPremium / 10000) },
   ];
+
+  if (!mounted) {
+    return (
+      <div className="flex h-[250px] items-center justify-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
+      </div>
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height={250}>

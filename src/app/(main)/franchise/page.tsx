@@ -182,6 +182,10 @@ export default function FranchisePage() {
         setBrands(json.data || []);
         setMeta(json.meta || { total: 0, page: 1, limit: 12, totalPages: 0 });
       })
+      .catch(() => {
+        setBrands([]);
+        setMeta({ total: 0, page: 1, limit: 12, totalPages: 0 });
+      })
       .finally(() => setIsLoading(false));
   };
 

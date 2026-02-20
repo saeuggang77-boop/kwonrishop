@@ -22,20 +22,14 @@ interface LocationSectionProps {
   postalCode: string | null;
 }
 
-// ── Kakao category code → facility mapping ──
-const FACILITY_MAP: Record<string, { emoji: string; name: string }> = {
-  SW8: { emoji: "🚇", name: "지하철역" },
-  // BK9 not in our area-analysis API, use nearby search
-};
-
-// Categories we want for facilities
-const FACILITY_CATEGORIES = [
-  { code: "SW8", emoji: "🚇", name: "지하철역" },
-  { code: "BT1", emoji: "🚌", name: "버스정류장" },
-  { code: "BK9", emoji: "🏦", name: "은행/ATM" },
-  { code: "PK6", emoji: "🅿️", name: "주차장" },
-  { code: "HP8", emoji: "🏥", name: "병원/약국" },
-];
+// Facility type returned from /api/area-analysis/facilities
+interface FacilityAPIResult {
+  code: string;
+  emoji: string;
+  name: string;
+  places: { name: string; distance: number }[];
+  count: number;
+}
 
 interface FacilityData {
   emoji: string;
@@ -63,7 +57,12 @@ export function ListingLocationSection({
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState(false);
+  const [sdkFailed, setSdkFailed] = useState(false);
   const mapInstanceRef = useRef<any>(null);
+
+  const [resolvedLat, setResolvedLat] = useState<number | null>(lat);
+  const [resolvedLng, setResolvedLng] = useState<number | null>(lng);
+  const [geocoding, setGeocoding] = useState(false);
 
   const [facilities, setFacilities] = useState<FacilityData[]>([]);
   const [facilitiesLoading, setFacilitiesLoading] = useState(true);
@@ -78,6 +77,28 @@ export function ListingLocationSection({
 
   const isSeoul = isSeoulAddress(`${city} ${district}`);
 
+  // ── Geocode fallback when lat/lng missing ──
+  useEffect(() => {
+    if (lat && lng) {
+      setResolvedLat(lat);
+      setResolvedLng(lng);
+      return;
+    }
+    if (!address) return;
+
+    setGeocoding(true);
+    fetch(`/api/geocode?address=${encodeURIComponent(address)}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.lat && data?.lng) {
+          setResolvedLat(data.lat);
+          setResolvedLng(data.lng);
+        }
+      })
+      .catch(err => console.error("Geocode error:", err))
+      .finally(() => setGeocoding(false));
+  }, [lat, lng, address]);
+
   // ── Load Kakao SDK ──
   useEffect(() => {
     const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
@@ -90,14 +111,21 @@ export function ListingLocationSection({
     script.onload = () => window.kakao.maps.load(() => setMapLoaded(true));
     script.onerror = () => setMapError(true);
     document.head.appendChild(script);
-  }, []);
+
+    // Timeout: if SDK doesn't load in 5 seconds, mark as failed
+    const timeout = setTimeout(() => {
+      if (!mapLoaded) setSdkFailed(true);
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [mapLoaded]);
 
   // ── Render map ──
   useEffect(() => {
-    if (!mapLoaded || !mapRef.current || !lat || !lng) return;
+    if (!mapLoaded || !mapRef.current || !resolvedLat || !resolvedLng) return;
     if (mapInstanceRef.current) return;
 
-    const pos = new window.kakao.maps.LatLng(lat, lng);
+    const pos = new window.kakao.maps.LatLng(resolvedLat, resolvedLng);
     const map = new window.kakao.maps.Map(mapRef.current, {
       center: pos,
       level: 4,
@@ -112,73 +140,44 @@ export function ListingLocationSection({
       content: `<div style="padding:6px 10px;font-size:13px;font-weight:600;color:#1B3A5C;white-space:nowrap;">${address}</div>`,
     });
     iw.open(map, new window.kakao.maps.Marker({ map, position: pos }));
-  }, [mapLoaded, lat, lng, address]);
+  }, [mapLoaded, resolvedLat, resolvedLng, address]);
 
-  // ── Fetch facilities via Kakao REST (through our proxy) ──
+  // ── Fetch facilities via REST API fallback ──
   useEffect(() => {
-    if (!lat || !lng) { setFacilitiesLoading(false); return; }
+    if (!resolvedLat || !resolvedLng) { setFacilitiesLoading(false); return; }
 
     const fetchFacilities = async () => {
       try {
-        const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
-        if (!KEY || !window.kakao?.maps?.services) {
-          // Fallback: wait for SDK
-          await new Promise<void>((resolve) => {
-            const check = setInterval(() => {
-              if (window.kakao?.maps?.services) { clearInterval(check); resolve(); }
-            }, 200);
-            setTimeout(() => { clearInterval(check); resolve(); }, 5000);
-          });
-        }
+        // Use REST API for facilities (more reliable than SDK)
+        const res = await fetch(`/api/area-analysis/facilities?lat=${resolvedLat}&lng=${resolvedLng}`);
+        if (!res.ok) throw new Error('API failed');
 
-        if (!window.kakao?.maps?.services) { setFacilitiesLoading(false); return; }
+        const data: { code: string; emoji: string; name: string; places: { name: string; distance: number }[]; count: number }[] = await res.json();
 
-        const places = new window.kakao.maps.services.Places();
-        const results: FacilityData[] = [];
+        const results: FacilityData[] = data.map(cat => {
+          if (cat.places.length > 0) {
+            const nearest = cat.places[0];
+            const detail = nearest.name;
+            const distance = distanceToWalk(nearest.distance);
 
-        // Search each facility category
-        for (const cat of FACILITY_CATEGORIES) {
-          const found = await new Promise<FacilityData | null>((resolve) => {
-            places.categorySearch(cat.code, (data: any, status: any) => {
-              if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
-                const nearest = data[0];
-                const dist = Number(nearest.distance);
-                resolve({
-                  emoji: cat.emoji,
-                  name: cat.name,
-                  detail: nearest.place_name,
-                  distance: distanceToWalk(dist),
-                });
+            // Track subway/bus for address section
+            if (cat.code === "SW8") {
+              setNearestSubway(`${nearest.name} ${distance}`);
+            }
+            if (cat.code === "BT1") {
+              const nearby500 = cat.places.filter(p => p.distance <= 500);
+              setBusStopCount(nearby500.length);
+            }
 
-                // Track subway/bus for address section
-                if (cat.code === "SW8") {
-                  setNearestSubway(`${nearest.place_name} ${distanceToWalk(dist)}`);
-                }
-                if (cat.code === "BT1") {
-                  // Count bus stops within 500m
-                  const nearby = data.filter((d: any) => Number(d.distance) <= 500);
-                  setBusStopCount(nearby.length);
-                }
-              } else {
-                resolve({
-                  emoji: cat.emoji,
-                  name: cat.name,
-                  detail: "",
-                  distance: "정보 없음",
-                });
-                if (cat.code === "SW8") setNearestSubway(null);
-                if (cat.code === "BT1") setBusStopCount(0);
-              }
-            }, {
-              location: new window.kakao.maps.LatLng(lat, lng),
-              radius: 2000,
-              sort: window.kakao.maps.services.SortBy.DISTANCE,
-              size: 5,
-            });
-          });
+            return { emoji: cat.emoji, name: cat.name, detail, distance };
+          }
 
-          if (found) results.push(found);
-        }
+          // No places found
+          if (cat.code === "SW8") setNearestSubway(null);
+          if (cat.code === "BT1") setBusStopCount(0);
+
+          return { emoji: cat.emoji, name: cat.name, detail: "", distance: "정보 없음" };
+        });
 
         setFacilities(results);
       } catch (err) {
@@ -189,18 +188,18 @@ export function ListingLocationSection({
     };
 
     fetchFacilities();
-  }, [lat, lng]);
+  }, [resolvedLat, resolvedLng]);
 
   // ── Fetch foot traffic ──
   useEffect(() => {
-    if (!lat || !lng) { setTrafficLoading(false); return; }
+    if (!resolvedLat || !resolvedLng) { setTrafficLoading(false); return; }
 
     const fetchTraffic = async () => {
       try {
         if (isSeoul) {
           // Pass neighborhood (dong) parameter for location filtering
           const dongParam = neighborhood ? `&dong=${encodeURIComponent(neighborhood)}` : "";
-          const res = await fetch(`/api/area-analysis/seoul?lat=${lat}&lng=${lng}${dongParam}`);
+          const res = await fetch(`/api/area-analysis/seoul?lat=${resolvedLat}&lng=${resolvedLng}${dongParam}`);
           if (res.ok) {
             const data: SeoulData = await res.json();
             if (data.footTraffic.length > 0) {
@@ -226,7 +225,7 @@ export function ListingLocationSection({
         }
 
         // Non-Seoul or Seoul API failed: estimate from nearby facility density
-        const nearbyRes = await fetch(`/api/area-analysis/nearby?x=${lng}&y=${lat}&radius=500`);
+        const nearbyRes = await fetch(`/api/area-analysis/nearby?x=${resolvedLng}&y=${resolvedLat}&radius=500`);
         if (nearbyRes.ok) {
           const nearbyData: NearbyResult[] = await nearbyRes.json();
           const totalPlaces = nearbyData.reduce((s, r) => s + r.count, 0);
@@ -253,7 +252,7 @@ export function ListingLocationSection({
     };
 
     fetchTraffic();
-  }, [lat, lng, isSeoul, neighborhood]);
+  }, [resolvedLat, resolvedLng, isSeoul, neighborhood]);
 
   return (
     <section id="location-info" className="mt-12">
@@ -261,13 +260,33 @@ export function ListingLocationSection({
 
       {/* ── Map ── */}
       <div className="mt-4 overflow-hidden rounded-xl border border-gray-200">
-        {lat && lng ? (
-          <div ref={mapRef} className="aspect-[16/9] w-full">
-            {!mapLoaded && !mapError && (
-              <div className="flex h-full items-center justify-center bg-gray-100">
-                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-              </div>
-            )}
+        {resolvedLat && resolvedLng ? (
+          (mapError || (sdkFailed && !mapLoaded)) ? (
+            <div className="flex aspect-[16/9] flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+              <MapPinned className="h-12 w-12 text-navy/40" />
+              <p className="mt-3 text-sm font-semibold text-gray-600">{address}</p>
+              <a
+                href={`https://map.kakao.com/link/map/${encodeURIComponent(address)},${resolvedLat},${resolvedLng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy/90"
+              >
+                카카오맵에서 보기
+              </a>
+            </div>
+          ) : (
+            <div ref={mapRef} className="aspect-[16/9] w-full">
+              {!mapLoaded && (
+                <div className="flex h-full items-center justify-center bg-gray-100">
+                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                </div>
+              )}
+            </div>
+          )
+        ) : geocoding ? (
+          <div className="flex aspect-[16/9] items-center justify-center bg-gray-100">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            <span className="ml-2 text-sm text-gray-500">주소로 위치를 찾는 중...</span>
           </div>
         ) : (
           <div className="flex aspect-[16/9] items-center justify-center bg-gray-200">
@@ -275,14 +294,6 @@ export function ListingLocationSection({
               <MapPinned className="mx-auto h-16 w-16 text-gray-400" />
               <p className="mt-3 text-lg font-semibold text-gray-600">위치 정보 없음</p>
               <p className="mt-1 text-sm text-gray-400">좌표가 등록되지 않은 매물입니다</p>
-            </div>
-          </div>
-        )}
-        {mapError && (
-          <div className="flex aspect-[16/9] items-center justify-center bg-gray-100">
-            <div className="text-center text-gray-500">
-              <MapPinned className="mx-auto h-12 w-12 text-gray-300" />
-              <p className="mt-2 text-sm">지도를 불러올 수 없습니다</p>
             </div>
           </div>
         )}

@@ -36,6 +36,7 @@ export default auth((req) => {
     (pathname.startsWith("/api/experts") && req.method === "GET") ||
     (pathname === "/api/subscription/plans" && req.method === "GET") ||
     (pathname.startsWith("/api/area-analysis") && req.method === "GET") ||
+    (pathname === "/api/geocode" && req.method === "GET") ||
     pathname.startsWith("/api/events");
 
   // CRON routes - secured by secret
