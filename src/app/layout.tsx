@@ -28,7 +28,13 @@ export const metadata: Metadata = {
   keywords: ["부동산", "권리진단서", "전세권", "근저당권", "임차권", "매물", "시세비교"],
   icons: {
     icon: "/logos/krw_shop_favicon.png",
-    apple: "/logos/krw_shop_logo_symbol.png",
+    apple: "/icons/icon-192x192.png",
+  },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "권리샵",
+    "mobile-web-app-capable": "yes",
   },
   openGraph: {
     title: "권리샵 | 부동산 권리 분석 플랫폼",
