@@ -41,18 +41,26 @@ export async function GET(
       prisma.expertReview.count({ where }),
     ]);
 
-    return Response.json({
-      reviews: reviews.map((r) => ({
-        id: r.id,
-        rating: r.rating,
-        content: r.content,
-        reviewerName: r.user.name ?? "익명",
-        createdAt: r.createdAt.toISOString(),
-      })),
-      total,
-      page,
-      hasMore: skip + reviews.length < total,
-    });
+    return new Response(
+      JSON.stringify({
+        reviews: reviews.map((r) => ({
+          id: r.id,
+          rating: r.rating,
+          content: r.content,
+          reviewerName: r.user.name ?? "익명",
+          createdAt: r.createdAt.toISOString(),
+        })),
+        total,
+        page,
+        hasMore: skip + reviews.length < total,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        },
+      },
+    );
   } catch (error) {
     return errorToResponse(error);
   }

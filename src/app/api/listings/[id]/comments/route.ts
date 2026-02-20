@@ -69,7 +69,15 @@ export async function GET(
         : [],
     }));
 
-    return NextResponse.json({ data, sellerId: listing.sellerId });
+    return new Response(
+      JSON.stringify({ data, sellerId: listing.sellerId }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
+        },
+      },
+    );
   } catch {
     return NextResponse.json(
       { error: "댓글을 불러오는 중 오류가 발생했습니다" },

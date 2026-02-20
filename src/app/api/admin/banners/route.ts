@@ -23,7 +23,11 @@ export async function GET() {
       orderBy: { sortOrder: "asc" },
     });
 
-    return Response.json({ data: banners });
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (!isAdmin) {
+      headers["Cache-Control"] = "public, s-maxage=60, stale-while-revalidate=120";
+    }
+    return new Response(JSON.stringify({ data: banners }), { headers });
   } catch (error) {
     return errorToResponse(error);
   }

@@ -7,12 +7,15 @@ export async function GET() {
       orderBy: { price: "asc" },
     });
 
-    return Response.json({
-      data: plans.map((p) => ({
-        ...p,
-        price: Number(p.price),
-      })),
-    });
+    return new Response(
+      JSON.stringify({ data: plans.map((p) => ({ ...p, price: Number(p.price) })) }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+        },
+      },
+    );
   } catch (error) {
     console.error("Failed to fetch report plans:", error);
     return Response.json({ error: "서버 오류" }, { status: 500 });

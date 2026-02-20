@@ -8,7 +8,12 @@ export async function GET() {
       orderBy: { sortOrder: "asc" },
     });
 
-    return Response.json({ data: plans });
+    return new Response(JSON.stringify({ data: plans }), {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+      },
+    });
   } catch (error) {
     return errorToResponse(error);
   }

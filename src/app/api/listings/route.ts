@@ -93,8 +93,31 @@ export async function GET(req: NextRequest) {
         ...where,
         ...(parsed.cursor ? { id: { lt: parsed.cursor } } : {}),
       },
-      include: {
-        images: { where: { isPrimary: true }, take: 1 },
+      select: {
+        id: true,
+        title: true,
+        businessCategory: true,
+        storeType: true,
+        price: true,
+        monthlyRent: true,
+        managementFee: true,
+        premiumFee: true,
+        monthlyRevenue: true,
+        monthlyProfit: true,
+        areaPyeong: true,
+        floor: true,
+        city: true,
+        district: true,
+        safetyGrade: true,
+        isPremium: true,
+        premiumRank: true,
+        hasDiagnosisBadge: true,
+        viewCount: true,
+        images: {
+          where: { isPrimary: true },
+          take: 1,
+          select: { url: true, thumbnailUrl: true },
+        },
         seller: { select: { name: true, image: true, isTrustedSeller: true } },
       },
       orderBy,
@@ -104,30 +127,30 @@ export async function GET(req: NextRequest) {
     const hasMore = listings.length > parsed.limit;
     const data = hasMore ? listings.slice(0, -1) : listings;
 
-    // Fetch active paid services for these listings (JUMP_UP + AUTO_REFRESH)
+    // Fetch active paid services in parallel
     const now = new Date();
     const listingIds = data.map((l) => l.id);
-    const activeBoosts = await prisma.paidService.findMany({
-      where: {
-        listingId: { in: listingIds },
-        type: { in: ["JUMP_UP", "AUTO_REFRESH"] },
-        status: "ACTIVE",
-        endDate: { gt: now },
-      },
-      select: { listingId: true, startDate: true },
-      orderBy: { startDate: "desc" },
-    });
-
-    // Also fetch active URGENT_TAG services
-    const activeUrgent = await prisma.paidService.findMany({
-      where: {
-        listingId: { in: listingIds },
-        type: "URGENT_TAG",
-        status: "ACTIVE",
-        endDate: { gt: now },
-      },
-      select: { listingId: true, reason: true },
-    });
+    const [activeBoosts, activeUrgent] = await Promise.all([
+      prisma.paidService.findMany({
+        where: {
+          listingId: { in: listingIds },
+          type: { in: ["JUMP_UP", "AUTO_REFRESH"] },
+          status: "ACTIVE",
+          endDate: { gt: now },
+        },
+        select: { listingId: true, startDate: true },
+        orderBy: { startDate: "desc" },
+      }),
+      prisma.paidService.findMany({
+        where: {
+          listingId: { in: listingIds },
+          type: "URGENT_TAG",
+          status: "ACTIVE",
+          endDate: { gt: now },
+        },
+        select: { listingId: true, reason: true },
+      }),
+    ]);
 
     const boostSet = new Set(activeBoosts.map((b) => b.listingId));
     const urgentMap = new Map(activeUrgent.map((u) => [u.listingId, u.reason]));
@@ -147,25 +170,33 @@ export async function GET(req: NextRequest) {
       sortedData = sortedData.filter((l) => urgentIds.has(l.id));
     }
 
-    return Response.json({
-      data: sortedData.map((l) => ({
-        ...l,
-        price: l.price.toString(),
-        monthlyRent: l.monthlyRent?.toString() ?? null,
-        managementFee: l.managementFee?.toString() ?? null,
-        premiumFee: l.premiumFee?.toString() ?? null,
-        monthlyRevenue: l.monthlyRevenue?.toString() ?? null,
-        monthlyProfit: l.monthlyProfit?.toString() ?? null,
-        isJumpUp: boostSet.has(l.id),
-        urgentTag: urgentMap.has(l.id)
-          ? { active: true, reason: urgentMap.get(l.id) ?? null }
-          : null,
-      })),
-      meta: {
-        cursor: data[data.length - 1]?.id,
-        hasMore,
+    return new Response(
+      JSON.stringify({
+        data: sortedData.map((l) => ({
+          ...l,
+          price: l.price.toString(),
+          monthlyRent: l.monthlyRent?.toString() ?? null,
+          managementFee: l.managementFee?.toString() ?? null,
+          premiumFee: l.premiumFee?.toString() ?? null,
+          monthlyRevenue: l.monthlyRevenue?.toString() ?? null,
+          monthlyProfit: l.monthlyProfit?.toString() ?? null,
+          isJumpUp: boostSet.has(l.id),
+          urgentTag: urgentMap.has(l.id)
+            ? { active: true, reason: urgentMap.get(l.id) ?? null }
+            : null,
+        })),
+        meta: {
+          cursor: data[data.length - 1]?.id,
+          hasMore,
+        },
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
+        },
       },
-    });
+    );
   } catch (error) {
     return errorToResponse(error);
   }

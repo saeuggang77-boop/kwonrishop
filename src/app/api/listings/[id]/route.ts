@@ -25,32 +25,80 @@ export async function GET(
     const { id } = await params;
     const listing = await prisma.listing.findUnique({
       where: { id },
-      include: {
-        images: { orderBy: { sortOrder: "asc" } },
+      select: {
+        id: true,
+        sellerId: true,
+        title: true,
+        description: true,
+        businessCategory: true,
+        storeType: true,
+        businessSubtype: true,
+        price: true,
+        monthlyRent: true,
+        managementFee: true,
+        premiumFee: true,
+        monthlyRevenue: true,
+        monthlyProfit: true,
+        operatingYears: true,
+        address: true,
+        addressDetail: true,
+        city: true,
+        district: true,
+        neighborhood: true,
+        latitude: true,
+        longitude: true,
+        areaM2: true,
+        areaPyeong: true,
+        floor: true,
+        totalFloors: true,
+        unit: true,
+        status: true,
+        safetyGrade: true,
+        safetyComment: true,
+        isPremium: true,
+        premiumRank: true,
+        hasDiagnosisBadge: true,
+        viewCount: true,
+        inquiryCount: true,
+        likeCount: true,
+        contactPhone: true,
+        contactEmail: true,
+        isPhonePublic: true,
+        createdAt: true,
+        updatedAt: true,
+        publishedAt: true,
+        expiresAt: true,
+        images: {
+          orderBy: { sortOrder: "asc" },
+          select: { id: true, url: true, thumbnailUrl: true, sortOrder: true, isPrimary: true },
+        },
         seller: { select: { id: true, name: true, image: true, businessName: true, isTrustedSeller: true } },
-        comparisons: true,
+        comparisons: {
+          select: {
+            id: true, radiusKm: true, comparableCount: true,
+            avgPremiumFee: true, avgRentPrice: true, avgSalePrice: true,
+            medianPrice: true, pricePercentile: true, computedAt: true,
+          },
+        },
       },
     });
 
     if (!listing) throw new NotFoundError("매물을 찾을 수 없습니다.");
 
-    // Increment view count
-    await prisma.listing.update({
-      where: { id },
-      data: { viewCount: { increment: 1 } },
-    });
-
-    // Track event
+    // Fire-and-forget: view count + event tracking (don't block response)
     const session = await auth();
-    await prisma.event.create({
-      data: {
-        userId: session?.user?.id,
-        listingId: id,
-        eventType: "VIEW_LISTING",
-        ipAddress: req.headers.get("x-forwarded-for")?.split(",")[0],
-        userAgent: req.headers.get("user-agent"),
-      },
-    });
+    Promise.all([
+      prisma.listing.update({ where: { id }, data: { viewCount: { increment: 1 } } }),
+      prisma.event.create({
+        data: {
+          userId: session?.user?.id,
+          listingId: id,
+          eventType: "VIEW_LISTING",
+          ipAddress: req.headers.get("x-forwarded-for")?.split(",")[0],
+          userAgent: req.headers.get("user-agent"),
+        },
+      }),
+    ]).catch(() => {});
 
     return Response.json({ data: serializeListing(listing as unknown as Record<string, unknown>) });
   } catch (error) {

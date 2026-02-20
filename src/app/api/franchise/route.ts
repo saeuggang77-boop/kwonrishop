@@ -70,19 +70,22 @@ export async function GET(request: NextRequest) {
 
     const totalPages = Math.ceil(total / limit);
 
-    return Response.json({
-      data: franchises.map((f) => ({
-        ...f,
-        monthlyAvgSales: f.monthlyAvgSales?.toString() ?? null,
-        startupCost: f.startupCost?.toString() ?? null,
-      })),
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages,
+    return new Response(
+      JSON.stringify({
+        data: franchises.map((f) => ({
+          ...f,
+          monthlyAvgSales: f.monthlyAvgSales?.toString() ?? null,
+          startupCost: f.startupCost?.toString() ?? null,
+        })),
+        meta: { total, page, limit, totalPages },
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
       },
-    });
+    );
   } catch (error) {
     return Response.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }

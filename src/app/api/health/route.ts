@@ -1,26 +1,24 @@
 import { prisma } from "@/lib/prisma";
-import { redis } from "@/lib/redis/client";
+import { getRedis } from "@/lib/redis/client";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const checks: Record<string, "ok" | "error"> = {};
 
-  // Database check
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    checks.database = "ok";
-  } catch {
-    checks.database = "error";
-  }
+  // Database + Redis checks in parallel with timeouts
+  const [dbResult, redisResult] = await Promise.allSettled([
+    prisma.$queryRaw`SELECT 1`,
+    Promise.race([
+      getRedis().ping(),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Redis timeout")), 2000),
+      ),
+    ]),
+  ]);
 
-  // Redis check
-  try {
-    await redis.ping();
-    checks.redis = "ok";
-  } catch {
-    checks.redis = "error";
-  }
+  checks.database = dbResult.status === "fulfilled" ? "ok" : "error";
+  checks.redis = redisResult.status === "fulfilled" ? "ok" : "error";
 
   const allOk = Object.values(checks).every((v) => v === "ok");
 
@@ -30,6 +28,6 @@ export async function GET() {
       checks,
       timestamp: new Date().toISOString(),
     },
-    { status: allOk ? 200 : 503 }
+    { status: allOk ? 200 : 503 },
   );
 }

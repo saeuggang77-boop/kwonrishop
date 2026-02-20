@@ -18,15 +18,23 @@ export async function GET(req: NextRequest) {
       orderBy: [{ subRegion: "asc" }, { businessType: "asc" }],
     });
 
-    return Response.json({
-      data: prices.map((p) => ({
-        ...p,
-        avgDeposit: Number(p.avgDeposit),
-        avgMonthlyRent: Number(p.avgMonthlyRent),
-        avgKeyMoney: Number(p.avgKeyMoney),
-        avgMonthlySales: Number(p.avgMonthlySales),
-      })),
-    });
+    return new Response(
+      JSON.stringify({
+        data: prices.map((p) => ({
+          ...p,
+          avgDeposit: Number(p.avgDeposit),
+          avgMonthlyRent: Number(p.avgMonthlyRent),
+          avgKeyMoney: Number(p.avgKeyMoney),
+          avgMonthlySales: Number(p.avgMonthlySales),
+        })),
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+        },
+      },
+    );
   } catch (error) {
     console.error("Market prices fetch failed:", error);
     return Response.json({ error: "서버 오류" }, { status: 500 });

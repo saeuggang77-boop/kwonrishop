@@ -64,13 +64,15 @@ export async function GET(req: NextRequest) {
       isVerified: e.isVerified,
     }));
 
-    return Response.json({
-      experts,
-      total,
-      page,
-      limit,
-      hasMore: skip + rows.length < total,
-    });
+    return new Response(
+      JSON.stringify({ experts, total, page, limit, hasMore: skip + rows.length < total }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      },
+    );
   } catch (error) {
     return errorToResponse(error);
   }
