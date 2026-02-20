@@ -19,6 +19,10 @@ export const BUSINESS_CATEGORY_LABELS: Record<string, string> = {
   EDUCATION: "교육/학원",
   ACCOMMODATION: "숙박업",
   OTHER: "기타",
+  // 레거시 (DB 마이그레이션 전 하위호환)
+  CHICKEN: "치킨",
+  PIZZA: "피자",
+  OTHER_FOOD: "기타외식",
 };
 
 export const STORE_TYPE_LABELS: Record<string, string> = {
