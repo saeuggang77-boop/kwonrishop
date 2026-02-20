@@ -71,11 +71,9 @@ const nextConfig: NextConfig = {
 };
 
 export default withSentryConfig(nextConfig, {
-  org: "kwonrishop",
+  org: "park-ze",
   project: "kwonrishop",
   silent: !process.env.CI,
   widenClientFileUpload: true,
-  disableLogger: true,
   tunnelRoute: "/monitoring",
-  automaticVercelMonitors: true,
 });
