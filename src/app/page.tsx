@@ -84,6 +84,7 @@ const QUICK_MENU = [
   { icon: Building2, label: "프랜차이즈", href: "/franchise" },
   { icon: ShieldCheck, label: "권리진단서", href: "/reports/request" },
   { icon: Calculator, label: "시뮬레이터", href: "/simulator" },
+  { icon: BarChart3, label: "상권분석", href: "/area-analysis" },
 ];
 
 /* ─── Hero Slides (CSS-only backgrounds) ─── */
@@ -227,6 +228,7 @@ export default function HomePage() {
             <Link href="/franchise" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">프랜차이즈</Link>
             <Link href="/experts" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">전문가</Link>
             <Link href="/simulator" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">시뮬레이터</Link>
+            <Link href="/area-analysis" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">상권분석</Link>
             <Link href="/bbs" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">이용가이드</Link>
           </nav>
 
@@ -252,6 +254,7 @@ export default function HomePage() {
                 { href: "/franchise", label: "프랜차이즈" },
                 { href: "/experts", label: "전문가" },
                 { href: "/simulator", label: "시뮬레이터" },
+                { href: "/area-analysis", label: "상권분석" },
                 { href: "/bbs", label: "이용가이드" },
               ].map(l => (
                 <Link key={l.href} href={l.href} onClick={() => setMobileMenuOpen(false)}
@@ -359,11 +362,11 @@ export default function HomePage() {
         </>)}
       </section>
 
-      {/* ═══ 2. Quick Menu (5 items) ═══ */}
+      {/* ═══ 2. Quick Menu (6 items) ═══ */}
       <RevealOnScroll>
         <section className="bg-white py-6 md:py-8">
           <div className="mx-auto max-w-3xl px-4">
-            <div className="grid grid-cols-5 gap-3 md:gap-4">
+            <div className="grid grid-cols-3 gap-3 md:grid-cols-6 md:gap-4">
               {QUICK_MENU.map(c => (
                 <Link key={c.label} href={c.href}
                   className="group flex flex-col items-center gap-2 rounded-xl py-3 transition-all duration-200 md:gap-3 md:py-4 md:hover:-translate-y-0.5 md:hover:shadow-md active:bg-gray-50">

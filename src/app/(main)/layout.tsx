@@ -39,6 +39,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <Link href="/simulator" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               시뮬레이터
             </Link>
+            <Link href="/area-analysis" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
+              상권분석
+            </Link>
             <Link href="/bbs" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               이용가이드
             </Link>
