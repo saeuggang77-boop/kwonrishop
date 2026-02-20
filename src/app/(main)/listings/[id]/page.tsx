@@ -4,7 +4,7 @@ import Image from "next/image";
 import {
   MapPin, Calendar, Eye, Building, Layers,
   TrendingUp, Calculator, Star, Users,
-  ArrowRight, MapPinned, Footprints, Store, Shield, ShieldCheck,
+  ArrowRight, Shield, ShieldCheck,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { SafetyBadge, DiagnosisBadge } from "@/components/listings/safety-badge";
@@ -34,6 +34,7 @@ import { DiagnosisSummaryCard, DiagnosisCTACard } from "@/components/listings/di
 import { PaywallOverlay } from "@/components/listings/paywall-overlay";
 import { canViewRevenueData } from "@/lib/utils/access-check";
 import { auth } from "@/lib/auth";
+import { ListingLocationSection } from "./listing-location-section";
 
 export const dynamic = "force-dynamic";
 
@@ -934,112 +935,16 @@ export default async function ListingDetailPage({
           </section>
 
           {/* ===== TAB 4: 위치정보 ===== */}
-          <section id="location-info" className="mt-12">
-            <h2 className="text-xl font-bold text-navy">위치 정보</h2>
-
-            {/* Map Placeholder */}
-            <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-gray-200">
-              <div className="flex aspect-[16/9] items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <MapPinned className="mx-auto h-16 w-16 text-gray-400" />
-                  <p className="mt-3 text-lg font-semibold text-gray-600">지도 준비중</p>
-                  <p className="mt-1 text-sm text-gray-400">카카오맵 연동 예정</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Location Details Grid */}
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {/* Nearby Facilities */}
-              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-                <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
-                  <Store className="h-4 w-4 text-navy" />
-                  <h3 className="text-sm font-semibold text-navy">
-                    주변 시설
-                  </h3>
-                </div>
-                <div className="divide-y divide-gray-50 px-5 py-2">
-                  <FacilityRow emoji="🚇" name="지하철역" distance="도보 5분" />
-                  <FacilityRow emoji="🚌" name="버스정류장" distance="도보 2분" />
-                  <FacilityRow emoji="🏦" name="은행/ATM" distance="도보 3분" />
-                  <FacilityRow emoji="🅿️" name="주차장" distance="도보 4분" />
-                  <FacilityRow emoji="🏥" name="병원/약국" distance="도보 6분" />
-                </div>
-                <div className="border-t border-gray-100 px-5 py-3">
-                  <p className="text-[11px] text-gray-400">
-                    * 예상 거리이며 실제와 다를 수 있습니다
-                  </p>
-                </div>
-              </div>
-
-              {/* Foot Traffic */}
-              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-                <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
-                  <Footprints className="h-4 w-4 text-navy" />
-                  <h3 className="text-sm font-semibold text-navy">
-                    유동인구 (추정)
-                  </h3>
-                </div>
-                <div className="px-5 py-4">
-                  <div className="space-y-3">
-                    <TrafficRow time="오전 (6-12시)" level={60} label="보통" />
-                    <TrafficRow time="점심 (12-14시)" level={90} label="매우 많음" />
-                    <TrafficRow time="오후 (14-18시)" level={70} label="많음" />
-                    <TrafficRow time="저녁 (18-22시)" level={85} label="많음" />
-                    <TrafficRow time="야간 (22-6시)" level={30} label="적음" />
-                  </div>
-                </div>
-                <div className="border-t border-gray-100 px-5 py-3">
-                  <p className="text-[11px] text-gray-400">
-                    * 예상 데이터이며 실제와 다를 수 있습니다
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Address & Nearby Info */}
-            <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <div className="border-b border-gray-100 px-6 py-5">
-                <p className="text-xs font-medium text-gray-500">주소</p>
-                <p className="mt-1 text-xl font-bold text-navy">
-                  {listing.address}
-                  {listing.addressDetail ? ` ${listing.addressDetail}` : ""}
-                </p>
-                <p className="mt-1 text-sm text-gray-500">
-                  {listing.city} {listing.district}
-                  {listing.neighborhood ? ` ${listing.neighborhood}` : ""}
-                  {listing.postalCode ? ` (${listing.postalCode})` : ""}
-                </p>
-              </div>
-              <div className="divide-y divide-gray-100">
-                <div className="flex items-center justify-between px-6 py-4">
-                  <span className="flex items-center gap-2 text-sm text-gray-600">
-                    🚇 가장 가까운 지하철역
-                  </span>
-                  <span className="text-sm font-semibold text-navy">
-                    {listing.district.replace(/구$/, "")}역 도보 5분
-                  </span>
-                </div>
-                <div className="flex items-center justify-between px-6 py-4">
-                  <span className="flex items-center gap-2 text-sm text-gray-600">
-                    🚌 주변 버스정류장
-                  </span>
-                  <span className="text-sm font-semibold text-navy">3개</span>
-                </div>
-                <div className="flex items-center justify-between px-6 py-4">
-                  <span className="flex items-center gap-2 text-sm text-gray-600">
-                    👥 일평균 유동인구
-                  </span>
-                  <span className="text-sm font-semibold text-navy">약 32,000명 (추정)</span>
-                </div>
-              </div>
-              <div className="border-t border-gray-100 px-6 py-2">
-                <p className="text-[11px] text-gray-400">
-                  * 유동인구는 추정치이며 실제와 다를 수 있습니다
-                </p>
-              </div>
-            </div>
-          </section>
+          <ListingLocationSection
+            lat={listing.latitude}
+            lng={listing.longitude}
+            address={listing.address ?? ""}
+            addressDetail={listing.addressDetail}
+            city={listing.city}
+            district={listing.district}
+            neighborhood={listing.neighborhood}
+            postalCode={listing.postalCode}
+          />
 
           {/* ===== Bottom Section ===== */}
           <div className="mt-12 border-t border-gray-200 pt-8">
@@ -1472,47 +1377,3 @@ function MarketStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function FacilityRow({
-  emoji,
-  name,
-  distance,
-}: {
-  emoji: string;
-  name: string;
-  distance: string;
-}) {
-  return (
-    <div className="flex items-center justify-between py-2.5">
-      <span className="flex items-center gap-2 text-sm text-gray-700">
-        <span>{emoji}</span>
-        {name}
-      </span>
-      <span className="text-xs text-gray-500">{distance}</span>
-    </div>
-  );
-}
-
-function TrafficRow({
-  time,
-  level,
-  label,
-}: {
-  time: string;
-  level: number;
-  label: string;
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-gray-600">{time}</span>
-        <span className="font-medium text-gray-700">{label}</span>
-      </div>
-      <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100">
-        <div
-          className="h-full rounded-full bg-navy transition-all"
-          style={{ width: `${level}%` }}
-        />
-      </div>
-    </div>
-  );
-}
