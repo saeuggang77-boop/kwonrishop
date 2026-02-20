@@ -1,9 +1,50 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Component, useEffect, useRef, useState } from "react";
+import type { ReactNode, ErrorInfo } from "react";
 import { MapPinned, Store, Footprints, Loader2 } from "lucide-react";
 import type { NearbyResult, SeoulData } from "@/lib/utils/area-analysis";
 import { isSeoulAddress } from "@/lib/utils/area-analysis";
+
+// ── Error Boundary: isolate map/location errors from the rest of the page ──
+interface MapErrorBoundaryProps { children: ReactNode; address: string; }
+interface MapErrorBoundaryState { hasError: boolean; }
+
+class MapErrorBoundary extends Component<MapErrorBoundaryProps, MapErrorBoundaryState> {
+  constructor(props: MapErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(): MapErrorBoundaryState {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("MapErrorBoundary caught:", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <section id="location-info" className="mt-12">
+          <h2 className="text-xl font-bold text-navy">위치 정보</h2>
+          <div className="mt-4 flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+            <MapPinned className="h-12 w-12 text-navy/40" />
+            <p className="mt-3 text-sm font-semibold text-gray-600">{this.props.address}</p>
+            <p className="mt-2 text-xs text-gray-400">지도를 불러오는 중 오류가 발생했습니다</p>
+          </div>
+        </section>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export function ListingLocationSectionSafe(props: LocationSectionProps) {
+  return (
+    <MapErrorBoundary address={props.address}>
+      <ListingLocationSection {...props} />
+    </MapErrorBoundary>
+  );
+}
 
 declare global {
   interface Window {
@@ -103,19 +144,33 @@ export function ListingLocationSection({
   useEffect(() => {
     const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
     if (!KEY) { setMapError(true); return; }
-    if (window.kakao?.maps) { setMapLoaded(true); return; }
+
+    // SDK already fully loaded (LatLng constructor exists)
+    if (window.kakao?.maps?.LatLng) { setMapLoaded(true); return; }
+
+    // SDK script loaded but maps API not initialized (autoload=false)
+    if (window.kakao?.maps?.load) {
+      try {
+        window.kakao.maps.load(() => setMapLoaded(true));
+      } catch { setMapError(true); }
+      return;
+    }
 
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KEY}&autoload=false&libraries=services`;
     script.async = true;
-    script.onload = () => window.kakao.maps.load(() => setMapLoaded(true));
+    script.onload = () => {
+      try {
+        window.kakao.maps.load(() => setMapLoaded(true));
+      } catch { setMapError(true); }
+    };
     script.onerror = () => setMapError(true);
     document.head.appendChild(script);
 
-    // Timeout: if SDK doesn't load in 5 seconds, mark as failed
+    // Timeout: if SDK doesn't load in 8 seconds, mark as failed
     const timeout = setTimeout(() => {
       if (!mapLoaded) setSdkFailed(true);
-    }, 5000);
+    }, 8000);
 
     return () => clearTimeout(timeout);
   }, [mapLoaded]);
@@ -125,21 +180,32 @@ export function ListingLocationSection({
     if (!mapLoaded || !mapRef.current || !resolvedLat || !resolvedLng) return;
     if (mapInstanceRef.current) return;
 
-    const pos = new window.kakao.maps.LatLng(resolvedLat, resolvedLng);
-    const map = new window.kakao.maps.Map(mapRef.current, {
-      center: pos,
-      level: 4,
-    });
-    mapInstanceRef.current = map;
+    // Defensive: ensure SDK constructors are ready
+    if (!window.kakao?.maps?.LatLng || !window.kakao?.maps?.Map) {
+      setMapError(true);
+      return;
+    }
 
-    // Marker
-    new window.kakao.maps.Marker({ map, position: pos });
+    try {
+      const pos = new window.kakao.maps.LatLng(resolvedLat, resolvedLng);
+      const map = new window.kakao.maps.Map(mapRef.current, {
+        center: pos,
+        level: 4,
+      });
+      mapInstanceRef.current = map;
 
-    // InfoWindow
-    const iw = new window.kakao.maps.InfoWindow({
-      content: `<div style="padding:6px 10px;font-size:13px;font-weight:600;color:#1B3A5C;white-space:nowrap;">${address}</div>`,
-    });
-    iw.open(map, new window.kakao.maps.Marker({ map, position: pos }));
+      // Marker
+      const marker = new window.kakao.maps.Marker({ map, position: pos });
+
+      // InfoWindow
+      const iw = new window.kakao.maps.InfoWindow({
+        content: `<div style="padding:6px 10px;font-size:13px;font-weight:600;color:#1B3A5C;white-space:nowrap;">${address}</div>`,
+      });
+      iw.open(map, marker);
+    } catch (err) {
+      console.error("Kakao map render error:", err);
+      setMapError(true);
+    }
   }, [mapLoaded, resolvedLat, resolvedLng, address]);
 
   // ── Fetch facilities via REST API fallback ──

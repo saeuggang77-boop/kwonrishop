@@ -35,7 +35,7 @@ import { DiagnosisPurchaseButton } from "@/components/listings/diagnosis-purchas
 import { DiagnosisSummaryCard, DiagnosisCTACard } from "@/components/listings/diagnosis-summary-card";
 import { PaywallOverlay } from "@/components/listings/paywall-overlay";
 import { auth } from "@/lib/auth";
-import { ListingLocationSection } from "./listing-location-section";
+import { ListingLocationSectionSafe as ListingLocationSection } from "./listing-location-section";
 
 /** Recursively convert all BigInt values to Number to prevent RSC serialization errors */
 function toSerializable<T>(obj: T): T {
