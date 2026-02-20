@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR, Montserrat } from "next/font/google";
 import { Providers } from "./providers";
+import { PwaInstallBanner } from "@/components/pwa-install-banner";
 import "./globals.css";
 
 const notoSansKr = Noto_Sans_KR({
@@ -72,6 +73,7 @@ export default function RootLayout({
         </a>
         <Providers>
           <div id="main-content">{children}</div>
+          <PwaInstallBanner />
         </Providers>
       </body>
     </html>

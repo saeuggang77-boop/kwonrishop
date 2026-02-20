@@ -4,6 +4,7 @@ import { AuthNavItems } from "./auth-nav";
 import { MobileTabBar } from "./mobile-tab-bar";
 import { CompareFloatingBar } from "@/components/listings/compare-floating-bar";
 
+
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50">
