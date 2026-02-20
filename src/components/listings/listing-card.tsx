@@ -53,6 +53,7 @@ export interface ListingCardProps {
   listing: ListingCardData;
   variant: ListingCardVariant;
   isCarouselItem?: boolean;
+  priority?: boolean;
 }
 
 /* ================================================================
@@ -148,17 +149,17 @@ function buildBadges(listing: ListingCardData, compact: boolean) {
    Component
    ================================================================ */
 
-export function ListingCard({ listing, variant, isCarouselItem = false }: ListingCardProps) {
+export function ListingCard({ listing, variant, isCarouselItem = false, priority = false }: ListingCardProps) {
   if (variant === "search") return <SearchCard listing={listing} />;
-  if (variant === "recommend") return <RecommendCard listing={listing} isCarouselItem={isCarouselItem} />;
-  return <PremiumCard listing={listing} isCarouselItem={isCarouselItem} />;
+  if (variant === "recommend") return <RecommendCard listing={listing} isCarouselItem={isCarouselItem} priority={priority} />;
+  return <PremiumCard listing={listing} isCarouselItem={isCarouselItem} priority={priority} />;
 }
 
 /* ────────────────────────────────────────────────────────────────
    Premium Card (큰 세로 카드, 홈 프리미엄 섹션)
    ──────────────────────────────────────────────────────────────── */
 
-function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; isCarouselItem: boolean }) {
+function PremiumCard({ listing, isCarouselItem, priority = false }: { listing: ListingCardData; isCarouselItem: boolean; priority?: boolean }) {
   const tc = listing.premiumRank >= 2 ? PREMIUM_AD_CONFIG[listing.premiumRank === 3 ? "VIP" : "PREMIUM"] : null;
   const fa = floorAreaStr(listing.floor, listing.areaPyeong);
   const badges = buildBadges(listing, false);
@@ -174,9 +175,9 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
     >
       <div className="relative aspect-[16/9] bg-gray-100">
         {hasRealImage ? (
-          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 200px, 20vw" loading="lazy" />
+          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 200px, 20vw" {...(priority ? { priority: true } : { loading: "lazy" as const })} />
         ) : CATEGORY_UNSPLASH[listing.businessCategory] ? (
-          <Image src={CATEGORY_UNSPLASH[listing.businessCategory]} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 200px, 20vw" loading="lazy" />
+          <Image src={CATEGORY_UNSPLASH[listing.businessCategory]} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 200px, 20vw" {...(priority ? { priority: true } : { loading: "lazy" as const })} />
         ) : (
           <CategoryPlaceholder category={listing.businessCategory} size="md" />
         )}
@@ -225,7 +226,7 @@ function PremiumCard({ listing, isCarouselItem }: { listing: ListingCardData; is
    Recommend Card (작은 세로 카드, 홈 오늘의 추천)
    ──────────────────────────────────────────────────────────────── */
 
-function RecommendCard({ listing, isCarouselItem }: { listing: ListingCardData; isCarouselItem: boolean }) {
+function RecommendCard({ listing, isCarouselItem, priority = false }: { listing: ListingCardData; isCarouselItem: boolean; priority?: boolean }) {
   const isRecommend = listing.premiumRank === 2;
   const hasPremiumFee = listing.premiumFee != null && Number(listing.premiumFee) > 0;
   const hasRevenue = listing.monthlyRevenue != null && Number(listing.monthlyRevenue) > 0;
@@ -240,9 +241,9 @@ function RecommendCard({ listing, isCarouselItem }: { listing: ListingCardData; 
     >
       <div className="relative h-[120px] bg-gray-100">
         {hasRealImage ? (
-          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 176px, 16vw" loading="lazy" />
+          <Image src={listing.images[0].thumbnailUrl ?? listing.images[0].url} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 176px, 16vw" {...(priority ? { priority: true } : { loading: "lazy" as const })} />
         ) : CATEGORY_UNSPLASH[listing.businessCategory] ? (
-          <Image src={CATEGORY_UNSPLASH[listing.businessCategory]} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 176px, 16vw" loading="lazy" />
+          <Image src={CATEGORY_UNSPLASH[listing.businessCategory]} alt={listing.title} fill className="object-cover" sizes="(max-width:768px) 176px, 16vw" {...(priority ? { priority: true } : { loading: "lazy" as const })} />
         ) : (
           <CategoryPlaceholder category={listing.businessCategory} size="sm" />
         )}

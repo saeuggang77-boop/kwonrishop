@@ -385,8 +385,8 @@ export default function HomePage() {
             </div>
             <div className="mt-4 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-5 md:gap-4 md:overflow-visible">
               {loadingPremium ? Array.from({ length: 10 }).map((_, i) => <SkeletonCard key={i} />) :
-                premiumListings.length > 0 ? premiumListings.map(item => (
-                  <ListingCard key={item.id} listing={item} variant="premium" isCarouselItem />
+                premiumListings.length > 0 ? premiumListings.map((item, idx) => (
+                  <ListingCard key={item.id} listing={item} variant="premium" isCarouselItem priority={idx < 5} />
                 )) : <p className="col-span-5 py-8 text-center text-sm text-gray-400">프리미엄 매물이 없습니다</p>}
             </div>
           </div>
