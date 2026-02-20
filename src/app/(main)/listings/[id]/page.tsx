@@ -155,7 +155,9 @@ const getListingPublicData = unstable_cache(
         }),
       ]);
 
-    return { listingData, images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw };
+    // Convert BigInt fields to Number INSIDE the cache callback
+    // so that unstable_cache can JSON.stringify the return value
+    return toSerializable({ listingData, images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw });
   },
   ["listing-detail"],
   { revalidate: 60, tags: ["listing"] }
