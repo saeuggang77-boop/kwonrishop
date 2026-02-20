@@ -6,6 +6,7 @@ import {
   TrendingUp, Calculator, Star, Users,
   ArrowRight, Shield, ShieldCheck, Lock,
 } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { SafetyBadge, DiagnosisBadge } from "@/components/listings/safety-badge";
 import { ContactSection } from "@/components/listings/contact-section";
@@ -33,11 +34,8 @@ import { DiagnosisCard } from "@/components/listings/diagnosis-card";
 import { DiagnosisPurchaseButton } from "@/components/listings/diagnosis-purchase-button";
 import { DiagnosisSummaryCard, DiagnosisCTACard } from "@/components/listings/diagnosis-summary-card";
 import { PaywallOverlay } from "@/components/listings/paywall-overlay";
-import { canViewRevenueData } from "@/lib/utils/access-check";
 import { auth } from "@/lib/auth";
 import { ListingLocationSection } from "./listing-location-section";
-
-export const dynamic = "force-dynamic";
 
 /** Recursively convert all BigInt values to Number to prevent RSC serialization errors */
 function toSerializable<T>(obj: T): T {
@@ -70,6 +68,99 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
+// Cached function for public listing data (60 second cache)
+const getListingPublicData = unstable_cache(
+  async (listingId: string) => {
+    const listingData = await prisma.listing.findUnique({ where: { id: listingId } });
+    if (!listingData || listingData.status === "DELETED") return null;
+
+    const [images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw] =
+      await Promise.all([
+        prisma.listingImage.findMany({
+          where: { listingId },
+          orderBy: { sortOrder: "asc" },
+        }),
+        prisma.user.findUnique({
+          where: { id: listingData.sellerId },
+          select: { id: true, name: true, image: true, isTrustedSeller: true },
+        }),
+        prisma.marketPrice.findFirst({
+          where: {
+            subRegion: listingData.district,
+            businessType: listingData.businessCategory,
+          },
+        }),
+        prisma.expert.findMany({
+          where: { isActive: true, region: listingData.city },
+          select: {
+            id: true,
+            name: true,
+            title: true,
+            rating: true,
+            category: true,
+            isVerified: true,
+          },
+          orderBy: [
+            { isVerified: "desc" },
+            { rating: "desc" },
+            { consultCount: "desc" },
+          ],
+          take: 3,
+        }),
+        prisma.listing.findMany({
+          where: {
+            id: { not: listingId },
+            status: "ACTIVE",
+            district: listingData.district,
+          },
+          select: {
+            id: true,
+            title: true,
+            businessCategory: true,
+            city: true,
+            district: true,
+            price: true,
+            premiumFee: true,
+            monthlyRent: true,
+            safetyGrade: true,
+            images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true, thumbnailUrl: true } },
+          },
+          orderBy: { viewCount: "desc" },
+          take: 4,
+        }),
+        prisma.listing.findMany({
+          where: {
+            id: { not: listingId },
+            status: "ACTIVE",
+            businessCategory: listingData.businessCategory,
+            district: { not: listingData.district },
+          },
+          select: {
+            id: true,
+            title: true,
+            businessCategory: true,
+            city: true,
+            district: true,
+            price: true,
+            premiumFee: true,
+            monthlyRent: true,
+            safetyGrade: true,
+            images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true, thumbnailUrl: true } },
+          },
+          orderBy: { viewCount: "desc" },
+          take: 4,
+        }),
+        prisma.diagnosisReport.findUnique({
+          where: { listingId },
+        }),
+      ]);
+
+    return { listingData, images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw };
+  },
+  ["listing-detail"],
+  { revalidate: 60, tags: ["listing"] }
+);
+
 export default async function ListingDetailPage({
   params,
 }: {
@@ -85,89 +176,61 @@ export default async function ListingDetailPage({
     console.error("[listing-detail] auth() failed:", e);
   }
 
-  const listingData = await prisma.listing.findUnique({
-    where: { id },
-  });
+  // Fetch cached public data
+  const publicData = await getListingPublicData(id);
+  if (!publicData) notFound();
 
-  if (!listingData || listingData.status === "DELETED") {
-    notFound();
-  }
+  const { listingData, images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw } = publicData;
 
-  const [images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw] =
-    await Promise.all([
-      prisma.listingImage.findMany({
-        where: { listingId: id },
-        orderBy: { sortOrder: "asc" },
-      }),
-      prisma.user.findUnique({
-        where: { id: listingData.sellerId },
-        select: { id: true, name: true, image: true, isTrustedSeller: true },
-      }),
-      prisma.marketPrice.findFirst({
-        where: {
-          subRegion: listingData.district,
-          businessType: listingData.businessCategory,
-        },
-      }),
-      prisma.expert.findMany({
-        where: { isActive: true, region: listingData.city },
-        orderBy: [
-          { isVerified: "desc" },
-          { rating: "desc" },
-          { consultCount: "desc" },
-        ],
-        take: 3,
-      }),
-      prisma.listing.findMany({
-        where: {
-          id: { not: id },
-          status: "ACTIVE",
-          district: listingData.district,
-        },
-        include: {
-          images: { take: 1, orderBy: { sortOrder: "asc" } },
-        },
-        orderBy: { viewCount: "desc" },
-        take: 4,
-      }),
-      prisma.listing.findMany({
-        where: {
-          id: { not: id },
-          status: "ACTIVE",
-          businessCategory: listingData.businessCategory,
-          district: { not: listingData.district },
-        },
-        include: {
-          images: { take: 1, orderBy: { sortOrder: "asc" } },
-        },
-        orderBy: { viewCount: "desc" },
-        take: 4,
-      }),
-      prisma.diagnosisReport.findUnique({
-        where: { listingId: id },
-      }),
-    ]);
+  // User-specific queries (NOT cached, run in parallel)
+  const userId = session?.user?.id;
+  const [userLikeRecord, userSubscription, userSinglePurchase] = await Promise.all([
+    userId
+      ? prisma.listingLike.findUnique({
+          where: { listingId_userId: { listingId: id, userId } },
+        })
+      : Promise.resolve(null),
+    userId
+      ? prisma.subscription.findUnique({ where: { userId } })
+      : Promise.resolve(null),
+    userId
+      ? prisma.singlePurchase.findFirst({
+          where: { userId, listingId: id, expiresAt: { gt: new Date() } },
+        })
+      : Promise.resolve(null),
+  ]);
+
+  const userLiked = !!userLikeRecord;
+
+  // Inline access check logic (avoids calling canViewRevenueData and its duplicate listing query)
+  const hasRevenueAccess = (() => {
+    if (!userId) return false;
+    // Owner always has access
+    if (listingData.sellerId === userId) return true;
+    // Active subscription (PRO/PREMIUM)
+    if (
+      userSubscription &&
+      userSubscription.status === "ACTIVE" &&
+      (userSubscription.tier === "PRO" || userSubscription.tier === "PREMIUM") &&
+      (!userSubscription.currentPeriodEnd || userSubscription.currentPeriodEnd > new Date())
+    ) return true;
+    // Trial subscription
+    if (
+      userSubscription &&
+      userSubscription.status === "TRIAL" &&
+      userSubscription.currentPeriodEnd &&
+      userSubscription.currentPeriodEnd > new Date()
+    ) return true;
+    // Single purchase
+    if (userSinglePurchase) return true;
+    return false;
+  })();
 
   // Convert all BigInt fields to Number (Prisma returns BigInt, RSC can't serialize it)
   const marketPrice = toSerializable(marketPriceRaw);
   const districtListings = toSerializable(districtListingsRaw);
   const categoryListings = toSerializable(categoryListingsRaw);
   const diagnosisReport = toSerializable(diagnosisReportRaw);
-
-  // Check if current user has liked this listing
-  let userLiked = false;
-  try {
-    userLiked = session?.user?.id
-      ? !!(await prisma.listingLike.findUnique({
-          where: { listingId_userId: { listingId: id, userId: session.user.id } },
-        }))
-      : false;
-  } catch (e) {
-    console.error("[listing-detail] listingLike query failed:", e);
-  }
-
-  // Check if user can view paid revenue data
-  const hasRevenueAccess = await canViewRevenueData(session?.user?.id, id);
 
   const listing = { ...toSerializable(listingData), images, seller };
 

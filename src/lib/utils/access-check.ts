@@ -12,16 +12,21 @@ import { prisma } from "@/lib/prisma";
 export async function canViewRevenueData(
   userId: string | undefined,
   listingId: string,
+  sellerId?: string,  // NEW: pass pre-fetched sellerId to skip duplicate query
 ): Promise<boolean> {
   if (!userId) return false;
 
   try {
     // 4. Listing owner always has access
-    const listing = await prisma.listing.findUnique({
-      where: { id: listingId },
-      select: { sellerId: true },
-    });
-    if (listing?.sellerId === userId) return true;
+    if (sellerId) {
+      if (sellerId === userId) return true;
+    } else {
+      const listing = await prisma.listing.findUnique({
+        where: { id: listingId },
+        select: { sellerId: true },
+      });
+      if (listing?.sellerId === userId) return true;
+    }
 
     // 1. Active subscription (PRO/PREMIUM)
     const subscription = await prisma.subscription.findUnique({
