@@ -81,6 +81,10 @@ export async function GET(req: NextRequest) {
     if (parsed.diagnosisOnly) {
       where.hasDiagnosisBadge = true;
     }
+    if (parsed.swLat != null && parsed.swLng != null && parsed.neLat != null && parsed.neLng != null) {
+      where.latitude = { gte: parsed.swLat, lte: parsed.neLat };
+      where.longitude = { gte: parsed.swLng, lte: parsed.neLng };
+    }
 
     const urgentOnly = req.nextUrl.searchParams.get("urgentOnly") === "true";
 
@@ -114,6 +118,9 @@ export async function GET(req: NextRequest) {
         floor: true,
         city: true,
         district: true,
+        neighborhood: true,
+        latitude: true,
+        longitude: true,
         safetyGrade: true,
         isPremium: true,
         premiumRank: true,

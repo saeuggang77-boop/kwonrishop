@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
-  Search, MapPin, X, ChevronDown, Map, Store, Loader2, ShieldCheck,
+  Search, MapPin, X, ChevronDown, Map as MapIcon, Store, Loader2, ShieldCheck, List,
 } from "lucide-react";
 import { ListingCard as ListingCardComponent } from "@/components/listings/listing-card";
+import { useDebounce } from "@/hooks/use-debounce";
 import dynamic from "next/dynamic";
-const KakaoMap = dynamic(() => import("@/components/kakao-map").then(m => m.KakaoMap), { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" /></div> });
+const ListingsMap = dynamic(() => import("@/components/listings/listings-map").then(m => m.ListingsMap), { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" /></div> });
+import type { MapBounds } from "@/components/listings/listings-map";
 import {
   BUSINESS_CATEGORY_LABELS,
   BUSINESS_CATEGORY_GROUPS,
@@ -51,6 +53,8 @@ interface ListingItem {
   isPremium: boolean;
   premiumRank: number;
   hasDiagnosisBadge: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
   isJumpUp?: boolean;
   urgentTag?: { active: boolean; reason: string | null } | null;
 }
@@ -101,6 +105,8 @@ export default function ListingsPage() {
 
   const [activeTab, setActiveTab] = useState<TabType>("direct");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
+  const [mobileView, setMobileView] = useState<"list" | "map">("list");
+  const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
 
   const [diagnosisOnly, setDiagnosisOnly] = useState(false);
   const [urgentOnly, setUrgentOnly] = useState(false);
@@ -146,6 +152,27 @@ export default function ListingsPage() {
     sortOrder: "desc",
   });
 
+  const debouncedBounds = useDebounce(mapBounds, 500);
+
+  const handleBoundsChange = useCallback((bounds: MapBounds) => {
+    setMapBounds(bounds);
+  }, []);
+
+  const mapFilters = useMemo(() => ({
+    businessCategory: filters.businessCategory,
+    businessSubtype: filters.businessSubtype,
+    storeType: activeTab === "franchise" ? "FRANCHISE" : filters.storeType,
+    city: filters.city,
+    district: filters.district,
+    trustedOnly: filters.trustedOnly,
+    diagnosisOnly,
+    premiumFeeMax: filters.theme === "무권리" ? "0" : undefined,
+    monthlyProfitMin: filters.monthlyProfitMin || undefined,
+    monthlyProfitMax: filters.monthlyProfitMax || undefined,
+    totalCostMin: filters.totalCostMin || undefined,
+    totalCostMax: filters.totalCostMax || undefined,
+  }), [filters, activeTab, diagnosisOnly]);
+
   /* ---- Fetch ---- */
   const fetchListings = useCallback(
     async (reset = false) => {
@@ -172,6 +199,12 @@ export default function ListingsPage() {
       params.set("sortBy", filters.sortBy);
       params.set("sortOrder", filters.sortOrder);
       params.set("limit", "12");
+      if (debouncedBounds) {
+        params.set("swLat", String(debouncedBounds.swLat));
+        params.set("swLng", String(debouncedBounds.swLng));
+        params.set("neLat", String(debouncedBounds.neLat));
+        params.set("neLng", String(debouncedBounds.neLng));
+      }
       if (!reset && cursor) params.set("cursor", cursor);
 
       try {
@@ -191,7 +224,7 @@ export default function ListingsPage() {
         setIsLoading(false);
       }
     },
-    [filters, cursor, activeTab, diagnosisOnly, urgentOnly]
+    [filters, cursor, activeTab, diagnosisOnly, urgentOnly, debouncedBounds]
   );
 
   useEffect(() => {
@@ -203,6 +236,7 @@ export default function ListingsPage() {
     filters.totalCostMin, filters.totalCostMax, filters.monthlyProfitMin, filters.monthlyProfitMax, filters.floor,
     filters.areaMin, filters.areaMax, filters.sortBy, filters.sortOrder,
     filters.revenueVerified, filters.trustedOnly, activeTab, diagnosisOnly, urgentOnly,
+    debouncedBounds,
   ]);
 
   // Infinite scroll
@@ -573,7 +607,7 @@ export default function ListingsPage() {
       {/* ======== Main content: List + Map ======== */}
       <div className="flex min-h-0 flex-1">
         {/* Left: Listing list */}
-        <div className="flex-1 overflow-y-auto md:w-[60%] md:flex-none">
+        <div className={`${mobileView === "map" ? "hidden" : "flex-1"} overflow-y-auto md:block md:w-[50%] md:flex-none`}>
           <div className="px-4 py-3">
             {/* Count */}
             <p className="mb-3 text-sm text-gray-500">
@@ -643,10 +677,30 @@ export default function ListingsPage() {
           </div>
         </div>
 
-        {/* Right: Kakao Map (desktop only) */}
-        <div className="hidden border-l border-gray-200 bg-gray-50 md:block md:w-[40%]">
-          <KakaoMap listings={listings} />
+        {/* Right: Map */}
+        <div className={`${mobileView === "list" ? "hidden" : "flex-1"} border-l border-gray-200 bg-gray-50 md:block md:w-[50%] md:flex-none`}>
+          <ListingsMap filters={mapFilters} onBoundsChange={handleBoundsChange} />
         </div>
+      </div>
+
+      {/* Mobile toggle button */}
+      <div className="fixed bottom-6 left-1/2 z-20 -translate-x-1/2 md:hidden">
+        <button
+          onClick={() => setMobileView((v) => (v === "list" ? "map" : "list"))}
+          className="flex items-center gap-2 rounded-full bg-[#1B3A5C] px-5 py-3 text-sm font-semibold text-white shadow-lg transition-transform active:scale-95"
+        >
+          {mobileView === "list" ? (
+            <>
+              <MapIcon className="h-4 w-4" />
+              지도 보기
+            </>
+          ) : (
+            <>
+              <List className="h-4 w-4" />
+              목록 보기
+            </>
+          )}
+        </button>
       </div>
     </div>
   );
