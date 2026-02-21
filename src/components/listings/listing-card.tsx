@@ -326,17 +326,11 @@ function SearchCard({ listing }: { listing: ListingCardData }) {
       {/* 썸네일 */}
       <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:h-40 sm:w-40">
         {hasRealImage ? (
-          <Image src={thumbnail} alt={listing.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="160px" />
+          <Image src={thumbnail} alt={listing.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 640px) 128px, 176px" />
         ) : CATEGORY_UNSPLASH[listing.businessCategory] ? (
-          <Image src={CATEGORY_UNSPLASH[listing.businessCategory]} alt={listing.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="160px" />
+          <Image src={CATEGORY_UNSPLASH[listing.businessCategory]} alt={listing.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 640px) 128px, 176px" />
         ) : (
           <CategoryPlaceholder category={listing.businessCategory} size="lg" />
-        )}
-        <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-          {catLabel(listing.businessCategory, listing.businessSubtype)}
-        </span>
-        {fa && (
-          <span className="absolute right-1.5 top-1.5 rounded bg-black/50 px-1 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">{fa}</span>
         )}
         {tierConfig ? (
           <span className={`absolute bottom-1.5 left-1.5 rounded px-1.5 py-0.5 text-[10px] font-bold border ${tierConfig.bg} ${tierConfig.color} ${tierConfig.border}`}>
@@ -377,6 +371,13 @@ function SearchCard({ listing }: { listing: ListingCardData }) {
 
       {/* 정보 */}
       <div className="flex min-w-0 flex-1 flex-col justify-center space-y-1">
+        {/* 업종 뱃지 + 층수/면적 */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="shrink-0 rounded-full bg-[#1B3A5C]/10 px-2 py-0.5 text-[11px] font-medium text-[#1B3A5C]">
+            {catLabel(listing.businessCategory, listing.businessSubtype)}
+          </span>
+          {fa && <span className="truncate text-[11px] font-medium text-gray-500">{fa}</span>}
+        </div>
         <h3 className="text-sm font-bold text-gray-900 truncate">{listing.title}</h3>
         <p className="truncate text-sm font-semibold text-[#1B3A5C]">
           보증금 {price(Number(listing.price))} / 월세{" "}
@@ -386,11 +387,22 @@ function SearchCard({ listing }: { listing: ListingCardData }) {
           {hasPremiumFee ? `권리금 ${price(Number(listing.premiumFee))}` : "무권리"}
         </p>
         {(hasRevenue || hasProfit) && (
-          <p className="truncate text-xs text-gray-500">
-            {hasRevenue && <>월매출 {price(Number(listing.monthlyRevenue))}</>}
-            {hasRevenue && hasProfit && <span className="mx-1 text-gray-300">|</span>}
-            {hasProfit && <>월수익 {price(Number(listing.monthlyProfit))}</>}
-          </p>
+          <div className="space-y-0.5">
+            {hasRevenue && (
+              <p className="flex items-center gap-1 text-xs">
+                <span className="text-blue-500">📊</span>
+                <span className="text-gray-500">월매출</span>
+                <span className="font-semibold text-blue-600">{price(Number(listing.monthlyRevenue))}</span>
+              </p>
+            )}
+            {hasProfit && (
+              <p className="flex items-center gap-1 text-xs">
+                <span className="text-green-500">💰</span>
+                <span className="text-gray-500">월수익</span>
+                <span className="font-semibold text-green-600">{price(Number(listing.monthlyProfit))}</span>
+              </p>
+            )}
+          </div>
         )}
         {badges.length > 0 && (
           <div className="flex flex-wrap gap-1.5">

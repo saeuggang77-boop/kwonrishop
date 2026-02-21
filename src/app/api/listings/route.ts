@@ -140,33 +140,28 @@ export async function GET(req: NextRequest) {
     const hasMore = listings.length > parsed.limit;
     const data = hasMore ? listings.slice(0, -1) : listings;
 
-    // Fetch active paid services in parallel
+    // Fetch active paid services in a single query
     const now = new Date();
     const listingIds = data.map((l) => l.id);
-    const [activeBoosts, activeUrgent] = await Promise.all([
-      prisma.paidService.findMany({
-        where: {
-          listingId: { in: listingIds },
-          type: { in: ["JUMP_UP", "AUTO_REFRESH"] },
-          status: "ACTIVE",
-          endDate: { gt: now },
-        },
-        select: { listingId: true, startDate: true },
-        orderBy: { startDate: "desc" },
-      }),
-      prisma.paidService.findMany({
-        where: {
-          listingId: { in: listingIds },
-          type: "URGENT_TAG",
-          status: "ACTIVE",
-          endDate: { gt: now },
-        },
-        select: { listingId: true, reason: true },
-      }),
-    ]);
 
-    const boostSet = new Set(activeBoosts.map((b) => b.listingId));
-    const urgentMap = new Map(activeUrgent.map((u) => [u.listingId, u.reason]));
+    const activePaidServices = listingIds.length > 0
+      ? await prisma.paidService.findMany({
+          where: {
+            listingId: { in: listingIds },
+            type: { in: ["JUMP_UP", "AUTO_REFRESH", "URGENT_TAG"] },
+            status: "ACTIVE",
+            endDate: { gt: now },
+          },
+          select: { listingId: true, type: true, reason: true, startDate: true },
+        })
+      : [];
+
+    const boostSet = new Set(
+      activePaidServices.filter((s) => s.type !== "URGENT_TAG").map((s) => s.listingId)
+    );
+    const urgentMap = new Map(
+      activePaidServices.filter((s) => s.type === "URGENT_TAG").map((s) => [s.listingId, s.reason])
+    );
 
     // Sort: boosted listings first (keeping premiumRank priority)
     let sortedData = [...data].sort((a, b) => {
@@ -179,7 +174,7 @@ export async function GET(req: NextRequest) {
 
     // Filter to urgent-only listings if requested
     if (urgentOnly) {
-      const urgentIds = new Set(activeUrgent.map((u) => u.listingId));
+      const urgentIds = new Set(urgentMap.keys());
       sortedData = sortedData.filter((l) => urgentIds.has(l.id));
     }
 

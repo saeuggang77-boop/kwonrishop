@@ -15,9 +15,13 @@ export async function GET(
       );
     }
 
-    const report = await prisma.diagnosisReport.findUnique({
-      where: { listingId },
-    });
+    const [report, listing] = await Promise.all([
+      prisma.diagnosisReport.findUnique({ where: { listingId } }),
+      prisma.listing.findUnique({
+        where: { id: listingId },
+        select: { premiumFee: true, monthlyRevenue: true, monthlyProfit: true },
+      }),
+    ]);
 
     if (!report) {
       return NextResponse.json(
@@ -26,7 +30,15 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ data: report });
+    // Convert BigInt fields to strings for JSON serialization
+    return NextResponse.json({
+      data: {
+        ...report,
+        premiumFee: listing?.premiumFee ? String(listing.premiumFee) : "0",
+        monthlyRevenue: listing?.monthlyRevenue ? String(listing.monthlyRevenue) : "0",
+        monthlyProfit: listing?.monthlyProfit ? String(listing.monthlyProfit) : "0",
+      },
+    });
   } catch (error) {
     console.error("Diagnosis fetch error:", error);
     return NextResponse.json(

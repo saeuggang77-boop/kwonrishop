@@ -73,18 +73,56 @@ export default function ReportDetailPage({
   const [checklist, setChecklist] = useState<{ id: number; item: string; checked: boolean }[]>([]);
 
   useEffect(() => {
-    fetch(`/api/report-purchases/${id}`)
-      .then((r) => r.json())
-      .then((json) => {
-        if (json.data) {
-          setReport(json.data);
-          if (json.data.data?.analysisResult?.checklist) {
-            setChecklist(json.data.data.analysisResult.checklist);
+    async function loadReport() {
+      try {
+        // 1) Try report-purchase ID first
+        const purchaseRes = await fetch(`/api/report-purchases/${id}`);
+        if (purchaseRes.ok) {
+          const json = await purchaseRes.json();
+          if (json.data) {
+            setReport(json.data);
+            if (json.data.data?.analysisResult?.checklist) {
+              setChecklist(json.data.data.analysisResult.checklist);
+            }
+            return;
           }
         }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+
+        // 2) Fallback: try as listing ID via diagnosis API
+        const diagRes = await fetch(`/api/diagnosis/${id}`);
+        if (diagRes.ok) {
+          const diagJson = await diagRes.json();
+          if (diagJson.data) {
+            const d = diagJson.data;
+            const analysis = typeof d.analysisResult === "string"
+              ? JSON.parse(d.analysisResult)
+              : d.analysisResult;
+            setReport({
+              id: d.id,
+              status: "COMPLETED",
+              listing: { id: d.listingId, title: "", address: "", city: "", district: "", businessCategory: "" },
+              plan: { name: "free", displayName: "무료 진단", price: 0 },
+              data: {
+                id: d.id,
+                inputData: {},
+                analysisResult: analysis,
+                pdfUrl: null,
+              },
+              createdAt: d.createdAt,
+            });
+            if (analysis?.checklist) {
+              setChecklist(analysis.checklist);
+            }
+            return;
+          }
+        }
+      } catch {
+        // Both lookups failed
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadReport();
   }, [id]);
 
   const toggleCheck = (checkId: number) => {

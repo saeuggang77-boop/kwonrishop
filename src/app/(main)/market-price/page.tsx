@@ -2,10 +2,17 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, Legend,
-} from "recharts";
+import dynamic from "next/dynamic";
+const BarChart = dynamic(() => import("recharts").then(m => m.BarChart), { ssr: false });
+const Bar = dynamic(() => import("recharts").then(m => m.Bar), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
+const CartesianGrid = dynamic(() => import("recharts").then(m => m.CartesianGrid), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
+const LineChart = dynamic(() => import("recharts").then(m => m.LineChart), { ssr: false });
+const Line = dynamic(() => import("recharts").then(m => m.Line), { ssr: false });
+const Legend = dynamic(() => import("recharts").then(m => m.Legend), { ssr: false });
 import { Search, TrendingUp, Wallet, Building, DollarSign, BarChart3 } from "lucide-react";
 import { formatKRW } from "@/lib/utils/format";
 import { BUSINESS_CATEGORY_LABELS, REGIONS } from "@/lib/utils/constants";
@@ -219,7 +226,7 @@ export default function MarketPricePage() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                       <YAxis tick={{ fontSize: 11 }} />
-                      <Tooltip formatter={(v?: number) => `${(v ?? 0).toLocaleString()}만원`} />
+                      <Tooltip formatter={(value) => `${Number(value ?? 0).toLocaleString()}만원`} />
                       <Bar dataKey="평균권리금" fill="#1B3A5C" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -233,7 +240,7 @@ export default function MarketPricePage() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                       <YAxis tick={{ fontSize: 11 }} />
-                      <Tooltip formatter={(v?: number) => `${(v ?? 0).toLocaleString()}만원`} />
+                      <Tooltip formatter={(value) => `${Number(value ?? 0).toLocaleString()}만원`} />
                       <Legend />
                       <Line type="monotone" dataKey="권리금" stroke="#f97316" strokeWidth={2} dot={{ r: 3 }} />
                       <Line type="monotone" dataKey="보증금" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} />

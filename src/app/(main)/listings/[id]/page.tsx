@@ -126,7 +126,7 @@ const getListingPublicData = unstable_cache(
             images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true, thumbnailUrl: true } },
           },
           orderBy: { viewCount: "desc" },
-          take: 4,
+          take: 8,
         }),
         prisma.listing.findMany({
           where: {
@@ -148,7 +148,7 @@ const getListingPublicData = unstable_cache(
             images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true, thumbnailUrl: true } },
           },
           orderBy: { viewCount: "desc" },
-          take: 4,
+          take: 8,
         }),
         prisma.diagnosisReport.findUnique({
           where: { listingId },
@@ -264,22 +264,28 @@ export default async function ListingDetailPage({
   const numDeposit = Number(listing.price);
   const avgPremium = marketPrice ? Number(marketPrice.avgKeyMoney) : 0;
 
-  // Real market stats from actual listings in the same district + category
+  // Real market stats from actual listings — prefer same district+category, fallback to wider pool
   const sameCategoryDistrictListings = [...districtListings, ...categoryListings].filter(
     (l) => l.businessCategory === listingData.businessCategory && l.district === listingData.district
   );
-  const realListingsForStats = [
-    ...sameCategoryDistrictListings,
-    // Include current listing in stats for comparison
-  ];
+  // If narrow filter has < 2 results, use all available comparison listings (same district OR same category)
+  const uniqueListings = new Map<string, typeof districtListings[0]>();
+  for (const l of [...districtListings, ...categoryListings]) {
+    uniqueListings.set(l.id, l);
+  }
+  const realListingsForStats = sameCategoryDistrictListings.length >= 2
+    ? sameCategoryDistrictListings
+    : Array.from(uniqueListings.values());
   const realAvgDeposit = realListingsForStats.length > 0
     ? Math.round(realListingsForStats.reduce((s, l) => s + Number(l.price), 0) / realListingsForStats.length)
     : 0;
-  const realAvgPremium = realListingsForStats.length > 0
-    ? Math.round(realListingsForStats.filter(l => l.premiumFee && Number(l.premiumFee) > 0).reduce((s, l) => s + Number(l.premiumFee!), 0) / Math.max(1, realListingsForStats.filter(l => l.premiumFee && Number(l.premiumFee) > 0).length))
+  const premiumListings = realListingsForStats.filter(l => l.premiumFee && Number(l.premiumFee) > 0);
+  const realAvgPremium = premiumListings.length > 0
+    ? Math.round(premiumListings.reduce((s, l) => s + Number(l.premiumFee!), 0) / premiumListings.length)
     : 0;
-  const realAvgRent = realListingsForStats.length > 0
-    ? Math.round(realListingsForStats.filter(l => l.monthlyRent && Number(l.monthlyRent) > 0).reduce((s, l) => s + Number(l.monthlyRent!), 0) / Math.max(1, realListingsForStats.filter(l => l.monthlyRent && Number(l.monthlyRent) > 0).length))
+  const rentListings = realListingsForStats.filter(l => l.monthlyRent && Number(l.monthlyRent) > 0);
+  const realAvgRent = rentListings.length > 0
+    ? Math.round(rentListings.reduce((s, l) => s + Number(l.monthlyRent!), 0) / rentListings.length)
     : 0;
 
   // Cost breakdown estimates

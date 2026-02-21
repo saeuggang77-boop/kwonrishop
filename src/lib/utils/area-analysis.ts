@@ -60,8 +60,8 @@ export function getSeoulQuarters(): string[] {
   const now = new Date();
   const quarters: string[] = [];
 
-  // Try quarters going back 3, 4, 5 quarters
-  for (let lagQuarters of [3, 4, 5]) {
+  // Seoul data lags significantly; try quarters from 2 to 8 back
+  for (let lagQuarters = 2; lagQuarters <= 8; lagQuarters++) {
     let year = now.getFullYear();
     let quarter = Math.ceil((now.getMonth() + 1) / 3);
     quarter -= lagQuarters;

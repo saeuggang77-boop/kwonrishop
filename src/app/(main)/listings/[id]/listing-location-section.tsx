@@ -104,7 +104,7 @@ export function ListingLocationSection({
   const [trafficSource, setTrafficSource] = useState<"seoul" | "estimated" | null>(null);
 
   const [nearestSubway, setNearestSubway] = useState<string | null>(null);
-  const [busStopCount, setBusStopCount] = useState<number | null>(null);
+  const [nearestConvenience, setNearestConvenience] = useState<string | null>(null);
   const [dailyFootTraffic, setDailyFootTraffic] = useState<string | null>(null);
 
   const isSeoul = isSeoulAddress(`${city} ${district}`);
@@ -168,9 +168,8 @@ export function ListingLocationSection({
             if (cat.code === "SW8") {
               setNearestSubway(`${nearest.name} ${distance}`);
             }
-            if (cat.code === "BT1") {
-              const nearby500 = cat.places.filter(p => p.distance <= 500);
-              setBusStopCount(nearby500.length);
+            if (cat.code === "CS2") {
+              setNearestConvenience(`${nearest.name} ${distance}`);
             }
 
             return { emoji: cat.emoji, name: cat.name, detail, distance };
@@ -178,7 +177,7 @@ export function ListingLocationSection({
 
           // No places found
           if (cat.code === "SW8") setNearestSubway(null);
-          if (cat.code === "BT1") setBusStopCount(0);
+          if (cat.code === "CS2") setNearestConvenience(null);
 
           return { emoji: cat.emoji, name: cat.name, detail: "", distance: "정보 없음" };
         });
@@ -425,12 +424,12 @@ export function ListingLocationSection({
           </div>
           <div className="flex items-center justify-between px-6 py-4">
             <span className="flex items-center gap-2 text-sm text-gray-600">
-              🚌 주변 버스정류장
+              🏪 가장 가까운 편의점
             </span>
             <span className="text-sm font-semibold text-navy">
               {facilitiesLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-gray-300" />
-              ) : busStopCount !== null ? `${busStopCount}개` : "정보 없음"}
+              ) : nearestConvenience ?? "정보 없음"}
             </span>
           </div>
           <div className="flex items-center justify-between px-6 py-4">

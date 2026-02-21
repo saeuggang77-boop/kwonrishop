@@ -286,8 +286,7 @@ export default function HomePage() {
             >
               {/* Background layer */}
               <div className="absolute inset-0" style={{ background: s.gradient }} />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />
+              <Image src={s.image} alt="" fill className="object-cover opacity-25" sizes="100vw" priority={i === 0} />
               <div className="absolute inset-0" style={s.patternStyle} />
               {/* Decorative elements per slide */}
               {i === 0 && (

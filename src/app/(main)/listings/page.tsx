@@ -102,6 +102,7 @@ export default function ListingsPage() {
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | undefined>();
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const [activeTab, setActiveTab] = useState<TabType>("direct");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
@@ -176,6 +177,9 @@ export default function ListingsPage() {
   /* ---- Fetch ---- */
   const fetchListings = useCallback(
     async (reset = false) => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
       setIsLoading(true);
       const params = new URLSearchParams();
       if (filters.query) params.set("query", filters.query);
@@ -208,7 +212,7 @@ export default function ListingsPage() {
       if (!reset && cursor) params.set("cursor", cursor);
 
       try {
-        const res = await fetch(`/api/listings?${params}`);
+        const res = await fetch(`/api/listings?${params}`, { signal: controller.signal });
         const json = await res.json();
         if (reset) {
           setListings(json.data ?? []);
@@ -218,10 +222,11 @@ export default function ListingsPage() {
         setCursor(json.meta?.cursor);
         setHasMore(json.meta?.hasMore ?? false);
         setTotalCount(json.meta?.total ?? json.data?.length ?? 0);
-      } catch {
+      } catch (e) {
+        if (e instanceof DOMException && e.name === "AbortError") return;
         if (reset) setListings([]);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     },
     [filters, cursor, activeTab, diagnosisOnly, urgentOnly, debouncedBounds]
@@ -607,7 +612,7 @@ export default function ListingsPage() {
       {/* ======== Main content: List + Map ======== */}
       <div className="flex min-h-0 flex-1">
         {/* Left: Listing list */}
-        <div className={`${mobileView === "map" ? "hidden" : "flex-1"} overflow-y-auto md:block md:w-[50%] md:flex-none`}>
+        <div className={`${mobileView === "map" ? "hidden" : "flex-1"} overflow-y-auto md:block md:w-[60%] md:flex-none`}>
           <div className="px-4 py-3">
             {/* Count */}
             <p className="mb-3 text-sm text-gray-500">
@@ -616,7 +621,7 @@ export default function ListingsPage() {
 
             {/* Loading skeleton */}
             {isLoading && listings.length === 0 ? (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="flex gap-4 rounded-xl border border-gray-100 bg-white p-4">
                     <div className="h-36 w-36 shrink-0 animate-pulse rounded-lg bg-gray-200 sm:h-44 sm:w-44" />
@@ -644,21 +649,28 @@ export default function ListingsPage() {
                   return (
                     <>
                       {premium.length > 0 && (
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                          {premium.map((listing) => (
-                            <ListingCardComponent key={listing.id} listing={listing} variant="search" />
-                          ))}
-                        </div>
+                        <>
+                          <div className="mb-3 flex items-center gap-2">
+                            <span className="text-amber-500">&#9733;</span>
+                            <span className="text-sm font-bold text-gray-800">프리미엄 매물</span>
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{premium.length}</span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {premium.map((listing) => (
+                              <ListingCardComponent key={listing.id} listing={listing} variant="search" />
+                            ))}
+                          </div>
+                        </>
                       )}
                       {premium.length > 0 && normal.length > 0 && (
-                        <div className="my-4 flex items-center gap-3">
+                        <div className="my-5 flex items-center gap-3">
                           <div className="h-px flex-1 bg-gray-200" />
-                          <span className="text-xs text-gray-400">일반 매물</span>
+                          <span className="text-xs font-medium text-gray-400">일반 매물</span>
                           <div className="h-px flex-1 bg-gray-200" />
                         </div>
                       )}
                       {normal.length > 0 && (
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {normal.map((listing) => (
                             <ListingCardComponent key={listing.id} listing={listing} variant="search" />
                           ))}
@@ -678,7 +690,7 @@ export default function ListingsPage() {
         </div>
 
         {/* Right: Map */}
-        <div className={`${mobileView === "list" ? "hidden" : "flex-1"} border-l border-gray-200 bg-gray-50 md:block md:w-[50%] md:flex-none`}>
+        <div className={`${mobileView === "list" ? "hidden" : "flex-1"} border-l border-gray-200 bg-gray-50 md:block md:w-[40%] md:flex-none`}>
           <ListingsMap filters={mapFilters} onBoundsChange={handleBoundsChange} />
         </div>
       </div>

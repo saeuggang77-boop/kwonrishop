@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const FACILITY_CATEGORIES = [
   { code: "SW8", emoji: "🚇", name: "지하철역" },
-  { code: "BT1", emoji: "🚌", name: "버스정류장" },
+  { code: "CS2", emoji: "🏪", name: "편의점" },
   { code: "BK9", emoji: "🏦", name: "은행/ATM" },
   { code: "PK6", emoji: "🅿️", name: "주차장" },
   { code: "HP8", emoji: "🏥", name: "병원/약국" },

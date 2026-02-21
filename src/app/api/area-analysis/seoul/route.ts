@@ -34,10 +34,16 @@ export async function GET(req: NextRequest) {
       ]);
 
       // Parse foot traffic
+      if (footTrafficRes && !footTrafficRes.ok) {
+        console.warn(`[Seoul API] footTraffic ${quarter}: HTTP ${footTrafficRes.status}`);
+      }
       if (footTrafficRes?.ok) {
         const ftData = await footTrafficRes.json();
         // Seoul API returns errors inside 200 response body
-        if (ftData?.RESULT?.CODE) continue; // API error, try next quarter
+        if (ftData?.RESULT?.CODE) {
+          console.warn(`[Seoul API] footTraffic ${quarter}: ${ftData.RESULT.CODE} - ${ftData.RESULT.MESSAGE}`);
+          continue;
+        }
         let rows = ftData?.VwsmTrdarFlpop?.row ?? [];
 
         // Filter by dong (neighborhood) if provided
@@ -64,6 +70,9 @@ export async function GET(req: NextRequest) {
       }
 
       // Parse estimated sales
+      if (salesRes && !salesRes.ok) {
+        console.warn(`[Seoul API] sales ${quarter}: HTTP ${salesRes.status}`);
+      }
       if (salesRes?.ok) {
         const sData = await salesRes.json();
         let rows = sData?.VwsmTrdarSelng?.row ?? [];

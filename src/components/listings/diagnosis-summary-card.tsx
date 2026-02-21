@@ -3,15 +3,21 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-  Shield, ShieldCheck, TrendingUp, Clock, Target,
+  Shield, ShieldCheck, TrendingUp, Target,
   AlertTriangle, CheckCircle, XCircle, ChevronRight,
-  FileText, Sparkles, BarChart3, Percent, Activity,
-  Building, Zap, Eye, Award,
+  FileText, Sparkles, BarChart3, Award,
 } from "lucide-react";
-import {
-  PieChart, Pie, Cell, ResponsiveContainer,
-  AreaChart, Area, CartesianGrid, XAxis, YAxis, Tooltip,
-} from "recharts";
+import dynamic from "next/dynamic";
+const PieChart = dynamic(() => import("recharts").then(m => m.PieChart), { ssr: false });
+const Pie = dynamic(() => import("recharts").then(m => m.Pie), { ssr: false });
+const Cell = dynamic(() => import("recharts").then(m => m.Cell), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
+const AreaChart = dynamic(() => import("recharts").then(m => m.AreaChart), { ssr: false });
+const Area = dynamic(() => import("recharts").then(m => m.Area), { ssr: false });
+const CartesianGrid = dynamic(() => import("recharts").then(m => m.CartesianGrid), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
 
 /* ═══════════════════════════════════════════════════════════════ */
 /*  Types                                                          */
@@ -32,41 +38,8 @@ interface DiagnosisSummaryData {
 }
 
 /* ═══════════════════════════════════════════════════════════════ */
-/*  Mock Data — Placeholder data for UI development                */
+/*  Constants                                                       */
 /* ═══════════════════════════════════════════════════════════════ */
-
-const MOCK_DIAGNOSIS: DiagnosisSummaryData = {
-  grade: "B",
-  gradeLabel: "양호",
-  score: 75,
-  oneLiner: "권리금은 적정 범위이나, 상권 변동성에 주의가 필요합니다",
-  currentPremium: 11000,
-  aiEstimateMin: 9500,
-  aiEstimateMax: 12000,
-  composition: [
-    { name: "영업권리금", value: 6600, pct: 60 },
-    { name: "시설권리금", value: 3300, pct: 30 },
-    { name: "바닥권리금", value: 1100, pct: 10 },
-  ],
-  trend: [
-    { month: "9월", value: 10200 },
-    { month: "10월", value: 10500 },
-    { month: "11월", value: 10800 },
-    { month: "12월", value: 11200 },
-    { month: "1월", value: 10900 },
-    { month: "2월", value: 11000 },
-  ],
-  metrics: [
-    { label: "권리금 회수 기간", value: "14개월", sub: "단기 회수 가능" },
-    { label: "시설 권리금", value: "3,300만원", sub: "감가상각 반영" },
-    { label: "월매출 대비 배수", value: "4.4배", sub: "권리금/월매출" },
-  ],
-  risks: [
-    { item: "상권 변동성", status: "주의", detail: "유동인구 5% 감소 추세" },
-    { item: "재건축 가능성", status: "위험", detail: "재건축 예정 구역 포함" },
-    { item: "임대차 계약", status: "안전", detail: "잔여 36개월로 안정적" },
-  ],
-};
 
 const PIE_COLORS = ["#1B3A5C", "#3B82F6", "#93C5FD"];
 
@@ -168,26 +141,121 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
 /*  DiagnosisSummaryCard — 진단서 발급 완료 매물용                     */
 /* ═══════════════════════════════════════════════════════════════ */
 
+function mapReportToSummary(report: any): DiagnosisSummaryData {
+  // Map grade: A+/A/A- → A, B+/B/B- → B, C → C
+  const gradeChar = (report.overallGrade?.charAt(0) as "A" | "B" | "C") || "B";
+  const gradeLabels: Record<string, string> = { A: "우수", B: "양호", C: "주의" };
+
+  // Score: weighted (profitRating*0.4 + locationRating*0.3 + riskRating*0.3) → 0-100 scale
+  const rawScore = (report.profitRating * 0.4 + report.locationRating * 0.3 + report.riskRating * 0.3);
+  const score = Math.round(rawScore * 20); // 1-5 scale → 20-100
+
+  // Premium values in 만원
+  const currentPremium = Math.round(Number(report.premiumFee || 0) / 10000);
+  const fairTotal = Math.round(report.fairPremiumTotal / 10000);
+  const aiEstimateMin = Math.round(fairTotal * 0.9);
+  const aiEstimateMax = Math.round(fairTotal * 1.1);
+
+  // Composition
+  const totalFair = report.fairPremiumBusiness + report.fairPremiumFacility + report.fairPremiumFloor;
+  const composition = [
+    { name: "영업권리금", value: Math.round(report.fairPremiumBusiness / 10000), pct: totalFair > 0 ? Math.round((report.fairPremiumBusiness / totalFair) * 100) : 0 },
+    { name: "시설권리금", value: Math.round(report.fairPremiumFacility / 10000), pct: totalFair > 0 ? Math.round((report.fairPremiumFacility / totalFair) * 100) : 0 },
+    { name: "바닥권리금", value: Math.round(report.fairPremiumFloor / 10000), pct: totalFair > 0 ? Math.round((report.fairPremiumFloor / totalFair) * 100) : 0 },
+  ];
+
+  // Trend - no real data available, leave empty
+  const trend: { month: string; value: number }[] = [];
+
+  // Metrics
+  const metrics = [
+    { label: "권리금 회수 기간", value: `${report.roiMonths}개월`, sub: report.roiMonths <= report.avgRoiMonths ? "업종 평균 이하" : "업종 평균 이상" },
+    { label: "영업이익률", value: `${report.profitMargin.toFixed(1)}%`, sub: `업종 평균 ${report.avgProfitMargin.toFixed(1)}%` },
+    { label: "적정가 판정", value: report.premiumVerdict, sub: `괴리율 ${report.premiumGap > 0 ? "+" : ""}${report.premiumGap.toFixed(1)}%` },
+  ];
+
+  // Risks
+  const risks: DiagnosisSummaryData["risks"] = [];
+
+  // Competitor density risk
+  const competitorStatus = report.competitorDensity === "높음" ? "위험" as const : report.competitorDensity === "보통" ? "주의" as const : "안전" as const;
+  risks.push({ item: "경쟁 밀도", status: competitorStatus, detail: `주변 동종업종 경쟁 ${report.competitorDensity}` });
+
+  // Premium gap risk
+  const premiumStatus = report.premiumGap > 25 ? "위험" as const : report.premiumGap > 10 ? "주의" as const : "안전" as const;
+  risks.push({ item: "권리금 적정성", status: premiumStatus, detail: `${report.premiumVerdict} (괴리율 ${report.premiumGap > 0 ? "+" : ""}${report.premiumGap.toFixed(1)}%)` });
+
+  // Lease risk
+  const leaseStatus = report.leaseRemaining === "정보없음" ? "주의" as const : "안전" as const;
+  risks.push({ item: "임대차 계약", status: leaseStatus, detail: report.leaseRemaining === "정보없음" ? "임대차 잔여기간 확인 필요" : `잔여 ${report.leaseRemaining}` });
+
+  return {
+    grade: gradeChar,
+    gradeLabel: gradeLabels[gradeChar] ?? "양호",
+    score,
+    oneLiner: report.overallComment,
+    currentPremium,
+    aiEstimateMin,
+    aiEstimateMax,
+    composition,
+    trend,
+    metrics,
+    risks,
+  };
+}
+
 export function DiagnosisSummaryCard({
   listingId,
 }: {
   listingId: string;
 }) {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [data, setData] = useState<DiagnosisSummaryData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  // Note: Currently using placeholder data for UI development
-  // Real diagnosis data will be fetched from the API when available
-  const d = MOCK_DIAGNOSIS;
-  const gc = GRADE_STYLE[d.grade] ?? GRADE_STYLE.C;
+  useEffect(() => {
+    setMounted(true);
 
-  if (!mounted) {
+    async function fetchDiagnosis() {
+      try {
+        const res = await fetch(`/api/diagnosis/${listingId}`);
+        if (!res.ok) { setError(true); setLoading(false); return; }
+        const json = await res.json();
+        const report = json.data;
+        if (!report) { setError(true); setLoading(false); return; }
+
+        // Map DiagnosisReport to DiagnosisSummaryData
+        const mapped = mapReportToSummary(report);
+        setData(mapped);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDiagnosis();
+  }, [listingId]);
+
+  if (!mounted || loading) {
     return (
       <div className="mb-6 flex h-[200px] items-center justify-center rounded-2xl border border-gray-200 bg-white">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
       </div>
     );
   }
+
+  if (error || !data) {
+    return (
+      <div className="mb-6 flex h-[200px] items-center justify-center rounded-2xl border border-gray-200 bg-white">
+        <p className="text-sm text-gray-500">진단 데이터를 불러올 수 없습니다</p>
+      </div>
+    );
+  }
+
+  const d = data;
+  const gc = GRADE_STYLE[d.grade] ?? GRADE_STYLE.C;
 
   return (
     <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -199,9 +267,6 @@ export function DiagnosisSummaryCard({
             <h3 className="text-base font-bold text-white">권리진단서 결과</h3>
           </div>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-semibold text-amber-700">
-              샘플 진단 결과
-            </span>
             <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-semibold text-white/90">
               진단 완료
             </span>
@@ -282,7 +347,7 @@ export function DiagnosisSummaryCard({
         </div>
 
         {/* Pie + Trend Charts */}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className={d.trend.length > 0 ? "grid gap-4 sm:grid-cols-2" : ""}>
           {/* Composition Pie */}
           <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
             <p className="mb-3 text-xs font-medium text-gray-500">권리금 구성</p>
@@ -314,30 +379,32 @@ export function DiagnosisSummaryCard({
             </div>
           </div>
 
-          {/* 6-Month Trend */}
-          <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
-            <p className="mb-3 text-xs font-medium text-gray-500">인근 권리금 추이</p>
-            <ResponsiveContainer width="100%" height={150}>
-              <AreaChart data={d.trend}>
-                <defs>
-                  <linearGradient id="summaryTrendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.25} />
-                    <stop offset="100%" stopColor="#3B82F6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="month" tick={{ fontSize: 9 }} />
-                <YAxis hide domain={["dataMin - 300", "dataMax + 300"]} />
-                <Tooltip content={<ChartTooltip />} />
-                <Area
-                  type="monotone" dataKey="value"
-                  stroke="#1B3A5C" strokeWidth={2}
-                  fill="url(#summaryTrendGrad)"
-                  dot={{ fill: "#1B3A5C", r: 2.5 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+          {/* 6-Month Trend - only show if data exists */}
+          {d.trend.length > 0 && (
+            <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+              <p className="mb-3 text-xs font-medium text-gray-500">인근 권리금 추이</p>
+              <ResponsiveContainer width="100%" height={150}>
+                <AreaChart data={d.trend}>
+                  <defs>
+                    <linearGradient id="summaryTrendGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.25} />
+                      <stop offset="100%" stopColor="#3B82F6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis dataKey="month" tick={{ fontSize: 9 }} />
+                  <YAxis hide domain={["dataMin - 300", "dataMax + 300"]} />
+                  <Tooltip content={<ChartTooltip />} />
+                  <Area
+                    type="monotone" dataKey="value"
+                    stroke="#1B3A5C" strokeWidth={2}
+                    fill="url(#summaryTrendGrad)"
+                    dot={{ fill: "#1B3A5C", r: 2.5 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </div>
       </div>
 
