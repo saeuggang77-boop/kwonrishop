@@ -45,6 +45,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (phone) {
+      const phoneExists = await prisma.user.findUnique({ where: { phone } });
+      if (phoneExists) {
+        return NextResponse.json(
+          { error: "이미 사용 중인 전화번호입니다." },
+          { status: 409 }
+        );
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     await prisma.user.create({
@@ -80,7 +90,8 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json({ ok: true }, { status: 201 });
-  } catch {
+  } catch (err) {
+    console.error("[Register Error]", err);
     return NextResponse.json(
       { error: "서버 오류가 발생했습니다." },
       { status: 500 }

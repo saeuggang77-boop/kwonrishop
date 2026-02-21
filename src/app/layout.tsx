@@ -21,12 +21,12 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://kwonrishop.com"),
   title: {
-    default: "권리샵 | 부동산 권리 분석 플랫폼",
+    default: "권리샵 | 안전한 점포 직거래",
     template: "%s | 권리샵",
   },
   description:
-    "부동산 권리 분석, 매물 등록, 시세 비교를 한 곳에서. 전세권, 저당권, 임차권 등 다양한 권리 매물을 안전하게 거래하세요.",
-  keywords: ["부동산", "권리진단서", "전세권", "근저당권", "임차권", "매물", "시세비교"],
+    "점포 매물 검색, 권리 진단, 안심 직거래를 한 곳에서. 상가 양도양수, 권리금 분석, 매출 인증까지 안전하게 거래하세요.",
+  keywords: ["점포", "상가", "권리금", "양도양수", "직거래", "권리진단서", "창업", "매물"],
   icons: {
     icon: "/logos/krw_shop_favicon.png",
     apple: "/icons/icon-192x192.png",
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
   },
   openGraph: {
-    title: "권리샵 | 부동산 권리 분석 플랫폼",
+    title: "권리샵 | 안전한 점포 직거래",
     description:
-      "부동산 권리 분석, 매물 등록, 시세 비교를 한 곳에서.",
+      "점포 매물 검색, 권리 진단, 안심 직거래를 한 곳에서.",
     siteName: "권리샵",
     locale: "ko_KR",
     type: "website",
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "권리샵 | 부동산 권리 분석 플랫폼",
-    description: "부동산 권리 분석, 매물 등록, 시세 비교를 한 곳에서.",
+    title: "권리샵 | 안전한 점포 직거래",
+    description: "점포 매물 검색, 권리 진단, 안심 직거래를 한 곳에서.",
     images: ["/logos/krw_shop_logo_full.png"],
   },
 };

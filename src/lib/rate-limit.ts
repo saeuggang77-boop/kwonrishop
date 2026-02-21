@@ -43,28 +43,39 @@ export async function rateLimit(
 
 /**
  * Check rate limit and return 429 response if exceeded.
+ * Fails open (allows request) if Redis is unavailable.
  */
 export async function checkRateLimit(
   identifier: string,
   limit = 60,
   windowSec = 60
 ): Promise<Response | null> {
-  const result = await rateLimit(identifier, limit, windowSec);
+  try {
+    const result = await Promise.race([
+      rateLimit(identifier, limit, windowSec),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Rate limit timeout")), 3000)
+      ),
+    ]);
 
-  if (!result.success) {
-    return Response.json(
-      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },
-      {
-        status: 429,
-        headers: {
-          "X-RateLimit-Limit": String(limit),
-          "X-RateLimit-Remaining": String(result.remaining),
-          "X-RateLimit-Reset": String(result.reset),
-          "Retry-After": String(windowSec),
-        },
-      }
-    );
+    if (!result.success) {
+      return Response.json(
+        { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": String(limit),
+            "X-RateLimit-Remaining": String(result.remaining),
+            "X-RateLimit-Reset": String(result.reset),
+            "Retry-After": String(windowSec),
+          },
+        }
+      );
+    }
+
+    return null;
+  } catch {
+    // Redis unavailable — fail open (allow the request)
+    return null;
   }
-
-  return null;
 }

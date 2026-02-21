@@ -6,11 +6,19 @@ const globalForRedis = globalThis as unknown as {
 
 function createRedisClient(): IORedis {
   const url = process.env.REDIS_URL || "redis://localhost:6379";
-  return new IORedis(url, {
+  const client = new IORedis(url, {
     maxRetriesPerRequest: null,
     enableReadyCheck: false,
     lazyConnect: true,
+    retryStrategy(times) {
+      // Stop retrying after 3 attempts when Redis is unavailable
+      if (times > 3) return null;
+      return Math.min(times * 200, 1000);
+    },
   });
+  // Suppress unhandled error events when Redis is unavailable
+  client.on("error", () => {});
+  return client;
 }
 
 /**
