@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { createHash } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { searchListingsSchema, createListingSchema } from "@/lib/validators/listing";
@@ -6,11 +7,45 @@ import { errorToResponse } from "@/lib/utils/errors";
 import { m2ToPyeong } from "@/lib/utils/area";
 import { fraudDetectionQueue, imageProcessingQueue } from "@/lib/queue";
 import { S3_BUCKET_UPLOADS } from "@/lib/s3/client";
+import { getExposureBatch, assignExposureOrder } from "@/lib/utils/rotation-queue";
+
+function getSessionId(req: Request): string {
+  const cookieHeader = req.headers.get("cookie") ?? "";
+  const tokenMatch = cookieHeader.match(/(?:__Secure-)?next-auth\.session-token=([^;]+)/);
+  if (tokenMatch?.[1]) {
+    return createHash("sha256").update(tokenMatch[1]).digest("hex").slice(0, 16);
+  }
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  const ip = forwardedFor?.split(",")[0].trim() || "unknown";
+  return createHash("sha256").update(ip).digest("hex").slice(0, 16);
+}
+
+/** 프론트엔드 짧은 도시명 → DB 정식명 매핑 */
+const CITY_FULL_NAMES: Record<string, string> = {
+  "서울": "서울특별시",
+  "경기": "경기도",
+  "인천": "인천광역시",
+  "부산": "부산광역시",
+  "대구": "대구광역시",
+  "대전": "대전광역시",
+  "광주": "광주광역시",
+  "울산": "울산광역시",
+  "세종": "세종특별자치시",
+  "강원": "강원특별자치도",
+  "충북": "충청북도",
+  "충남": "충청남도",
+  "전북": "전북특별자치도",
+  "전남": "전라남도",
+  "경북": "경상북도",
+  "경남": "경상남도",
+  "제주": "제주특별자치도",
+};
 
 export async function GET(req: NextRequest) {
   try {
     const params = Object.fromEntries(req.nextUrl.searchParams);
     const parsed = searchListingsSchema.parse(params);
+    const sort = req.nextUrl.searchParams.get("sort") ?? "rotation";
 
     const where: Record<string, unknown> = {
       status: "ACTIVE",
@@ -26,7 +61,7 @@ export async function GET(req: NextRequest) {
     if (parsed.businessCategory) where.businessCategory = parsed.businessCategory;
     if (parsed.businessSubtype) where.businessSubtype = parsed.businessSubtype;
     if (parsed.storeType) where.storeType = parsed.storeType;
-    if (parsed.city) where.city = parsed.city;
+    if (parsed.city) where.city = CITY_FULL_NAMES[parsed.city] ?? parsed.city;
     if (parsed.district) where.district = parsed.district;
     if (parsed.priceMin || parsed.priceMax) {
       where.price = {};
@@ -81,6 +116,17 @@ export async function GET(req: NextRequest) {
     if (parsed.diagnosisOnly) {
       where.hasDiagnosisBadge = true;
     }
+    if (parsed.floor != null) {
+      where.floor = parsed.floor;
+    }
+    if (parsed.areaMin != null || parsed.areaMax != null) {
+      where.areaPyeong = {};
+      if (parsed.areaMin != null) (where.areaPyeong as Record<string, unknown>).gte = parsed.areaMin;
+      if (parsed.areaMax != null) (where.areaPyeong as Record<string, unknown>).lte = parsed.areaMax;
+    }
+    if (parsed.safetyGrade) {
+      where.safetyGrade = parsed.safetyGrade;
+    }
     if (parsed.swLat != null && parsed.swLng != null && parsed.neLat != null && parsed.neLng != null) {
       where.latitude = { gte: parsed.swLat, lte: parsed.neLat };
       where.longitude = { gte: parsed.swLng, lte: parsed.neLng };
@@ -88,11 +134,217 @@ export async function GET(req: NextRequest) {
 
     const urgentOnly = req.nextUrl.searchParams.get("urgentOnly") === "true";
 
-    const orderBy: Record<string, unknown>[] = [
-      { premiumRank: "desc" as const },
-      { hasDiagnosisBadge: "desc" as const },
-    ];
-    if (parsed.sortBy === "safetyGrade") {
+    // ── Rotation mode ──
+    if (sort === "rotation") {
+      const sessionId = getSessionId(req);
+      const cursor = parsed.cursor;
+
+      // Total count for pagination info
+      const totalCount = await prisma.listing.count({ where: { status: "ACTIVE", ...where } });
+
+      let premiumTop: unknown[] = [];
+      let recommended: unknown[] = [];
+      let listings: unknown[] = [];
+      let nextCursor: string | null = null;
+
+      // Detect if any filter is active
+      const hasFilters = Boolean(
+        parsed.query || parsed.businessCategory || parsed.businessSubtype ||
+        parsed.storeType || parsed.city || parsed.district ||
+        parsed.priceMin || parsed.priceMax || parsed.premiumFeeMin || parsed.premiumFeeMax ||
+        parsed.totalCostMin || parsed.totalCostMax || parsed.monthlyProfitMin || parsed.monthlyProfitMax ||
+        parsed.premiumOnly || parsed.trustedOnly || parsed.diagnosisOnly ||
+        parsed.floor != null || parsed.areaMin != null || parsed.areaMax != null ||
+        parsed.safetyGrade || urgentOnly
+      );
+
+      if (!cursor) {
+        // First page: get premiumTop, recommended only when NO filters active
+        if (!hasFilters) {
+          const premiumResult = await getExposureBatch("premium", 2, sessionId);
+          const recommendResult = await getExposureBatch("recommend", 2, sessionId);
+          premiumTop = premiumResult.listings;
+          recommended = recommendResult.listings;
+        }
+
+        // Direct DB query with all user filters + rotation ordering
+        const rotationSelect = {
+          id: true, title: true, businessCategory: true, storeType: true,
+          price: true, monthlyRent: true, managementFee: true, premiumFee: true,
+          monthlyRevenue: true, monthlyProfit: true, areaPyeong: true, floor: true,
+          city: true, district: true, neighborhood: true, latitude: true, longitude: true,
+          safetyGrade: true, isPremium: true, isRecommended: true, premiumRank: true,
+          hasDiagnosisBadge: true, viewCount: true, listingExposureOrder: true,
+          images: { where: { isPrimary: true }, take: 1, select: { url: true, thumbnailUrl: true } },
+          seller: { select: { name: true, image: true, isTrustedSeller: true } },
+        };
+
+        const allListings = await prisma.listing.findMany({
+          where,
+          select: rotationSelect,
+          orderBy: { listingExposureOrder: "asc" },
+          take: 21,
+        });
+
+        listings = allListings.slice(0, 20);
+        if (allListings.length > 20) {
+          const lastListing = listings[listings.length - 1] as Record<string, unknown>;
+          nextCursor = `${lastListing.listingExposureOrder}_${Date.now()}`;
+        }
+
+        // 일반 매물 큐 로테이션 (프리미엄/추천과 동일 로직)
+        // 노출된 매물의 listingExposureOrder = MAX+1부터 재할당 → 큐 뒤로 이동
+        if (!hasFilters && listings.length > 0) {
+          const listingCooldownKey = `rotation:listing:${sessionId}`;
+          let shouldRotateListings = false;
+          try {
+            const { getRedis } = await import("@/lib/redis/client");
+            const redis = getRedis();
+            const result = await Promise.race([
+              redis.set(listingCooldownKey, "1", "EX", 300, "NX"),
+              new Promise<null>((_, reject) =>
+                setTimeout(() => reject(new Error("Redis timeout")), 2000),
+              ),
+            ]);
+            shouldRotateListings = result === "OK";
+          } catch {
+            shouldRotateListings = true;
+          }
+
+          if (shouldRotateListings) {
+            try {
+              const maxResult = await prisma.listing.aggregate({
+                where: { status: "ACTIVE" },
+                _max: { listingExposureOrder: true },
+              });
+              const maxOrder = maxResult._max.listingExposureOrder ?? 0;
+              await prisma.$transaction(
+                (listings as Array<Record<string, unknown>>).map((l, idx) =>
+                  prisma.listing.update({
+                    where: { id: l.id as string },
+                    data: { listingExposureOrder: maxOrder + idx + 1 },
+                  }),
+                ),
+              );
+            } catch {
+              // 로테이션 실패해도 조회 결과는 반환
+            }
+          }
+        }
+      } else {
+        // Subsequent pages: cursor-based pagination
+        const [lastOrder] = cursor.split("_");
+        const allListings = await prisma.listing.findMany({
+          where: {
+            ...where,
+            listingExposureOrder: { gt: parseInt(lastOrder, 10) },
+          },
+          select: {
+            id: true, title: true, businessCategory: true, storeType: true,
+            price: true, monthlyRent: true, managementFee: true, premiumFee: true,
+            monthlyRevenue: true, monthlyProfit: true, areaPyeong: true, floor: true,
+            city: true, district: true, neighborhood: true, latitude: true, longitude: true,
+            safetyGrade: true, isPremium: true, isRecommended: true, premiumRank: true,
+            hasDiagnosisBadge: true, viewCount: true, listingExposureOrder: true,
+            images: { where: { isPrimary: true }, take: 1, select: { url: true, thumbnailUrl: true } },
+            seller: { select: { name: true, image: true, isTrustedSeller: true } },
+          },
+          orderBy: { listingExposureOrder: "asc" },
+          take: 21,
+        });
+
+        listings = allListings.slice(0, 20);
+        if (allListings.length > 20) {
+          const lastListing = listings[listings.length - 1] as Record<string, unknown>;
+          nextCursor = `${lastListing.listingExposureOrder}_${Date.now()}`;
+        }
+      }
+
+      // Fetch paid services for all sections
+      const now = new Date();
+      const allIds = [
+        ...(premiumTop as Array<Record<string, unknown>>).map(l => l.id as string),
+        ...(recommended as Array<Record<string, unknown>>).map(l => l.id as string),
+        ...(listings as Array<Record<string, unknown>>).map(l => l.id as string),
+      ];
+
+      const activePaidServices = allIds.length > 0
+        ? await prisma.paidService.findMany({
+            where: {
+              listingId: { in: allIds },
+              type: { in: ["JUMP_UP", "AUTO_REFRESH", "URGENT_TAG"] },
+              status: "ACTIVE",
+              endDate: { gt: now },
+            },
+            select: { listingId: true, type: true, reason: true },
+          })
+        : [];
+
+      const boostSet = new Set(
+        activePaidServices.filter((s) => s.type !== "URGENT_TAG").map((s) => s.listingId)
+      );
+      const urgentMap = new Map(
+        activePaidServices.filter((s) => s.type === "URGENT_TAG").map((s) => [s.listingId, s.reason])
+      );
+
+      // Filter urgentOnly in rotation mode
+      if (urgentOnly) {
+        const urgentIds = new Set(urgentMap.keys());
+        premiumTop = (premiumTop as Array<Record<string, unknown>>).filter(l => urgentIds.has(l.id as string));
+        recommended = (recommended as Array<Record<string, unknown>>).filter(l => urgentIds.has(l.id as string));
+        listings = (listings as Array<Record<string, unknown>>).filter(l => urgentIds.has(l.id as string));
+      }
+
+      const serializeItem = (l: Record<string, unknown>) => ({
+        ...l,
+        price: String(l.price ?? "0"),
+        monthlyRent: l.monthlyRent != null ? String(l.monthlyRent) : null,
+        managementFee: l.managementFee != null ? String(l.managementFee) : null,
+        premiumFee: l.premiumFee != null ? String(l.premiumFee) : null,
+        monthlyRevenue: l.monthlyRevenue != null ? String(l.monthlyRevenue) : null,
+        monthlyProfit: l.monthlyProfit != null ? String(l.monthlyProfit) : null,
+        isJumpUp: boostSet.has(l.id as string),
+        urgentTag: urgentMap.has(l.id as string)
+          ? { active: true, reason: urgentMap.get(l.id as string) ?? null }
+          : null,
+        listingExposureOrder: undefined, // Don't expose to client
+      });
+
+      return new Response(
+        JSON.stringify({
+          premiumTop: (premiumTop as Array<Record<string, unknown>>).map(serializeItem),
+          recommended: (recommended as Array<Record<string, unknown>>).map(serializeItem),
+          data: (listings as Array<Record<string, unknown>>).map(serializeItem),
+          meta: {
+            nextCursor,
+            hasMore: nextCursor != null,
+            total: totalCount,
+          },
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
+          },
+        },
+      );
+    }
+
+    // ── Non-rotation mode (standard sort) ──
+    const sortMapping: Record<string, Record<string, string>> = {
+      price_asc: { price: "asc" },
+      price_desc: { price: "desc" },
+      revenue: { monthlyRevenue: "desc" },
+      profit: { monthlyProfit: "desc" },
+      views: { viewCount: "desc" },
+      createdAt: { createdAt: "desc" },
+    };
+
+    const orderBy: Record<string, unknown>[] = [];
+
+    if (sortMapping[sort]) {
+      orderBy.push(sortMapping[sort]);
+    } else if (parsed.sortBy === "safetyGrade") {
       orderBy.push({ safetyGrade: { sort: "asc", nulls: "last" } });
     } else {
       orderBy.push({ [parsed.sortBy]: parsed.sortOrder });
@@ -196,6 +448,9 @@ export async function GET(req: NextRequest) {
         meta: {
           cursor: data[data.length - 1]?.id,
           hasMore,
+          total: sortedData.length < parsed.limit && !hasMore
+            ? sortedData.length
+            : await prisma.listing.count({ where: { status: "ACTIVE", ...where } }),
         },
       }),
       {
@@ -274,6 +529,13 @@ export async function POST(req: NextRequest) {
         areaPyeong: parsed.areaM2 ? m2ToPyeong(parsed.areaM2) : null,
         status: "PENDING_VERIFICATION",
       },
+    });
+
+    // Assign listingExposureOrder for rotation queue
+    const listingOrder = await assignExposureOrder("listing");
+    await prisma.listing.update({
+      where: { id: listing.id },
+      data: { listingExposureOrder: listingOrder },
     });
 
     // Save uploaded images

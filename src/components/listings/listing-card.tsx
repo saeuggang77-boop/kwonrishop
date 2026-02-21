@@ -54,6 +54,8 @@ export interface ListingCardProps {
   variant: ListingCardVariant;
   isCarouselItem?: boolean;
   priority?: boolean;
+  showAdBadge?: boolean;
+  showRecommendBadge?: boolean;
 }
 
 /* ================================================================
@@ -161,8 +163,8 @@ function buildBadges(listing: ListingCardData, compact: boolean) {
    Component
    ================================================================ */
 
-export function ListingCard({ listing, variant, isCarouselItem = false, priority = false }: ListingCardProps) {
-  if (variant === "search") return <SearchCard listing={listing} />;
+export function ListingCard({ listing, variant, isCarouselItem = false, priority = false, showAdBadge, showRecommendBadge }: ListingCardProps) {
+  if (variant === "search") return <SearchCard listing={listing} showAdBadge={showAdBadge} showRecommendBadge={showRecommendBadge} />;
   if (variant === "recommend") return <RecommendCard listing={listing} isCarouselItem={isCarouselItem} priority={priority} />;
   return <PremiumCard listing={listing} isCarouselItem={isCarouselItem} priority={priority} />;
 }
@@ -300,7 +302,7 @@ function RecommendCard({ listing, isCarouselItem, priority = false }: { listing:
    Search Card (가로형, 점포찾기)
    ──────────────────────────────────────────────────────────────── */
 
-function SearchCard({ listing }: { listing: ListingCardData }) {
+function SearchCard({ listing, showAdBadge, showRecommendBadge }: { listing: ListingCardData; showAdBadge?: boolean; showRecommendBadge?: boolean }) {
   const thumbnail = listing.images[0]?.thumbnailUrl ?? listing.images[0]?.url;
   const hasRealImage = thumbnail && !isPicsum(thumbnail);
   const fa = floorAreaStr(listing.floor, listing.areaPyeong);
@@ -371,11 +373,19 @@ function SearchCard({ listing }: { listing: ListingCardData }) {
 
       {/* 정보 */}
       <div className="flex min-w-0 flex-1 flex-col justify-center space-y-1">
-        {/* 업종 뱃지 + 층수/면적 */}
+        {/* AD/추천 뱃지 + 업종 뱃지 + 층수/면적 */}
         <div className="flex items-center justify-between gap-2">
-          <span className="shrink-0 rounded-full bg-[#1B3A5C]/10 px-2 py-0.5 text-[11px] font-medium text-[#1B3A5C]">
-            {catLabel(listing.businessCategory, listing.businessSubtype)}
-          </span>
+          <div className="flex items-center gap-1">
+            {showAdBadge && (
+              <span className="shrink-0 rounded bg-amber-100 border border-amber-300 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">AD</span>
+            )}
+            {showRecommendBadge && (
+              <span className="shrink-0 rounded bg-blue-100 border border-blue-300 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">추천</span>
+            )}
+            <span className="shrink-0 rounded-full bg-[#1B3A5C]/10 px-2 py-0.5 text-[11px] font-medium text-[#1B3A5C]">
+              {catLabel(listing.businessCategory, listing.businessSubtype)}
+            </span>
+          </div>
           {fa && <span className="truncate text-[11px] font-medium text-gray-500">{fa}</span>}
         </div>
         <h3 className="text-sm font-bold text-gray-900 truncate">{listing.title}</h3>

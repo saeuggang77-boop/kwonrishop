@@ -7,6 +7,7 @@ import { errorToResponse } from "@/lib/utils/errors";
 import { reportGenerationQueue } from "@/lib/queue";
 import { createNotification } from "@/lib/notifications/create";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { assignExposureOrder } from "@/lib/utils/rotation-queue";
 
 export async function POST(req: NextRequest) {
   try {
@@ -105,12 +106,24 @@ export async function POST(req: NextRequest) {
           });
 
           const tierRankMap: Record<string, number> = { BASIC: 1, PREMIUM: 2, VIP: 3 };
+          const rank = tierRankMap[adTier] ?? 1;
+
+          const updateData: Record<string, unknown> = {
+            isPremium: true,
+            premiumRank: rank,
+          };
+
+          // VIP(rank 3) → 프리미엄 큐, PREMIUM(rank 2) → 추천 큐
+          if (rank >= 3) {
+            updateData.premiumExposureOrder = await assignExposureOrder("premium");
+          } else if (rank === 2) {
+            updateData.isRecommended = true;
+            updateData.recommendExposureOrder = await assignExposureOrder("recommend");
+          }
+
           await prisma.listing.update({
             where: { id: listingId },
-            data: {
-              isPremium: true,
-              premiumRank: tierRankMap[adTier] ?? 1,
-            },
+            data: updateData,
           });
         }
       }

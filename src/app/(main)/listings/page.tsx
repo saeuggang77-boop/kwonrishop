@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -64,13 +64,13 @@ type FilterKey = "region" | "category" | "revenue" | "theme" | "price" | "profit
 
 
 const SORT_OPTIONS = [
-  { value: "createdAt-desc", label: "최신등록순" },
-  { value: "safetyGrade-asc", label: "신뢰도높은순" },
-  { value: "premiumFee-asc", label: "권리금낮은순" },
-  { value: "premiumFee-desc", label: "권리금높은순" },
-  { value: "monthlyProfit-desc", label: "월순익높은순" },
-  { value: "monthlyRevenue-desc", label: "월매출높은순" },
-  { value: "areaPyeong-desc", label: "면적순" },
+  { value: "rotation", label: "추천순" },
+  { value: "createdAt", label: "최신등록순" },
+  { value: "price_asc", label: "보증금낮은순" },
+  { value: "price_desc", label: "보증금높은순" },
+  { value: "profit", label: "월순익높은순" },
+  { value: "revenue", label: "월매출높은순" },
+  { value: "views", label: "조회순" },
 ] as const;
 
 const TOTAL_COST_OPTIONS = [
@@ -94,9 +94,41 @@ const THEME_OPTIONS = [
    ================================================================ */
 
 export default function ListingsPage() {
+  return (
+    <Suspense fallback={<ListingsPageSkeleton />}>
+      <ListingsPageContent />
+    </Suspense>
+  );
+}
+
+function ListingsPageSkeleton() {
+  return (
+    <div className="flex h-[calc(100dvh-57px)] flex-col overflow-hidden">
+      <div className="shrink-0 border-b border-gray-200 bg-white p-4">
+        <div className="h-10 animate-pulse rounded-lg bg-gray-200" />
+        <div className="mt-3 flex gap-2">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-8 w-20 animate-pulse rounded-lg bg-gray-200" />
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-44 animate-pulse rounded-xl bg-gray-200" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ListingsPageContent() {
   const searchParams = useSearchParams();
 
   const [listings, setListings] = useState<ListingItem[]>([]);
+  const [premiumTop, setPremiumTop] = useState<ListingItem[]>([]);
+  const [recommendedTop, setRecommendedTop] = useState<ListingItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
@@ -104,13 +136,13 @@ export default function ListingsPage() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  const [activeTab, setActiveTab] = useState<TabType>("direct");
+  const [activeTab, setActiveTab] = useState<TabType>(searchParams.get("tab") === "franchise" ? "franchise" : "direct");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
   const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
 
-  const [diagnosisOnly, setDiagnosisOnly] = useState(false);
-  const [urgentOnly, setUrgentOnly] = useState(false);
+  const [diagnosisOnly, setDiagnosisOnly] = useState(searchParams.get("diagnosisOnly") === "true");
+  const [urgentOnly, setUrgentOnly] = useState(searchParams.get("urgentOnly") === "true");
 
   // Lock body scroll & hide footer for full-screen layout
   useEffect(() => {
@@ -137,20 +169,19 @@ export default function ListingsPage() {
     businessCategory: searchParams.get("businessCategory") ?? "",
     businessSubtype: searchParams.get("businessSubtype") ?? "",
     storeType: searchParams.get("storeType") ?? "",
-    city: "",
-    district: "",
-    totalCostMin: "",
-    totalCostMax: "",
-    monthlyProfitMin: "",
-    monthlyProfitMax: "",
-    floor: "",
-    areaMin: "",
-    areaMax: "",
-    theme: "",
-    revenueVerified: false,
-    trustedOnly: false,
-    sortBy: "createdAt",
-    sortOrder: "desc",
+    city: searchParams.get("city") ?? "",
+    district: searchParams.get("district") ?? "",
+    totalCostMin: searchParams.get("totalCostMin") ?? "",
+    totalCostMax: searchParams.get("totalCostMax") ?? "",
+    monthlyProfitMin: searchParams.get("monthlyProfitMin") ?? "",
+    monthlyProfitMax: searchParams.get("monthlyProfitMax") ?? "",
+    floor: searchParams.get("floor") ?? "",
+    areaMin: searchParams.get("areaMin") ?? "",
+    areaMax: searchParams.get("areaMax") ?? "",
+    theme: searchParams.get("theme") ?? "",
+    revenueVerified: searchParams.get("revenueVerified") === "true",
+    trustedOnly: searchParams.get("trustedOnly") === "true",
+    sort: searchParams.get("sort") ?? "rotation",
   });
 
   const debouncedBounds = useDebounce(mapBounds, 500);
@@ -173,6 +204,44 @@ export default function ListingsPage() {
     totalCostMin: filters.totalCostMin || undefined,
     totalCostMax: filters.totalCostMax || undefined,
   }), [filters, activeTab, diagnosisOnly]);
+
+  /* ---- isFiltered: any filter/search/tab active? ---- */
+  const isFiltered = useMemo(() => {
+    if (activeTab === "franchise") return true;
+    if (filters.query) return true;
+    if (filters.businessCategory || filters.businessSubtype) return true;
+    if (filters.storeType) return true;
+    if (filters.city || filters.district) return true;
+    if (filters.totalCostMin || filters.totalCostMax) return true;
+    if (filters.monthlyProfitMin || filters.monthlyProfitMax) return true;
+    if (filters.floor) return true;
+    if (filters.areaMin || filters.areaMax) return true;
+    if (filters.theme) return true;
+    if (filters.revenueVerified) return true;
+    if (filters.trustedOnly) return true;
+    if (filters.sort !== "rotation") return true;
+    if (diagnosisOnly) return true;
+    if (urgentOnly) return true;
+    return false;
+  }, [filters, activeTab, diagnosisOnly, urgentOnly]);
+
+  /* ---- Deduplicate: exclude premiumTop/recommended IDs from main list ---- */
+  const adIds = useMemo(() => {
+    const ids = new Set<string>();
+    premiumTop.forEach(l => ids.add(l.id));
+    recommendedTop.forEach(l => ids.add(l.id));
+    return ids;
+  }, [premiumTop, recommendedTop]);
+
+  const displayListings = useMemo(() => {
+    if (isFiltered || adIds.size === 0) return listings;
+    return listings.filter(l => !adIds.has(l.id));
+  }, [listings, isFiltered, adIds]);
+
+  const displayCount = useMemo(() => {
+    if (isFiltered) return totalCount;
+    return Math.max(0, totalCount - premiumTop.length - recommendedTop.length);
+  }, [totalCount, isFiltered, premiumTop.length, recommendedTop.length]);
 
   /* ---- Fetch ---- */
   const fetchListings = useCallback(
@@ -200,15 +269,9 @@ export default function ListingsPage() {
       if (filters.trustedOnly) params.set("trustedOnly", "true");
       if (diagnosisOnly) params.set("diagnosisOnly", "true");
       if (urgentOnly) params.set("urgentOnly", "true");
-      params.set("sortBy", filters.sortBy);
-      params.set("sortOrder", filters.sortOrder);
-      params.set("limit", "12");
-      if (debouncedBounds) {
-        params.set("swLat", String(debouncedBounds.swLat));
-        params.set("swLng", String(debouncedBounds.swLng));
-        params.set("neLat", String(debouncedBounds.neLat));
-        params.set("neLng", String(debouncedBounds.neLng));
-      }
+      if (filters.revenueVerified) params.set("safetyGrade", "A");
+      params.set("sort", filters.sort);
+      params.set("limit", "20");
       if (!reset && cursor) params.set("cursor", cursor);
 
       try {
@@ -216,10 +279,13 @@ export default function ListingsPage() {
         const json = await res.json();
         if (reset) {
           setListings(json.data ?? []);
+          setPremiumTop(json.premiumTop ?? []);
+          setRecommendedTop(json.recommended ?? []);
         } else {
           setListings((prev) => [...prev, ...(json.data ?? [])]);
+          // Don't update premiumTop/recommendedTop on scroll
         }
-        setCursor(json.meta?.cursor);
+        setCursor(json.meta?.nextCursor ?? json.meta?.cursor);
         setHasMore(json.meta?.hasMore ?? false);
         setTotalCount(json.meta?.total ?? json.data?.length ?? 0);
       } catch (e) {
@@ -229,7 +295,7 @@ export default function ListingsPage() {
         if (!controller.signal.aborted) setIsLoading(false);
       }
     },
-    [filters, cursor, activeTab, diagnosisOnly, urgentOnly, debouncedBounds]
+    [filters, cursor, activeTab, diagnosisOnly, urgentOnly]
   );
 
   useEffect(() => {
@@ -239,9 +305,8 @@ export default function ListingsPage() {
   }, [
     filters.businessCategory, filters.businessSubtype, filters.storeType, filters.city, filters.district,
     filters.totalCostMin, filters.totalCostMax, filters.monthlyProfitMin, filters.monthlyProfitMax, filters.floor,
-    filters.areaMin, filters.areaMax, filters.sortBy, filters.sortOrder,
+    filters.areaMin, filters.areaMax, filters.sort,
     filters.revenueVerified, filters.trustedOnly, activeTab, diagnosisOnly, urgentOnly,
-    debouncedBounds,
   ]);
 
   // Infinite scroll
@@ -255,6 +320,33 @@ export default function ListingsPage() {
     return () => observer.disconnect();
   }, [hasMore, isLoading, fetchListings]);
 
+  // URL query string sync
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filters.query) params.set("query", filters.query);
+    if (filters.businessCategory) params.set("businessCategory", filters.businessCategory);
+    if (filters.businessSubtype) params.set("businessSubtype", filters.businessSubtype);
+    if (filters.storeType) params.set("storeType", filters.storeType);
+    if (filters.city) params.set("city", filters.city);
+    if (filters.district) params.set("district", filters.district);
+    if (filters.totalCostMin) params.set("totalCostMin", filters.totalCostMin);
+    if (filters.totalCostMax) params.set("totalCostMax", filters.totalCostMax);
+    if (filters.monthlyProfitMin) params.set("monthlyProfitMin", filters.monthlyProfitMin);
+    if (filters.monthlyProfitMax) params.set("monthlyProfitMax", filters.monthlyProfitMax);
+    if (filters.floor) params.set("floor", filters.floor);
+    if (filters.areaMin) params.set("areaMin", filters.areaMin);
+    if (filters.areaMax) params.set("areaMax", filters.areaMax);
+    if (filters.theme) params.set("theme", filters.theme);
+    if (filters.revenueVerified) params.set("revenueVerified", "true");
+    if (filters.trustedOnly) params.set("trustedOnly", "true");
+    if (filters.sort !== "rotation") params.set("sort", filters.sort);
+    if (diagnosisOnly) params.set("diagnosisOnly", "true");
+    if (urgentOnly) params.set("urgentOnly", "true");
+    if (activeTab !== "direct") params.set("tab", activeTab);
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
+  }, [filters, activeTab, diagnosisOnly, urgentOnly]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCursor(undefined);
@@ -267,7 +359,7 @@ export default function ListingsPage() {
       city: "", district: "", totalCostMin: "", totalCostMax: "",
       monthlyProfitMin: "", monthlyProfitMax: "",
       floor: "", areaMin: "", areaMax: "", theme: "",
-      revenueVerified: false, trustedOnly: false, sortBy: "createdAt", sortOrder: "desc",
+      revenueVerified: false, trustedOnly: false, sort: "rotation",
     });
     setDiagnosisOnly(false);
     setUrgentOnly(false);
@@ -371,10 +463,9 @@ export default function ListingsPage() {
 
               {/* Sort */}
               <select
-                value={`${filters.sortBy}-${filters.sortOrder}`}
+                value={filters.sort}
                 onChange={(e) => {
-                  const [sortBy, sortOrder] = e.target.value.split("-");
-                  setFilters((f) => ({ ...f, sortBy, sortOrder }));
+                  setFilters((f) => ({ ...f, sort: e.target.value }));
                 }}
                 aria-label="정렬 기준"
                 className="shrink-0 appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-xs font-medium text-gray-600 outline-none focus:border-[#1B3A5C]"
@@ -616,7 +707,7 @@ export default function ListingsPage() {
           <div className="px-4 py-3">
             {/* Count */}
             <p className="mb-3 text-sm text-gray-500">
-              총 <span className="font-semibold text-[#1B3A5C]">{totalCount > 0 ? totalCount : listings.length}</span>건
+              총 <span className="font-semibold text-[#1B3A5C]">{displayCount}</span>건
             </p>
 
             {/* Loading skeleton */}
@@ -634,7 +725,7 @@ export default function ListingsPage() {
                   </div>
                 ))}
               </div>
-            ) : listings.length === 0 ? (
+            ) : displayListings.length === 0 && (isFiltered || (premiumTop.length === 0 && recommendedTop.length === 0)) ? (
               <div className="py-20 text-center">
                 <Store className="mx-auto h-12 w-12 text-gray-300" />
                 <p className="mt-4 text-lg font-medium text-gray-500">매물이 없습니다</p>
@@ -642,43 +733,44 @@ export default function ListingsPage() {
               </div>
             ) : (
               <>
-                {/* Premium listings */}
-                {(() => {
-                  const premium = listings.filter((l) => l.isPremium && l.premiumRank > 0);
-                  const normal = listings.filter((l) => !l.isPremium || l.premiumRank === 0);
-                  return (
-                    <>
-                      {premium.length > 0 && (
-                        <>
-                          <div className="mb-3 flex items-center gap-2">
-                            <span className="text-amber-500">&#9733;</span>
-                            <span className="text-sm font-bold text-gray-800">프리미엄 매물</span>
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{premium.length}</span>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {premium.map((listing) => (
-                              <ListingCardComponent key={listing.id} listing={listing} variant="search" />
-                            ))}
-                          </div>
-                        </>
-                      )}
-                      {premium.length > 0 && normal.length > 0 && (
-                        <div className="my-5 flex items-center gap-3">
-                          <div className="h-px flex-1 bg-gray-200" />
-                          <span className="text-xs font-medium text-gray-400">일반 매물</span>
-                          <div className="h-px flex-1 bg-gray-200" />
-                        </div>
-                      )}
-                      {normal.length > 0 && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {normal.map((listing) => (
-                            <ListingCardComponent key={listing.id} listing={listing} variant="search" />
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  );
-                })()}
+                {/* Premium Top Section — only when no filters active */}
+                {!isFiltered && premiumTop.length > 0 && (
+                  <div className="mb-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700">AD</span>
+                      <h3 className="text-sm font-semibold text-gray-700">프리미엄 매물</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {premiumTop.map((item) => (
+                        <ListingCardComponent key={item.id} listing={item as any} variant="search" showAdBadge />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recommended Section — only when no filters active */}
+                {!isFiltered && recommendedTop.length > 0 && (
+                  <div className="mb-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="rounded bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700">AD</span>
+                      <h3 className="text-sm font-semibold text-gray-700">오늘의 추천매물</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {recommendedTop.map((item) => (
+                        <ListingCardComponent key={item.id} listing={item as any} variant="search" showRecommendBadge />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Main listings grid */}
+                {displayListings.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {displayListings.map((listing) => (
+                      <ListingCardComponent key={listing.id} listing={listing} variant="search" />
+                    ))}
+                  </div>
+                )}
                 {hasMore && (
                   <div ref={sentinelRef} className="py-6 text-center">
                     {isLoading && <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#1B3A5C]" />}

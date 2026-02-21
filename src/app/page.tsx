@@ -177,10 +177,10 @@ export default function HomePage() {
     setLoadingPremium(true);
     setLoadingRecommended(true);
 
-    fetch("/api/homepage/listings").then(r => r.json()).catch(() => ({ premium: [], recommend: [] }))
+    fetch("/api/homepage/listings").then(r => r.json()).catch(() => ({ premiumTop: [], recommended: [] }))
       .then((listingsJ) => {
-        setPremiumListings((listingsJ.premium ?? []).map((l: RawListingResponse) => toCard(l)));
-        setRecommendedListings((listingsJ.recommend ?? []).map((l: RawListingResponse) => toCard(l)));
+        setPremiumListings((listingsJ.premiumTop ?? []).map((l: RawListingResponse) => toCard(l)));
+        setRecommendedListings((listingsJ.recommended ?? []).map((l: RawListingResponse) => toCard(l)));
       }).finally(() => { setLoadingPremium(false); setLoadingRecommended(false); });
   }, []);
 

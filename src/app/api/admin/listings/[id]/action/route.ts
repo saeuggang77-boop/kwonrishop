@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { errorToResponse } from "@/lib/utils/errors";
 import { serializeBigInt } from "@/lib/utils/bigint-json";
 import { createNotification } from "@/lib/notifications/create";
+import { assignExposureOrder } from "@/lib/utils/rotation-queue";
 import type { AdminActionType } from "@prisma/client";
 
 export async function POST(
@@ -61,7 +62,7 @@ export async function POST(
       case "FEATURE":
         const currentListing = await prisma.listing.findUnique({
           where: { id },
-          select: { isFeatured: true },
+          select: { isRecommended: true },
         });
         if (!currentListing) {
           return Response.json(
@@ -69,11 +70,20 @@ export async function POST(
             { status: 404 }
           );
         }
+
+        const willBeRecommended = !currentListing.isRecommended;
+        const recommendExposureOrder = willBeRecommended
+          ? await assignExposureOrder("recommend")
+          : 0;
+
         listing = await prisma.listing.update({
           where: { id },
-          data: { isFeatured: !currentListing.isFeatured },
+          data: {
+            isRecommended: willBeRecommended,
+            recommendExposureOrder,
+          },
         });
-        adminAction = currentListing.isFeatured
+        adminAction = currentListing.isRecommended
           ? "HIDE_LISTING"
           : "RESTORE_LISTING";
         break;

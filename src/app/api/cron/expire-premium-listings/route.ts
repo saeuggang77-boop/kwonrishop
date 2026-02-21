@@ -39,7 +39,13 @@ export async function POST(req: NextRequest) {
       }),
       prisma.listing.updateMany({
         where: { id: { in: listingIds } },
-        data: { isPremium: false, premiumRank: 0 },
+        data: {
+          isPremium: false,
+          premiumRank: 0,
+          isRecommended: false,
+          premiumExposureOrder: 0,
+          recommendExposureOrder: 0,
+        },
       }),
     ]);
 

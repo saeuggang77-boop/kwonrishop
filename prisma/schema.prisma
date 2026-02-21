@@ -363,8 +363,12 @@ model Listing {
   safetyGrade      SafetyGrade?
   safetyComment    String?          // 등급 판정 요약
   isPremium        Boolean          @default(false)
+  isRecommended    Boolean          @default(false)
   hasDiagnosisBadge Boolean         @default(false)
   premiumRank      Int              @default(0)
+  premiumExposureOrder  Int         @default(0)
+  recommendExposureOrder Int        @default(0)
+  listingExposureOrder  Int         @default(0)
   viewCount        Int              @default(0)
   inquiryCount     Int              @default(0)
   likeCount        Int              @default(0)
