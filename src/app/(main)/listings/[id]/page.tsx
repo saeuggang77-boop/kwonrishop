@@ -460,7 +460,7 @@ export default async function ListingDetailPage({
                 {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) && (
                   <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                     <PriceCard emoji="📊" label="월매출" value={numMonthlyRevenue > 0 ? formatKRW(numMonthlyRevenue) : null} color="text-green-600" />
-                    <PriceCard emoji="💵" label="월수익" value={numMonthlyProfit > 0 ? formatKRW(numMonthlyProfit) : null} color="text-green-600" />
+                    <PriceCard emoji="💵" label="월순이익" value={numMonthlyProfit > 0 ? formatKRW(numMonthlyProfit) : null} color="text-green-600" />
                   </div>
                 )}
               </div>
@@ -717,7 +717,7 @@ export default async function ListingDetailPage({
                         <CostRow label="기타비용 (추정)" value={otherCost} />
                         <div className="flex items-center justify-between bg-purple/5 px-6 py-3">
                           <span className="text-sm font-bold text-navy">
-                            월 순수익
+                            월순이익
                           </span>
                           <span className="text-base font-bold text-purple">
                             {formatKRW(numMonthlyProfit)}
@@ -781,7 +781,7 @@ export default async function ListingDetailPage({
                             {annualROI.toFixed(1)}%
                           </p>
                           <p className="mt-1 text-[11px] text-gray-400">
-                            (월수익 × 12) ÷ (보증금 + 권리금) × 100
+                            (월순이익 × 12) ÷ (보증금 + 권리금) × 100
                           </p>
                         </div>
                       )}

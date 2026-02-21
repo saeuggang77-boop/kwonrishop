@@ -297,7 +297,7 @@ export const SORT_OPTIONS = [
   { value: "favoriteCount-desc", label: "좋아요 많은순" },
   { value: "price-asc", label: "투자금 낮은순" },
   { value: "monthlyRevenue-desc", label: "월매출 높은순" },
-  { value: "monthlyProfit-desc", label: "월수익 높은순" },
+  { value: "monthlyProfit-desc", label: "월순이익 높은순" },
 ] as const;
 
 export const REGIONS: Record<string, string[]> = {

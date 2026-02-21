@@ -154,7 +154,7 @@ export function RevenueGradeMessage({ grade, monthlyRevenue, monthlyProfit }: {
         <p className="mt-1 text-lg font-bold text-gray-800">{formatValue(monthlyRevenue)}</p>
       </div>
       <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center">
-        <p className="text-xs text-gray-500">월수익</p>
+        <p className="text-xs text-gray-500">월순이익</p>
         <p className="mt-1 text-lg font-bold text-gray-800">{formatValue(monthlyProfit)}</p>
       </div>
     </div>

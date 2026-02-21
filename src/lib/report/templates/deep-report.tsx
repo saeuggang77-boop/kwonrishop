@@ -272,7 +272,7 @@ export function DeepReportDocument({ data }: { data: ReportData }) {
         )}
         {listing.monthlyProfit && (
           <View style={styles.row}>
-            <Text style={styles.label}>월수익</Text>
+            <Text style={styles.label}>월순이익</Text>
             <Text style={styles.value}>{formatPrice(listing.monthlyProfit)}</Text>
           </View>
         )}

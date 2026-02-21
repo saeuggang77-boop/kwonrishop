@@ -509,7 +509,7 @@ export default function HomePage() {
                       <p className="text-sm font-bold text-navy">1.2억</p>
                     </div>
                     <div className="rounded-lg bg-amber-50 p-2.5 text-center">
-                      <p className="text-[9px] text-gray-500">예상 월수익</p>
+                      <p className="text-[9px] text-gray-500">예상 월순이익</p>
                       <p className="text-sm font-bold text-accent-dark">850만</p>
                     </div>
                     <div className="rounded-lg bg-navy/5 p-2.5 text-center">
@@ -545,7 +545,7 @@ export default function HomePage() {
                       <p className="mt-1 text-lg font-bold text-navy">1.2억</p>
                     </div>
                     <div className="rounded-lg bg-[#FEF3C7] p-3 text-center">
-                      <p className="text-[10px] text-gray-500">예상 월수익</p>
+                      <p className="text-[10px] text-gray-500">예상 월순이익</p>
                       <p className="mt-1 text-lg font-bold text-accent-dark">850만</p>
                     </div>
                     <div className="rounded-lg bg-[#E8F0FE] p-3 text-center">

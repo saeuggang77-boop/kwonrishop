@@ -1169,7 +1169,7 @@ function Step4Additional({
 
       {/* Net Profit (auto) */}
       <div>
-        <SectionLabel>월 순수익 (자동 계산)</SectionLabel>
+        <SectionLabel>월순이익 (자동 계산)</SectionLabel>
         <div className={`rounded-xl border px-4 py-3.5 ${netProfit >= 0 ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
           <span className={`text-lg font-bold ${netProfit >= 0 ? "text-green-600" : "text-red-600"}`}>
             {netProfit !== 0 ? formatManwon(String(Math.abs(netProfit))) : "—"}

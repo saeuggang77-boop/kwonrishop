@@ -530,7 +530,7 @@ export default function ListingsPage() {
                 )}
                 {openFilter === "profit" && (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">월수익</p>
+                    <p className="text-sm font-medium text-gray-700">월순이익</p>
                     <div className="flex flex-wrap gap-2">
                       {MONTHLY_PROFIT_OPTIONS.map((opt) => {
                         const isActive = filters.monthlyProfitMin === opt.min && filters.monthlyProfitMax === opt.max;

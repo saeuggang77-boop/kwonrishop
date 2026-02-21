@@ -216,7 +216,7 @@ function PremiumCard({ listing, isCarouselItem, priority = false }: { listing: L
           <p className="text-xs text-gray-500">
             {hasRevenue && <>월매출 {price(Number(listing.monthlyRevenue))}</>}
             {hasRevenue && hasProfit && <span className="mx-1 text-gray-300">|</span>}
-            {hasProfit && <>월수익 {price(Number(listing.monthlyProfit))}</>}
+            {hasProfit && <>월순이익 {price(Number(listing.monthlyProfit))}</>}
           </p>
         )}
         {badges.length > 0 && (
@@ -280,7 +280,7 @@ function RecommendCard({ listing, isCarouselItem, priority = false }: { listing:
           <p className="text-xs text-gray-500">
             {hasRevenue && <>월매출 {price(Number(listing.monthlyRevenue))}</>}
             {hasRevenue && hasProfit && <span className="mx-0.5 text-gray-300">|</span>}
-            {hasProfit && <>월수익 {price(Number(listing.monthlyProfit))}</>}
+            {hasProfit && <>월순이익 {price(Number(listing.monthlyProfit))}</>}
           </p>
         )}
         {badges.length > 0 && (
@@ -398,7 +398,7 @@ function SearchCard({ listing }: { listing: ListingCardData }) {
             {hasProfit && (
               <p className="flex items-center gap-1 text-xs">
                 <span className="text-green-500">💰</span>
-                <span className="text-gray-500">월수익</span>
+                <span className="text-gray-500">월순이익</span>
                 <span className="font-semibold text-green-600">{price(Number(listing.monthlyProfit))}</span>
               </p>
             )}

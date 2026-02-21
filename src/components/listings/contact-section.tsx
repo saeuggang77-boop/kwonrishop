@@ -23,7 +23,7 @@ export function ContactSection({
 
   const showPhone = isPhonePublic && contactPhone;
   const showEmail = !!contactEmail;
-  const hasAnyContact = showPhone || showEmail;
+  const hasPhone = !!contactPhone;
 
   return (
     <>
@@ -43,6 +43,12 @@ export function ContactSection({
             </a>
           )}
 
+          {!showPhone && hasPhone && (
+            <p className="text-center text-sm text-gray-500">
+              연락처가 비공개입니다. 아래 문의하기를 이용해주세요.
+            </p>
+          )}
+
           {showEmail && (
             <a
               href={`mailto:${contactEmail}`}
@@ -53,7 +59,7 @@ export function ContactSection({
             </a>
           )}
 
-          {!hasAnyContact && (
+          {!hasPhone && !showEmail && (
             <p className="text-center text-sm text-gray-500">
               연락처가 등록되지 않았습니다.
             </p>

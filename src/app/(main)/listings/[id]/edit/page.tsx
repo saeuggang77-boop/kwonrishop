@@ -195,7 +195,7 @@ export default function EditListingPage() {
               <input type="number" value={form.monthlyRevenue} onChange={(e) => update("monthlyRevenue", e.target.value)} className="input-field" />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">월수익 (원)</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">월순이익 (원)</label>
               <input type="number" value={form.monthlyProfit} onChange={(e) => update("monthlyProfit", e.target.value)} className="input-field" />
             </div>
           </div>

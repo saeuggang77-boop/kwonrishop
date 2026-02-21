@@ -289,7 +289,7 @@ export default function ComparePage() {
             })}
           </CompareRow>
 
-          <CompareRow label="월수익" gridCols={gridCols} highlight>
+          <CompareRow label="월순이익" gridCols={gridCols} highlight>
             {displayItems.map((item) => {
               const v = numVal(item.monthlyProfit);
               return (
@@ -348,7 +348,7 @@ export default function ComparePage() {
           <div className="rounded-xl border border-gray-200 bg-white p-5">
             <h3 className="text-sm font-bold text-navy">수익 비교</h3>
             <BarChart items={displayItems} getter={(i) => numVal(i.monthlyRevenue)} label="월매출" />
-            <BarChart items={displayItems} getter={(i) => numVal(i.monthlyProfit)} label="월수익" />
+            <BarChart items={displayItems} getter={(i) => numVal(i.monthlyProfit)} label="월순이익" />
           </div>
         </div>
       </div>
