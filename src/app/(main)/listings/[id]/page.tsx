@@ -13,6 +13,7 @@ import { ContactSection } from "@/components/listings/contact-section";
 import { formatKRW, formatDateKR, formatNumber } from "@/lib/utils/format";
 import {
   BUSINESS_CATEGORY_LABELS,
+  BUSINESS_CATEGORY_GROUPS,
   STORE_TYPE_LABELS,
   LISTING_STATUS_LABELS,
   SAFETY_GRADE_CONFIG,
@@ -74,6 +75,11 @@ const getListingPublicData = unstable_cache(
     const listingData = await prisma.listing.findUnique({ where: { id: listingId } });
     if (!listingData || listingData.status === "DELETED") return null;
 
+    // 같은 대분류(categoryGroup) 업종 목록
+    const categoryGroupCats = (Object.values(BUSINESS_CATEGORY_GROUPS).find(
+      (cats) => cats.includes(listingData.businessCategory),
+    ) ?? [listingData.businessCategory]) as typeof listingData.businessCategory[];
+
     const [images, seller, marketPriceRaw, recommendedExperts, districtListingsRaw, categoryListingsRaw, diagnosisReportRaw] =
       await Promise.all([
         prisma.listingImage.findMany({
@@ -107,11 +113,12 @@ const getListingPublicData = unstable_cache(
           ],
           take: 3,
         }),
+        // 이 지역 유사 매물: 같은 시 전체 (같은 구 우선, 프리미엄/추천 우선)
         prisma.listing.findMany({
           where: {
             id: { not: listingId },
             status: "ACTIVE",
-            district: listingData.district,
+            city: listingData.city,
           },
           select: {
             id: true,
@@ -123,17 +130,18 @@ const getListingPublicData = unstable_cache(
             premiumFee: true,
             monthlyRent: true,
             safetyGrade: true,
+            premiumRank: true,
             images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true, thumbnailUrl: true } },
           },
-          orderBy: { viewCount: "desc" },
-          take: 8,
+          orderBy: [{ premiumRank: "desc" }, { viewCount: "desc" }],
+          take: 20,
         }),
+        // 같은 업종 추천 매물: 같은 대분류 전체 (같은 소분류 우선, 프리미엄/추천 우선)
         prisma.listing.findMany({
           where: {
             id: { not: listingId },
             status: "ACTIVE",
-            businessCategory: listingData.businessCategory,
-            district: { not: listingData.district },
+            businessCategory: { in: categoryGroupCats },
           },
           select: {
             id: true,
@@ -145,10 +153,11 @@ const getListingPublicData = unstable_cache(
             premiumFee: true,
             monthlyRent: true,
             safetyGrade: true,
+            premiumRank: true,
             images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true, thumbnailUrl: true } },
           },
-          orderBy: { viewCount: "desc" },
-          take: 8,
+          orderBy: [{ premiumRank: "desc" }, { viewCount: "desc" }],
+          take: 20,
         }),
         prisma.diagnosisReport.findUnique({
           where: { listingId },
@@ -232,6 +241,31 @@ export default async function ListingDetailPage({
   const marketPrice = toSerializable(marketPriceRaw);
   const districtListings = toSerializable(districtListingsRaw);
   const categoryListings = toSerializable(categoryListingsRaw);
+
+  // Priority-sorted display arrays (max 4 each)
+  const districtDisplay = (() => {
+    const getPriority = (l: (typeof districtListings)[number]) => {
+      const sameDistrict = l.district === listingData.district;
+      const isPremium = (l.premiumRank ?? 0) >= 2;
+      if (sameDistrict && isPremium) return 0;
+      if (sameDistrict) return 1;
+      if (isPremium) return 2;
+      return 3;
+    };
+    return [...districtListings].sort((a, b) => getPriority(a) - getPriority(b)).slice(0, 4);
+  })();
+
+  const categoryDisplay = (() => {
+    const getPriority = (l: (typeof categoryListings)[number]) => {
+      const sameCat = l.businessCategory === listingData.businessCategory;
+      const isPremium = (l.premiumRank ?? 0) >= 2;
+      if (sameCat && isPremium) return 0;
+      if (sameCat) return 1;
+      if (isPremium) return 2;
+      return 3;
+    };
+    return [...categoryListings].sort((a, b) => getPriority(a) - getPriority(b)).slice(0, 4);
+  })();
   const diagnosisReport = toSerializable(diagnosisReportRaw);
 
   const listing = { ...toSerializable(listingData), images, seller };
@@ -1240,7 +1274,7 @@ export default async function ListingDetailPage({
       </div>
 
       {/* ===== District Similar Listings ===== */}
-      {districtListings.length > 0 && (
+      {districtDisplay.length > 0 && (
         <div className="mt-16 border-t border-gray-200 pt-8">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-navy">이 지역 유사 매물</h2>
@@ -1253,7 +1287,7 @@ export default async function ListingDetailPage({
             </Link>
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {districtListings.slice(0, 4).map((sl) => (
+            {districtDisplay.map((sl) => (
               <SimilarListingCard key={sl.id} sl={sl} />
             ))}
           </div>
@@ -1261,7 +1295,7 @@ export default async function ListingDetailPage({
       )}
 
       {/* ===== Category Similar Listings ===== */}
-      {categoryListings.length > 0 && (
+      {categoryDisplay.length > 0 && (
         <div className="mt-8 border-t border-gray-200 pt-8">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-navy">같은 업종 추천 매물</h2>
@@ -1274,7 +1308,7 @@ export default async function ListingDetailPage({
             </Link>
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {categoryListings.slice(0, 4).map((sl) => (
+            {categoryDisplay.map((sl) => (
               <SimilarListingCard key={sl.id} sl={sl} />
             ))}
           </div>
@@ -1307,15 +1341,22 @@ const SIMILAR_GRADE_MAP: Record<string, { label: string; color: string; bg: stri
   D: { label: "C등급", color: "text-amber-700", bg: "bg-amber-100" },
 };
 
-function SimilarListingCard({ sl }: { sl: { id: string; title: string; businessCategory: string; city: string; district: string; price: number | bigint; premiumFee?: number | bigint | null; safetyGrade?: string | null; images: { url: string; thumbnailUrl?: string | null }[] } }) {
+function SimilarListingCard({ sl }: { sl: { id: string; title: string; businessCategory: string; city: string; district: string; price: number | bigint; premiumFee?: number | bigint | null; safetyGrade?: string | null; premiumRank?: number | null; images: { url: string; thumbnailUrl?: string | null }[] } }) {
   const thumb = sl.images[0]?.thumbnailUrl ?? sl.images[0]?.url ?? null;
   const catInfo = SIMILAR_CAT_MAP[sl.businessCategory] ?? { gradient: "from-gray-600/70 to-gray-400/50", icon: "🏠" };
   const gradeConfig = sl.safetyGrade ? SIMILAR_GRADE_MAP[sl.safetyGrade] ?? null : null;
+  const rank = sl.premiumRank ?? 0;
 
   return (
     <Link
       href={`/listings/${sl.id}`}
-      className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md"
+      className={`group overflow-hidden rounded-xl border bg-white transition-shadow hover:shadow-md ${
+        rank === 3
+          ? "border-amber-300 ring-1 ring-amber-200"
+          : rank === 2
+            ? "border-emerald-300 ring-1 ring-emerald-200"
+            : "border-gray-200"
+      }`}
     >
       <div className="relative aspect-[4/3] bg-gray-100">
         {thumb ? (
@@ -1334,6 +1375,16 @@ function SimilarListingCard({ sl }: { sl: { id: string; title: string; businessC
         <span className="absolute left-2 top-2 rounded bg-navy/80 px-2 py-0.5 text-[11px] font-medium text-white">
           {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ?? sl.businessCategory}
         </span>
+        {rank === 3 && (
+          <span className="absolute left-2 bottom-2 rounded bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white shadow">
+            AD
+          </span>
+        )}
+        {rank === 2 && (
+          <span className="absolute left-2 bottom-2 rounded bg-emerald-500 px-1.5 py-0.5 text-[10px] font-bold text-white shadow">
+            오늘의추천
+          </span>
+        )}
         {gradeConfig && (
           <span className={`absolute right-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold ${gradeConfig.bg} ${gradeConfig.color}`}>
             {gradeConfig.label}

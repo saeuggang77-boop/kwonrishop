@@ -262,50 +262,6 @@ export default function PricingPage() {
             </div>
           </section>
 
-          {/* ── 노출 구조 안내 ── */}
-          <section>
-            <h2 className="flex items-center gap-2 text-lg font-bold text-[#1B3A5C]">
-              <BarChart3 className="h-5 w-5 text-indigo-500" />
-              점포찾기 노출 구조
-            </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              점포찾기 페이지에서 매물이 어떤 순서로 표시되는지 안내합니다
-            </p>
-            <div className="mt-5 space-y-3">
-              <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">1</span>
-                <div>
-                  <p className="text-sm font-semibold text-amber-800">프리미엄 매물</p>
-                  <p className="text-xs text-amber-600">VIP 광고 매물 2개 — 골드 테두리 + 로테이션 노출</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">2</span>
-                <div>
-                  <p className="text-sm font-semibold text-blue-800">오늘의 추천매물</p>
-                  <p className="text-xs text-blue-600">추천 광고 매물 2개 — 그린 테두리 + 로테이션 노출</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white">3</span>
-                <div>
-                  <p className="text-sm font-semibold text-indigo-800">점프업 매물</p>
-                  <p className="text-xs text-indigo-600">점프업 구매 매물 2개 — 24시간 상단 고정 + 로테이션 노출</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-500 text-xs font-bold text-white">4</span>
-                <div>
-                  <p className="text-sm font-semibold text-gray-700">일반 매물</p>
-                  <p className="text-xs text-gray-500">전체 매물 무한스크롤 — 공평 로테이션 순서</p>
-                </div>
-              </div>
-            </div>
-            <p className="mt-3 text-xs text-gray-400">
-              * 필터 사용 시 1~3열은 숨겨지고, 필터 결과만 표시됩니다.
-            </p>
-          </section>
-
           {/* ── 매도자 무료 등록 배너 ── */}
           <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-4 text-center">
             <div className="flex items-center justify-center gap-2">
