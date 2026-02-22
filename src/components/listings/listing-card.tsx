@@ -44,6 +44,9 @@ export interface ListingCardData {
   likeCount?: number;
   isJumpUp?: boolean;
   urgentTag?: { active: boolean; reason: string | null } | null;
+  goodwillPremium?: number | null;
+  facilityPremium?: number | null;
+  floorPremium?: number | null;
   createdAt?: string;
 }
 
@@ -153,9 +156,14 @@ function buildBadges(listing: ListingCardData, compact: boolean) {
   const hasSales = listing.safetyGrade === "A";
   const hasDiag = listing.hasDiagnosisBadge;
 
+  if (listing.urgentTag?.active) badges.push({ label: "급매", cls: "bg-red-100 text-red-700" });
   if (hasSales) badges.push({ label: compact ? "매출인증 ✓" : "매출인증 ✓", cls: "bg-green-100 text-green-700" });
   if (hasDiag) badges.push({ label: compact ? "권리진단 ◎" : "권리진단 ◎", cls: "bg-purple-100 text-purple-700" });
   if (hasSales && hasDiag) badges.push({ label: "안심거래 🛡", cls: "bg-blue-100 text-blue-700" });
+  const hasBreakdown = (listing.goodwillPremium != null && listing.goodwillPremium > 0) ||
+    (listing.facilityPremium != null && listing.facilityPremium > 0) ||
+    (listing.floorPremium != null && listing.floorPremium > 0);
+  if (hasBreakdown) badges.push({ label: "세부내역", cls: "bg-orange-100 text-orange-700" });
 
   return badges;
 }

@@ -37,6 +37,7 @@ import { DiagnosisSummaryCard, DiagnosisCTACard } from "@/components/listings/di
 import { PaywallOverlay } from "@/components/listings/paywall-overlay";
 import { auth } from "@/lib/auth";
 import { ListingLocationSectionSafe as ListingLocationSection } from "./listing-location-section";
+import { PremiumOfferSection } from "./premium-offer-section";
 
 /** Recursively convert all BigInt values to Number to prevent RSC serialization errors */
 function toSerializable<T>(obj: T): T {
@@ -499,6 +500,74 @@ export default async function ListingDetailPage({
                 )}
               </div>
             </div>
+
+            {/* 권리금 산정에 대한 설명 (셀러 입력) */}
+            {(listing.goodwillPremium || listing.facilityPremium || listing.floorPremium) && (
+              <div className="mt-4 overflow-hidden rounded-xl border-l-4 border-purple bg-purple-50">
+                <div className="px-5 py-4">
+                  <h3 className="text-sm font-bold text-purple">&#128203; 권리금 산정에 대한 설명</h3>
+                  <div className="mt-3 space-y-3">
+                    {listing.goodwillPremium != null && listing.goodwillPremium > 0 && (
+                      <div>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-sm font-medium text-gray-700">영업권리금</span>
+                          <span className="text-sm font-bold text-purple">{listing.goodwillPremium.toLocaleString()}만원</span>
+                        </div>
+                        {listing.goodwillPremiumDesc && (
+                          <p className="mt-1 whitespace-pre-line text-sm text-gray-600">{listing.goodwillPremiumDesc}</p>
+                        )}
+                      </div>
+                    )}
+                    {listing.facilityPremium != null && listing.facilityPremium > 0 && (
+                      <div>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-sm font-medium text-gray-700">시설권리금</span>
+                          <span className="text-sm font-bold text-purple">{listing.facilityPremium.toLocaleString()}만원</span>
+                        </div>
+                        {listing.facilityPremiumDesc && (
+                          <p className="mt-1 whitespace-pre-line text-sm text-gray-600">{listing.facilityPremiumDesc}</p>
+                        )}
+                      </div>
+                    )}
+                    {listing.floorPremium != null && listing.floorPremium > 0 && (
+                      <div>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-sm font-medium text-gray-700">바닥권리금</span>
+                          <span className="text-sm font-bold text-purple">{listing.floorPremium.toLocaleString()}만원</span>
+                        </div>
+                        {listing.floorPremiumDesc && (
+                          <p className="mt-1 whitespace-pre-line text-sm text-gray-600">{listing.floorPremiumDesc}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {/* 합계 */}
+                  <div className="mt-3 border-t border-purple/20 pt-3 text-right">
+                    <span className="text-sm text-gray-500">합계 </span>
+                    <span className="text-sm font-bold text-purple">
+                      {((listing.goodwillPremium ?? 0) + (listing.facilityPremium ?? 0) + (listing.floorPremium ?? 0)).toLocaleString()}만원
+                    </span>
+                  </div>
+                  {/* 진단서 적정 권리금 비교 */}
+                  {diagnosisReport && (
+                    <div className="mt-2 rounded-lg bg-white/80 px-3 py-2 text-right">
+                      <span className="text-xs text-gray-500">권리진단서 적정 권리금: </span>
+                      <span className="text-xs font-bold text-blue-600">
+                        {formatKRW(diagnosisReport.fairPremiumBusiness + diagnosisReport.fairPremiumFacility + diagnosisReport.fairPremiumFloor)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 권리금 제안하기 */}
+            <PremiumOfferSection
+              listingId={id}
+              sellerId={listing.sellerId}
+              userId={userId ?? null}
+              premiumFee={Math.round(numPremiumFee / 10000)}
+            />
 
             {/* Revenue Quick Summary: 월매출, 월순이익, 투자회수 */}
             {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) && (

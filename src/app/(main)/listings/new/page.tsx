@@ -17,6 +17,7 @@ import {
 import { ImageUploader } from "@/components/listings/image-uploader";
 import { useToast } from "@/components/ui/toast";
 import { calculateSafetyGrade } from "@/lib/utils/safety-grade";
+import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
 
 /* ─── Constants ─── */
 
@@ -51,6 +52,8 @@ const STEP_ICON_COMPONENTS = [MapPin, Store, ClipboardList, Coins, PenLine, Came
 
 interface DaumPostcodeResult {
   address: string;
+  roadAddress: string;
+  jibunAddress: string;
   zonecode: string;
   sido: string;
   sigungu: string;
@@ -59,6 +62,7 @@ interface DaumPostcodeResult {
 
 interface DaumPostcodeInstance {
   open(): void;
+  embed(element: HTMLElement): void;
 }
 
 interface DaumPostcodeConstructor {
@@ -72,6 +76,7 @@ interface DaumNamespace {
 declare global {
   interface Window {
     daum?: DaumNamespace;
+    kakao?: any;
   }
 }
 
@@ -85,6 +90,8 @@ interface FormData {
   district: string;
   neighborhood: string;
   fairTradeAgreed: boolean;
+  latitude: number | null;
+  longitude: number | null;
   // Step 2
   categoryGroup: string;
   businessCategory: string;
@@ -145,7 +152,7 @@ interface FormData {
 }
 
 const initialForm: FormData = {
-  address: "", addressDetail: "", city: "", district: "", neighborhood: "", fairTradeAgreed: false,
+  address: "", addressDetail: "", city: "", district: "", neighborhood: "", fairTradeAgreed: false, latitude: null, longitude: null,
   categoryGroup: "", businessCategory: "", businessSubtype: "", deposit: "", monthlyRent: "",
   premiumFee: "", noPremium: false, premiumNegotiable: false,
   goodwillPremium: "", goodwillPremiumDesc: "", goodwillPremiumEnabled: false,
@@ -323,13 +330,25 @@ export default function NewListingPage() {
       };
 
       if (form.monthlyRent) body.monthlyRent = toWon(form.monthlyRent);
-      if (!form.noPremium && form.premiumFee) body.premiumFee = toWon(form.premiumFee);
+      if (!form.noPremium && form.premiumFee) {
+        body.premiumFee = toWon(form.premiumFee);
+        if (form.goodwillPremium) body.goodwillPremium = Number(form.goodwillPremium);
+        if (form.goodwillPremiumDesc) body.goodwillPremiumDesc = form.goodwillPremiumDesc;
+        if (form.facilityPremium) body.facilityPremium = Number(form.facilityPremium);
+        if (form.facilityPremiumDesc) body.facilityPremiumDesc = form.facilityPremiumDesc;
+        if (form.floorPremium) body.floorPremium = Number(form.floorPremium);
+        if (form.floorPremiumDesc) body.floorPremiumDesc = form.floorPremiumDesc;
+      }
       if (form.managementFee) body.managementFee = toWon(form.managementFee);
       if (form.monthlyRevenue) body.monthlyRevenue = toWon(form.monthlyRevenue);
       if (netProfit) body.monthlyProfit = netProfit * 10000;
       if (form.businessSubtype) body.businessSubtype = form.businessSubtype;
       if (form.addressDetail) body.addressDetail = form.addressDetail;
       if (form.neighborhood) body.neighborhood = form.neighborhood;
+      if (form.latitude != null && form.longitude != null) {
+        body.latitude = form.latitude;
+        body.longitude = form.longitude;
+      }
       if (form.areaPyeong) body.areaM2 = Number((Number(form.areaPyeong) * 3.306).toFixed(1));
       if (form.floor) body.floor = FLOOR_CHOICES.indexOf(form.floor as typeof FLOOR_CHOICES[number]);
       if (form.operatingYears) body.operatingYears = Number(form.operatingYears);
@@ -522,19 +541,17 @@ export default function NewListingPage() {
    STEP 1: 위치정보
    ═══════════════════════════════════════════════════ */
 
-function openDaumPostcode(onComplete: (data: DaumPostcodeResult) => void) {
-  const script = document.querySelector<HTMLScriptElement>('script[src*="postcode"]');
-  const run = () => {
-    if (!window.daum) return;
-    new window.daum.Postcode({
-      oncomplete: onComplete,
-    }).open();
-  };
-  if (script) { run(); return; }
-  const s = document.createElement("script");
-  s.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
-  s.onload = run;
-  document.head.appendChild(s);
+function loadDaumPostcodeScript(): Promise<void> {
+  return new Promise((resolve) => {
+    if (document.querySelector<HTMLScriptElement>('script[src*="postcode"]')) {
+      resolve();
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    s.onload = () => resolve();
+    document.head.appendChild(s);
+  });
 }
 
 function Step1Location({
@@ -546,12 +563,45 @@ function Step1Location({
   showFairTradeModal: boolean;
   setShowFairTradeModal: (v: boolean) => void;
 }) {
-  const handleAddressSearch = () => {
-    openDaumPostcode((data) => {
-      update("address", data.address);
-      update("city", data.sido);
-      update("district", data.sigungu);
-      update("neighborhood", data.bname);
+  const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+  const [sdkLoading] = useKakaoLoader({ appkey: KEY ?? "", libraries: ["services"] });
+
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    form.latitude != null && form.longitude != null ? { lat: form.latitude, lng: form.longitude } : null
+  );
+  const [showPostcode, setShowPostcode] = useState(false);
+  const postcodeRef = useRef<HTMLDivElement>(null);
+
+  const handleAddressSearch = async () => {
+    setShowPostcode(true);
+    await loadDaumPostcodeScript();
+    // Wait for the ref container to render
+    requestAnimationFrame(() => {
+      if (!window.daum || !postcodeRef.current) return;
+      new window.daum.Postcode({
+        oncomplete: (data: DaumPostcodeResult) => {
+          setShowPostcode(false);
+          update("address", data.roadAddress || data.jibunAddress || data.address);
+          update("city", data.sido);
+          update("district", data.sigungu);
+          update("neighborhood", data.bname);
+
+          // Geocode using roadAddress for accurate coordinates
+          const geocodeAddr = data.roadAddress || data.jibunAddress || data.address;
+          if (!sdkLoading && window.kakao?.maps?.services) {
+            const geocoder = new window.kakao.maps.services.Geocoder();
+            geocoder.addressSearch(geocodeAddr, (result: any[], status: any) => {
+              if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+                const lat = parseFloat(result[0].y);
+                const lng = parseFloat(result[0].x);
+                setCoords({ lat, lng });
+                update("latitude", lat);
+                update("longitude", lng);
+              }
+            });
+          }
+        },
+      }).embed(postcodeRef.current);
     });
   };
 
@@ -570,46 +620,54 @@ function Step1Location({
         </button>
       </div>
 
-      {/* Map Placeholder */}
-      <div className="flex h-44 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50">
-        <div className="text-center text-gray-400">
-          <MapPin className="mx-auto mb-2 h-8 w-8" />
-          <p className="text-sm">주소를 검색하면 지도가 표시됩니다</p>
+      {/* Daum Postcode Embed / Map / Placeholder */}
+      {showPostcode ? (
+        <div
+          ref={postcodeRef}
+          className="h-96 overflow-hidden rounded-xl border border-gray-200"
+        />
+      ) : coords ? (
+        <div className="h-52 overflow-hidden rounded-xl border border-gray-200">
+          <Map center={coords} style={{ width: "100%", height: "100%" }} level={3}>
+            <MapMarker position={coords} />
+          </Map>
         </div>
-      </div>
+      ) : (
+        <div className="flex h-44 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50">
+          <div className="text-center text-gray-400">
+            <MapPin className="mx-auto mb-2 h-8 w-8" />
+            <p className="text-sm">주소를 검색하면 지도가 표시됩니다</p>
+          </div>
+        </div>
+      )}
 
-      {/* Region Selects */}
+      {/* Region (auto-filled from address search, read-only) */}
       <div className="grid grid-cols-3 gap-3">
         <div>
           <SectionLabel>시/도</SectionLabel>
-          <select
+          <input
             value={form.city}
-            onChange={(e) => { update("city", e.target.value); update("district", ""); }}
-            className="step-select"
-          >
-            <option value="">선택</option>
-            {REGION_KEYS.map((r) => <option key={r} value={r}>{r}</option>)}
-          </select>
+            readOnly
+            placeholder="주소 검색 시 자동입력"
+            className="step-input bg-gray-100 text-gray-600 cursor-not-allowed"
+          />
         </div>
         <div>
           <SectionLabel>시/군/구</SectionLabel>
-          <select
+          <input
             value={form.district}
-            onChange={(e) => update("district", e.target.value)}
-            disabled={!form.city}
-            className="step-select disabled:bg-gray-100"
-          >
-            <option value="">선택</option>
-            {districtOptions.map((d) => <option key={d} value={d}>{d}</option>)}
-          </select>
+            readOnly
+            placeholder="주소 검색 시 자동입력"
+            className="step-input bg-gray-100 text-gray-600 cursor-not-allowed"
+          />
         </div>
         <div>
           <SectionLabel>동/읍/면</SectionLabel>
           <input
             value={form.neighborhood}
-            onChange={(e) => update("neighborhood", e.target.value)}
-            placeholder="역삼동"
-            className="step-input"
+            readOnly
+            placeholder="주소 검색 시 자동입력"
+            className="step-input bg-gray-100 text-gray-600 cursor-not-allowed"
           />
         </div>
       </div>
@@ -619,7 +677,7 @@ function Step1Location({
         <input
           value={form.addressDetail}
           onChange={(e) => update("addressDetail", e.target.value)}
-          placeholder="건물명, 호수 등"
+          placeholder="상세주소를 입력하세요 (예: 2층 201호)"
           className="step-input"
         />
       </div>
@@ -814,7 +872,7 @@ function Step2Business({
                 onValueChange={(v) => update("goodwillPremium", v)}
                 desc={form.goodwillPremiumDesc}
                 onDescChange={(v) => update("goodwillPremiumDesc", v)}
-                placeholder="단골, 매출, 노하우 등"
+                placeholder={"월 평균 매출, 매출 추이, 단골 비율 등을 구체적으로 작성해주세요\n예) 2024년 오픈 후 월평균 매출 3,000만원 유지, 배달앱 별점 4.8, 단골비율 40%"}
               />
 
               <PremiumBreakdownOpen
@@ -823,7 +881,7 @@ function Step2Business({
                 onValueChange={(v) => update("facilityPremium", v)}
                 desc={form.facilityPremiumDesc}
                 onDescChange={(v) => update("facilityPremiumDesc", v)}
-                placeholder="인테리어, 설비, 집기 등"
+                placeholder={"주방설비, 인테리어, 가구, 냉난방 등 시설 목록과 상태를 작성해주세요\n예) 업소용 냉장고 2대, 에어컨 4대, 2023년 인테리어 전체 신규 시공 3,000만원"}
               />
 
               <FloorPremiumAuto
@@ -1710,6 +1768,14 @@ function InlineLabelInput({
   );
 }
 
+function DescHint({ text }: { text: string }) {
+  if (!text || text.length === 0) return null;
+  if (text.length >= 20) {
+    return <p className="mt-1 text-xs text-green-600">&#10003; 좋은 설명이에요!</p>;
+  }
+  return <p className="mt-1 text-xs text-orange-500">&#128161; 더 자세히 작성하면 매물 문의가 2배 증가합니다</p>;
+}
+
 function PremiumBreakdownOpen({
   label, value, onValueChange, desc, onDescChange, placeholder,
 }: {
@@ -1739,9 +1805,10 @@ function PremiumBreakdownOpen({
         value={desc}
         onChange={(e) => onDescChange(e.target.value)}
         placeholder={placeholder}
-        rows={2}
+        rows={3}
         className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 placeholder:text-gray-400 resize-none"
       />
+      <DescHint text={desc} />
     </div>
   );
 }
@@ -1788,10 +1855,11 @@ function FloorPremiumAuto({
       <textarea
         value={desc}
         onChange={(e) => onDescChange(e.target.value)}
-        placeholder="입지, 유동인구, 상권 등"
-        rows={2}
+        placeholder={"입지 장점, 유동인구, 상권 특성 등을 작성해주세요\n예) 역세권 도보 2분, 대로변 코너 1층, 3면 간판 노출, 유동인구 일 5,000명"}
+        rows={3}
         className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 placeholder:text-gray-400 resize-none"
       />
+      <DescHint text={desc} />
     </div>
   );
 }

@@ -176,14 +176,23 @@ export default function HomePage() {
 
   /* ─── fetch ─── */
   useEffect(() => {
+    const ac = new AbortController();
     setLoadingPremium(true);
     setLoadingRecommended(true);
 
-    fetch("/api/homepage/listings").then(r => r.json()).catch(() => ({ premiumTop: [], recommended: [] }))
+    fetch("/api/homepage/listings", { signal: ac.signal })
+      .then(r => r.json())
+      .catch((err) => {
+        if (err?.name === "AbortError") return null;
+        return { premiumTop: [], recommended: [] };
+      })
       .then((listingsJ) => {
+        if (!listingsJ) return;
         setPremiumListings((listingsJ.premiumTop ?? []).map((l: RawListingResponse) => toCard(l)));
         setRecommendedListings((listingsJ.recommended ?? []).map((l: RawListingResponse) => toCard(l)));
-      }).finally(() => { setLoadingPremium(false); setLoadingRecommended(false); });
+      }).finally(() => { if (!ac.signal.aborted) { setLoadingPremium(false); setLoadingRecommended(false); } });
+
+    return () => ac.abort();
   }, []);
 
   useEffect(() => {
@@ -282,7 +291,7 @@ export default function HomePage() {
             >
               {/* Background layer */}
               <div className="absolute inset-0" style={{ background: s.gradient }} />
-              <Image src={s.image} alt="" fill className="object-cover opacity-25" sizes="100vw" priority={i === 0} />
+              <Image src={s.image} alt="" fill className="object-cover opacity-25" sizes="100vw" priority={i === 0} loading={i === 0 ? "eager" : "lazy"} />
               <div className="absolute inset-0" style={s.patternStyle} />
               {/* Decorative elements per slide */}
               {i === 0 && (
@@ -390,7 +399,7 @@ export default function HomePage() {
             <div className="mt-4 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-5 md:gap-4 md:overflow-visible">
               {loadingPremium ? Array.from({ length: 10 }).map((_, i) => <SkeletonCard key={i} />) :
                 premiumListings.length > 0 ? premiumListings.map((item, idx) => (
-                  <ListingCard key={item.id} listing={item} variant="premium" isCarouselItem priority={idx < 5} />
+                  <ListingCard key={item.id} listing={item} variant="premium" isCarouselItem priority={idx < 3} />
                 )) : <p className="col-span-5 py-8 text-center text-sm text-gray-400">프리미엄 매물이 없습니다</p>}
             </div>
           </div>

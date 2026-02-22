@@ -320,6 +320,7 @@ model User {
   salesIntegrations SalesIntegration[]
   paidServices     PaidService[]
   singlePurchases  SinglePurchase[]
+  premiumOffers    PremiumOffer[]
 
   @@index([role])
   @@index([accountStatus])
@@ -341,6 +342,12 @@ model Listing {
   price            BigInt           // 보증금
   monthlyRent      BigInt?          // 월세
   premiumFee       BigInt?          // 권리금
+  goodwillPremium     Int?          // 영업권리금 (만원)
+  goodwillPremiumDesc String?       @db.Text  // 영업권리금 설명
+  facilityPremium     Int?          // 시설권리금 (만원)
+  facilityPremiumDesc String?       @db.Text  // 시설권리금 설명
+  floorPremium        Int?          // 바닥권리금 (만원)
+  floorPremiumDesc    String?       @db.Text  // 바닥권리금 설명
   managementFee    BigInt?          // 관리비
   monthlyRevenue   BigInt?          // 월매출
   monthlyProfit    BigInt?          // 월수익
@@ -410,6 +417,7 @@ model Listing {
   diagnosisReport  DiagnosisReport?
   paidServices     PaidService[]
   singlePurchases  SinglePurchase[]
+  premiumOffers    PremiumOffer[]
 
   @@index([sellerId])
   @@index([status])
@@ -421,6 +429,24 @@ model Listing {
   @@index([createdAt])
   @@index([isJumpUp, jumpUpExposureOrder])
   @@map("listings")
+}
+
+model PremiumOffer {
+  id          String   @id @default(cuid())
+  listingId   String
+  userId      String
+  offerAmount Int      // 제안 금액 (만원)
+  reason      String   @db.Text
+  status      String   @default("pending") // pending, accepted, rejected
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@index([listingId])
+  @@index([userId])
+  @@map("premium_offers")
 }
 
 model ListingLike {

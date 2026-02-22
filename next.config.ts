@@ -61,7 +61,7 @@ const nextConfig: NextConfig = {
         {
           key: "Content-Security-Policy",
           value:
-            "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.tosspayments.com dapi.kakao.com *.daumcdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob: *.daumcdn.net *.kakao.com; connect-src 'self' https://api.tosspayments.com https://*.amazonaws.com dapi.kakao.com *.kakao.com *.daumcdn.net https://*.ingest.us.sentry.io; frame-src https://js.tosspayments.com; worker-src 'self' blob:;",
+            "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.tosspayments.com dapi.kakao.com *.daumcdn.net *.daum.net *.kakao.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob: *.daumcdn.net *.kakao.com *.daum.net; connect-src 'self' https://api.tosspayments.com https://*.amazonaws.com dapi.kakao.com *.kakao.com *.daumcdn.net *.daum.net https://*.ingest.us.sentry.io; frame-src https://js.tosspayments.com *.daumcdn.net *.daum.net *.kakao.com; child-src *.daumcdn.net *.daum.net *.kakao.com blob:; worker-src 'self' blob:;",
         },
       ],
     },

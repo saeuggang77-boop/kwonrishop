@@ -39,6 +39,12 @@ export default function EditListingPage() {
           district: l.district ?? "",
           contactPhone: l.contactPhone ?? "",
           contactEmail: l.contactEmail ?? "",
+          goodwillPremium: l.goodwillPremium?.toString() ?? "",
+          goodwillPremiumDesc: l.goodwillPremiumDesc ?? "",
+          facilityPremium: l.facilityPremium?.toString() ?? "",
+          facilityPremiumDesc: l.facilityPremiumDesc ?? "",
+          floorPremium: l.floorPremium?.toString() ?? "",
+          floorPremiumDesc: l.floorPremiumDesc ?? "",
         });
         setIsLoading(false);
       })
@@ -75,6 +81,15 @@ export default function EditListingPage() {
     if (form.monthlyRevenue) body.monthlyRevenue = Number(form.monthlyRevenue);
     if (form.monthlyProfit) body.monthlyProfit = Number(form.monthlyProfit);
     if (form.operatingYears) body.operatingYears = Number(form.operatingYears);
+    if (form.goodwillPremium) body.goodwillPremium = Number(form.goodwillPremium);
+    else body.goodwillPremium = null;
+    body.goodwillPremiumDesc = form.goodwillPremiumDesc || null;
+    if (form.facilityPremium) body.facilityPremium = Number(form.facilityPremium);
+    else body.facilityPremium = null;
+    body.facilityPremiumDesc = form.facilityPremiumDesc || null;
+    if (form.floorPremium) body.floorPremium = Number(form.floorPremium);
+    else body.floorPremium = null;
+    body.floorPremiumDesc = form.floorPremiumDesc || null;
 
     try {
       const res = await fetch(`/api/listings/${id}`, {
@@ -185,6 +200,40 @@ export default function EditListingPage() {
               <input type="number" value={form.premiumFee} onChange={(e) => update("premiumFee", e.target.value)} className="input-field" />
             </div>
           </div>
+          {/* 권리금 세부내역 */}
+          {(form.premiumFee && Number(form.premiumFee) > 0) && (
+            <div className="rounded-lg border border-purple/20 bg-purple-50/50 p-4 space-y-3">
+              <p className="text-sm font-bold text-purple">권리금 세부내역 (선택)</p>
+              <p className="text-xs text-gray-500">권리금의 구성을 설명하면 매수자 신뢰도가 높아집니다.</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">영업권리금 (만원)</label>
+                  <input type="number" value={form.goodwillPremium} onChange={(e) => update("goodwillPremium", e.target.value)} placeholder="예: 3000" className="input-field text-sm" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">시설권리금 (만원)</label>
+                  <input type="number" value={form.facilityPremium} onChange={(e) => update("facilityPremium", e.target.value)} placeholder="예: 2000" className="input-field text-sm" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">바닥권리금 (만원)</label>
+                  <input type="number" value={form.floorPremium} onChange={(e) => update("floorPremium", e.target.value)} placeholder="예: 1000" className="input-field text-sm" />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">영업권리금 설명</label>
+                <textarea rows={2} value={form.goodwillPremiumDesc} onChange={(e) => update("goodwillPremiumDesc", e.target.value)} placeholder="예: 월평균 매출 2,500만원, 단골 고객 300명 이상 확보" className="input-field text-sm resize-none" />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">시설권리금 설명</label>
+                <textarea rows={2} value={form.facilityPremiumDesc} onChange={(e) => update("facilityPremiumDesc", e.target.value)} placeholder="예: 2023년 전체 인테리어 리모델링 (5,000만원 투자)" className="input-field text-sm resize-none" />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">바닥권리금 설명</label>
+                <textarea rows={2} value={form.floorPremiumDesc} onChange={(e) => update("floorPremiumDesc", e.target.value)} placeholder="예: 역세권 도보 3분, 유동인구 일 5,000명 이상" className="input-field text-sm resize-none" />
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">관리비 (원)</label>

@@ -27,6 +27,9 @@ const CARD_SELECT = {
   isRecommended: true,
   premiumRank: true,
   hasDiagnosisBadge: true,
+  goodwillPremium: true,
+  facilityPremium: true,
+  floorPremium: true,
   viewCount: true,
   listingExposureOrder: true,
   images: {
