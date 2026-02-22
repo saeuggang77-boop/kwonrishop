@@ -25,7 +25,7 @@ export function MobileBottomBar({
 
   return (
     <>
-      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-gray-200 bg-white px-4 py-3 lg:hidden">
+      <div className="fixed bottom-14 inset-x-0 z-40 border-t border-gray-200 bg-white px-4 py-3 md:hidden">
         <div className="flex items-center gap-2">
           {showPhone && (
             <a
@@ -62,8 +62,8 @@ export function MobileBottomBar({
         </div>
       </div>
 
-      {/* Spacer to prevent content from being hidden behind the fixed bar */}
-      <div className="h-16 lg:hidden" />
+      {/* Spacer to prevent content from being hidden behind the fixed bar + tab bar */}
+      <div className="h-28 md:hidden" />
 
       <InquiryModal
         listingId={listingId}
