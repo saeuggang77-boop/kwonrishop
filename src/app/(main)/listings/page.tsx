@@ -129,6 +129,7 @@ function ListingsPageContent() {
   const [listings, setListings] = useState<ListingItem[]>([]);
   const [premiumTop, setPremiumTop] = useState<ListingItem[]>([]);
   const [recommendedTop, setRecommendedTop] = useState<ListingItem[]>([]);
+  const [jumpUpTop, setJumpUpTop] = useState<ListingItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
@@ -230,8 +231,9 @@ function ListingsPageContent() {
     const ids = new Set<string>();
     premiumTop.forEach(l => ids.add(l.id));
     recommendedTop.forEach(l => ids.add(l.id));
+    jumpUpTop.forEach(l => ids.add(l.id));
     return ids;
-  }, [premiumTop, recommendedTop]);
+  }, [premiumTop, recommendedTop, jumpUpTop]);
 
   const displayListings = useMemo(() => {
     if (isFiltered || adIds.size === 0) return listings;
@@ -240,8 +242,8 @@ function ListingsPageContent() {
 
   const displayCount = useMemo(() => {
     if (isFiltered) return totalCount;
-    return Math.max(0, totalCount - premiumTop.length - recommendedTop.length);
-  }, [totalCount, isFiltered, premiumTop.length, recommendedTop.length]);
+    return Math.max(0, totalCount - premiumTop.length - recommendedTop.length - jumpUpTop.length);
+  }, [totalCount, isFiltered, premiumTop.length, recommendedTop.length, jumpUpTop.length]);
 
   /* ---- Fetch ---- */
   const fetchListings = useCallback(
@@ -281,6 +283,7 @@ function ListingsPageContent() {
           setListings(json.data ?? []);
           setPremiumTop(json.premiumTop ?? []);
           setRecommendedTop(json.recommended ?? []);
+          setJumpUpTop(json.jumpUp ?? []);
         } else {
           setListings((prev) => [...prev, ...(json.data ?? [])]);
           // Don't update premiumTop/recommendedTop on scroll
@@ -758,6 +761,21 @@ function ListingsPageContent() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {recommendedTop.map((item) => (
                         <ListingCardComponent key={item.id} listing={item as any} variant="search" showRecommendBadge />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Jump Up Section — only when no filters active */}
+                {!isFiltered && jumpUpTop.length > 0 && (
+                  <div className="mb-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="rounded bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-700">UP</span>
+                      <h3 className="text-sm font-semibold text-gray-700">점프업 매물</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {jumpUpTop.map((item) => (
+                        <ListingCardComponent key={item.id} listing={item as any} variant="search" />
                       ))}
                     </div>
                   </div>

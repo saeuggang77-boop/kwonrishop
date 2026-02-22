@@ -144,6 +144,7 @@ export async function GET(req: NextRequest) {
 
       let premiumTop: unknown[] = [];
       let recommended: unknown[] = [];
+      let jumpUp: unknown[] = [];
       let listings: unknown[] = [];
       let nextCursor: string | null = null;
 
@@ -161,10 +162,20 @@ export async function GET(req: NextRequest) {
       if (!cursor) {
         // First page: get premiumTop, recommended only when NO filters active
         if (!hasFilters) {
-          const premiumResult = await getExposureBatch("premium", 2, sessionId);
-          const recommendResult = await getExposureBatch("recommend", 2, sessionId);
+          const [premiumResult, recommendResult] = await Promise.all([
+            getExposureBatch("premium", 2, sessionId),
+            getExposureBatch("recommend", 2, sessionId),
+          ]);
           premiumTop = premiumResult.listings;
           recommended = recommendResult.listings;
+
+          // jumpUp 쿼리는 마이그레이션 전에는 실패할 수 있으므로 별도 try-catch
+          try {
+            const jumpUpResult = await getExposureBatch("jumpUp", 2, sessionId);
+            jumpUp = jumpUpResult.listings;
+          } catch {
+            // isJumpUp 컬럼 미존재 시 빈 배열 (마이그레이션 전 안전 폴백)
+          }
         }
 
         // Direct DB query with all user filters + rotation ordering
@@ -265,6 +276,7 @@ export async function GET(req: NextRequest) {
       const allIds = [
         ...(premiumTop as Array<Record<string, unknown>>).map(l => l.id as string),
         ...(recommended as Array<Record<string, unknown>>).map(l => l.id as string),
+        ...(jumpUp as Array<Record<string, unknown>>).map(l => l.id as string),
         ...(listings as Array<Record<string, unknown>>).map(l => l.id as string),
       ];
 
@@ -292,6 +304,7 @@ export async function GET(req: NextRequest) {
         const urgentIds = new Set(urgentMap.keys());
         premiumTop = (premiumTop as Array<Record<string, unknown>>).filter(l => urgentIds.has(l.id as string));
         recommended = (recommended as Array<Record<string, unknown>>).filter(l => urgentIds.has(l.id as string));
+        jumpUp = (jumpUp as Array<Record<string, unknown>>).filter(l => urgentIds.has(l.id as string));
         listings = (listings as Array<Record<string, unknown>>).filter(l => urgentIds.has(l.id as string));
       }
 
@@ -314,6 +327,7 @@ export async function GET(req: NextRequest) {
         JSON.stringify({
           premiumTop: (premiumTop as Array<Record<string, unknown>>).map(serializeItem),
           recommended: (recommended as Array<Record<string, unknown>>).map(serializeItem),
+          jumpUp: (jumpUp as Array<Record<string, unknown>>).map(serializeItem),
           data: (listings as Array<Record<string, unknown>>).map(serializeItem),
           meta: {
             nextCursor,

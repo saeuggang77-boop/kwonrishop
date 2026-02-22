@@ -142,16 +142,12 @@ export default function PricingPage() {
                       ))}
                     </ul>
 
-                    <Link
-                      href="/premium/listing-ad"
-                      className={
-                        isVip
-                          ? "mt-5 block w-full rounded-lg bg-amber-500 py-3 text-center text-sm font-medium text-white transition-all hover:bg-amber-600 active:scale-[0.97]"
-                          : "mt-5 block w-full rounded-lg border border-blue-600 py-3 text-center text-sm font-medium text-blue-700 transition-all hover:bg-blue-50 active:scale-[0.97]"
-                      }
+                    <button
+                      disabled
+                      className="mt-5 block w-full rounded-lg bg-gray-300 py-3 text-center text-sm font-medium text-gray-500 cursor-not-allowed"
                     >
-                      {isVip ? "프리미엄 매물 광고 신청" : "오늘의 추천 매물 광고 신청"}
-                    </Link>
+                      오픈 예정
+                    </button>
                   </div>
                 );
               })}
@@ -176,22 +172,30 @@ export default function PricingPage() {
                 </div>
                 <h3 className="mt-3 text-base font-bold text-[#1B3A5C]">점프업</h3>
                 <div className="mt-1.5">
-                  <span className="text-2xl font-bold text-blue-600">₩5,000</span>
+                  <span className="text-2xl font-bold text-blue-600">₩10,000</span>
                   <span className="text-sm text-gray-500"> / 회</span>
                 </div>
                 <ul className="mt-4 flex-1 space-y-2">
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-                    <span className="text-gray-700">24시간 검색 상단 노출</span>
+                    <span className="text-gray-700">24시간 점포찾기 일반매물 상단 고정</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+                    <span className="text-gray-700">여러 개면 로테이션 공평 노출</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+                    <span className="text-gray-700">24시간 후 자동 해제</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
                     <span className="text-gray-700">하루 최대 3회 구매 가능</span>
                   </li>
                 </ul>
-                <Link href="/my/ads" className="mt-5 block w-full rounded-lg bg-[#1B3A5C] py-2.5 text-center text-sm font-medium text-white hover:bg-[#152e4a] active:scale-[0.97]">
-                  구매하기
-                </Link>
+                <button disabled className="mt-5 block w-full rounded-lg bg-gray-300 py-2.5 text-center text-sm font-medium text-gray-500 cursor-not-allowed">
+                  오픈 예정
+                </button>
               </div>
 
               {/* 급매 태그 */}
@@ -204,8 +208,8 @@ export default function PricingPage() {
                 </div>
                 <h3 className="mt-3 text-base font-bold text-[#1B3A5C]">급매 태그</h3>
                 <div className="mt-1.5">
-                  <span className="text-2xl font-bold text-red-600">₩9,900</span>
-                  <span className="text-sm text-gray-500"> / 7일</span>
+                  <span className="text-2xl font-bold text-red-600">₩100,000</span>
+                  <span className="text-sm text-gray-500"> / 30일</span>
                 </div>
                 <ul className="mt-4 flex-1 space-y-2">
                   <li className="flex items-start gap-2 text-sm">
@@ -216,10 +220,14 @@ export default function PricingPage() {
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
                     <span className="text-gray-700">급매 필터 노출</span>
                   </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+                    <span className="text-gray-700">노출 순서에는 영향 없음</span>
+                  </li>
                 </ul>
-                <Link href="/my/ads" className="mt-5 block w-full rounded-lg bg-[#1B3A5C] py-2.5 text-center text-sm font-medium text-white hover:bg-[#152e4a] active:scale-[0.97]">
-                  구매하기
-                </Link>
+                <button disabled className="mt-5 block w-full rounded-lg bg-gray-300 py-2.5 text-center text-sm font-medium text-gray-500 cursor-not-allowed">
+                  오픈 예정
+                </button>
               </div>
 
               {/* 자동 갱신 */}
@@ -229,10 +237,10 @@ export default function PricingPage() {
                 </div>
                 <h3 className="mt-3 text-base font-bold text-[#1B3A5C]">자동 갱신</h3>
                 <div className="mt-1.5">
-                  <span className="text-2xl font-bold text-green-600">₩79,000</span>
+                  <span className="text-2xl font-bold text-green-600">₩150,000</span>
                   <span className="text-sm text-gray-500"> / 30일</span>
                 </div>
-                <p className="mt-0.5 text-xs font-medium text-green-600">개별 점프업 대비 47% 할인!</p>
+                <p className="mt-0.5 text-xs font-medium text-green-600">개별 점프업 대비 50% 할인!</p>
                 <ul className="mt-4 flex-1 space-y-2">
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
@@ -240,14 +248,62 @@ export default function PricingPage() {
                   </li>
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
+                    <span className="text-gray-700">매일 24시간 3열 상단 로테이션</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
                     <span className="text-gray-700">별도 클릭 없이 자동 실행</span>
                   </li>
                 </ul>
-                <Link href="/my/ads" className="mt-5 block w-full rounded-lg bg-[#1B3A5C] py-2.5 text-center text-sm font-medium text-white hover:bg-[#152e4a] active:scale-[0.97]">
-                  구매하기
-                </Link>
+                <button disabled className="mt-5 block w-full rounded-lg bg-gray-300 py-2.5 text-center text-sm font-medium text-gray-500 cursor-not-allowed">
+                  오픈 예정
+                </button>
               </div>
             </div>
+          </section>
+
+          {/* ── 노출 구조 안내 ── */}
+          <section>
+            <h2 className="flex items-center gap-2 text-lg font-bold text-[#1B3A5C]">
+              <BarChart3 className="h-5 w-5 text-indigo-500" />
+              점포찾기 노출 구조
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              점포찾기 페이지에서 매물이 어떤 순서로 표시되는지 안내합니다
+            </p>
+            <div className="mt-5 space-y-3">
+              <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">1</span>
+                <div>
+                  <p className="text-sm font-semibold text-amber-800">프리미엄 매물</p>
+                  <p className="text-xs text-amber-600">VIP 광고 매물 2개 — 골드 테두리 + 로테이션 노출</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">2</span>
+                <div>
+                  <p className="text-sm font-semibold text-blue-800">오늘의 추천매물</p>
+                  <p className="text-xs text-blue-600">추천 광고 매물 2개 — 그린 테두리 + 로테이션 노출</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white">3</span>
+                <div>
+                  <p className="text-sm font-semibold text-indigo-800">점프업 매물</p>
+                  <p className="text-xs text-indigo-600">점프업 구매 매물 2개 — 24시간 상단 고정 + 로테이션 노출</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-500 text-xs font-bold text-white">4</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">일반 매물</p>
+                  <p className="text-xs text-gray-500">전체 매물 무한스크롤 — 공평 로테이션 순서</p>
+                </div>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-gray-400">
+              * 필터 사용 시 1~3열은 숨겨지고, 필터 결과만 표시됩니다.
+            </p>
           </section>
 
           {/* ── 매도자 무료 등록 배너 ── */}

@@ -5,38 +5,6 @@ import { getExposureBatch } from "@/lib/utils/rotation-queue";
 import { createHash } from "crypto";
 
 /**
- * 홈페이지 매물 필드 — 카드 렌더에 필요한 것만 select
- */
-const CARD_SELECT = {
-  id: true,
-  title: true,
-  businessCategory: true,
-  storeType: true,
-  price: true,
-  monthlyRent: true,
-  premiumFee: true,
-  monthlyRevenue: true,
-  monthlyProfit: true,
-  areaPyeong: true,
-  floor: true,
-  city: true,
-  district: true,
-  safetyGrade: true,
-  isPremium: true,
-  isRecommended: true,
-  premiumRank: true,
-  hasDiagnosisBadge: true,
-  images: {
-    where: { isPrimary: true },
-    take: 1,
-    select: { url: true, thumbnailUrl: true },
-  },
-  seller: {
-    select: { name: true, image: true, isTrustedSeller: true },
-  },
-} as const;
-
-/**
  * 세션 ID 추출 — 쿠키 또는 IP 해시 폴백
  */
 function getSessionId(req: Request): string {

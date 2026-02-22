@@ -7,15 +7,13 @@ import { errorToResponse } from "@/lib/utils/errors";
 const purchaseSchema = z.object({
   listingId: z.string().min(1),
   type: z.enum(["JUMP_UP", "URGENT_TAG", "AUTO_REFRESH"]),
-  reason: z.string().max(30).optional(), // urgent tag reason
-  duration: z.enum(["7", "30"]).optional(), // urgent tag duration days
+  reason: z.string().max(30).optional(),
 });
 
 const SERVICE_CONFIG = {
-  JUMP_UP: { price: 5000, durationMs: 24 * 60 * 60 * 1000 }, // +24 hours
-  URGENT_TAG_7: { price: 9900, durationMs: 7 * 24 * 60 * 60 * 1000 }, // +7 days
-  URGENT_TAG_30: { price: 29000, durationMs: 30 * 24 * 60 * 60 * 1000 }, // +30 days
-  AUTO_REFRESH: { price: 79000, durationMs: 30 * 24 * 60 * 60 * 1000 }, // +30 days
+  JUMP_UP: { price: 10000, durationMs: 24 * 60 * 60 * 1000 },
+  URGENT_TAG: { price: 100000, durationMs: 30 * 24 * 60 * 60 * 1000 },
+  AUTO_REFRESH: { price: 150000, durationMs: 30 * 24 * 60 * 60 * 1000 },
 } as const;
 
 export async function POST(req: NextRequest) {
@@ -59,11 +57,20 @@ export async function POST(req: NextRequest) {
     }
 
     const now = new Date();
-    const urgentDuration = parsed.type === "URGENT_TAG" ? (parsed.duration ?? "7") : null;
-    const configKey = parsed.type === "URGENT_TAG"
-      ? (`URGENT_TAG_${urgentDuration}` as "URGENT_TAG_7" | "URGENT_TAG_30")
-      : parsed.type;
-    const config = SERVICE_CONFIG[configKey];
+    const config = SERVICE_CONFIG[parsed.type];
+
+    // 프리미엄/추천 매물은 점프업/자동갱신 구매 차단
+    if (parsed.type === "JUMP_UP" || parsed.type === "AUTO_REFRESH") {
+      const activePremium = await prisma.premiumListing.findFirst({
+        where: { listingId: parsed.listingId, status: "ACTIVE", endDate: { gt: now } },
+      });
+      if (activePremium) {
+        return Response.json(
+          { error: { message: "이미 상위 광고가 적용중입니다. 프리미엄/추천 매물은 점프업을 사용할 수 없습니다." } },
+          { status: 409 }
+        );
+      }
+    }
 
     // Type-specific validation
     if (parsed.type === "JUMP_UP") {

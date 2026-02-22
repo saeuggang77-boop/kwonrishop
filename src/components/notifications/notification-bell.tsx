@@ -46,6 +46,41 @@ function relativeTime(dateStr: string): string {
   return `${months}개월 전`;
 }
 
+// ─── Module-level fetch deduplication (여러 인스턴스 중복 호출 방지) ───
+let _cachedCounts: { unread: number; inquiry: number } | null = null;
+let _pendingFetch: Promise<{ unread: number; inquiry: number }> | null = null;
+let _lastFetchAt = 0;
+const DEDUP_WINDOW_MS = 5000;
+
+async function fetchCountsShared(): Promise<{ unread: number; inquiry: number }> {
+  const now = Date.now();
+  if (_pendingFetch && now - _lastFetchAt < DEDUP_WINDOW_MS) {
+    return _pendingFetch;
+  }
+  _lastFetchAt = now;
+  _pendingFetch = (async () => {
+    try {
+      const [notifRes, inquiryRes] = await Promise.allSettled([
+        fetch("/api/notifications?limit=1&unread=true"),
+        fetch("/api/inquiries/unread-count"),
+      ]);
+      const unread =
+        notifRes.status === "fulfilled" && notifRes.value.ok
+          ? ((await notifRes.value.json()).meta?.unreadCount ?? 0)
+          : (_cachedCounts?.unread ?? 0);
+      const inquiry =
+        inquiryRes.status === "fulfilled" && inquiryRes.value.ok
+          ? ((await inquiryRes.value.json()).unreadCount ?? 0)
+          : (_cachedCounts?.inquiry ?? 0);
+      _cachedCounts = { unread, inquiry };
+      return _cachedCounts;
+    } catch {
+      return _cachedCounts ?? { unread: 0, inquiry: 0 };
+    }
+  })();
+  return _pendingFetch;
+}
+
 export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [inquiryUnreadCount, setInquiryUnreadCount] = useState(0);
@@ -57,32 +92,21 @@ export function NotificationBell() {
 
   const totalCount = unreadCount + inquiryUnreadCount;
 
-  // Fetch unread counts
+  // Fetch unread counts (module-level 중복 제거)
   useEffect(() => {
-    async function fetchCounts() {
-      try {
-        const [notifRes, inquiryRes] = await Promise.allSettled([
-          fetch("/api/notifications?limit=1&unread=true"),
-          fetch("/api/inquiries/unread-count"),
-        ]);
+    let mounted = true;
 
-        if (notifRes.status === "fulfilled" && notifRes.value.ok) {
-          const data = await notifRes.value.json();
-          setUnreadCount(data.meta?.unreadCount ?? 0);
-        }
-
-        if (inquiryRes.status === "fulfilled" && inquiryRes.value.ok) {
-          const data = await inquiryRes.value.json();
-          setInquiryUnreadCount(data.unreadCount ?? 0);
-        }
-      } catch {
-        // Silently fail
+    async function refresh() {
+      const counts = await fetchCountsShared();
+      if (mounted) {
+        setUnreadCount(counts.unread);
+        setInquiryUnreadCount(counts.inquiry);
       }
     }
 
-    fetchCounts();
-    const interval = setInterval(fetchCounts, 30_000); // Poll every 30s
-    return () => clearInterval(interval);
+    refresh();
+    const interval = setInterval(refresh, 30_000);
+    return () => { mounted = false; clearInterval(interval); };
   }, []);
 
   // Fetch recent notifications when dropdown opens

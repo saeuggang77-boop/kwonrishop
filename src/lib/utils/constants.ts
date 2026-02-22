@@ -88,9 +88,8 @@ export const SELLER_AD_PLANS = [
     priceWithVat: 220_000,
     days: 30,
     features: [
-      "매물 목록 상위 노출",
-      "\"오늘의 추천\" 배지 표시",
-      "그린 테두리 카드 디자인",
+      "메인페이지 + 점포찾기 2열 상위 노출",
+      "그린 테두리 카드",
       "기본 조회수 통계",
     ],
   },
@@ -102,15 +101,21 @@ export const SELLER_AD_PLANS = [
     days: 30,
     recommended: true,
     features: [
-      "매물 목록 최상단 고정",
-      "홈페이지 프리미엄 매물 캐러셀 노출",
-      "\"프리미엄 매물\" 배지 + 골드 테두리 카드",
-      "권리진단서 1회 무료 포함",
-      "안전도 등급 상세 표시",
+      "메인페이지 + 점포찾기 1열 최상단 노출",
+      "프리미엄 매물 배지 + 골드 테두리",
+      "권리진단서 1회 무료",
+      "안전도 등급 상세",
       "상세 조회수 통계",
     ],
   },
 ];
+
+// ── 소액 부스트 서비스 ──
+export const BOOST_SERVICE_CONFIG = {
+  JUMP_UP:      { price: 10_000,  label: "점프업",   durationMs: 24 * 60 * 60 * 1000 },
+  URGENT_TAG:   { price: 100_000, label: "급매 태그", durationMs: 30 * 24 * 60 * 60 * 1000 },
+  AUTO_REFRESH: { price: 150_000, label: "자동 갱신", durationMs: 30 * 24 * 60 * 60 * 1000 },
+} as const;
 
 // ── 권리진단서 요금 (건별 판매) ──
 export const REPORT_PLAN = {

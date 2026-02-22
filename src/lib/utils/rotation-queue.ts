@@ -44,13 +44,13 @@ type CardListing = Awaited<
 >[number];
 
 /** 큐 타입별 필터 조건 + exposureOrder 필드명 매핑 */
-type QueueType = "premium" | "recommend" | "listing";
+type QueueType = "premium" | "recommend" | "listing" | "jumpUp";
 
 const QUEUE_CONFIG: Record<
   QueueType,
   {
     where: Record<string, unknown>;
-    orderField: "premiumExposureOrder" | "recommendExposureOrder" | "listingExposureOrder";
+    orderField: "premiumExposureOrder" | "recommendExposureOrder" | "listingExposureOrder" | "jumpUpExposureOrder";
   }
 > = {
   premium: {
@@ -64,6 +64,10 @@ const QUEUE_CONFIG: Record<
   listing: {
     where: {},
     orderField: "listingExposureOrder",
+  },
+  jumpUp: {
+    where: { isJumpUp: true },
+    orderField: "jumpUpExposureOrder",
   },
 };
 
@@ -113,27 +117,29 @@ export async function getExposureBatch(
     shouldRotate = true;
   }
 
-  // 3. 순환: 노출된 매물을 큐 뒤로 이동
+  // 3. 순환: 노출된 매물을 큐 뒤로 이동 (fire-and-forget — 응답 지연 방지)
   if (shouldRotate) {
-    try {
-      const maxResult = await prisma.listing.aggregate({
-        where: { status: "ACTIVE", ...config.where },
-        _max: { [config.orderField]: true },
-      });
-      const maxOrder =
-        (maxResult._max as Record<string, number | null>)[config.orderField] ?? 0;
+    void (async () => {
+      try {
+        const maxResult = await prisma.listing.aggregate({
+          where: { status: "ACTIVE", ...config.where },
+          _max: { [config.orderField]: true },
+        });
+        const maxOrder =
+          (maxResult._max as Record<string, number | null>)[config.orderField] ?? 0;
 
-      await prisma.$transaction(
-        listings.map((listing, idx) =>
-          prisma.listing.update({
-            where: { id: listing.id },
-            data: { [config.orderField]: maxOrder + idx + 1 },
-          }),
-        ),
-      );
-    } catch {
-      // 순환 실패해도 조회 결과는 반환
-    }
+        await prisma.$transaction(
+          listings.map((listing, idx) =>
+            prisma.listing.update({
+              where: { id: listing.id },
+              data: { [config.orderField]: maxOrder + idx + 1 },
+            }),
+          ),
+        );
+      } catch {
+        // 순환 실패해도 CRON이 정리
+      }
+    })();
   }
 
   return { listings, rotated: shouldRotate };

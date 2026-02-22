@@ -369,6 +369,16 @@ model Listing {
   premiumExposureOrder  Int         @default(0)
   recommendExposureOrder Int        @default(0)
   listingExposureOrder  Int         @default(0)
+
+  // 점프업 (24시간 상단 고정)
+  isJumpUp              Boolean   @default(false)
+  jumpUpExpiresAt       DateTime?
+  jumpUpExposureOrder   Int       @default(0)
+
+  // 급매 태그 (30일 빨간 뱃지)
+  isUrgent              Boolean   @default(false)
+  urgentExpiresAt       DateTime?
+
   viewCount        Int              @default(0)
   inquiryCount     Int              @default(0)
   likeCount        Int              @default(0)
@@ -409,6 +419,7 @@ model Listing {
   @@index([price])
   @@index([latitude, longitude])
   @@index([createdAt])
+  @@index([isJumpUp, jumpUpExposureOrder])
   @@map("listings")
 }
 
