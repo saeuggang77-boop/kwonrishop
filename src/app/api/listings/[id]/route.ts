@@ -30,6 +30,7 @@ export async function GET(
         sellerId: true,
         title: true,
         description: true,
+        transferReason: true,
         businessCategory: true,
         storeType: true,
         businessSubtype: true,

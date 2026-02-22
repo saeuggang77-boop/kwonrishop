@@ -336,6 +336,7 @@ model Listing {
   sellerId         String
   title            String
   description      String           @db.Text
+  transferReason   String?          @db.Text  // 양도사유
   businessCategory BusinessCategory
   storeType        StoreType
   businessSubtype  String?          // 세부업종 (자유입력)

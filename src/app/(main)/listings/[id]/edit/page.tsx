@@ -39,6 +39,7 @@ export default function EditListingPage() {
           district: l.district ?? "",
           contactPhone: l.contactPhone ?? "",
           contactEmail: l.contactEmail ?? "",
+          transferReason: l.transferReason ?? "",
           goodwillPremium: l.goodwillPremium?.toString() ?? "",
           goodwillPremiumDesc: l.goodwillPremiumDesc ?? "",
           facilityPremium: l.facilityPremium?.toString() ?? "",
@@ -90,6 +91,7 @@ export default function EditListingPage() {
     if (form.floorPremium) body.floorPremium = Number(form.floorPremium);
     else body.floorPremium = null;
     body.floorPremiumDesc = form.floorPremiumDesc || null;
+    body.transferReason = form.transferReason || null;
 
     try {
       const res = await fetch(`/api/listings/${id}`, {
@@ -255,6 +257,13 @@ export default function EditListingPage() {
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">상세 설명</label>
             <textarea rows={5} value={form.description} onChange={(e) => update("description", e.target.value)} className="input-field resize-y" />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">양도 사유 (선택)</label>
+            <textarea rows={3} value={form.transferReason} onChange={(e) => update("transferReason", e.target.value)} placeholder="매수자가 안심할 수 있도록 양도 사유를 작성해주세요" className="input-field resize-y text-sm" />
+            {form.transferReason && form.transferReason.length > 0 && form.transferReason.length < 20 && (
+              <p className="mt-1 text-xs text-orange-500">💡 양도사유를 자세히 적으면 매수자의 신뢰가 높아집니다</p>
+            )}
           </div>
         </div>
 

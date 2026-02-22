@@ -3,6 +3,7 @@ import { z } from "zod/v4";
 export const createListingSchema = z.object({
   title: z.string().min(2, "제목은 2자 이상 입력해주세요.").max(100),
   description: z.string().min(10, "설명은 10자 이상 입력해주세요."),
+  transferReason: z.string().optional(),
   businessCategory: z.enum([
     "KOREAN_FOOD", "CHINESE_FOOD", "JAPANESE_FOOD", "WESTERN_FOOD",
     "CHICKEN", "PIZZA", "CAFE_BAKERY", "BAR_PUB", "BUNSIK",

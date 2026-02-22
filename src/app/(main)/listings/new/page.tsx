@@ -138,6 +138,7 @@ interface FormData {
   // Step 5
   title: string;
   description: string;
+  transferReason: string;
   // Step 6
   contactVisible: boolean;
   contactPhone: string;
@@ -165,7 +166,7 @@ const initialForm: FormData = {
   familyStaff: "", fullTimeStaff: "", partTimeStaff: "",
   expenseRent: "", expenseMaintenance: "", utilities: "", otherExpense: "",
   operatingYears: "", profitDescription: "",
-  title: "", description: "",
+  title: "", description: "", transferReason: "",
   contactVisible: false, contactPhone: "", contactEmail: "", isPhonePublic: false,
   hometaxLinked: false, creditCardLinked: false, baeminLinked: false, yogiyoLinked: false, coupangLinked: false,
 };
@@ -321,6 +322,7 @@ export default function NewListingPage() {
       const body: Record<string, unknown> = {
         title: form.title,
         description: form.description,
+        transferReason: form.transferReason || undefined,
         businessCategory: form.businessCategory,
         storeType: form.isFranchise ? "FRANCHISE" : form.storeType,
         price: toWon(form.deposit) ?? 0,
@@ -1309,6 +1311,25 @@ function Step5Description({
           className="step-input min-h-[240px] resize-y"
         />
         <p className="mt-1 text-right text-xs text-gray-400">{form.description.length}/2,000</p>
+      </div>
+
+      {/* Transfer Reason */}
+      <div>
+        <SectionLabel>양도 사유 <span className="text-xs font-normal text-gray-400">(선택)</span></SectionLabel>
+        <textarea
+          value={form.transferReason}
+          onChange={(e) => update("transferReason", e.target.value)}
+          placeholder={"매수자가 안심할 수 있도록 양도 사유를 작성해주세요\n예: 가족과 함께 지방으로 이주하게 되어 양도합니다, 다른 업종으로 전환하기 위해 양도합니다"}
+          maxLength={500}
+          rows={3}
+          className="step-input resize-y"
+        />
+        {form.transferReason.length > 0 && form.transferReason.length < 20 && (
+          <p className="mt-1 text-xs text-orange-500">💡 양도사유를 자세히 적으면 매수자의 신뢰가 높아집니다</p>
+        )}
+        {form.transferReason.length >= 20 && (
+          <p className="mt-1 text-xs text-green-600">✓ 좋은 설명이에요!</p>
+        )}
       </div>
 
       {/* Warning */}

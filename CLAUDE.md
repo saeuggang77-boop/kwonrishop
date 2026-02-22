@@ -3,7 +3,7 @@
 2. 수정 후 반드시 npx tsc --noEmit으로 타입 에러 체크
 3. 수정 후 반드시 npm run dev로 서버 실행 확인
 4. 수정 후 반드시 관련 페이지 curl로 200 응답 확인
-5. Prisma 스키마 수정 시: prisma db push → prisma generate → 서버 재시작 → API 테스트까지 한 세트
+5. Prisma 스키마 수정 시 반드시 prisma db push → prisma generate → 서버 재시작 → 해당 페이지 curl 200 확인까지 한 세트로 실행. 이 중 하나라도 빠지면 안 됨.
 6. 한 파일 수정할 때 import, type, relation 등 연관된 모든 파일을 함께 수정
 7. 에러 발생 시 다른 작업 넘어가지 말고 해당 에러 완전히 해결 후 진행
 8. 절대 기존 동작하던 기능을 깨뜨리지 말 것

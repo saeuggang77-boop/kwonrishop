@@ -26,11 +26,13 @@ export function PremiumOfferSection({
   sellerId,
   userId,
   premiumFee,
+  compact = false,
 }: {
   listingId: string;
   sellerId: string;
   userId: string | null;
   premiumFee: number;
+  compact?: boolean;
 }) {
   const { toast } = useToast();
   const isOwner = userId === sellerId;
@@ -100,9 +102,9 @@ export function PremiumOfferSection({
   // Not logged in
   if (!userId) {
     return (
-      <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-5 text-center">
-        <p className="text-sm font-bold text-gray-700">&#128176; 권리금 제안하기</p>
-        <p className="mt-2 text-sm text-gray-500">로그인 후 권리금을 제안할 수 있습니다.</p>
+      <div className={compact ? "p-5 text-center" : "mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-5 text-center"}>
+        {!compact && <p className="text-sm font-bold text-gray-700">권리금 제안하기</p>}
+        <p className={compact ? "text-sm text-gray-500" : "mt-2 text-sm text-gray-500"}>로그인 후 권리금을 제안할 수 있습니다.</p>
         <Link
           href="/login"
           className="mt-3 inline-block rounded-lg bg-purple px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-purple/90"
@@ -116,11 +118,13 @@ export function PremiumOfferSection({
   // Owner: show received offers
   if (isOwner) {
     return (
-      <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <div className="bg-gradient-to-r from-purple/5 to-purple/10 px-5 py-4">
-          <h3 className="text-sm font-bold text-purple">&#128176; 받은 권리금 제안 ({ownerOffers.length}건)</h3>
-        </div>
-        <div className="p-4">
+      <div className={compact ? "" : "mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white"}>
+        {!compact && (
+          <div className="bg-gradient-to-r from-purple/5 to-purple/10 px-5 py-4">
+            <h3 className="text-sm font-bold text-purple">받은 권리금 제안 ({ownerOffers.length}건)</h3>
+          </div>
+        )}
+        <div className={compact ? "p-4" : "p-4"}>
           {loadingOffers ? (
             <div className="py-4 text-center text-sm text-gray-400">불러오는 중...</div>
           ) : ownerOffers.length === 0 ? (
@@ -160,8 +164,8 @@ export function PremiumOfferSection({
   // Already offered
   if (myOffer) {
     return (
-      <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-5">
-        <p className="text-sm font-bold text-gray-700">&#128176; 권리금 제안하기</p>
+      <div className={compact ? "p-5" : "mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-5"}>
+        {!compact && <p className="text-sm font-bold text-gray-700">권리금 제안하기</p>}
         <div className="mt-3 rounded-lg bg-purple/5 p-4 text-center">
           <p className="text-sm text-gray-600">이미 제안을 보냈습니다.</p>
           <p className="mt-1 text-lg font-bold text-purple">{myOffer.offerAmount.toLocaleString()}만원</p>
@@ -175,15 +179,17 @@ export function PremiumOfferSection({
 
   // Offer form
   return (
-    <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <div className="bg-gradient-to-r from-purple/5 to-purple/10 px-5 py-4">
-        <h3 className="text-sm font-bold text-purple">&#128176; 권리금 제안하기</h3>
-        <p className="mt-1 text-xs text-gray-500">이 매물에 관심이 있다면 권리금을 제안해보세요!</p>
-      </div>
+    <div className={compact ? "" : "mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white"}>
+      {!compact && (
+        <div className="bg-gradient-to-r from-purple/5 to-purple/10 px-5 py-4">
+          <h3 className="text-sm font-bold text-purple">권리금 제안하기</h3>
+          <p className="mt-1 text-xs text-gray-500">이 매물에 관심이 있다면 권리금을 제안해보세요!</p>
+        </div>
+      )}
       <div className="space-y-3 p-4">
         {premiumFee > 0 && (
           <p className="text-xs text-gray-500">
-            현재 매도자 요청 권리금: <span className="font-bold text-orange-600">{premiumFee.toLocaleString()}만원</span>
+            현재 매도자 요청 권리금: <span className="font-bold text-purple">{premiumFee.toLocaleString()}만원</span>
           </p>
         )}
         <div>

@@ -35,6 +35,40 @@ const CATEGORY_PLACEHOLDER: Record<string, { gradient: string; icon: string }> =
   ACCOMMODATION: { gradient: "from-stone-700/70 to-stone-500/50", icon: "🏨" },
 };
 
+/** CSS-only repeating diagonal watermark overlay */
+function WatermarkOverlay() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 z-10 overflow-hidden select-none"
+      aria-hidden="true"
+      style={{
+        background: `repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 60px,
+          rgba(255,255,255,0.08) 60px,
+          rgba(255,255,255,0.08) 61px
+        )`,
+      }}
+    >
+      <div
+        className="absolute inset-0 flex flex-wrap items-center justify-center gap-x-16 gap-y-10"
+        style={{ transform: "rotate(-30deg) scale(1.5)", transformOrigin: "center center" }}
+      >
+        {Array.from({ length: 20 }).map((_, i) => (
+          <span
+            key={i}
+            className="whitespace-nowrap text-lg font-bold text-white select-none"
+            style={{ opacity: 0.15 }}
+          >
+            권리샵
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ImageGallery({ images, title, businessCategory, showPhotoHint }: ImageGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -121,6 +155,7 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
                 priority={index === 0}
                 sizes="300px"
               />
+              <WatermarkOverlay />
               {/* Bottom overlay: category label + counter */}
               <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-black/50 px-3 py-1 text-xs text-white">
                 <span>{IMAGE_CATEGORY_LABELS[index] ?? `사진 ${index + 1}`}</span>
@@ -197,7 +232,7 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
           </button>
 
           {/* Image */}
-          <div onClick={(e) => e.stopPropagation()}>
+          <div onClick={(e) => e.stopPropagation()} className="relative">
             <Image
               src={images[lightboxIndex].url}
               alt={`${title} - ${lightboxIndex + 1}`}
@@ -206,6 +241,7 @@ export function ImageGallery({ images, title, businessCategory, showPhotoHint }:
               className="max-h-[80vh] max-w-[90vw] object-contain"
               sizes="90vw"
             />
+            <WatermarkOverlay />
           </div>
 
           {/* Left/right arrows */}
