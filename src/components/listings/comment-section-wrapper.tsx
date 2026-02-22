@@ -11,7 +11,7 @@ const CommentSection = dynamic(
     ssr: false,
     loading: () => (
       <div className="mt-8 flex justify-center py-12">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-purple-600" />
       </div>
     ),
   },

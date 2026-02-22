@@ -22,7 +22,7 @@ const SLICE_COLORS: Record<string, string> = {
   "인건비": "#C4B5A0",   // warm muted
   "재료비": "#A3BFAB",   // sage muted
   "기타비용": "#B8B0C8", // lavender muted
-  "순수익": "#2EC4B6",   // brand accent
+  "순수익": "#7C3AED",   // purple accent
 };
 
 const RADIAN = Math.PI / 180;
@@ -45,7 +45,7 @@ function renderSliceLabel(props: any) {
       dominantBaseline="central"
       fontSize={isProfit ? 12 : 11}
       fontWeight={isProfit ? 700 : 500}
-      fill={isProfit ? "#2EC4B6" : "#6B7280"}
+      fill={isProfit ? "#7C3AED" : "#6B7280"}
     >
       {name} {((percent ?? 0) * 100).toFixed(0)}%
     </text>
@@ -75,7 +75,7 @@ export function CostPieChart({
   if (!mounted) {
     return (
       <div className="flex h-[220px] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-purple-600" />
       </div>
     );
   }
@@ -113,7 +113,7 @@ export function CostPieChart({
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div className="text-center">
           <p className="text-[10px] font-medium text-gray-400">순수익</p>
-          <p className="text-lg font-bold text-[#2EC4B6]">
+          <p className="text-lg font-bold text-purple-600">
             {profitMan.toLocaleString()}만원
           </p>
         </div>
@@ -129,8 +129,8 @@ export function RevenueGradeMessage({ grade, monthlyRevenue, monthlyProfit }: {
 }) {
   if (grade === "A") {
     return (
-      <div className="rounded-xl border border-green-200 bg-green-50 p-6 text-center">
-        <p className="text-sm font-medium text-green-800">
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
+        <p className="text-sm font-medium text-gray-600">
           홈택스 연동 매출 데이터가 준비되면 차트가 표시됩니다
         </p>
       </div>
@@ -138,8 +138,8 @@ export function RevenueGradeMessage({ grade, monthlyRevenue, monthlyProfit }: {
   }
   if (grade === "B") {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-center">
-        <p className="text-sm font-medium text-amber-800">
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
+        <p className="text-sm font-medium text-gray-600">
           매출 증빙자료가 제출되었습니다
         </p>
       </div>

@@ -10,8 +10,8 @@ export function SafetyBadge({ grade, size = "sm" }: SafetyBadgeProps) {
   if (grade === "C" || grade === "D") return null;
 
   const config = grade === "A"
-    ? { bg: "bg-green-100", color: "text-green-700", border: "border-green-300", label: "매출 인증", Icon: CheckCircle }
-    : { bg: "bg-amber-100", color: "text-amber-700", border: "border-amber-300", label: "매출 증빙", Icon: FileText };
+    ? { bg: "bg-purple-100", color: "text-purple-700", border: "border-purple-300", label: "매출 인증", Icon: CheckCircle }
+    : { bg: "bg-purple-50", color: "text-purple-600", border: "border-purple-200", label: "매출 증빙", Icon: FileText };
 
   const sizeClasses = size === "sm"
     ? "px-2 py-0.5 text-[11px] gap-1"

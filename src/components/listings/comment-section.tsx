@@ -49,7 +49,7 @@ function formatRelativeTime(dateStr: string): string {
 function UserAvatar({ user }: { user: CommentUser }) {
   const initials = user.name ? user.name.charAt(0).toUpperCase() : "?";
   return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy/10 text-sm font-semibold text-navy">
+    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-700">
       {initials}
     </div>
   );
@@ -188,7 +188,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
                 {formatRelativeTime(comment.createdAt)}
               </span>
               {comment.isSecret && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-700">
                   <Lock className="h-3 w-3" />
                   비밀 댓글
                 </span>
@@ -218,7 +218,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
                     setReplyContent("");
                     setReplyIsSecret(false);
                   }}
-                  className="flex items-center gap-1 text-xs text-gray-400 transition-colors hover:text-navy"
+                  className="flex items-center gap-1 text-xs text-gray-400 transition-colors hover:text-purple-600"
                 >
                   <Reply className="h-3.5 w-3.5" />
                   답글
@@ -244,7 +244,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
                   onChange={(e) => setReplyContent(e.target.value)}
                   placeholder="답글을 입력하세요..."
                   rows={2}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                 />
                 <div className="mt-2 flex items-center justify-between">
                   <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-500">
@@ -261,7 +261,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
                     type="button"
                     onClick={() => handleReplySubmit(comment.id)}
                     disabled={submitting || !replyContent.trim()}
-                    className="rounded-lg bg-navy px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-navy/90 disabled:opacity-50"
+                    className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
                   >
                     답글 작성
                   </button>
@@ -285,7 +285,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
     <div className="rounded-xl border border-gray-200 bg-white p-6">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <MessageSquare className="h-5 w-5 text-navy" />
+        <MessageSquare className="h-5 w-5 text-purple-600" />
         <h3 className="text-lg font-bold text-gray-900">댓글</h3>
         <span className="text-sm text-gray-400">{totalCount}</span>
       </div>
@@ -296,7 +296,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
           <div className="rounded-lg bg-gray-50 px-4 py-3 text-center text-sm text-gray-500">
             <Link
               href="/login"
-              className="font-medium text-navy hover:underline"
+              className="font-medium text-purple-600 hover:underline"
             >
               로그인
             </Link>
@@ -309,7 +309,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
               onChange={(e) => setContent(e.target.value)}
               placeholder="댓글을 입력하세요..."
               rows={3}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
             />
             <div className="mt-2 flex items-center justify-between">
               <label className="flex cursor-pointer items-center gap-1.5 text-sm text-gray-500">
@@ -325,7 +325,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
               <button
                 type="submit"
                 disabled={submitting || !content.trim()}
-                className="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy/90 disabled:opacity-50"
+                className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
               >
                 작성
               </button>
@@ -340,7 +340,7 @@ export function CommentSection({ listingId }: CommentSectionProps) {
       {/* Comment List */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-navy" />
+          <Loader2 className="h-6 w-6 animate-spin text-purple-600" />
         </div>
       ) : comments.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">

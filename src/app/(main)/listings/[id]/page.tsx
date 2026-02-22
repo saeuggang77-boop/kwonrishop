@@ -33,6 +33,7 @@ import { DiagnosisSummaryCard } from "@/components/listings/diagnosis-summary-ca
 import { auth } from "@/lib/auth";
 import { ListingLocationSectionSafe as ListingLocationSection } from "./listing-location-section";
 import { PremiumOfferSection } from "./premium-offer-section";
+import { MobileBottomBar } from "./mobile-bottom-bar";
 
 /** Recursively convert all BigInt values to Number to prevent RSC serialization errors */
 function toSerializable<T>(obj: T): T {
@@ -1110,6 +1111,15 @@ export default async function ListingDetailPage({
           </div>
         </div>
       )}
+
+      {/* Mobile Bottom CTA Bar */}
+      <MobileBottomBar
+        listingId={listing.id}
+        sellerId={listing.sellerId}
+        contactPhone={listing.contactPhone}
+        isPhonePublic={listing.isPhonePublic}
+        diagnosisReportId={diagnosisReport?.id}
+      />
     </div>
   );
 }
@@ -1204,7 +1214,7 @@ function SimilarListingCard({ sl }: { sl: { id: string; title: string; businessC
           {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ?? sl.businessCategory}
         </span>
         {rank >= 2 && (
-          <span className="absolute left-2 bottom-2 rounded bg-gray-700 px-1.5 py-0.5 text-[10px] font-medium text-white">
+          <span className="absolute left-2 bottom-2 rounded bg-purple-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
             {rank === 3 ? "AD" : "추천"}
           </span>
         )}
