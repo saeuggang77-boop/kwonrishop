@@ -68,6 +68,8 @@ const SORT_OPTIONS = [
   { value: "createdAt", label: "최신등록순" },
   { value: "price_asc", label: "보증금낮은순" },
   { value: "price_desc", label: "보증금높은순" },
+  { value: "premiumFee_asc", label: "권리금낮은순" },
+  { value: "premiumFee_desc", label: "권리금높은순" },
   { value: "profit", label: "월순익높은순" },
   { value: "revenue", label: "월매출높은순" },
   { value: "views", label: "조회순" },
@@ -785,7 +787,7 @@ function ListingsPageContent() {
                 {displayListings.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {displayListings.map((listing) => (
-                      <ListingCardComponent key={listing.id} listing={listing} variant="search" />
+                      <ListingCardComponent key={listing.id} listing={listing} variant="search" hidePremiumStyling={activeTab === "franchise"} />
                     ))}
                   </div>
                 )}

@@ -70,7 +70,7 @@ export const searchListingsSchema = z.object({
   swLng: z.coerce.number().optional(),
   neLat: z.coerce.number().optional(),
   neLng: z.coerce.number().optional(),
-  sort: z.enum(["rotation", "price_asc", "price_desc", "revenue", "profit", "views", "createdAt"]).optional().default("rotation"),
+  sort: z.enum(["rotation", "price_asc", "price_desc", "premiumFee_asc", "premiumFee_desc", "premium_asc", "premium_desc", "revenue", "profit", "views", "createdAt"]).optional().default("rotation"),
   sortBy: z.enum(["createdAt", "price", "viewCount", "favoriteCount", "monthlyRevenue", "monthlyProfit", "safetyGrade", "premiumFee", "areaPyeong"]).optional().default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
   cursor: z.string().optional(),

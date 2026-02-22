@@ -56,6 +56,7 @@ export interface ListingCardProps {
   priority?: boolean;
   showAdBadge?: boolean;
   showRecommendBadge?: boolean;
+  hidePremiumStyling?: boolean;
 }
 
 /* ================================================================
@@ -163,8 +164,8 @@ function buildBadges(listing: ListingCardData, compact: boolean) {
    Component
    ================================================================ */
 
-export function ListingCard({ listing, variant, isCarouselItem = false, priority = false, showAdBadge, showRecommendBadge }: ListingCardProps) {
-  if (variant === "search") return <SearchCard listing={listing} showAdBadge={showAdBadge} showRecommendBadge={showRecommendBadge} />;
+export function ListingCard({ listing, variant, isCarouselItem = false, priority = false, showAdBadge, showRecommendBadge, hidePremiumStyling }: ListingCardProps) {
+  if (variant === "search") return <SearchCard listing={listing} showAdBadge={showAdBadge} showRecommendBadge={showRecommendBadge} hidePremiumStyling={hidePremiumStyling} />;
   if (variant === "recommend") return <RecommendCard listing={listing} isCarouselItem={isCarouselItem} priority={priority} />;
   return <PremiumCard listing={listing} isCarouselItem={isCarouselItem} priority={priority} />;
 }
@@ -302,7 +303,7 @@ function RecommendCard({ listing, isCarouselItem, priority = false }: { listing:
    Search Card (가로형, 점포찾기)
    ──────────────────────────────────────────────────────────────── */
 
-function SearchCard({ listing, showAdBadge, showRecommendBadge }: { listing: ListingCardData; showAdBadge?: boolean; showRecommendBadge?: boolean }) {
+function SearchCard({ listing, showAdBadge, showRecommendBadge, hidePremiumStyling }: { listing: ListingCardData; showAdBadge?: boolean; showRecommendBadge?: boolean; hidePremiumStyling?: boolean }) {
   const thumbnail = listing.images[0]?.thumbnailUrl ?? listing.images[0]?.url;
   const hasRealImage = thumbnail && !isPicsum(thumbnail);
   const fa = floorAreaStr(listing.floor, listing.areaPyeong);
@@ -311,7 +312,7 @@ function SearchCard({ listing, showAdBadge, showRecommendBadge }: { listing: Lis
   const hasProfit = listing.monthlyProfit != null && Number(listing.monthlyProfit) > 0;
   const badges = buildBadges(listing, false);
 
-  const tierConfig = listing.premiumRank >= 2 ? PREMIUM_AD_CONFIG[listing.premiumRank === 3 ? "VIP" : "PREMIUM"] : null;
+  const tierConfig = !hidePremiumStyling && listing.premiumRank >= 2 ? PREMIUM_AD_CONFIG[listing.premiumRank === 3 ? "VIP" : "PREMIUM"] : null;
   const imageCount = listing.images.length;
 
   const borderClass = listing.urgentTag?.active

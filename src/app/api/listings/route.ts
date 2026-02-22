@@ -348,6 +348,10 @@ export async function GET(req: NextRequest) {
     const sortMapping: Record<string, Record<string, string>> = {
       price_asc: { price: "asc" },
       price_desc: { price: "desc" },
+      premiumFee_asc: { premiumFee: "asc" },
+      premiumFee_desc: { premiumFee: "desc" },
+      premium_asc: { premiumFee: "asc" },
+      premium_desc: { premiumFee: "desc" },
       revenue: { monthlyRevenue: "desc" },
       profit: { monthlyProfit: "desc" },
       views: { viewCount: "desc" },
