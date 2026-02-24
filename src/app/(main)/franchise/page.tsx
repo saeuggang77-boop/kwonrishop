@@ -15,6 +15,7 @@ interface FranchiseBrand {
   storeCount: number | null;
   dataYear: number | null;
   isPromoting: boolean;
+  logoUrl?: string;
 }
 
 interface Meta {
@@ -339,11 +340,19 @@ export default function FranchisePage() {
               >
                 <div className="flex items-start gap-4">
                   {/* Avatar */}
-                  <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg font-bold ${getAvatarColor(brand.subcategory)}`}
-                  >
-                    {brand.brandName.charAt(0)}
-                  </div>
+                  {brand.logoUrl ? (
+                    <img
+                      src={brand.logoUrl}
+                      alt={brand.brandName}
+                      className="h-12 w-12 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg font-bold ${getAvatarColor(brand.subcategory)}`}
+                    >
+                      {brand.brandName.charAt(0)}
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${getSubcategoryBadge(brand.subcategory)}`}>

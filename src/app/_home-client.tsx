@@ -19,7 +19,7 @@ import { RecentListingsSection } from "@/components/home/recent-listings-section
 /* ─── Constants ─── */
 const QUICK_MENU = [
   { icon: Search, label: "점포 찾기", href: "/listings" },
-  { icon: FileText, label: "점포 팔기", href: "/listings/new" },
+  { icon: FileText, label: "점포 팔기", href: "/sell" },
   { icon: Building2, label: "프랜차이즈", href: "/franchise" },
   { icon: ShieldCheck, label: "권리진단서", href: "/reports/request" },
   { icon: Calculator, label: "시뮬레이터", href: "/simulator" },
@@ -165,7 +165,7 @@ export default function HomeClient({
           {/* Desktop nav */}
           <nav className="hidden items-center gap-5 md:flex">
             <Link href="/listings" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">점포 찾기</Link>
-            <Link href="/listings/new" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">점포 팔기</Link>
+            <Link href="/sell" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">점포 팔기</Link>
             <Link href="/franchise" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">프랜차이즈</Link>
             <Link href="/experts" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">전문가</Link>
             <Link href="/simulator" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">시뮬레이터</Link>
@@ -191,7 +191,7 @@ export default function HomeClient({
             <nav className="flex flex-col gap-1">
               {[
                 { href: "/listings", label: "점포 찾기" },
-                { href: "/listings/new", label: "점포 팔기" },
+                { href: "/sell", label: "점포 팔기" },
                 { href: "/franchise", label: "프랜차이즈" },
                 { href: "/experts", label: "전문가" },
                 { href: "/simulator", label: "시뮬레이터" },

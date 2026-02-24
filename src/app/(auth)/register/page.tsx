@@ -58,6 +58,12 @@ export default function RegisterPage() {
     confirmPassword: "",
     role: "BUYER" as "BUYER" | "SELLER" | "AGENT" | "FRANCHISE" | "EXPERT",
     expertCategory: "",
+    agentLicenseNo: "",
+    agentOfficeName: "",
+    companyName: "",
+    businessRegNo: "",
+    expertCredential: "",
+    expertYears: "",
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
@@ -105,6 +111,12 @@ export default function RegisterPage() {
           password: form.password,
           role: form.role,
           expertCategory: form.expertCategory,
+          agentLicenseNo: form.agentLicenseNo,
+          agentOfficeName: form.agentOfficeName,
+          companyName: form.companyName,
+          businessRegNo: form.businessRegNo,
+          expertCredential: form.expertCredential,
+          expertYears: form.expertYears ? parseInt(form.expertYears) : undefined,
         }),
       });
 
@@ -125,7 +137,7 @@ export default function RegisterPage() {
       if (result?.error) {
         router.push("/login");
       } else {
-        router.push("/");
+        router.push("/welcome");
         router.refresh();
       }
     } catch {
@@ -264,21 +276,79 @@ export default function RegisterPage() {
             ))}
           </div>
 
-          {/* Expert Category Dropdown */}
+          {/* Role-specific additional fields */}
+          {form.role === "AGENT" && (
+            <div className="mt-3 space-y-3">
+              <Input
+                label="중개사 자격번호"
+                type="text"
+                value={form.agentLicenseNo}
+                onChange={(e) => updateField("agentLicenseNo", e.target.value)}
+                placeholder="예: 서울-12345"
+              />
+              <Input
+                label="소속 사무소명"
+                type="text"
+                value={form.agentOfficeName}
+                onChange={(e) => updateField("agentOfficeName", e.target.value)}
+                placeholder="예: 권리샵 부동산"
+              />
+            </div>
+          )}
+
+          {form.role === "FRANCHISE" && (
+            <div className="mt-3 space-y-3">
+              <Input
+                label="브랜드/회사명"
+                type="text"
+                value={form.companyName}
+                onChange={(e) => updateField("companyName", e.target.value)}
+                placeholder="예: 권리프랜차이즈"
+              />
+              <Input
+                label="사업자등록번호"
+                type="text"
+                value={form.businessRegNo}
+                onChange={(e) => updateField("businessRegNo", e.target.value)}
+                placeholder="000-00-00000"
+              />
+            </div>
+          )}
+
           {form.role === "EXPERT" && (
-            <div className="mt-3">
-              <select
-                value={form.expertCategory}
-                onChange={(e) => updateField("expertCategory", e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-700 outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy"
-              >
-                <option value="">전문 분야를 선택하세요</option>
-                {EXPERT_CATEGORIES.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
+            <div className="mt-3 space-y-3">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-navy">
+                  전문 분야
+                </label>
+                <select
+                  value={form.expertCategory}
+                  onChange={(e) => updateField("expertCategory", e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-700 outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy"
+                >
+                  <option value="">전문 분야를 선택하세요</option>
+                  {EXPERT_CATEGORIES.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Input
+                label="자격증명"
+                type="text"
+                value={form.expertCredential}
+                onChange={(e) => updateField("expertCredential", e.target.value)}
+                placeholder="예: 변호사, 세무사 등"
+              />
+              <Input
+                label="경력연수"
+                type="number"
+                min="0"
+                value={form.expertYears}
+                onChange={(e) => updateField("expertYears", e.target.value)}
+                placeholder="예: 5"
+              />
             </div>
           )}
         </div>

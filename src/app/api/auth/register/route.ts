@@ -16,7 +16,20 @@ export async function POST(req: NextRequest) {
       if (limited) return limited;
     } catch {}
 
-    const { name, email, phone, password, role, expertCategory } = await req.json();
+    const {
+      name,
+      email,
+      phone,
+      password,
+      role,
+      expertCategory,
+      agentLicenseNo,
+      agentOfficeName,
+      companyName,
+      businessRegNo,
+      expertCredential,
+      expertYears
+    } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -65,6 +78,12 @@ export async function POST(req: NextRequest) {
         hashedPassword,
         role: userRole,
         expertCategory: userExpertCategory,
+        agentLicenseNo: userRole === "AGENT" ? agentLicenseNo || null : null,
+        agentOfficeName: userRole === "AGENT" ? agentOfficeName || null : null,
+        companyName: userRole === "FRANCHISE" ? companyName || null : null,
+        businessRegNo: userRole === "FRANCHISE" ? businessRegNo || null : null,
+        expertCredential: userRole === "EXPERT" ? expertCredential || null : null,
+        expertYears: userRole === "EXPERT" && expertYears ? parseInt(expertYears) : null,
         accountStatus: "ACTIVE",
       },
     });

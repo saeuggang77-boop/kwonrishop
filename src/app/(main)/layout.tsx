@@ -27,8 +27,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <Link href="/listings" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               점포 찾기
             </Link>
-            <Link href="/listings/new" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
+            <Link href="/sell" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               점포 팔기
+            </Link>
+            <Link href="/wanted" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
+              점포 의뢰
             </Link>
             <Link href="/franchise" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">
               프랜차이즈
@@ -77,7 +80,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <h3 className="text-sm font-bold text-white/90">서비스</h3>
               <ul className="mt-3 space-y-2">
                 <li><Link href="/listings" className="text-sm text-white/50 transition-colors hover:text-white/80">점포 찾기</Link></li>
-                <li><Link href="/listings/new" className="text-sm text-white/50 transition-colors hover:text-white/80">점포 팔기</Link></li>
+                <li><Link href="/sell" className="text-sm text-white/50 transition-colors hover:text-white/80">점포 팔기</Link></li>
                 <li><Link href="/franchise" className="text-sm text-white/50 transition-colors hover:text-white/80">프랜차이즈</Link></li>
                 <li><Link href="/reports/request" className="text-sm text-white/50 transition-colors hover:text-white/80">권리진단서</Link></li>
               </ul>

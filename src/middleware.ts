@@ -20,7 +20,7 @@ export default auth((req) => {
   }
 
   // Public routes
-  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium", "/pricing", "/franchise", "/bbs", "/market-price", "/simulator", "/experts", "/area-analysis"];
+  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium", "/pricing", "/franchise", "/bbs", "/market-price", "/simulator", "/experts", "/area-analysis", "/wanted"];
   const isPublicPath = publicPaths.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
@@ -84,6 +84,19 @@ export default auth((req) => {
     }
   }
 
+  // Dashboard routes - redirect /dashboard to role-specific default page
+  if (pathname === "/dashboard") {
+    let defaultPath = "/dashboard/notifications";
+
+    if (userRole === "SELLER" || userRole === "AGENT" || userRole === "FRANCHISE") {
+      defaultPath = "/dashboard/listings";
+    } else if (userRole === "EXPERT") {
+      defaultPath = "/dashboard/inquiries";
+    }
+
+    return NextResponse.redirect(new URL(defaultPath, req.url));
+  }
+
   // Dashboard routes - BUYER can access notifications, inquiries, reports
   if (pathname.startsWith("/dashboard")) {
     const buyerAllowedPaths = ["/dashboard/notifications", "/dashboard/inquiries", "/dashboard/reports"];
@@ -91,7 +104,7 @@ export default auth((req) => {
       (p) => pathname === p || pathname.startsWith(`${p}/`)
     );
 
-    if (!isBuyerAllowed && userRole !== "SELLER" && userRole !== "ADMIN") {
+    if (!isBuyerAllowed && userRole !== "SELLER" && userRole !== "AGENT" && userRole !== "FRANCHISE" && userRole !== "EXPERT" && userRole !== "ADMIN") {
       return NextResponse.redirect(new URL("/dashboard/notifications", req.url));
     }
   }

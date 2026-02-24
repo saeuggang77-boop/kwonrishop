@@ -662,6 +662,19 @@ export async function POST(req: NextRequest) {
       console.error("Alert notification error:", error);
     }
 
+    // Send wanted-request matching notifications
+    try {
+      const { notifyWantedRequestUsers } = await import("@/lib/utils/wanted-notification");
+      await notifyWantedRequestUsers({
+        id: listing.id,
+        city: listing.city,
+        businessCategory: listing.businessCategory,
+        title: listing.title,
+      });
+    } catch (error) {
+      console.error("Wanted notification error:", error);
+    }
+
     return Response.json(
       {
         data: {
