@@ -10,6 +10,7 @@ import {
   ChevronRight, ChevronLeft,
   ShieldCheck, Calculator, BarChart3,
   Sparkles, Menu, X,
+  CheckCircle2, Users, MessageCircle, MapPin,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
@@ -89,6 +90,28 @@ const QUICK_MENU = [
   { icon: ShieldCheck, label: "권리진단서", href: "/reports/request" },
   { icon: Calculator, label: "시뮬레이터", href: "/simulator" },
   { icon: BarChart3, label: "상권분석", href: "/area-analysis" },
+];
+
+const POPULAR_AREAS = [
+  { city: "서울", district: "강남구", label: "강남" },
+  { city: "서울", district: "마포구", label: "홍대" },
+  { city: "서울", district: "용산구", label: "이태원" },
+  { city: "서울", district: "서대문구", label: "신촌" },
+  { city: "서울", district: "성동구", label: "성수" },
+  { city: "서울", district: "송파구", label: "잠실" },
+  { city: "서울", district: "서초구", label: "서초" },
+  { city: "경기", district: "성남시", label: "분당" },
+  { city: "경기", district: "고양시", label: "일산" },
+  { city: "경기", district: "수원시", label: "수원" },
+  { city: "부산", district: "해운대구", label: "해운대" },
+  { city: "인천", district: "중구", label: "인천" },
+];
+
+const TRUST_STATS = [
+  { icon: Building2, label: "등록 매물", key: "listingsCount" as const },
+  { icon: CheckCircle2, label: "거래 완료", key: "soldCount" as const },
+  { icon: Users, label: "전문가", key: "expertsCount" as const },
+  { icon: MessageCircle, label: "누적 상담", key: "inquiriesCount" as const },
 ];
 
 /* ─── Hero Slides (CSS-only backgrounds) ─── */
@@ -173,6 +196,7 @@ export default function HomePage() {
   const [loadingPremium, setLoadingPremium] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [stats, setStats] = useState({ listingsCount: 0, soldCount: 0, expertsCount: 0, inquiriesCount: 0 });
 
   /* ─── fetch ─── */
   useEffect(() => {
@@ -190,6 +214,7 @@ export default function HomePage() {
         if (!listingsJ) return;
         setPremiumListings((listingsJ.premiumTop ?? []).map((l: RawListingResponse) => toCard(l)));
         setRecommendedListings((listingsJ.recommended ?? []).map((l: RawListingResponse) => toCard(l)));
+        if (listingsJ.stats) setStats(listingsJ.stats);
       }).finally(() => { if (!ac.signal.aborted) { setLoadingPremium(false); setLoadingRecommended(false); } });
 
     return () => ac.abort();
@@ -379,6 +404,48 @@ export default function HomePage() {
                   </div>
                   <span className="text-[11px] font-semibold leading-tight text-gray-700 md:text-xs">{c.label}</span>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      {/* ═══ 2.5 Popular Area Tags ═══ */}
+      <RevealOnScroll>
+        <section className="border-t border-gray-100 bg-white py-5 md:py-6">
+          <div className="mx-auto max-w-[1200px] px-4">
+            <div className="flex items-center gap-1.5 mb-3">
+              <MapPin className="h-4 w-4 text-navy" />
+              <h2 className="text-sm font-bold text-gray-700 md:text-base">인기 지역</h2>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:flex-wrap md:overflow-visible">
+              {POPULAR_AREAS.map((area) => (
+                <Link
+                  key={`${area.city}-${area.district}`}
+                  href={`/listings?city=${encodeURIComponent(area.city)}&district=${encodeURIComponent(area.district)}`}
+                  className="flex-none rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-all hover:border-navy hover:bg-navy/5 hover:text-navy active:scale-95"
+                >
+                  {area.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      {/* ═══ 2.7 Trust Indicators ═══ */}
+      <RevealOnScroll>
+        <section className="bg-gradient-to-b from-white to-gray-50 py-8 md:py-10">
+          <div className="mx-auto max-w-3xl px-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+              {TRUST_STATS.map((s) => (
+                <div key={s.key} className="rounded-xl border border-gray-200 bg-white p-4 text-center shadow-sm md:p-5">
+                  <s.icon className="mx-auto h-7 w-7 text-navy md:h-8 md:w-8" />
+                  <div className="mt-2 text-xl font-bold text-navy md:text-2xl">
+                    <CountUp end={stats[s.key]} suffix={s.key === "inquiriesCount" ? "+" : ""} />
+                  </div>
+                  <p className="mt-1 text-[11px] text-gray-500 md:text-xs">{s.label}</p>
+                </div>
               ))}
             </div>
           </div>

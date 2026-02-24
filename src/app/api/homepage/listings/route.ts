@@ -25,10 +25,14 @@ export async function GET(req: Request) {
   try {
     const sessionId = getSessionId(req);
 
-    // 큐 기반 순환 조회
-    const [premiumBatch, recommendBatch] = await Promise.all([
+    // 큐 기반 순환 조회 + 신뢰 지표 통계
+    const [premiumBatch, recommendBatch, listingsCount, soldCount, expertsCount, inquiriesCount] = await Promise.all([
       getExposureBatch("premium", HOMEPAGE_SLOTS.PREMIUM, sessionId),
       getExposureBatch("recommend", HOMEPAGE_SLOTS.RECOMMEND, sessionId),
+      prisma.listing.count({ where: { status: "ACTIVE" } }),
+      prisma.listing.count({ where: { status: "SOLD" } }),
+      prisma.expert.count({ where: { isActive: true } }),
+      prisma.inquiry.count(),
     ]);
 
     // BigInt → string 직렬화
@@ -46,6 +50,7 @@ export async function GET(req: Request) {
       JSON.stringify({
         premiumTop: premiumBatch.listings.map(serialize),
         recommended: recommendBatch.listings.map(serialize),
+        stats: { listingsCount, soldCount, expertsCount, inquiriesCount },
       }),
       {
         headers: {

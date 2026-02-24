@@ -6,13 +6,44 @@ import Image from "next/image";
 import {
   ArrowRight, FileEdit, Eye, BarChart3, ShieldCheck, ClipboardList,
   Receipt, Target, MessageCircle, Search, Phone, Mail, Clock,
-  ChevronDown, Home, User, Users, Calculator,
+  ChevronDown, ChevronRight, Home, User, Users, Calculator,
 } from "lucide-react";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
+
+/* ─── Franchise helpers ─── */
+interface FranchiseBrand {
+  id: string;
+  brandName: string;
+  category: string;
+  subcategory: string;
+  monthlyAvgSales: string | null;
+  startupCost: string | null;
+  storeCount: number | null;
+}
+
+const AVATAR_COLORS: Record<string, string> = {
+  커피: "bg-amber-800 text-amber-100",
+  치킨: "bg-orange-600 text-orange-100",
+  한식: "bg-red-700 text-red-100",
+  양식: "bg-rose-700 text-rose-100",
+  피자: "bg-yellow-600 text-yellow-100",
+  분식: "bg-pink-600 text-pink-100",
+  패스트푸드: "bg-orange-500 text-orange-100",
+  편의점: "bg-blue-700 text-blue-100",
+  세탁: "bg-purple-600 text-purple-100",
+};
+
+function formatKRW(amount: number): string {
+  if (amount >= 100000000) return `${(amount / 100000000).toFixed(1)}억`;
+  if (amount >= 10000) return `${Math.round(amount / 10000).toLocaleString()}만`;
+  return amount.toLocaleString();
+}
 
 export default function HomeBelowFold() {
   const [showFloating, setShowFloating] = useState(false);
   const [footerOpen, setFooterOpen] = useState<string | null>(null);
+  const [franchises, setFranchises] = useState<FranchiseBrand[]>([]);
+  const [loadingFranchise, setLoadingFranchise] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setShowFloating(window.scrollY > 400);
@@ -20,8 +51,84 @@ export default function HomeBelowFold() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    fetch("/api/franchise?limit=6&sortBy=monthlyAvgSales")
+      .then(r => r.json())
+      .then(json => setFranchises(json.data ?? []))
+      .catch(() => setFranchises([]))
+      .finally(() => setLoadingFranchise(false));
+  }, []);
+
   return (
     <>
+      {/* ═══ 4.5 Popular Franchises ═══ */}
+      <RevealOnScroll>
+        <section className="border-t border-gray-200 bg-white py-10 md:py-16">
+          <div className="mx-auto max-w-[1200px] px-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-heading text-base font-bold text-navy md:text-xl">인기 프랜차이즈</h2>
+              <Link href="/franchise" className="flex items-center text-xs text-gray-500 transition-colors hover:text-navy md:text-sm">
+                전체보기 <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+            {loadingFranchise ? (
+              <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="h-44 animate-pulse rounded-xl border border-gray-200 bg-gray-100" />
+                ))}
+              </div>
+            ) : franchises.length === 0 ? (
+              <p className="mt-6 py-8 text-center text-sm text-gray-400">프랜차이즈 정보가 없습니다</p>
+            ) : (
+              <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+                {franchises.map((brand) => (
+                  <Link
+                    key={brand.id}
+                    href={`/franchise/${brand.id}`}
+                    className="group rounded-xl border border-gray-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${AVATAR_COLORS[brand.subcategory] ?? "bg-navy text-white"}`}>
+                        {brand.brandName.charAt(0)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="inline-block rounded px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-600">
+                          {brand.subcategory}
+                        </span>
+                        <h3 className="mt-1 truncate text-sm font-bold text-navy group-hover:text-navy/80">
+                          {brand.brandName}
+                        </h3>
+                      </div>
+                    </div>
+                    <div className="mt-3 space-y-1.5 text-xs">
+                      {brand.monthlyAvgSales && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-500">월 평균매출</span>
+                          <span className="font-bold text-navy">{formatKRW(Number(brand.monthlyAvgSales))}</span>
+                        </div>
+                      )}
+                      {brand.startupCost && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-500">창업비용</span>
+                          <span className="font-bold text-navy">{formatKRW(Number(brand.startupCost))}</span>
+                        </div>
+                      )}
+                      {brand.storeCount != null && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-500">가맹점</span>
+                          <span className="font-bold text-navy">{brand.storeCount.toLocaleString()}개</span>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      </RevealOnScroll>
+
       {/* ═══ 5. Report Promo ═══ */}
       <RevealOnScroll>
         <section className="relative overflow-hidden bg-gradient-to-br from-[#1e3a5f] via-[#1e40af] to-[#3b82f6] py-12 md:py-20">
