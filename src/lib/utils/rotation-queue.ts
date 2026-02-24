@@ -3,6 +3,7 @@ import { getRedis } from "@/lib/redis/client";
 
 /**
  * 홈페이지 매물 카드 필드 — 렌더에 필요한 것만 select
+ * 최적화: 홈페이지에서 실제로 사용하지 않는 필드 제거
  */
 const CARD_SELECT = {
   id: true,
@@ -11,7 +12,7 @@ const CARD_SELECT = {
   storeType: true,
   price: true,
   monthlyRent: true,
-  managementFee: true,
+  managementFee: true, // serialize에서 사용하므로 유지
   premiumFee: true,
   monthlyRevenue: true,
   monthlyProfit: true,
@@ -19,9 +20,9 @@ const CARD_SELECT = {
   floor: true,
   city: true,
   district: true,
-  neighborhood: true,
-  latitude: true,
-  longitude: true,
+  // neighborhood: true,  // ❌ 홈페이지 카드에서 미사용 (city, district만 표시)
+  // latitude: true,      // ❌ 홈페이지에 지도 없음
+  // longitude: true,     // ❌ 홈페이지에 지도 없음
   safetyGrade: true,
   isPremium: true,
   isRecommended: true,
@@ -30,15 +31,19 @@ const CARD_SELECT = {
   goodwillPremium: true,
   facilityPremium: true,
   floorPremium: true,
-  viewCount: true,
-  listingExposureOrder: true,
+  // viewCount: true,     // ❌ 홈페이지 카드에서 미표시
+  // listingExposureOrder: true, // ❌ 내부 필드, 화면 미표시
   images: {
     where: { isPrimary: true },
     take: 1,
     select: { url: true, thumbnailUrl: true },
   },
   seller: {
-    select: { name: true, image: true, isTrustedSeller: true },
+    select: {
+      name: true,
+      image: true,
+      // isTrustedSeller: true, // ❌ 홈페이지 PremiumCard/RecommendCard에서 미사용
+    },
   },
 } as const;
 
