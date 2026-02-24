@@ -473,12 +473,12 @@ export default async function ListingDetailPage({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               {(listing.safetyGrade === "A" || listing.safetyGrade === "B") && (
-                <span className="rounded-md bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-700">
+                <span className="rounded-lg bg-navy-50 px-3 py-1 text-sm font-semibold text-navy">
                   매출인증
                 </span>
               )}
               {isPremium && (
-                <span className="rounded-md bg-purple-600 px-3 py-1 text-sm font-semibold text-white">
+                <span className="rounded-lg bg-navy px-3 py-1 text-sm font-semibold text-white">
                   프리미엄
                 </span>
               )}
@@ -516,7 +516,7 @@ export default async function ListingDetailPage({
           </div>
 
           {/* [2-2] Core Pricing */}
-          <div className="mt-8 rounded-xl border border-gray-100 bg-white p-6">
+          <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-6">
             <div className="flex items-center divide-x divide-gray-200">
               <PriceBlock label="보증금" value={formatKRW(numDeposit)} />
               <PriceBlock
@@ -539,7 +539,7 @@ export default async function ListingDetailPage({
 
           {/* [2-3] Revenue Summary (arrow flow) */}
           {(numMonthlyRevenue > 0 || numMonthlyProfit > 0) && (
-            <div className="mt-4 flex items-center gap-3 rounded-xl bg-gray-50 px-6 py-4">
+            <div className="mt-4 flex items-center gap-3 rounded-xl bg-surface-1 px-6 py-4">
               <div className="text-center">
                 <p className="text-xs text-gray-500">월매출</p>
                 <p className="mt-0.5 text-base font-bold text-gray-900">{formatKRW(numMonthlyRevenue)}</p>
@@ -552,7 +552,7 @@ export default async function ListingDetailPage({
               <ArrowRight className="h-4 w-4 shrink-0 text-gray-400" />
               <div className="text-center">
                 <p className="text-xs text-gray-500">투자회수</p>
-                <p className="mt-0.5 text-base font-bold text-purple-600">
+                <p className="mt-0.5 text-base font-bold text-navy">
                   {roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}
                 </p>
               </div>
@@ -572,7 +572,7 @@ export default async function ListingDetailPage({
             )}
 
             {/* Info table */}
-            <div className="mt-6 overflow-hidden rounded-xl border border-gray-100">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100">
               <table className="w-full text-sm">
                 <tbody className="divide-y divide-gray-100">
                   <InfoRow
@@ -610,8 +610,8 @@ export default async function ListingDetailPage({
 
             {/* Description */}
             <div className="mt-8">
-              <h2 className="text-lg font-bold text-gray-900">상세 설명</h2>
-              <div className="mt-3 whitespace-pre-wrap rounded-lg bg-gray-50 p-6 leading-relaxed text-gray-700">
+              <h2 className="font-heading text-lg font-bold text-gray-900">상세 설명</h2>
+              <div className="mt-3 whitespace-pre-wrap rounded-xl bg-surface-1 p-6 leading-relaxed text-gray-700">
                 {listing.description || (
                   <span className="text-gray-400">상세 설명이 아직 등록되지 않았습니다.</span>
                 )}
@@ -620,9 +620,9 @@ export default async function ListingDetailPage({
 
             {/* Premium breakdown */}
             {(listing.goodwillPremium || listing.facilityPremium || listing.floorPremium) && (
-              <div className="mt-6 overflow-hidden rounded-xl border border-purple-100 bg-purple-50/50">
+              <div className="mt-6 overflow-hidden rounded-2xl border border-navy-100 bg-navy-50/50">
                 <div className="px-5 py-4">
-                  <h3 className="text-sm font-bold text-purple-700">권리금 산정에 대한 설명</h3>
+                  <h3 className="font-heading text-sm font-bold text-navy-dark">권리금 산정에 대한 설명</h3>
                   <div className="mt-3 space-y-3">
                     {listing.goodwillPremium != null && listing.goodwillPremium > 0 && (
                       <PremiumBreakdownRow
@@ -646,16 +646,16 @@ export default async function ListingDetailPage({
                       />
                     )}
                   </div>
-                  <div className="mt-3 border-t border-purple-200/50 pt-3 text-right">
+                  <div className="mt-3 border-t border-navy-200/50 pt-3 text-right">
                     <span className="text-sm text-gray-500">합계 </span>
-                    <span className="text-sm font-bold text-purple-700">
+                    <span className="text-sm font-bold text-navy-dark">
                       {((listing.goodwillPremium ?? 0) + (listing.facilityPremium ?? 0) + (listing.floorPremium ?? 0)).toLocaleString()}만원
                     </span>
                   </div>
                   {diagnosisReport && (
                     <div className="mt-2 rounded-lg bg-white/80 px-3 py-2 text-right">
                       <span className="text-xs text-gray-500">권리진단서 적정 권리금: </span>
-                      <span className="text-xs font-bold text-purple-600">
+                      <span className="text-xs font-bold text-navy">
                         {formatKRW(diagnosisReport.fairPremiumBusiness + diagnosisReport.fairPremiumFacility + diagnosisReport.fairPremiumFloor)}
                       </span>
                     </div>
@@ -694,22 +694,22 @@ export default async function ListingDetailPage({
           {/* ===== TAB 2: 수익분석 ===== */}
           <section id="revenue-analysis" className="mt-12">
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-gray-900">수익 분석</h2>
+              <h2 className="font-heading text-lg font-bold text-gray-900">수익 분석</h2>
               {listing.safetyGrade && <SafetyBadge grade={listing.safetyGrade} size="md" />}
             </div>
 
             {/* Safety verification badge (A/B only) */}
             {(listing.safetyGrade === "A" || listing.safetyGrade === "B") && (
-              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-purple-100 bg-purple-50/50 px-5 py-3">
+              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-navy-100 bg-navy-50/50 px-5 py-3">
                 <SafetyBadge grade={listing.safetyGrade} size="md" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-purple-800">
+                  <p className="text-sm font-semibold text-navy-dark">
                     {listing.safetyGrade === "A"
                       ? "홈택스/여신금융협회 매출 검증 완료"
                       : "매출 증빙자료 제출 완료"}
                   </p>
                   {listing.safetyComment && (
-                    <p className="mt-0.5 text-xs text-purple-600">
+                    <p className="mt-0.5 text-xs text-navy">
                       {listing.safetyComment}
                     </p>
                   )}
@@ -718,13 +718,13 @@ export default async function ListingDetailPage({
                   <div className="flex shrink-0 gap-2">
                     <Link
                       href={`/api/payments/single?listingId=${listing.id}`}
-                      className="rounded-lg border border-purple-300 px-3 py-1.5 text-xs font-bold text-purple-700 transition-colors hover:bg-purple-100"
+                      className="rounded-lg border border-navy-300 px-3 py-1.5 text-xs font-bold text-navy-dark transition-colors hover:bg-navy-50"
                     >
                       증빙 열람 {VIEWER_PLANS.SINGLE.price.toLocaleString()}원
                     </Link>
                     <Link
                       href="/pricing#viewer"
-                      className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-purple-700"
+                      className="rounded-lg bg-navy px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-navy-dark"
                     >
                       월 구독
                     </Link>
@@ -745,7 +745,7 @@ export default async function ListingDetailPage({
                 </div>
 
                 {/* Revenue Grade Message */}
-                <div className="mt-6 overflow-hidden rounded-xl border border-gray-100 bg-white p-6">
+                <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-white p-6">
                   <RevenueGradeMessage
                     grade={listing.safetyGrade}
                     monthlyRevenue={numMonthlyRevenue}
@@ -756,7 +756,7 @@ export default async function ListingDetailPage({
                 {/* Cost Structure */}
                 <div className="mt-6 grid gap-6 lg:grid-cols-2">
                   {/* Cost Table */}
-                  <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
+                  <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white">
                     <div className="border-b border-gray-100 px-6 py-4">
                       <h3 className="text-base font-semibold text-gray-900">
                         월 지출 내역 (판매자 입력)
@@ -768,9 +768,9 @@ export default async function ListingDetailPage({
                       <CostRow label="인건비 (추정)" value={laborCost} />
                       <CostRow label="재료비/원가 (추정)" value={materialCost} />
                       <CostRow label="기타비용 (추정)" value={otherCost} />
-                      <div className="flex items-center justify-between bg-purple-50 px-6 py-3">
+                      <div className="flex items-center justify-between bg-navy-50 px-6 py-3">
                         <span className="text-sm font-bold text-gray-900">월순이익</span>
-                        <span className="text-base font-bold text-purple-600">{formatKRW(numMonthlyProfit)}</span>
+                        <span className="text-base font-bold text-navy">{formatKRW(numMonthlyProfit)}</span>
                       </div>
                     </div>
                     <div className="border-t border-gray-100 px-6 py-2">
@@ -781,7 +781,7 @@ export default async function ListingDetailPage({
                   </div>
 
                   {/* Cost Pie Chart */}
-                  <div className="overflow-hidden rounded-xl border border-gray-100 bg-white p-6">
+                  <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white p-6">
                     <h3 className="mb-2 text-base font-semibold text-gray-900">매출 구성</h3>
                     <CostPieChart
                       rent={totalRent}
@@ -794,7 +794,7 @@ export default async function ListingDetailPage({
                 </div>
 
                 {/* ROI Summary */}
-                <div className="mt-6 overflow-hidden rounded-xl border border-gray-100 bg-gray-50">
+                <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-surface-1">
                   <div className="px-6 py-5">
                     <h3 className="text-base font-semibold text-gray-900">투자 수익률 (ROI)</h3>
                     <div className="mt-4 grid grid-cols-3 gap-4 text-center">
@@ -804,21 +804,21 @@ export default async function ListingDetailPage({
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">권리금</p>
-                        <p className="mt-1 text-sm font-bold text-purple-600">
+                        <p className="mt-1 text-sm font-bold text-navy">
                           {numPremiumFee > 0 ? formatKRW(numPremiumFee) : "무권리"}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">투자회수</p>
-                        <p className="mt-1 text-sm font-bold text-purple-600">
+                        <p className="mt-1 text-sm font-bold text-navy">
                           {roiMonths > 0 ? `약 ${roiMonths}개월` : "-"}
                         </p>
                       </div>
                     </div>
                     {annualROI > 0 && (
-                      <div className="mt-4 rounded-xl border border-purple-100 bg-purple-50 p-4 text-center">
+                      <div className="mt-4 rounded-xl border border-navy-100 bg-navy-50 p-4 text-center">
                         <p className="text-xs text-gray-500">연간 투자수익률 (ROI)</p>
-                        <p className="mt-1 text-2xl font-bold text-purple-600">
+                        <p className="mt-1 text-2xl font-bold text-navy">
                           {annualROI.toFixed(1)}%
                         </p>
                         <p className="mt-1 text-[11px] text-gray-400">
@@ -834,7 +834,7 @@ export default async function ListingDetailPage({
                         </div>
                         <div className="mt-1 h-3 overflow-hidden rounded-full bg-gray-200">
                           <div
-                            className="h-full rounded-full bg-purple-500 transition-all"
+                            className="h-full rounded-full bg-navy-500 transition-all"
                             style={{
                               width: `${Math.min(100, (12 / roiMonths) * 100)}%`,
                             }}
@@ -842,7 +842,7 @@ export default async function ListingDetailPage({
                         </div>
                         <p className="mt-1 text-xs text-gray-500">
                           1년 기준 회수율:{" "}
-                          <span className="font-semibold text-purple-600">
+                          <span className="font-semibold text-navy">
                             {((12 / roiMonths) * 100).toFixed(1)}%
                           </span>
                         </p>
@@ -863,15 +863,15 @@ export default async function ListingDetailPage({
 
           {/* ===== TAB 3: 주변시세 ===== */}
           <section id="market-comparison" className="mt-12">
-            <h2 className="text-lg font-bold text-gray-900">주변 시세</h2>
+            <h2 className="font-heading text-lg font-bold text-gray-900">주변 시세</h2>
 
             {(marketPrice || districtListings.length > 0) ? (
               <>
                 {/* Market Price Chart */}
                 {numPremiumFee > 0 && (avgPremium > 0 || realAvgPremium > 0) && (
-                  <div className="mt-4 overflow-hidden rounded-xl border border-gray-100 bg-white p-6">
+                  <div className="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white p-6">
                     <div className="mb-4 flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-purple-600" />
+                      <TrendingUp className="h-4 w-4 text-navy" />
                       <h3 className="text-base font-semibold text-gray-900">
                         권리금 시세 비교
                       </h3>
@@ -899,10 +899,10 @@ export default async function ListingDetailPage({
                           <span
                             className={`rounded-md px-3 py-1 text-sm font-bold ${
                               verdict === "적정"
-                                ? "bg-purple-100 text-purple-700"
+                                ? "bg-navy-50 text-navy-dark"
                                 : verdict === "저가"
                                   ? "bg-gray-100 text-gray-700"
-                                  : "bg-purple-50 text-purple-600"
+                                  : "bg-navy-50 text-navy"
                             }`}
                           >
                             지역 평균 대비{" "}
@@ -914,7 +914,7 @@ export default async function ListingDetailPage({
                           </span>
                           <Link
                             href={`/market-price?subRegion=${listing.district}&businessType=${listing.businessCategory}`}
-                            className="flex items-center gap-1 text-sm text-purple-600 hover:underline"
+                            className="flex items-center gap-1 text-sm text-navy hover:underline"
                           >
                             상세 시세 보기
                           </Link>
@@ -925,7 +925,7 @@ export default async function ListingDetailPage({
                 )}
 
                 {/* Market Price Stats */}
-                <div className="mt-6 overflow-hidden rounded-xl border border-gray-100 bg-white">
+                <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-white">
                   <div className="border-b border-gray-100 px-6 py-4">
                     <h3 className="text-base font-semibold text-gray-900">
                       {listing.district} 시세 요약
@@ -974,7 +974,7 @@ export default async function ListingDetailPage({
 
             {/* Nearby Listings Table */}
             {districtListings.length > 0 && (
-              <div className="mt-6 overflow-hidden rounded-xl border border-gray-100 bg-white">
+              <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-white">
                 <div className="border-b border-gray-100 px-6 py-4">
                   <h3 className="text-base font-semibold text-gray-900">인근 매물 비교</h3>
                 </div>
@@ -991,10 +991,10 @@ export default async function ListingDetailPage({
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {/* Current listing row */}
-                      <tr className="bg-purple-50/50">
+                      <tr className="bg-navy-50/50">
                         <td className="px-4 py-3 font-semibold text-gray-900">
                           {listing.title}
-                          <span className="ml-2 inline-flex items-center rounded-full bg-purple-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                          <span className="ml-2 inline-flex items-center rounded-full bg-navy px-2 py-0.5 text-[10px] font-bold text-white">
                             이 매물
                           </span>
                         </td>
@@ -1004,7 +1004,7 @@ export default async function ListingDetailPage({
                         <td className="px-4 py-3 text-right font-medium text-gray-900">
                           {formatKRW(listing.price)}
                         </td>
-                        <td className="px-4 py-3 text-right font-medium text-purple-600">
+                        <td className="px-4 py-3 text-right font-medium text-navy">
                           {numPremiumFee > 0 ? formatKRW(numPremiumFee) : "무권리"}
                         </td>
                         <td className="px-4 py-3 text-right text-gray-600">
@@ -1016,7 +1016,7 @@ export default async function ListingDetailPage({
                           <td className="px-4 py-3">
                             <Link
                               href={`/listings/${sl.id}`}
-                              className="font-medium text-gray-800 hover:text-purple-600"
+                              className="font-medium text-gray-800 hover:text-navy"
                             >
                               {sl.title}
                             </Link>
@@ -1027,7 +1027,7 @@ export default async function ListingDetailPage({
                           <td className="px-4 py-3 text-right font-medium text-gray-900">
                             {formatKRW(sl.price)}
                           </td>
-                          <td className="px-4 py-3 text-right font-medium text-purple-600">
+                          <td className="px-4 py-3 text-right font-medium text-navy">
                             {sl.premiumFee && Number(sl.premiumFee) > 0
                               ? formatKRW(sl.premiumFee)
                               : "무권리"}
@@ -1074,9 +1074,9 @@ export default async function ListingDetailPage({
         <div className="hidden lg:block">
           <div className="sticky top-28 space-y-4">
             {/* [S-1] Seller Info Card */}
-            <div className="rounded-xl border border-gray-100 bg-white p-6">
+            <div className="rounded-2xl border border-gray-100 bg-white p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-lg font-bold text-purple-700">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-navy-50 text-lg font-bold text-navy">
                   {listing.seller?.name?.charAt(0) ?? "?"}
                 </div>
                 <div>
@@ -1102,21 +1102,21 @@ export default async function ListingDetailPage({
             {!diagnosisReport ? (
               <Link
                 href={`/reports/purchase?listingId=${listing.id}`}
-                className="flex w-full items-center justify-center rounded-lg bg-purple-600 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-purple-700"
+                className="flex w-full items-center justify-center rounded-xl bg-navy px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-navy-dark"
               >
                 AI 권리진단서 발급 30,000원
               </Link>
             ) : (
               <Link
                 href={`/reports/${diagnosisReport.id}`}
-                className="flex w-full items-center justify-center rounded-lg border border-purple-300 px-4 py-3 text-sm font-bold text-purple-700 transition-colors hover:bg-purple-50"
+                className="flex w-full items-center justify-center rounded-xl border border-navy-300 px-4 py-3 text-sm font-bold text-navy hover:bg-navy-50"
               >
                 권리진단서 결과 보기
               </Link>
             )}
 
             {/* [S-3] Premium Offer (accordion) */}
-            <details className="group rounded-xl border border-gray-100 bg-white">
+            <details className="group rounded-2xl border border-gray-100 bg-white">
               <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-semibold text-gray-900">
                 권리금 제안하기
                 <ChevronRight className="h-4 w-4 text-gray-400 transition-transform group-open:rotate-90" />
@@ -1175,7 +1175,7 @@ export default async function ListingDetailPage({
             {/* [S-5] Simulator Link */}
             <Link
               href={`/simulator?listingId=${listing.id}&keyMoney=${Math.round(Number(listing.premiumFee || 0) / 10000)}&deposit=${Math.round(Number(listing.price || 0) / 10000)}&monthlyRent=${Math.round(Number(listing.monthlyRent || 0) / 10000)}&businessType=${encodeURIComponent(BUSINESS_CATEGORY_LABELS[listing.businessCategory] || "기타")}`}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
             >
               <Calculator className="h-4 w-4" />
               이 매물로 창업 시뮬레이션
@@ -1201,10 +1201,10 @@ export default async function ListingDetailPage({
       {districtDisplay.length > 0 && (
         <div className="mt-16 border-t border-gray-200 pt-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">이 지역 유사 매물</h2>
+            <h2 className="font-heading text-xl font-bold text-gray-900">이 지역 유사 매물</h2>
             <Link
               href={`/listings?district=${listing.district}&city=${listing.city}`}
-              className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:underline"
+              className="flex items-center gap-1 text-sm font-medium text-navy hover:underline"
             >
               더보기
               <ArrowRight className="h-4 w-4" />
@@ -1222,10 +1222,10 @@ export default async function ListingDetailPage({
       {categoryDisplay.length > 0 && (
         <div className="mt-8 border-t border-gray-200 pt-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">같은 업종 추천 매물</h2>
+            <h2 className="font-heading text-xl font-bold text-gray-900">같은 업종 추천 매물</h2>
             <Link
               href={`/listings?businessCategory=${listing.businessCategory}`}
-              className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:underline"
+              className="flex items-center gap-1 text-sm font-medium text-navy hover:underline"
             >
               더보기
               <ArrowRight className="h-4 w-4" />
@@ -1265,7 +1265,7 @@ function PriceBlock({
   return (
     <div className="flex-1 px-4 py-1 text-center first:pl-0 last:pr-0">
       <p className="text-xs text-gray-500">{label}</p>
-      <p className={`mt-1 text-2xl font-bold ${highlight ? "text-purple-600" : "text-gray-900"}`}>
+      <p className={`mt-1 text-2xl font-bold ${highlight ? "text-navy" : "text-gray-900"}`}>
         {value}
       </p>
     </div>
@@ -1283,7 +1283,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4">
+    <div className="rounded-2xl border border-gray-100 bg-white p-4">
       <p className="text-xs text-gray-500">{label}</p>
       <p className="mt-1 text-base font-bold text-gray-900">{value}</p>
     </div>
@@ -1303,7 +1303,7 @@ function PremiumBreakdownRow({
     <div>
       <div className="flex items-baseline gap-2">
         <span className="text-sm font-medium text-gray-700">{label}</span>
-        <span className="text-sm font-bold text-purple-700">{amount}</span>
+        <span className="text-sm font-bold text-navy-dark">{amount}</span>
       </div>
       {desc && (
         <p className="mt-1 whitespace-pre-line text-sm text-gray-600">{desc}</p>
@@ -1319,7 +1319,7 @@ function SimilarListingCard({ sl }: { sl: { id: string; title: string; businessC
   return (
     <Link
       href={`/listings/${sl.id}`}
-      className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md"
+      className="group overflow-hidden rounded-2xl border border-gray-100 bg-white transition-shadow hover:shadow-md"
     >
       <div className="relative aspect-[4/3] bg-gray-100">
         {thumb ? (
@@ -1341,20 +1341,20 @@ function SimilarListingCard({ sl }: { sl: { id: string; title: string; businessC
           {BUSINESS_CATEGORY_LABELS[sl.businessCategory] ?? sl.businessCategory}
         </span>
         {rank >= 2 && (
-          <span className="absolute left-2 bottom-2 rounded bg-purple-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
+          <span className="absolute left-2 bottom-2 rounded bg-navy px-1.5 py-0.5 text-[10px] font-medium text-white">
             {rank === 3 ? "AD" : "추천"}
           </span>
         )}
       </div>
       <div className="p-4">
-        <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-purple-600">
+        <p className="truncate text-sm font-semibold text-gray-800 group-hover:text-navy">
           {sl.title}
         </p>
         <p className="mt-1 text-xs text-gray-500">
           {sl.city} {sl.district}
         </p>
         <div className="mt-2 flex items-center gap-2">
-          <span className="text-sm font-bold text-purple-600">
+          <span className="text-sm font-bold text-navy">
             {sl.premiumFee && Number(sl.premiumFee) > 0 ? formatKRW(sl.premiumFee) : "무권리"}
           </span>
           <span className="text-xs text-gray-400">
