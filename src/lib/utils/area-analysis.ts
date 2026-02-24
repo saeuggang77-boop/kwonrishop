@@ -47,6 +47,13 @@ export interface SeoulData {
   quarterLabel: string;
 }
 
+export interface FootTrafficResponse {
+  source: "seoul_living" | "store_density";
+  data: { time: string; level: number; label: string }[];
+  dailyEstimate: number;
+  reliability: "high" | "medium" | "low";
+}
+
 export interface AnalysisResult {
   nearby: NearbyResult[];
   stores: StoreStats | null;

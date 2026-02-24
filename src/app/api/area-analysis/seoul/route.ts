@@ -114,41 +114,11 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // If all API calls failed with ERROR-500, provide fallback estimated data
-    if (apiErrorCount >= quarters.length && footTraffic.length === 0 && estimatedSales.length === 0) {
-      console.warn(`[Seoul API] All quarters returned errors. Providing fallback estimated data.`);
-
-      // Generate realistic fallback data based on typical Seoul commercial area patterns
-      const baseTraffic = 15000 + Math.floor(Math.random() * 5000);
-      footTraffic = [
-        { dayOfWeek: "월", count: Math.floor(baseTraffic * 0.85) },
-        { dayOfWeek: "화", count: Math.floor(baseTraffic * 0.88) },
-        { dayOfWeek: "수", count: Math.floor(baseTraffic * 0.90) },
-        { dayOfWeek: "목", count: Math.floor(baseTraffic * 0.92) },
-        { dayOfWeek: "금", count: Math.floor(baseTraffic * 1.05) },
-        { dayOfWeek: "토", count: Math.floor(baseTraffic * 1.15) },
-        { dayOfWeek: "일", count: Math.floor(baseTraffic * 1.10) },
-      ];
-
-      estimatedSales = [
-        { category: "음식", amount: 45000000 },
-        { category: "소매", amount: 32000000 },
-        { category: "생활서비스", amount: 18000000 },
-        { category: "학문/교육", amount: 15000000 },
-        { category: "부동산", amount: 12000000 },
-        { category: "숙박", amount: 8000000 },
-        { category: "스포츠", amount: 5000000 },
-        { category: "기타", amount: 3000000 },
-      ];
-
-      usedQuarter = "estimated";
-    }
-
     const result: SeoulData = {
       footTraffic,
       estimatedSales,
-      quarterLabel: usedQuarter === "estimated"
-        ? "추정값 (API 일시 오류)"
+      quarterLabel: (apiErrorCount >= quarters.length && footTraffic.length === 0 && estimatedSales.length === 0)
+        ? "API 키 갱신 필요"
         : usedQuarter
         ? `${usedQuarter.slice(0, 4)}년 ${usedQuarter.slice(4)}분기`
         : "데이터 없음",

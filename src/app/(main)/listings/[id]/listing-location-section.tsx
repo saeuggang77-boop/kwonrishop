@@ -3,7 +3,7 @@
 import { Component, useEffect, useState } from "react";
 import type { ReactNode, ErrorInfo } from "react";
 import { MapPinned, Store, Footprints, Loader2 } from "lucide-react";
-import type { NearbyResult, SeoulData } from "@/lib/utils/area-analysis";
+import type { NearbyResult, SeoulData, FootTrafficResponse } from "@/lib/utils/area-analysis";
 import { isSeoulAddress } from "@/lib/utils/area-analysis";
 import { Map, MapMarker, CustomOverlayMap, useKakaoLoader } from "react-kakao-maps-sdk";
 
@@ -101,7 +101,7 @@ export function ListingLocationSection({
 
   const [trafficData, setTrafficData] = useState<{ time: string; level: number; label: string }[]>([]);
   const [trafficLoading, setTrafficLoading] = useState(true);
-  const [trafficSource, setTrafficSource] = useState<"seoul" | "estimated" | null>(null);
+  const [trafficSource, setTrafficSource] = useState<"seoul_living" | "store_density" | null>(null);
 
   const [nearestSubway, setNearestSubway] = useState<string | null>(null);
   const [nearestConvenience, setNearestConvenience] = useState<string | null>(null);
@@ -199,53 +199,15 @@ export function ListingLocationSection({
 
     const fetchTraffic = async () => {
       try {
-        if (isSeoul) {
-          // Pass neighborhood (dong) parameter for location filtering
-          const dongParam = neighborhood ? `&dong=${encodeURIComponent(neighborhood)}` : "";
-          const res = await fetch(`/api/area-analysis/seoul?lat=${resolvedLat}&lng=${resolvedLng}${dongParam}`);
-          if (res.ok) {
-            const data: SeoulData = await res.json();
-            if (data.footTraffic.length > 0) {
-              const total = data.footTraffic.reduce((s, d) => s + d.count, 0);
-              const daily = Math.round(total / 7);
-              setDailyFootTraffic(`약 ${daily.toLocaleString("ko-KR")}명`);
+        const dongParam = neighborhood ? `&dong=${encodeURIComponent(neighborhood)}` : "";
+        const cityParam = `&city=${encodeURIComponent(city)}`;
+        const res = await fetch(`/api/area-analysis/foot-traffic?lat=${resolvedLat}&lng=${resolvedLng}${dongParam}${cityParam}`);
 
-              // Convert day-of-week data to time-of-day estimation
-              // Seoul API gives daily totals; approximate time distribution
-              const avgDaily = daily;
-              setTrafficData([
-                { time: "오전 (6-12시)", level: Math.min(Math.round((avgDaily * 0.2) / (avgDaily * 0.003)), 100), label: getTrafficLabel(avgDaily * 0.2) },
-                { time: "점심 (12-14시)", level: Math.min(Math.round((avgDaily * 0.25) / (avgDaily * 0.003)), 100), label: getTrafficLabel(avgDaily * 0.25) },
-                { time: "오후 (14-18시)", level: Math.min(Math.round((avgDaily * 0.25) / (avgDaily * 0.003)), 100), label: getTrafficLabel(avgDaily * 0.25) },
-                { time: "저녁 (18-22시)", level: Math.min(Math.round((avgDaily * 0.2) / (avgDaily * 0.003)), 100), label: getTrafficLabel(avgDaily * 0.2) },
-                { time: "야간 (22-6시)", level: Math.min(Math.round((avgDaily * 0.1) / (avgDaily * 0.003)), 100), label: getTrafficLabel(avgDaily * 0.1) },
-              ]);
-              setTrafficSource("seoul");
-              setTrafficLoading(false);
-              return;
-            }
-          }
-        }
-
-        // Non-Seoul or Seoul API failed: estimate from nearby facility density
-        const nearbyRes = await fetch(`/api/area-analysis/nearby?x=${resolvedLng}&y=${resolvedLat}&radius=500`);
-        if (nearbyRes.ok) {
-          const nearbyData: NearbyResult[] = await nearbyRes.json();
-          const totalPlaces = nearbyData.reduce((s, r) => s + r.count, 0);
-
-          // Heuristic: more nearby places = more foot traffic
-          const densityFactor = Math.min(totalPlaces / 100, 1); // normalize to 0-1
-          const base = Math.round(densityFactor * 100);
-
-          setTrafficData([
-            { time: "오전 (6-12시)", level: Math.round(base * 0.6), label: getTrafficLabel(base * 0.6 * 300) },
-            { time: "점심 (12-14시)", level: Math.round(base * 0.95), label: getTrafficLabel(base * 0.95 * 300) },
-            { time: "오후 (14-18시)", level: Math.round(base * 0.75), label: getTrafficLabel(base * 0.75 * 300) },
-            { time: "저녁 (18-22시)", level: Math.round(base * 0.85), label: getTrafficLabel(base * 0.85 * 300) },
-            { time: "야간 (22-6시)", level: Math.round(base * 0.3), label: getTrafficLabel(base * 0.3 * 300) },
-          ]);
-          setDailyFootTraffic(`약 ${Math.round(totalPlaces * 200).toLocaleString("ko-KR")}명 (추정)`);
-          setTrafficSource("estimated");
+        if (res.ok) {
+          const data: FootTrafficResponse = await res.json();
+          setTrafficData(data.data);
+          setDailyFootTraffic(`약 ${data.dailyEstimate.toLocaleString("ko-KR")}명${data.source === "store_density" ? " (추정)" : ""}`);
+          setTrafficSource(data.source);
         }
       } catch (err) {
         console.error("Traffic fetch error:", err);
@@ -255,7 +217,7 @@ export function ListingLocationSection({
     };
 
     fetchTraffic();
-  }, [resolvedLat, resolvedLng, isSeoul, neighborhood]);
+  }, [resolvedLat, resolvedLng, city, neighborhood]);
 
   return (
     <section id="location-info" className="mt-12">
@@ -357,9 +319,9 @@ export function ListingLocationSection({
             <h3 className="text-sm font-semibold text-navy">유동인구 (추정)</h3>
             {trafficSource && (
               <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
-                trafficSource === "seoul" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+                trafficSource === "seoul_living" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
               }`}>
-                {trafficSource === "seoul" ? "서울 공공데이터" : "주변시설 기반 추정"}
+                {trafficSource === "seoul_living" ? "서울 생활인구" : "상가밀집도 기반 추정"}
               </span>
             )}
           </div>
@@ -445,7 +407,7 @@ export function ListingLocationSection({
         </div>
         <div className="border-t border-gray-100 px-6 py-2">
           <p className="text-[11px] text-gray-400">
-            * 유동인구는 {trafficSource === "seoul" ? "서울 공공데이터 기반" : "주변 시설 밀집도 기반 추정치"}이며 실제와 다를 수 있습니다
+            * 유동인구는 {trafficSource === "seoul_living" ? "서울 생활인구 데이터 기반" : "상가 밀집도 기반 추정치"}이며 실제와 다를 수 있습니다
           </p>
         </div>
       </div>
