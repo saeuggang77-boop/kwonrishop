@@ -14,6 +14,7 @@ import {
 import { AuthNavItems } from "./(main)/auth-nav";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 import { ListingCard, type ListingCardData } from "@/components/listings/listing-card";
+import { REGION_DATA } from "@/lib/utils/constants";
 
 const HomeBelowFold = dynamic(() => import("./_home-below-fold"), {
   loading: () => <div className="min-h-[600px]" />,
@@ -147,6 +148,8 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [recTab, setRecTab] = useState<string>("all");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
 
   /* ─── fetch ─── */
   useEffect(() => {
@@ -183,6 +186,18 @@ export default function HomePage() {
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) router.push(`/listings?q=${encodeURIComponent(searchQuery.trim())}`);
+  };
+
+  const handleRegionSearch = () => {
+    const params = new URLSearchParams();
+    if (selectedCity) params.append("city", selectedCity);
+    if (selectedDistrict) params.append("district", selectedDistrict);
+    router.push(`/listings?${params.toString()}`);
+  };
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setSelectedDistrict(""); // Reset district when city changes
   };
 
   /* Slide data: always use CSS hero slides */
@@ -303,8 +318,9 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Search bar */}
-        <div className="absolute bottom-6 left-0 right-0 z-20 px-4 md:bottom-10">
+        {/* Search bar + Region dropdown */}
+        <div className="absolute bottom-3 left-0 right-0 z-20 px-4 md:bottom-8">
+          {/* Text search bar */}
           <form onSubmit={handleSearch} className="mx-auto flex max-w-xl overflow-hidden rounded-full border border-gray-200 bg-white shadow-xl">
             <div className="flex flex-1 items-center gap-2 px-4">
               <Search className="h-4 w-4 shrink-0 text-gray-400" />
@@ -320,6 +336,44 @@ export default function HomePage() {
               검색
             </button>
           </form>
+
+          {/* Region dropdown row */}
+          <div className="mx-auto mt-2.5 flex max-w-xl items-center gap-2 rounded-xl bg-white/90 p-2 shadow-lg backdrop-blur-sm md:gap-3 md:p-3">
+            <select
+              value={selectedCity}
+              onChange={(e) => handleCityChange(e.target.value)}
+              className="h-10 flex-1 rounded-lg border-0 bg-white px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-navy md:h-11"
+            >
+              <option value="">시/도 선택</option>
+              {Object.keys(REGION_DATA).map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              disabled={!selectedCity}
+              className="h-10 flex-1 rounded-lg border-0 bg-white px-3 text-sm text-gray-700 disabled:bg-gray-100 disabled:text-gray-400 focus:outline-none focus:ring-2 focus:ring-navy md:h-11"
+            >
+              <option value="">구/군 선택</option>
+              {selectedCity && REGION_DATA[selectedCity]?.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={handleRegionSearch}
+              disabled={!selectedCity}
+              className="h-10 rounded-lg bg-navy px-4 text-sm font-bold text-white transition-colors hover:bg-navy-dark disabled:bg-gray-300 disabled:text-gray-500 active:scale-95 md:h-11 md:px-5"
+            >
+              매물검색
+            </button>
+          </div>
         </div>
 
         {/* Banner nav */}
@@ -330,7 +384,7 @@ export default function HomePage() {
           <button onClick={nextBanner} className="absolute right-2 top-[35%] -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/20 md:right-4 md:p-2.5" aria-label="다음">
             <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
           </button>
-          <div className="absolute bottom-20 left-1/2 flex -translate-x-1/2 gap-1.5 md:bottom-24" role="tablist">
+          <div className="absolute bottom-32 left-1/2 flex -translate-x-1/2 gap-1.5 md:bottom-36" role="tablist">
             {Array.from({ length: bannerCount }).map((_, i) => (
               <button key={i} onClick={() => setBannerIdx(i)}
                 className={`h-2 rounded-full transition-all duration-300 ${i === bannerIdx ? "w-6 bg-white" : "w-2 bg-white/30"}`}
