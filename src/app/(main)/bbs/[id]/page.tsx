@@ -6,6 +6,45 @@ import { formatDateKR } from "@/lib/utils/format";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  const post = await prisma.boardPost.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      content: true,
+      category: true,
+      thumbnailUrl: true,
+      isPublished: true,
+    },
+  });
+
+  if (!post || !post.isPublished) {
+    return {
+      title: "게시글을 찾을 수 없습니다",
+    };
+  }
+
+  const title = `${post.title} | 권리샵`;
+
+  // Strip HTML tags and get first 150 chars
+  const plainContent = post.content.replace(/<[^>]*>/g, '').trim();
+  const description = plainContent.length > 150
+    ? plainContent.substring(0, 150) + '...'
+    : plainContent;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: post.thumbnailUrl ? [{ url: post.thumbnailUrl }] : undefined,
+    },
+  };
+}
+
 export default async function BbsDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 

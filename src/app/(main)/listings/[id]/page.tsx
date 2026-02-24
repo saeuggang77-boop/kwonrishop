@@ -54,15 +54,51 @@ function toSerializable<T>(obj: T): T {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
   const id = decodeURIComponent(rawId);
+
+  function formatPrice(amount: bigint | number | null): string {
+    if (!amount) return '';
+    const n = Number(amount);
+    if (n >= 100000000) return `${(n/100000000).toFixed(1)}억`;
+    if (n >= 10000) return `${Math.round(n/10000).toLocaleString()}만`;
+    return n.toLocaleString();
+  }
+
   const listing = await prisma.listing.findUnique({
     where: { id },
-    select: { title: true, city: true, district: true, businessCategory: true },
+    select: {
+      title: true,
+      city: true,
+      district: true,
+      businessCategory: true,
+      price: true,
+      premiumFee: true,
+      monthlyRevenue: true,
+      images: { take: 1, orderBy: { sortOrder: 'asc' }, select: { url: true } }
+    },
   });
+
   if (!listing) return { title: "매물을 찾을 수 없습니다" };
+
   const category = BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory;
+  const title = `${listing.title} - ${listing.city} ${listing.district}`;
+
+  const priceParts: string[] = [];
+  if (listing.price) priceParts.push(`보증금 ${formatPrice(listing.price)}`);
+  if (listing.premiumFee) priceParts.push(`권리금 ${formatPrice(listing.premiumFee)}`);
+  if (listing.monthlyRevenue) priceParts.push(`월매출 ${formatPrice(listing.monthlyRevenue)}`);
+
+  const description = `${listing.city} ${listing.district} ${category}${priceParts.length > 0 ? ' | ' + priceParts.join(' · ') : ''} - 권리샵`;
+  const imageUrl = listing.images[0]?.url;
+
   return {
-    title: `${listing.title} - ${listing.city} ${listing.district}`,
-    description: `${listing.city} ${listing.district} ${category} 매물 상세정보 - 권리샵`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      images: imageUrl ? [{ url: imageUrl }] : undefined,
+    },
   };
 }
 

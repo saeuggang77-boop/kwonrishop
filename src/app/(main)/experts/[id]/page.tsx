@@ -15,7 +15,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const expert = await prisma.expert.findUnique({
     where: { id: decodedId },
-    select: { name: true },
+    select: {
+      name: true,
+      title: true,
+      category: true,
+      career: true,
+      rating: true,
+      reviewCount: true,
+    },
   });
 
   if (!expert) {
@@ -24,8 +31,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const pageTitle = `${expert.name} - ${expert.category} 전문가 | 권리샵`;
+
+  const descParts: string[] = [];
+  if (expert.title) descParts.push(expert.title);
+  if (expert.career) descParts.push(`경력 ${expert.career}년`);
+  if (expert.rating && expert.reviewCount) {
+    descParts.push(`평점 ${expert.rating.toFixed(1)} (${expert.reviewCount}건)`);
+  }
+
+  const description = descParts.join(' | ');
+
   return {
-    title: `${expert.name} - 전문가 프로필`,
+    title: pageTitle,
+    description,
+    openGraph: {
+      title: pageTitle,
+      description,
+    },
   };
 }
 

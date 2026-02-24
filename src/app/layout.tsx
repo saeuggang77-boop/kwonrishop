@@ -19,7 +19,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://kwonrishop.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://kwonrishop.com"),
   title: {
     default: "권리샵 | 안전한 점포 직거래",
     template: "%s | 권리샵",
@@ -51,6 +51,12 @@ export const metadata: Metadata = {
     title: "권리샵 | 안전한 점포 직거래",
     description: "점포 매물 검색, 권리 진단, 안심 직거래를 한 곳에서.",
     images: ["/logos/krw_shop_logo_full.png"],
+  },
+  verification: {
+    google: "",
+    other: {
+      "naver-site-verification": "",
+    },
   },
 };
 
