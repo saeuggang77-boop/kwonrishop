@@ -4,6 +4,20 @@ import { Component, useEffect, useState } from "react";
 import type { ReactNode, ErrorInfo } from "react";
 import { MapPinned, Store, Footprints, Loader2 } from "lucide-react";
 import type { NearbyResult, SeoulData, FootTrafficResponse } from "@/lib/utils/area-analysis";
+
+interface SubwayTrafficData {
+  station: string;
+  lines: string[];
+  monthlyData: {
+    month: string;
+    dailyAvgBoarding: number;
+    dailyAvgAlighting: number;
+    dailyAvgTotal: number;
+    peakHour: string;
+    peakCount: number;
+  };
+  hourlyBreakdown: { hour: string; boarding: number; alighting: number }[];
+}
 import { isSeoulAddress } from "@/lib/utils/area-analysis";
 import { Map, MapMarker, CustomOverlayMap, useKakaoLoader } from "react-kakao-maps-sdk";
 
@@ -106,6 +120,9 @@ export function ListingLocationSection({
   const [nearestSubway, setNearestSubway] = useState<string | null>(null);
   const [nearestConvenience, setNearestConvenience] = useState<string | null>(null);
   const [dailyFootTraffic, setDailyFootTraffic] = useState<string | null>(null);
+
+  const [subwayTraffic, setSubwayTraffic] = useState<SubwayTrafficData | null>(null);
+  const [subwayLoading, setSubwayLoading] = useState(false);
 
   const isSeoul = isSeoulAddress(`${city} ${district}`);
 
@@ -218,6 +235,31 @@ export function ListingLocationSection({
 
     fetchTraffic();
   }, [resolvedLat, resolvedLng, city, neighborhood]);
+
+  // ── Fetch subway traffic ──
+  useEffect(() => {
+    if (!nearestSubway || !isSeoul) return;
+
+    const fetchSubwayTraffic = async () => {
+      setSubwayLoading(true);
+      try {
+        // Extract station name from "강남역 도보 5분" format
+        const stationName = nearestSubway.split(" ")[0];
+        const res = await fetch(`/api/area-analysis/subway-traffic?station=${encodeURIComponent(stationName)}`);
+
+        if (res.ok) {
+          const data: SubwayTrafficData = await res.json();
+          setSubwayTraffic(data);
+        }
+      } catch (err) {
+        console.error("Subway traffic fetch error:", err);
+      } finally {
+        setSubwayLoading(false);
+      }
+    };
+
+    fetchSubwayTraffic();
+  }, [nearestSubway, isSeoul]);
 
   return (
     <section id="location-info" className="mt-12">
@@ -358,6 +400,95 @@ export function ListingLocationSection({
           </div>
         </div>
       </div>
+
+      {/* ── Subway Traffic ── */}
+      {nearestSubway && isSeoul && (
+        <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
+            <span className="text-lg">🚇</span>
+            <h3 className="text-sm font-semibold text-navy">
+              지하철 승하차 ({subwayTraffic?.station ?? nearestSubway.split(" ")[0]})
+            </h3>
+            {subwayTraffic && subwayTraffic.lines.length > 0 && (
+              <div className="flex gap-1">
+                {subwayTraffic.lines.map((line, i) => (
+                  <span key={i} className="rounded bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                    {line}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="px-5 py-4">
+            {subwayLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+              </div>
+            ) : subwayTraffic ? (
+              <div className="space-y-4">
+                {/* Daily Average */}
+                <div className="text-center">
+                  <p className="text-xs text-gray-500">일평균 승하차 인원</p>
+                  <p className="mt-1 text-2xl font-bold text-navy">
+                    {subwayTraffic.monthlyData.dailyAvgTotal.toLocaleString("ko-KR")}명
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    승차 {subwayTraffic.monthlyData.dailyAvgBoarding.toLocaleString("ko-KR")}명 /
+                    하차 {subwayTraffic.monthlyData.dailyAvgAlighting.toLocaleString("ko-KR")}명
+                  </p>
+                </div>
+
+                {/* Peak Hours */}
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs font-medium text-gray-600">피크 시간대</p>
+                  <p className="mt-1 text-sm font-semibold text-navy">
+                    {subwayTraffic.monthlyData.peakHour} ({subwayTraffic.monthlyData.peakCount.toLocaleString("ko-KR")}명)
+                  </p>
+                </div>
+
+                {/* Top 5 Hours Bar Chart */}
+                <div>
+                  <p className="mb-2 text-xs font-medium text-gray-600">시간대별 승하차 (상위 5개)</p>
+                  {subwayTraffic.hourlyBreakdown
+                    .map((h) => ({ ...h, total: h.boarding + h.alighting }))
+                    .sort((a, b) => b.total - a.total)
+                    .slice(0, 5)
+                    .map((h, i) => {
+                      const maxTotal = subwayTraffic.hourlyBreakdown
+                        .map(x => x.boarding + x.alighting)
+                        .reduce((a, b) => Math.max(a, b), 0);
+                      const percentage = (h.total / maxTotal) * 100;
+
+                      return (
+                        <div key={i} className="mb-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-gray-600">{h.hour}</span>
+                            <span className="font-medium text-gray-700">
+                              {h.total.toLocaleString("ko-KR")}명
+                            </span>
+                          </div>
+                          <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100">
+                            <div
+                              className="h-full rounded-full bg-blue-500 transition-all"
+                              style={{ width: `${Math.max(percentage, 5)}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            ) : (
+              <p className="py-6 text-center text-sm text-gray-400">승하차 데이터를 불러올 수 없습니다</p>
+            )}
+          </div>
+          <div className="border-t border-gray-100 px-5 py-3">
+            <p className="text-[11px] text-gray-400">
+              * 서울시 지하철 승하차 인원 데이터 기준 ({subwayTraffic?.monthlyData.month.slice(0, 4)}년 {subwayTraffic?.monthlyData.month.slice(4, 6)}월)
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── Address & Summary ── */}
       <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
