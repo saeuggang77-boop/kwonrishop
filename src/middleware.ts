@@ -20,7 +20,7 @@ export default auth((req) => {
   }
 
   // Public routes
-  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium", "/pricing", "/franchise", "/bbs", "/market-price", "/simulator", "/experts", "/area-analysis", "/wanted"];
+  const publicPaths = ["/", "/login", "/register", "/verify", "/listings", "/legal", "/premium", "/pricing", "/franchise", "/bbs", "/market-price", "/simulator", "/experts", "/area-analysis", "/wanted", "/sell", "/welcome"];
   const isPublicPath = publicPaths.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
