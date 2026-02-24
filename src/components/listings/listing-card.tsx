@@ -225,17 +225,17 @@ function PremiumCard({ listing, isCarouselItem, priority = false }: { listing: L
         {(hasRevenue || hasProfit) && (
           <div className="flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-1.5">
             {hasRevenue && (
-              <span className="text-xs">
-                <span className="text-gray-500">월매출</span>{" "}
-                <span className="font-bold text-blue-700">{price(Number(listing.monthlyRevenue))}</span>
-              </span>
+              <>
+                <span className="text-xs text-blue-600">월매출</span>
+                <span className="text-xs font-bold text-blue-700">{price(Number(listing.monthlyRevenue))}</span>
+              </>
             )}
             {hasRevenue && hasProfit && <span className="text-gray-300">|</span>}
             {hasProfit && (
-              <span className="text-xs">
-                <span className="text-gray-500">월순이익</span>{" "}
-                <span className="font-bold text-green-700">{price(Number(listing.monthlyProfit))}</span>
-              </span>
+              <>
+                <span className="text-xs text-green-600">순이익</span>
+                <span className="text-xs font-bold text-green-700">{price(Number(listing.monthlyProfit))}</span>
+              </>
             )}
           </div>
         )}
@@ -298,17 +298,17 @@ function RecommendCard({ listing, isCarouselItem, priority = false }: { listing:
         {(hasRevenue || hasProfit) && (
           <div className="flex items-center gap-1 rounded-md bg-blue-50 px-1.5 py-1">
             {hasRevenue && (
-              <span className="text-[11px]">
-                <span className="text-gray-500">월매출</span>{" "}
-                <span className="font-bold text-blue-700">{price(Number(listing.monthlyRevenue))}</span>
-              </span>
+              <>
+                <span className="text-[11px] text-blue-600">월매출</span>
+                <span className="text-[11px] font-bold text-blue-700">{price(Number(listing.monthlyRevenue))}</span>
+              </>
             )}
-            {hasRevenue && hasProfit && <span className="text-[10px] text-gray-300">|</span>}
+            {hasRevenue && hasProfit && <span className="text-gray-300">|</span>}
             {hasProfit && (
-              <span className="text-[11px]">
-                <span className="text-gray-500">월순이익</span>{" "}
-                <span className="font-bold text-green-700">{price(Number(listing.monthlyProfit))}</span>
-              </span>
+              <>
+                <span className="text-[11px] text-green-600">순이익</span>
+                <span className="text-[11px] font-bold text-green-700">{price(Number(listing.monthlyProfit))}</span>
+              </>
             )}
           </div>
         )}
