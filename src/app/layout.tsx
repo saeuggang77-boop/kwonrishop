@@ -65,9 +65,47 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kwonrishop.com";
+
+  // Organization Schema
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "권리샵",
+    url: baseUrl,
+    logo: `${baseUrl}/logos/krw_shop_logo_full.png`,
+    description: "안전한 점포 직거래 플랫폼",
+    sameAs: [],
+  };
+
+  // WebSite Schema
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "권리샵",
+    url: baseUrl,
+    description: "점포 매물 검색, 권리 진단, 안심 직거래를 한 곳에서",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${baseUrl}/listings?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html lang="ko">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
       <body
         className={`${notoSansKr.variable} ${montserrat.variable} antialiased`}

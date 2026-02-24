@@ -14,6 +14,7 @@ import { AuthNavItems } from "./(main)/auth-nav";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 import { ListingCard, type ListingCardData } from "@/components/listings/listing-card";
 import { REGION_DATA } from "@/lib/utils/constants";
+import { RecentListingsSection } from "@/components/home/recent-listings-section";
 
 /* ─── Constants ─── */
 const QUICK_MENU = [
@@ -349,6 +350,9 @@ export default function HomeClient({
           </div>
         </section>
       </RevealOnScroll>
+
+      {/* ═══ 2.5. Recent Listings ═══ */}
+      <RecentListingsSection />
 
       {/* ═══ 3. Premium Listings ═══ */}
       <RevealOnScroll>

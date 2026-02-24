@@ -35,6 +35,7 @@ import { ListingLocationSectionSafe as ListingLocationSection } from "./listing-
 import { PremiumOfferSection } from "./premium-offer-section";
 import { MobileBottomBar } from "./mobile-bottom-bar";
 import { PaymentConfirmHandler } from "@/components/listings/payment-confirm-handler";
+import { RecentListingTracker } from "./recent-listing-tracker";
 
 /** Recursively convert all BigInt values to Number to prevent RSC serialization errors */
 function toSerializable<T>(obj: T): T {
@@ -365,10 +366,96 @@ export default async function ListingDetailPage({
       ? ((numMonthlyProfit * 12) / totalInvestment) * 100
       : 0;
 
+  // JSON-LD Structured Data for SEO
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://kwonrishop.com";
+  const listingUrl = `${baseUrl}/listings/${listing.id}`;
+  const imageUrl = listing.images[0]?.url;
+
+  // Product Schema (매물)
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: listing.title,
+    description: listing.description || `${listing.city} ${listing.district} ${BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory} 매물`,
+    ...(imageUrl && { image: imageUrl }),
+    offers: {
+      "@type": "Offer",
+      price: (numDeposit + numPremiumFee).toString(),
+      priceCurrency: "KRW",
+      availability: "https://schema.org/InStock",
+      ...(listing.expiresAt && { priceValidUntil: new Date(listing.expiresAt).toISOString().split('T')[0] }),
+    },
+    ...(listing.address && {
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: listing.city,
+        addressRegion: listing.district,
+        ...(listing.neighborhood && { addressCountry: listing.neighborhood }),
+        ...(listing.postalCode && { postalCode: listing.postalCode }),
+      },
+    }),
+    category: BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory,
+    ...(listing.areaM2 && {
+      additionalProperty: [
+        {
+          "@type": "PropertyValue",
+          name: "면적",
+          value: `${listing.areaM2}`,
+          unitText: "m²",
+        },
+      ],
+    }),
+  };
+
+  // BreadcrumbList Schema (네비게이션)
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "홈",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "매물 찾기",
+        item: `${baseUrl}/listings`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `${listing.city} ${listing.district}`,
+        item: `${baseUrl}/listings?city=${encodeURIComponent(listing.city)}&district=${encodeURIComponent(listing.district)}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: listing.title,
+        item: listingUrl,
+      },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       {/* Payment confirmation handler */}
       <PaymentConfirmHandler listingId={listing.id} />
+
+      {/* Recent listing tracker */}
+      <RecentListingTracker listing={listing} />
 
       {/* [1] Image Gallery */}
       <ImageGallery

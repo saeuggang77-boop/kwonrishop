@@ -648,6 +648,20 @@ export async function POST(req: NextRequest) {
       } catch {}
     }
 
+    // Send alert notifications to users with matching preferences
+    try {
+      const { notifyMatchingUsers } = await import("@/lib/utils/alert-notification");
+      await notifyMatchingUsers(
+        listing.id,
+        listing.city,
+        listing.businessCategory,
+        listing.title
+      );
+    } catch (error) {
+      // Fail silently if alertSettings table doesn't exist yet
+      console.error("Alert notification error:", error);
+    }
+
     return Response.json(
       {
         data: {
