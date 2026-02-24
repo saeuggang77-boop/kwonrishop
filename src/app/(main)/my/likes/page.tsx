@@ -58,7 +58,7 @@ export default function MyLikesPage() {
     <div className="mx-auto max-w-5xl px-4 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#0B3B57]">찜한 매물</h1>
+          <h1 className="text-2xl font-bold text-navy">찜한 매물</h1>
           <p className="mt-1 text-sm text-gray-500">좋아요한 매물을 확인하세요</p>
         </div>
         <Link
@@ -89,7 +89,7 @@ export default function MyLikesPage() {
           <p className="mt-2 text-sm text-gray-500">마음에 드는 매물에 좋아요를 눌러보세요</p>
           <Link
             href="/listings"
-            className="mt-6 inline-block rounded-lg bg-[#0B3B57] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#0B3B57]/90"
+            className="mt-6 inline-block rounded-lg bg-navy px-6 py-2.5 text-sm font-medium text-white hover:bg-navy/90"
           >
             매물 목록 보기
           </Link>
@@ -126,14 +126,14 @@ export default function MyLikesPage() {
                       <span className="text-5xl drop-shadow-lg">{cat.icon}</span>
                     </div>
                   )}
-                  <span className="absolute left-2 top-2 rounded bg-[#0B3B57]/80 px-2 py-0.5 text-[11px] font-medium leading-tight text-white">
+                  <span className="absolute left-2 top-2 rounded bg-navy/80 px-2 py-0.5 text-[11px] font-medium leading-tight text-white">
                     {categoryLabel}
                   </span>
                 </div>
 
                 {/* Card body */}
                 <div className="p-4">
-                  <h3 className="truncate text-sm font-semibold text-gray-900 group-hover:text-[#0B3B57]">
+                  <h3 className="truncate text-sm font-semibold text-gray-900 group-hover:text-navy">
                     {listing.title}
                   </h3>
 
@@ -147,7 +147,7 @@ export default function MyLikesPage() {
                   <div className="mt-2 space-y-0.5">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-500">권리금</span>
-                      <span className="font-bold text-[#0B3B57]">
+                      <span className="font-bold text-navy">
                         {formatKRW(listing.premiumFee)}
                       </span>
                     </div>

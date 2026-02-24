@@ -210,8 +210,8 @@ export default function FranchiseDetailClient() {
           icon={<Calendar className="h-5 w-5" />}
           label="데이터 기준"
           value={brand.dataYear ? `${brand.dataYear}년` : "비공개"}
-          color="text-purple-600"
-          bg="bg-purple-100"
+          color="text-navy"
+          bg="bg-navy-100"
         />
       </div>
 

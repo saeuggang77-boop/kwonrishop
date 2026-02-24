@@ -407,7 +407,7 @@ export default function NewListingPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
         <p className="text-gray-500">매물 등록은 로그인 후 이용 가능합니다.</p>
-        <Link href="/login" className="mt-4 inline-block rounded-lg bg-purple px-6 py-3 text-sm font-medium text-white hover:bg-purple-dark">
+        <Link href="/login" className="mt-4 inline-block rounded-lg bg-navy px-6 py-3 text-sm font-medium text-white hover:bg-navy-dark">
           로그인하기
         </Link>
       </div>
@@ -429,7 +429,7 @@ export default function NewListingPage() {
             <ChevronLeft className="h-4 w-4" />
             {step === 1 ? "돌아가기" : "이전"}
           </button>
-          <span className="text-sm font-bold text-purple sm:hidden">{step}/{TOTAL_STEPS}</span>
+          <span className="text-sm font-bold text-navy sm:hidden">{step}/{TOTAL_STEPS}</span>
         </div>
 
         {/* Step Indicators - Desktop */}
@@ -443,16 +443,16 @@ export default function NewListingPage() {
                 <div
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all ${
                     completed
-                      ? "bg-purple text-white"
+                      ? "bg-navy text-white"
                       : current
-                        ? "bg-purple text-white ring-4 ring-purple/20"
+                        ? "bg-navy text-white ring-4 ring-navy/20"
                         : "bg-gray-200 text-gray-400"
                   }`}
                 >
                   {completed ? <Check className="h-4 w-4" /> : s}
                 </div>
                 {s < TOTAL_STEPS && (
-                  <div className={`mx-1.5 h-0.5 flex-1 transition-colors ${s < step ? "bg-purple" : "bg-gray-200"}`} />
+                  <div className={`mx-1.5 h-0.5 flex-1 transition-colors ${s < step ? "bg-navy" : "bg-gray-200"}`} />
                 )}
               </div>
             );
@@ -462,7 +462,7 @@ export default function NewListingPage() {
         {/* Progress Bar - Mobile */}
         <div className="mt-3 h-1.5 w-full rounded-full bg-gray-200 sm:hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-purple to-purple-light transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-navy to-navy-400 transition-all duration-500"
             style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
           />
         </div>
@@ -470,10 +470,10 @@ export default function NewListingPage() {
 
       {/* Step Icon + Title */}
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple/10">
-          <StepIcon className="h-6 w-6 text-purple" />
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-navy/10">
+          <StepIcon className="h-6 w-6 text-navy" />
         </div>
-        <h1 className="text-xl font-bold text-purple">
+        <h1 className="text-xl font-bold text-navy">
           {STEP_TITLES[step - 1]}
         </h1>
       </div>
@@ -520,7 +520,7 @@ export default function NewListingPage() {
           <button
             type="button"
             onClick={goNext}
-            className="flex-[2] rounded-xl bg-gradient-to-r from-purple to-purple-light py-3.5 text-base font-bold text-white shadow-lg shadow-purple/25 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple/30 active:scale-[0.98]"
+            className="flex-[2] rounded-xl bg-gradient-to-r from-navy to-navy-400 py-3.5 text-base font-bold text-white shadow-lg shadow-navy/25 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-navy/30 active:scale-[0.98]"
           >
             다음
           </button>
@@ -615,9 +615,9 @@ function Step1Location({
         <button
           type="button"
           onClick={handleAddressSearch}
-          className="flex w-full items-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-3.5 text-left text-sm text-gray-400 transition-colors hover:border-purple hover:bg-purple/5"
+          className="flex w-full items-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-3.5 text-left text-sm text-gray-400 transition-colors hover:border-navy hover:bg-navy/5"
         >
-          <Search className="h-5 w-5 text-purple" />
+          <Search className="h-5 w-5 text-navy" />
           {form.address || "도로명, 건물명, 지번으로 검색"}
         </button>
       </div>
@@ -685,20 +685,20 @@ function Step1Location({
       </div>
 
       {/* Fair Trade Agreement */}
-      <div className="rounded-xl border border-purple/20 bg-purple/5 p-4">
+      <div className="rounded-xl border border-navy/20 bg-navy/5 p-4">
         <label className="flex items-start gap-3">
           <input
             type="checkbox"
             checked={form.fairTradeAgreed}
             onChange={(e) => update("fairTradeAgreed", e.target.checked)}
-            className="mt-0.5 h-5 w-5 rounded border-gray-300 accent-purple"
+            className="mt-0.5 h-5 w-5 rounded border-gray-300 accent-navy"
           />
           <div className="flex-1">
             <span className="text-sm font-medium text-gray-800">공정거래 이용약관에 동의합니다.</span>
             <button
               type="button"
               onClick={() => setShowFairTradeModal(true)}
-              className="ml-1 text-sm text-purple hover:underline"
+              className="ml-1 text-sm text-navy hover:underline"
             >
               내용보기
             </button>
@@ -726,7 +726,7 @@ function Step1Location({
             <button
               type="button"
               onClick={() => { update("fairTradeAgreed", true); setShowFairTradeModal(false); }}
-              className="mt-6 w-full rounded-xl bg-purple py-3 text-sm font-bold text-white"
+              className="mt-6 w-full rounded-xl bg-navy py-3 text-sm font-bold text-white"
             >
               동의하기
             </button>
@@ -777,8 +777,8 @@ function Step2Business({
                 }}
                 className={`relative flex min-h-[80px] flex-col items-center justify-center gap-1.5 rounded-xl border-2 px-2 py-3 text-center transition-all ${
                   isActive
-                    ? "border-purple bg-purple text-white shadow-md"
-                    : `bg-white text-gray-600 hover:border-purple hover:bg-purple-50 ${
+                    ? "border-navy bg-navy text-white shadow-md"
+                    : `bg-white text-gray-600 hover:border-navy hover:bg-navy-50 ${
                         categoryShake ? "border-red-400" : "border-gray-300"
                       }`
                 }`}
@@ -815,8 +815,8 @@ function Step2Business({
                   }}
                   className={`relative flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-xl border-2 px-2 py-2.5 text-center transition-all ${
                     isActive
-                      ? "border-purple bg-purple text-white shadow-md"
-                      : "border-gray-300 bg-white text-gray-600 hover:border-purple hover:bg-purple-50"
+                      ? "border-navy bg-navy text-white shadow-md"
+                      : "border-gray-300 bg-white text-gray-600 hover:border-navy hover:bg-navy-50"
                   }`}
                 >
                   {isActive && (
@@ -844,7 +844,7 @@ function Step2Business({
         {!form.noPremium ? (
           <>
             <div className="flex items-center gap-2">
-              <span className="w-16 shrink-0 text-sm font-bold text-purple">권리금</span>
+              <span className="w-16 shrink-0 text-sm font-bold text-navy">권리금</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -855,11 +855,11 @@ function Step2Business({
               />
               <span className="shrink-0 text-sm font-medium text-gray-500">만원</span>
               <label className="flex shrink-0 items-center gap-1 text-xs text-gray-500">
-                <input type="checkbox" checked={form.noPremium} onChange={(e) => update("noPremium", e.target.checked)} className="h-4 w-4 rounded accent-purple" />
+                <input type="checkbox" checked={form.noPremium} onChange={(e) => update("noPremium", e.target.checked)} className="h-4 w-4 rounded accent-navy" />
                 무권리금
               </label>
               <label className="flex shrink-0 items-center gap-1 text-xs text-gray-500">
-                <input type="checkbox" checked={form.premiumNegotiable} onChange={(e) => update("premiumNegotiable", e.target.checked)} className="h-4 w-4 rounded accent-purple" />
+                <input type="checkbox" checked={form.premiumNegotiable} onChange={(e) => update("premiumNegotiable", e.target.checked)} className="h-4 w-4 rounded accent-navy" />
                 협의가능
               </label>
             </div>
@@ -896,7 +896,7 @@ function Step2Business({
               />
 
               {premiumBreakdownTotal > 0 && (
-                <div className="border-t border-gray-200 pt-3 text-right text-sm font-bold text-purple">
+                <div className="border-t border-gray-200 pt-3 text-right text-sm font-bold text-navy">
                   소계: {formatManwon(String(premiumBreakdownTotal))}
                 </div>
               )}
@@ -904,15 +904,15 @@ function Step2Business({
           </>
         ) : (
           <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
-            <span className="text-sm font-bold text-purple">권리금</span>
+            <span className="text-sm font-bold text-navy">권리금</span>
             <span className="text-sm text-gray-400">무권리금</span>
             <div className="ml-auto flex items-center gap-3">
               <label className="flex items-center gap-1 text-xs text-gray-500">
-                <input type="checkbox" checked={form.noPremium} onChange={(e) => update("noPremium", e.target.checked)} className="h-4 w-4 rounded accent-purple" />
+                <input type="checkbox" checked={form.noPremium} onChange={(e) => update("noPremium", e.target.checked)} className="h-4 w-4 rounded accent-navy" />
                 무권리금
               </label>
               <label className="flex items-center gap-1 text-xs text-gray-500">
-                <input type="checkbox" checked={form.premiumNegotiable} onChange={(e) => update("premiumNegotiable", e.target.checked)} className="h-4 w-4 rounded accent-purple" />
+                <input type="checkbox" checked={form.premiumNegotiable} onChange={(e) => update("premiumNegotiable", e.target.checked)} className="h-4 w-4 rounded accent-navy" />
                 협의가능
               </label>
             </div>
@@ -1012,7 +1012,7 @@ function Step3Basic({
           </div>
           <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
             <span className="text-gray-400">≈</span>
-            <span className="font-medium text-purple">{pyeongToM2(form.areaPyeong) || "—"}</span>
+            <span className="font-medium text-navy">{pyeongToM2(form.areaPyeong) || "—"}</span>
             <span>m²</span>
           </div>
         </div>
@@ -1114,8 +1114,8 @@ function Step4Additional({
       {/* Investment Total (auto) */}
       <div>
         <SectionLabel>총 투자비용 (자동 계산)</SectionLabel>
-        <div className="rounded-xl border border-purple/20 bg-purple/5 px-4 py-3.5">
-          <span className="text-lg font-bold text-purple">
+        <div className="rounded-xl border border-navy/20 bg-navy/5 px-4 py-3.5">
+          <span className="text-lg font-bold text-navy">
             {investmentTotal > 0 ? formatManwon(String(investmentTotal)) : "—"}
           </span>
           <p className="mt-0.5 text-xs text-gray-500">보증금 + 권리금</p>
@@ -1158,7 +1158,7 @@ function Step4Additional({
                   type="checkbox"
                   checked={form.soloOperation}
                   onChange={(e) => update("soloOperation", e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 accent-purple"
+                  className="h-4 w-4 rounded border-gray-300 accent-navy"
                 />
                 혼자 운영 중
               </label>
@@ -1213,9 +1213,9 @@ function Step4Additional({
           {/* Total */}
           <div className="border-t border-gray-300 pt-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-purple">월 지출 합계</span>
+              <span className="text-sm font-bold text-navy">월 지출 합계</span>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-purple">
+                <span className="text-lg font-bold text-navy">
                   {totalExpenses > 0 ? formatManwon(String(totalExpenses)) : "—"}
                 </span>
                 {expensePercent > 0 && (
@@ -1251,7 +1251,7 @@ function Step4Additional({
           placeholder="예: 여름 성수기 매출이 높고, 겨울에는 다소 낮습니다. 평균적으로..."
           rows={4}
           maxLength={500}
-          className="mt-3 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 placeholder:text-gray-400 resize-y"
+          className="mt-3 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy/20 placeholder:text-gray-400 resize-y"
         />
         <p className="mt-1 text-right text-xs text-gray-400">{form.profitDescription.length}/500</p>
       </div>
@@ -1380,7 +1380,7 @@ function Step6Photos({
       {/* Photo Upload */}
       <div>
         <div className="flex items-center gap-2">
-          <Camera className="h-5 w-5 text-purple" />
+          <Camera className="h-5 w-5 text-navy" />
           <SectionLabel>매물 사진</SectionLabel>
         </div>
         <p className="mt-1 text-xs text-gray-500">
@@ -1394,7 +1394,7 @@ function Step6Photos({
       {/* Revenue Document Upload */}
       <div>
         <div className="flex items-center gap-2">
-          <FileText className="h-5 w-5 text-purple" />
+          <FileText className="h-5 w-5 text-navy" />
           <SectionLabel>매출 증빙자료 (선택)</SectionLabel>
         </div>
         <p className="mt-1 text-xs text-gray-500">
@@ -1426,7 +1426,7 @@ function Step6Photos({
           </ul>
         </div>
 
-        <label className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 py-6 text-sm text-gray-400 transition-colors hover:border-purple hover:text-purple">
+        <label className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 py-6 text-sm text-gray-400 transition-colors hover:border-navy hover:text-navy">
           <FileText className="h-5 w-5" />
           매출 증빙자료 업로드 (PDF, 이미지)
           <input
@@ -1514,7 +1514,7 @@ function Step6Photos({
       <div className="rounded-xl border border-gray-200 bg-white p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Info className="h-4 w-4 text-purple" />
+            <Info className="h-4 w-4 text-navy" />
             <span className="text-sm font-medium text-gray-700">
               {form.contactVisible ? "연락처 공개" : "연락처 비공개"}
             </span>
@@ -1522,7 +1522,7 @@ function Step6Photos({
           <button
             type="button"
             onClick={() => update("contactVisible", !form.contactVisible)}
-            className={`relative h-6 w-11 rounded-full transition-colors ${form.contactVisible ? "bg-purple" : "bg-gray-300"}`}
+            className={`relative h-6 w-11 rounded-full transition-colors ${form.contactVisible ? "bg-navy" : "bg-gray-300"}`}
           >
             <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.contactVisible ? "left-[22px]" : "left-0.5"}`} />
           </button>
@@ -1565,7 +1565,7 @@ function Step6Photos({
                 <button
                   type="button"
                   onClick={() => update("isPhonePublic", !form.isPhonePublic)}
-                  className={`relative h-6 w-11 rounded-full transition-colors ${form.isPhonePublic ? "bg-purple" : "bg-gray-300"}`}
+                  className={`relative h-6 w-11 rounded-full transition-colors ${form.isPhonePublic ? "bg-navy" : "bg-gray-300"}`}
                 >
                   <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.isPhonePublic ? "left-[22px]" : "left-0.5"}`} />
                 </button>
@@ -1593,9 +1593,9 @@ function Step7Integration() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-purple/20 bg-purple/5 p-4">
+      <div className="rounded-xl border border-navy/20 bg-navy/5 p-4">
         <div className="flex items-start gap-3">
-          <Link2 className="mt-0.5 h-5 w-5 text-purple" />
+          <Link2 className="mt-0.5 h-5 w-5 text-navy" />
           <div>
             <p className="text-sm font-medium text-gray-800">매출 데이터를 연동하면 매물 신뢰도가 높아집니다.</p>
             <p className="mt-1 text-xs text-gray-500">연동 기능은 현재 준비 중이며, 곧 제공될 예정입니다.</p>
@@ -1654,8 +1654,8 @@ function ChipButton({
       onClick={onClick}
       className={`flex items-center gap-1 rounded-full border px-4 py-2 text-sm font-medium transition-all ${
         active
-          ? "border-purple bg-purple text-white shadow-sm"
-          : "border-gray-200 bg-white text-gray-600 hover:border-purple/40 hover:bg-purple/5"
+          ? "border-navy bg-navy text-white shadow-sm"
+          : "border-gray-200 bg-white text-gray-600 hover:border-navy/40 hover:bg-navy/5"
       }`}
     >
       {children}
@@ -1677,15 +1677,15 @@ function RadioCard({
       onClick={onClick}
       className={`rounded-xl border p-4 text-left transition-all ${
         active
-          ? "border-purple bg-purple/5 ring-1 ring-purple/30"
-          : "border-gray-200 bg-white hover:border-purple/30"
+          ? "border-navy bg-navy/5 ring-1 ring-navy/30"
+          : "border-gray-200 bg-white hover:border-navy/30"
       }`}
     >
       <div className="flex items-center gap-2">
-        <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${active ? "border-purple" : "border-gray-300"}`}>
-          {active && <div className="h-2.5 w-2.5 rounded-full bg-purple" />}
+        <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${active ? "border-navy" : "border-gray-300"}`}>
+          {active && <div className="h-2.5 w-2.5 rounded-full bg-navy" />}
         </div>
-        <span className={`text-sm font-medium ${active ? "text-purple" : "text-gray-700"}`}>{label}</span>
+        <span className={`text-sm font-medium ${active ? "text-navy" : "text-gray-700"}`}>{label}</span>
       </div>
       {desc && <p className="mt-1 pl-7 text-xs text-gray-500">{desc}</p>}
     </button>
@@ -1702,14 +1702,14 @@ function ExpenseRow({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="w-16 shrink-0 text-sm font-bold text-purple">{label}</span>
+      <span className="w-16 shrink-0 text-sm font-bold text-navy">{label}</span>
       <input
         type="text"
         inputMode="numeric"
         value={addCommas(value)}
         onChange={(e) => onChange(stripCommas(e.target.value))}
         placeholder="0"
-        className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-right text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20"
+        className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-right text-sm outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy/20"
       />
       <span className="shrink-0 text-sm text-gray-500">만원</span>
       <span className="w-10 shrink-0 text-right text-xs text-gray-400">
@@ -1736,7 +1736,7 @@ function StaffInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="0"
-          className="w-full rounded-lg border border-gray-200 px-3 py-1.5 pr-8 text-right text-sm outline-none focus:border-purple focus:ring-1 focus:ring-purple/20"
+          className="w-full rounded-lg border border-gray-200 px-3 py-1.5 pr-8 text-right text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy/20"
         />
         <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">명</span>
       </div>
@@ -1775,7 +1775,7 @@ function InlineLabelInput({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="w-16 shrink-0 text-sm font-bold text-purple">{label}</span>
+      <span className="w-16 shrink-0 text-sm font-bold text-navy">{label}</span>
       <input
         type="text"
         inputMode="numeric"
@@ -1808,8 +1808,8 @@ function PremiumBreakdownOpen({
   placeholder: string;
 }) {
   return (
-    <div className="rounded-lg border border-purple/20 bg-white p-3">
-      <p className="mb-2 text-sm font-medium text-purple">{label}</p>
+    <div className="rounded-lg border border-navy/20 bg-white p-3">
+      <p className="mb-2 text-sm font-medium text-navy">{label}</p>
       <div className="flex items-center gap-2">
         <input
           type="text"
@@ -1818,7 +1818,7 @@ function PremiumBreakdownOpen({
           value={addCommas(value)}
           onChange={(e) => onValueChange(stripCommas(e.target.value))}
           placeholder="숫자만 입력"
-          className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-right text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20"
+          className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-right text-sm outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy/20"
         />
         <span className="shrink-0 text-xs font-medium text-gray-500">만원</span>
       </div>
@@ -1827,7 +1827,7 @@ function PremiumBreakdownOpen({
         onChange={(e) => onDescChange(e.target.value)}
         placeholder={placeholder}
         rows={3}
-        className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 placeholder:text-gray-400 resize-none"
+        className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy/20 placeholder:text-gray-400 resize-none"
       />
       <DescHint text={desc} />
     </div>
@@ -1854,8 +1854,8 @@ function FloorPremiumAuto({
   }, [displayValue, onValueChange]);
 
   return (
-    <div className="rounded-lg border border-purple/20 bg-white p-3">
-      <p className="mb-2 text-sm font-medium text-purple">바닥권리금 (자동계산)</p>
+    <div className="rounded-lg border border-navy/20 bg-white p-3">
+      <p className="mb-2 text-sm font-medium text-navy">바닥권리금 (자동계산)</p>
       <div className="flex items-center gap-2">
         <input
           type="text"
@@ -1878,7 +1878,7 @@ function FloorPremiumAuto({
         onChange={(e) => onDescChange(e.target.value)}
         placeholder={"입지 장점, 유동인구, 상권 특성 등을 작성해주세요\n예) 역세권 도보 2분, 대로변 코너 1층, 3면 간판 노출, 유동인구 일 5,000명"}
         rows={3}
-        className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 placeholder:text-gray-400 resize-none"
+        className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy/20 placeholder:text-gray-400 resize-none"
       />
       <DescHint text={desc} />
     </div>

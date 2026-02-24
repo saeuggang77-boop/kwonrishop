@@ -93,8 +93,8 @@ export default function DashboardPremiumPage() {
         </div>
         <div className="rounded-xl border border-gray-200 bg-white p-5">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-purple-100 p-2">
-              <MousePointer className="h-5 w-5 text-purple-600" />
+            <div className="rounded-lg bg-navy-100 p-2">
+              <MousePointer className="h-5 w-5 text-navy" />
             </div>
             <div>
               <p className="text-xs text-gray-500">총 문의수</p>

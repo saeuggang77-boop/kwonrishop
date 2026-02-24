@@ -30,7 +30,7 @@ export function MobileBottomBar({
           {showPhone && (
             <a
               href={`tel:${contactPhone}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-purple-600 py-2.5 text-sm font-bold text-white transition-colors hover:bg-purple-700"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-navy py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark"
             >
               <Phone className="h-4 w-4" />
               전화
@@ -39,7 +39,7 @@ export function MobileBottomBar({
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-purple-300 bg-white py-2.5 text-sm font-bold text-purple-700 transition-colors hover:bg-purple-50"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-navy-200 bg-white py-2.5 text-sm font-bold text-navy-dark transition-colors hover:bg-navy-50"
           >
             <MessageSquare className="h-4 w-4" />
             채팅 문의
@@ -47,14 +47,14 @@ export function MobileBottomBar({
           {!diagnosisReportId ? (
             <a
               href={`/reports/purchase?listingId=${listingId}`}
-              className="flex flex-1 items-center justify-center rounded-lg bg-purple-600 py-2.5 text-sm font-bold text-white transition-colors hover:bg-purple-700"
+              className="flex flex-1 items-center justify-center rounded-lg bg-navy py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy-dark"
             >
               AI 진단서
             </a>
           ) : (
             <a
               href={`/reports/${diagnosisReportId}`}
-              className="flex flex-1 items-center justify-center rounded-lg border border-purple-300 bg-white py-2.5 text-sm font-bold text-purple-700 transition-colors hover:bg-purple-50"
+              className="flex flex-1 items-center justify-center rounded-lg border border-navy-200 bg-white py-2.5 text-sm font-bold text-navy-dark transition-colors hover:bg-navy-50"
             >
               진단서 보기
             </a>

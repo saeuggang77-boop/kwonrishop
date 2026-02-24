@@ -23,7 +23,7 @@ const TIER_ICONS: Record<string, React.ElementType> = {
 };
 
 const TIER_STYLES: Record<string, { border: string; bg: string; badge: string }> = {
-  PREMIUM: { border: "border-purple-300", bg: "bg-gradient-to-b from-purple-50 to-white", badge: "bg-purple-100 text-purple-700" },
+  PREMIUM: { border: "border-navy-300", bg: "bg-gradient-to-b from-navy-50 to-white", badge: "bg-navy-100 text-navy700" },
   VIP: { border: "border-yellow-400", bg: "bg-gradient-to-b from-yellow-50 to-white", badge: "bg-yellow-100 text-yellow-800" },
 };
 

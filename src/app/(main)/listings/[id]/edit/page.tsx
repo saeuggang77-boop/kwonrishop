@@ -204,8 +204,8 @@ export default function EditListingPage() {
           </div>
           {/* 권리금 세부내역 */}
           {(form.premiumFee && Number(form.premiumFee) > 0) && (
-            <div className="rounded-lg border border-purple/20 bg-purple-50/50 p-4 space-y-3">
-              <p className="text-sm font-bold text-purple">권리금 세부내역 (선택)</p>
+            <div className="rounded-lg border border-navy/20 bg-navy-50/50 p-4 space-y-3">
+              <p className="text-sm font-bold text-navy">권리금 세부내역 (선택)</p>
               <p className="text-xs text-gray-500">권리금의 구성을 설명하면 매수자 신뢰도가 높아집니다.</p>
               <div className="grid gap-3 sm:grid-cols-3">
                 <div>

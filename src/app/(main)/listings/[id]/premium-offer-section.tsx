@@ -107,7 +107,7 @@ export function PremiumOfferSection({
         <p className={compact ? "text-sm text-gray-500" : "mt-2 text-sm text-gray-500"}>로그인 후 권리금을 제안할 수 있습니다.</p>
         <Link
           href="/login"
-          className="mt-3 inline-block rounded-lg bg-purple px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-purple/90"
+          className="mt-3 inline-block rounded-lg bg-navy px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-navy/90"
         >
           로그인
         </Link>
@@ -120,8 +120,8 @@ export function PremiumOfferSection({
     return (
       <div className={compact ? "" : "mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white"}>
         {!compact && (
-          <div className="bg-gradient-to-r from-purple/5 to-purple/10 px-5 py-4">
-            <h3 className="text-sm font-bold text-purple">받은 권리금 제안 ({ownerOffers.length}건)</h3>
+          <div className="bg-gradient-to-r from-navy/5 to-navy/10 px-5 py-4">
+            <h3 className="text-sm font-bold text-navy">받은 권리금 제안 ({ownerOffers.length}건)</h3>
           </div>
         )}
         <div className={compact ? "p-4" : "p-4"}>
@@ -135,7 +135,7 @@ export function PremiumOfferSection({
                 <div key={offer.id} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700">{offer.user.name || "익명"}</span>
-                    <span className="text-sm font-bold text-purple">{offer.offerAmount.toLocaleString()}만원</span>
+                    <span className="text-sm font-bold text-navy">{offer.offerAmount.toLocaleString()}만원</span>
                   </div>
                   <p className="mt-1.5 whitespace-pre-line text-sm text-gray-600">{offer.reason}</p>
                   <div className="mt-2 flex items-center justify-between">
@@ -166,9 +166,9 @@ export function PremiumOfferSection({
     return (
       <div className={compact ? "p-5" : "mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-5"}>
         {!compact && <p className="text-sm font-bold text-gray-700">권리금 제안하기</p>}
-        <div className="mt-3 rounded-lg bg-purple/5 p-4 text-center">
+        <div className="mt-3 rounded-lg bg-navy/5 p-4 text-center">
           <p className="text-sm text-gray-600">이미 제안을 보냈습니다.</p>
-          <p className="mt-1 text-lg font-bold text-purple">{myOffer.offerAmount.toLocaleString()}만원</p>
+          <p className="mt-1 text-lg font-bold text-navy">{myOffer.offerAmount.toLocaleString()}만원</p>
           <p className="mt-1 text-xs text-gray-400">
             {new Date(myOffer.createdAt).toLocaleDateString("ko-KR")} 제안
           </p>
@@ -181,15 +181,15 @@ export function PremiumOfferSection({
   return (
     <div className={compact ? "" : "mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white"}>
       {!compact && (
-        <div className="bg-gradient-to-r from-purple/5 to-purple/10 px-5 py-4">
-          <h3 className="text-sm font-bold text-purple">권리금 제안하기</h3>
+        <div className="bg-gradient-to-r from-navy/5 to-navy/10 px-5 py-4">
+          <h3 className="text-sm font-bold text-navy">권리금 제안하기</h3>
           <p className="mt-1 text-xs text-gray-500">이 매물에 관심이 있다면 권리금을 제안해보세요!</p>
         </div>
       )}
       <div className="space-y-3 p-4">
         {premiumFee > 0 && (
           <p className="text-xs text-gray-500">
-            현재 매도자 요청 권리금: <span className="font-bold text-purple">{premiumFee.toLocaleString()}만원</span>
+            현재 매도자 요청 권리금: <span className="font-bold text-navy">{premiumFee.toLocaleString()}만원</span>
           </p>
         )}
         <div>
@@ -201,7 +201,7 @@ export function PremiumOfferSection({
               value={addCommas(amount)}
               onChange={(e) => setAmount(stripCommas(e.target.value))}
               placeholder="제안할 금액 입력"
-              className="flex-1 rounded-lg border border-gray-200 px-3 py-2.5 text-right text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20"
+              className="flex-1 rounded-lg border border-gray-200 px-3 py-2.5 text-right text-sm outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy/20"
             />
             <span className="shrink-0 text-sm font-medium text-gray-500">만원</span>
           </div>
@@ -213,13 +213,13 @@ export function PremiumOfferSection({
             onChange={(e) => setReason(e.target.value)}
             placeholder={"매도자가 이해할 수 있는 이유를 적어주세요\n예) 시설 노후화 감안, 주변 시세 대비 등"}
             rows={3}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none transition-colors focus:border-purple focus:ring-1 focus:ring-purple/20 placeholder:text-gray-400 resize-none"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none transition-colors focus:border-navy focus:ring-1 focus:ring-navy/20 placeholder:text-gray-400 resize-none"
           />
         </div>
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="w-full rounded-lg bg-purple py-3 text-sm font-bold text-white transition-colors hover:bg-purple/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-lg bg-navy py-3 text-sm font-bold text-white transition-colors hover:bg-navy/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting ? "전송 중..." : "제안하기"}
         </button>

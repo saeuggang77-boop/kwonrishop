@@ -212,7 +212,7 @@ export default function MarketPricePage() {
               <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <SummaryCard icon={<DollarSign className="h-5 w-5" />} label="평균 권리금" value={formatKRW(avg.keyMoney)} color="text-orange-600" bg="bg-orange-100" />
                 <SummaryCard icon={<Wallet className="h-5 w-5" />} label="평균 보증금" value={formatKRW(avg.deposit)} color="text-blue-600" bg="bg-blue-100" />
-                <SummaryCard icon={<Building className="h-5 w-5" />} label="평균 월세" value={formatKRW(avg.rent)} color="text-purple-600" bg="bg-purple-100" />
+                <SummaryCard icon={<Building className="h-5 w-5" />} label="평균 월세" value={formatKRW(avg.rent)} color="text-navy" bg="bg-navy-100" />
                 <SummaryCard icon={<TrendingUp className="h-5 w-5" />} label="평균 월매출" value={formatKRW(avg.sales)} color="text-green-600" bg="bg-green-100" />
               </div>
 

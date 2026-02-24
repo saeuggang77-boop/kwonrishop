@@ -36,8 +36,8 @@ export function ShareButtons({ listingId }: ShareButtonsProps) {
       >
         {copied ? (
           <>
-            <Check className="h-4 w-4 text-purple-600" />
-            <span className="text-purple-600">복사됨</span>
+            <Check className="h-4 w-4 text-navy" />
+            <span className="text-navy">복사됨</span>
           </>
         ) : (
           <>

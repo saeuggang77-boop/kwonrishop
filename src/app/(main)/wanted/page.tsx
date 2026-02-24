@@ -232,13 +232,13 @@ export default function WantedPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-navy px-4 py-12 text-center text-white md:py-16">
+      <section className="bg-surface-1 px-4 py-12 text-center md:py-16">
         <div className="mx-auto max-w-3xl">
-          <Search className="mx-auto mb-4 h-10 w-10 text-accent-light" />
-          <h1 className="text-2xl font-bold md:text-3xl">
+          <Search className="mx-auto mb-4 h-10 w-10 text-accent" />
+          <h1 className="font-heading text-2xl font-bold text-navy md:text-3xl">
             원하는 조건의 점포를 찾아드립니다
           </h1>
-          <p className="mt-3 text-sm text-white/70 md:text-base">
+          <p className="mt-3 text-sm text-gray-500 md:text-base">
             조건을 등록하면 매칭되는 매물이 등록될 때 알림을 보내드립니다
           </p>
         </div>

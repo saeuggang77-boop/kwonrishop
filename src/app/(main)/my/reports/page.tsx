@@ -94,7 +94,7 @@ export default function MyReportsPage() {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-gray-900">{purchase.listing.title}</h3>
                       <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${
-                        isPremium ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-600"
+                        isPremium ? "bg-navy-100 text-navy" : "bg-gray-100 text-gray-600"
                       }`}>
                         {purchase.plan.displayName}
                       </span>

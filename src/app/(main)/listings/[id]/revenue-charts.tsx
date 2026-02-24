@@ -75,7 +75,7 @@ export function CostPieChart({
   if (!mounted) {
     return (
       <div className="flex h-[220px] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-purple-600" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" />
       </div>
     );
   }

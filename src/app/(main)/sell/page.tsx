@@ -3,9 +3,9 @@ import { FileText, CheckCircle, Users, DollarSign, TrendingUp, Shield, Camera, C
 
 export default function SellPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-1">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-navy via-navy-dark to-[#1B3A5C]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-navy via-navy-dark to-navy">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-40" />
         <div className="relative mx-auto max-w-5xl px-4 py-16 text-center md:py-24">
           <h1 className="font-heading text-3xl font-bold text-white md:text-5xl">
@@ -70,8 +70,8 @@ export default function SellPage() {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-navy/10 text-2xl font-bold text-navy">
               3
             </div>
-            <div className="mt-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100">
-              <Users className="h-6 w-6 text-purple-600" />
+            <div className="mt-4 flex h-12 w-12 items-center justify-center rounded-xl bg-navy-50">
+              <Users className="h-6 w-6 text-navy" />
             </div>
             <h3 className="mt-4 text-lg font-bold text-navy">매수자 문의 수신</h3>
             <p className="mt-2 text-center text-sm text-gray-600">
@@ -113,8 +113,8 @@ export default function SellPage() {
 
             {/* AI 권리금 진단서 */}
             <div className="flex flex-col items-center rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-purple-100">
-                <Shield className="h-7 w-7 text-purple-600" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-navy-50">
+                <Shield className="h-7 w-7 text-navy" />
               </div>
               <h3 className="mt-4 text-base font-bold text-navy">AI 권리금 진단서</h3>
               <p className="mt-2 text-sm text-gray-600">
@@ -167,7 +167,7 @@ export default function SellPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="border-t border-gray-200 bg-gradient-to-br from-navy via-navy-dark to-[#1B3A5C] py-12 md:py-16">
+      <section className="border-t border-gray-200 bg-gradient-to-br from-navy via-navy-dark to-navy py-12 md:py-16">
         <div className="mx-auto max-w-3xl px-4 text-center">
           <h2 className="font-heading text-2xl font-bold text-white md:text-3xl">
             지금 바로 무료로 등록하세요

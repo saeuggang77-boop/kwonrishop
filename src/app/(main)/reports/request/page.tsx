@@ -42,7 +42,7 @@ export default function ReportRequestIndexPage() {
     <div className="mx-auto max-w-3xl px-4 py-8">
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="font-heading text-2xl font-bold text-[#1B3A5C]">
+        <h1 className="font-heading text-2xl font-bold text-navy">
           권리진단서 발급 신청
         </h1>
         <p className="mt-2 text-sm text-gray-500">
@@ -56,7 +56,7 @@ export default function ReportRequestIndexPage() {
           onClick={() => setTab("search")}
           className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all ${
             tab === "search"
-              ? "bg-white text-[#1B3A5C] shadow-sm"
+              ? "bg-white text-navy shadow-sm"
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
@@ -67,7 +67,7 @@ export default function ReportRequestIndexPage() {
           onClick={() => setTab("direct")}
           className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all ${
             tab === "direct"
-              ? "bg-white text-[#1B3A5C] shadow-sm"
+              ? "bg-white text-navy shadow-sm"
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
@@ -136,14 +136,14 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="상호명 또는 주소로 검색"
-            className="w-full rounded-xl border border-gray-200 py-3 pl-10 pr-4 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+            className="w-full rounded-xl border border-gray-200 py-3 pl-10 pr-4 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
           />
         </div>
         <button
           onClick={() => setShowFilter(!showFilter)}
           className={`flex items-center gap-1 rounded-xl border px-4 text-sm font-medium transition-colors ${
             showFilter || category
-              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+              ? "border-navy bg-navy/10 text-navy"
               : "border-gray-200 text-gray-600 hover:border-gray-300"
           }`}
         >
@@ -152,7 +152,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
         </button>
         <button
           onClick={handleSearch}
-          className="rounded-xl bg-[#1B3A5C] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#152e49]"
+          className="rounded-xl bg-navy px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-navy-dark"
         >
           검색
         </button>
@@ -166,7 +166,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+              className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
             >
               <option value="">전체 업종</option>
               {Object.entries(BUSINESS_CATEGORY_LABELS).map(([key, label]) => (
@@ -184,7 +184,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
           <button
             key={listing.id}
             onClick={() => router.push(`/reports/request/${listing.id}`)}
-            className="group rounded-xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all hover:border-[#1B3A5C] hover:shadow-md"
+            className="group rounded-xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all hover:border-navy hover:shadow-md"
           >
             {/* Thumbnail */}
             <div className="mb-3 aspect-[16/10] overflow-hidden rounded-lg bg-gray-100">
@@ -205,7 +205,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
             {/* Info */}
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-[#1B3A5C]/10 px-2 py-0.5 text-xs font-medium text-[#1B3A5C]">
+                <span className="rounded-full bg-navy/10 px-2 py-0.5 text-xs font-medium text-navy">
                   {BUSINESS_CATEGORY_LABELS[listing.businessCategory] ?? listing.businessCategory}
                 </span>
               </div>
@@ -232,7 +232,7 @@ function SearchTab({ router }: { router: ReturnType<typeof useRouter> }) {
       {/* Loading */}
       {loading && (
         <div className="mt-8 flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#1B3A5C]" />
+          <Loader2 className="h-6 w-6 animate-spin text-navy" />
         </div>
       )}
 
@@ -353,7 +353,7 @@ function DirectInputTab({
               <select
                 value={businessCategory}
                 onChange={(e) => setBusinessCategory(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+                className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
               >
                 <option value="">업종 선택</option>
                 {Object.entries(BUSINESS_CATEGORY_LABELS).map(([key, label]) => (
@@ -370,7 +370,7 @@ function DirectInputTab({
               value={businessSubtype}
               onChange={(e) => setBusinessSubtype(e.target.value)}
               placeholder="예: 카페, 삼겹살 전문점"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -380,7 +380,7 @@ function DirectInputTab({
                 <select
                   value={city}
                   onChange={(e) => { setCity(e.target.value); setDistrict(""); }}
-                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
                 >
                   <option value="">시/도 선택</option>
                   {Object.keys(REGIONS).map((r) => (
@@ -397,7 +397,7 @@ function DirectInputTab({
                   value={district}
                   onChange={(e) => setDistrict(e.target.value)}
                   disabled={!city}
-                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C] disabled:bg-gray-100 disabled:text-gray-400"
+                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy disabled:bg-gray-100 disabled:text-gray-400"
                 >
                   <option value="">구/군 선택</option>
                   {(REGIONS[city] ?? []).map((d) => (
@@ -416,7 +416,7 @@ function DirectInputTab({
                   type="number"
                   value={floor}
                   onChange={(e) => setFloor(parseInt(e.target.value) || 1)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
                 />
                 <span className="shrink-0 text-sm text-gray-600">층</span>
               </div>
@@ -429,7 +429,7 @@ function DirectInputTab({
                   value={areaPyeong}
                   onChange={(e) => setAreaPyeong(parseInt(e.target.value) || 0)}
                   min={0}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
                 />
                 <span className="shrink-0 text-sm text-gray-600">평</span>
               </div>
@@ -563,7 +563,7 @@ function WonField({
           value={value}
           onChange={(e) => onChange(parseInt(e.target.value) || 0)}
           min={0}
-          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-navy focus:ring-1 focus:ring-navy"
         />
         <span className="shrink-0 text-sm text-gray-600">만원</span>
       </div>

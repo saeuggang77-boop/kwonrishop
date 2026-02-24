@@ -196,7 +196,7 @@ function BlurredSection({ children, label }: { children: React.ReactNode; label?
 /* ═══════════════════════════════════════════════════════════════ */
 function SectionHeader({ icon: Icon, title, badge }: { icon: React.ComponentType<{ className?: string }>; title: string; badge?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-[#E8F0FE] to-white px-6 py-4">
+    <div className="flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-navy-50 to-white px-6 py-4">
       <div className="flex items-center gap-3">
         <Icon className="h-5 w-5 text-navy" />
         <h2 className="text-lg font-bold text-navy">{title}</h2>
@@ -346,7 +346,7 @@ export default function ReportSamplePage() {
               <p className="text-sm text-gray-500">현재 권리금</p>
               <p className="text-3xl font-black text-navy">{d.valuation.currentPremium.toLocaleString()}<span className="text-lg font-bold">만원</span></p>
             </div>
-            <div className="rounded-xl bg-[#E8F0FE] px-5 py-3">
+            <div className="rounded-xl bg-navy-50 px-5 py-3">
               <p className="text-xs text-gray-500">AI 추정 적정가</p>
               <p className="text-lg font-bold text-navy">{d.valuation.aiEstimateMin.toLocaleString()} ~ {d.valuation.aiEstimateMax.toLocaleString()}만원</p>
             </div>
@@ -678,13 +678,13 @@ export default function ReportSamplePage() {
 
       {/* ═══ 9. 하단 CTA ═══ */}
       <section className="mb-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="bg-gradient-to-r from-[#E8F0FE] to-[#DBEAFE] p-6 text-center md:p-10">
+        <div className="bg-gradient-to-r from-navy-50 to-[#DBEAFE] p-6 text-center md:p-10">
           <h3 className="text-xl font-bold text-navy md:text-2xl">이 매물의 권리진단서를 발급받으세요</h3>
           <p className="mt-2 text-sm text-gray-500">지금 신청하면 <strong className="text-navy">10분 내 발급</strong> 완료</p>
 
           <div className="mt-6 flex flex-col items-center justify-center gap-3 md:flex-row">
             <Link href="/reports/request"
-              className="flex min-h-[48px] w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-purple-600 px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-purple-700 active:scale-[0.97] md:w-auto">
+              className="flex min-h-[48px] w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-navy px-8 text-sm font-bold text-white shadow-lg transition-all hover:bg-navy-dark active:scale-[0.97] md:w-auto">
               <Shield className="h-4 w-4" /> 권리진단서 신청하기 <span className="text-white/70 font-normal">30,000원</span>
             </Link>
           </div>

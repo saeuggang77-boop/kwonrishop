@@ -41,7 +41,7 @@ export default function PricingPage() {
     <div className="mx-auto max-w-5xl px-4 py-10 md:py-14">
       {/* Header + Tabs */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-[#1B3A5C] md:text-3xl">
+        <h1 className="font-heading text-2xl font-bold text-navy md:text-3xl">
           서비스 요금 안내
         </h1>
         <p className="mt-2 text-sm text-gray-500">
@@ -54,7 +54,7 @@ export default function PricingPage() {
             onClick={() => setTab("seller")}
             className={`rounded-lg px-6 py-2.5 text-sm font-semibold transition-all ${
               tab === "seller"
-                ? "bg-white text-[#1B3A5C] shadow-sm"
+                ? "bg-white text-navy shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
@@ -64,7 +64,7 @@ export default function PricingPage() {
             onClick={() => setTab("buyer")}
             className={`rounded-lg px-6 py-2.5 text-sm font-semibold transition-all ${
               tab === "buyer"
-                ? "bg-white text-[#1B3A5C] shadow-sm"
+                ? "bg-white text-navy shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
@@ -80,8 +80,8 @@ export default function PricingPage() {
         <div className="mt-10 space-y-12">
           {/* ── 매물 광고 ── */}
           <section>
-            <h2 className="flex items-center gap-2 text-lg font-bold text-[#1B3A5C]">
-              <Megaphone className="h-5 w-5 text-[#F59E0B]" />
+            <h2 className="flex items-center gap-2 text-lg font-bold text-navy">
+              <Megaphone className="h-5 w-5 text-accent" />
               매물 광고
             </h2>
             <p className="mt-1 text-sm text-gray-500">
@@ -156,8 +156,8 @@ export default function PricingPage() {
 
           {/* ── 소액 부스트 ── */}
           <section>
-            <h2 className="flex items-center gap-2 text-lg font-bold text-[#1B3A5C]">
-              <Zap className="h-5 w-5 text-purple-500" />
+            <h2 className="flex items-center gap-2 text-lg font-bold text-navy">
+              <Zap className="h-5 w-5 text-navy-400" />
               소액 부스트 서비스
             </h2>
             <p className="mt-1 text-sm text-gray-500">
@@ -170,7 +170,7 @@ export default function PricingPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
                   <ArrowUp className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="mt-3 text-base font-bold text-[#1B3A5C]">점프업</h3>
+                <h3 className="mt-3 text-base font-bold text-navy">점프업</h3>
                 <div className="mt-1.5">
                   <span className="text-2xl font-bold text-blue-600">₩10,000</span>
                   <span className="text-sm text-gray-500"> / 회</span>
@@ -206,7 +206,7 @@ export default function PricingPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
                   <Flame className="h-5 w-5 text-red-600" />
                 </div>
-                <h3 className="mt-3 text-base font-bold text-[#1B3A5C]">급매 태그</h3>
+                <h3 className="mt-3 text-base font-bold text-navy">급매 태그</h3>
                 <div className="mt-1.5">
                   <span className="text-2xl font-bold text-red-600">₩100,000</span>
                   <span className="text-sm text-gray-500"> / 30일</span>
@@ -235,7 +235,7 @@ export default function PricingPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
                   <RefreshCw className="h-5 w-5 text-green-600" />
                 </div>
-                <h3 className="mt-3 text-base font-bold text-[#1B3A5C]">자동 갱신</h3>
+                <h3 className="mt-3 text-base font-bold text-navy">자동 갱신</h3>
                 <div className="mt-1.5">
                   <span className="text-2xl font-bold text-green-600">₩150,000</span>
                   <span className="text-sm text-gray-500"> / 30일</span>
@@ -265,8 +265,8 @@ export default function PricingPage() {
           {/* ── 매도자 무료 등록 배너 ── */}
           <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-4 text-center">
             <div className="flex items-center justify-center gap-2">
-              <Megaphone className="h-5 w-5 text-[#F59E0B]" />
-              <span className="text-sm font-bold text-[#1B3A5C] md:text-base">
+              <Megaphone className="h-5 w-5 text-accent" />
+              <span className="text-sm font-bold text-navy md:text-base">
                 매도자 매물 등록은 월 2건까지 무료!
               </span>
             </div>
@@ -325,7 +325,7 @@ function BuyerTab() {
     <div className="mt-10 space-y-12">
       {/* ── 1. 무료 기능 (최상단으로 이동) ── */}
       <section>
-        <h2 className="text-lg font-bold text-[#1B3A5C]">
+        <h2 className="text-lg font-bold text-navy">
           이 모든 기능이 무료!
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
@@ -333,8 +333,8 @@ function BuyerTab() {
             const Icon = item.icon;
             return (
               <div key={item.label} className="flex flex-col items-center gap-2.5 rounded-xl border border-gray-100 bg-white p-4 text-center shadow-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1B3A5C]/10">
-                  <Icon className="h-5 w-5 text-[#1B3A5C]" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-navy/10">
+                  <Icon className="h-5 w-5 text-navy" />
                 </div>
                 <span className="text-xs font-medium text-gray-700">{item.label}</span>
               </div>
@@ -347,7 +347,7 @@ function BuyerTab() {
       <section>
         <h3 className="text-center text-base font-bold text-gray-700">더 깊은 분석이 필요하다면?</h3>
 
-        <h2 className="mt-6 flex items-center gap-2 text-lg font-bold text-[#1B3A5C]">
+        <h2 className="mt-6 flex items-center gap-2 text-lg font-bold text-navy">
           <BarChart3 className="h-5 w-5 text-teal-500" />
           매물 수익분석 열람
         </h2>
@@ -476,8 +476,8 @@ function BuyerTab() {
 
       {/* ── 3. 권리진단서 (간소화 — 수정 2) ── */}
       <section>
-        <h2 className="flex items-center gap-2 text-lg font-bold text-[#1B3A5C]">
-          <FileText className="h-5 w-5 text-purple-500" />
+        <h2 className="flex items-center gap-2 text-lg font-bold text-navy">
+          <FileText className="h-5 w-5 text-navy-400" />
           권리진단서
         </h2>
         <p className="mt-1 text-sm text-gray-500">
@@ -553,7 +553,7 @@ function BuyerTab() {
 
       {/* ── 4. FAQ (수정 6 — 3개 추가) ── */}
       <section>
-        <h2 className="text-lg font-bold text-[#1B3A5C]">자주 묻는 질문</h2>
+        <h2 className="text-lg font-bold text-navy">자주 묻는 질문</h2>
         <div className="mt-4 space-y-3">
           {FAQ_ITEMS.map((item) => (
             <div key={item.q} className="rounded-xl border border-gray-200 bg-white p-4">

@@ -61,7 +61,7 @@ export default function BbsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-navy">게시판</h1>
+      <h1 className="font-heading text-2xl font-bold text-navy">게시판</h1>
       <p className="mt-1 text-sm text-gray-500">공지사항과 유용한 정보를 확인하세요</p>
 
       {/* Category Tabs */}
@@ -89,7 +89,7 @@ export default function BbsPage() {
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-200" />
+              <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
             ))}
           </div>
         ) : posts.length === 0 ? (
@@ -103,7 +103,7 @@ export default function BbsPage() {
               <Link
                 key={post.id}
                 href={`/bbs/${post.id}`}
-                className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md transition"
+                className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 hover:shadow-md transition"
               >
                 {post.thumbnailUrl && (
                   <Image
@@ -139,7 +139,7 @@ export default function BbsPage() {
           <button
             onClick={() => handlePageChange(meta.page - 1)}
             disabled={meta.page === 1}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             이전
           </button>
@@ -150,7 +150,7 @@ export default function BbsPage() {
               <button
                 key={pageNum}
                 onClick={() => handlePageChange(pageNum)}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                className={`rounded-full px-3 py-2 text-sm font-medium transition ${
                   meta.page === pageNum
                     ? "bg-navy text-white"
                     : "border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -164,7 +164,7 @@ export default function BbsPage() {
           <button
             onClick={() => handlePageChange(meta.page + 1)}
             disabled={meta.page === meta.totalPages}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             다음
           </button>
