@@ -294,7 +294,7 @@ export default function ReportSamplePage() {
 
       {/* ═══ 1. 상단 요약 카드 ═══ */}
       <section className="mb-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="bg-gradient-to-r from-navy to-[#2D5F8A] px-6 py-4">
+        <div className="bg-gradient-to-r from-navy to-navy-light px-6 py-4">
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-white/80" />
             <h1 className="text-lg font-bold text-white">권리진단서 샘플</h1>
@@ -563,7 +563,7 @@ export default function ReportSamplePage() {
       </section>
 
       {/* ═══ 권리진단서 발급 배너 ═══ */}
-      <section className="mb-8 overflow-hidden rounded-2xl border-2 border-navy/20 bg-gradient-to-r from-navy to-[#2D5F8A] p-6 text-center md:p-8">
+      <section className="mb-8 overflow-hidden rounded-2xl border-2 border-navy/20 bg-gradient-to-r from-navy to-navy-light p-6 text-center md:p-8">
         <Lock className="mx-auto h-8 w-8 text-white/60" />
         <h3 className="mt-3 text-lg font-bold text-white">권리진단서를 발급받으면 더 자세한 분석을 확인할 수 있습니다</h3>
         <p className="mt-1 text-sm text-white/60">상권 시간대 분석, 경쟁업체 상세, 임대료 인상률 추이 등</p>
@@ -625,7 +625,7 @@ export default function ReportSamplePage() {
               <span className="font-bold text-navy">{d.summary.score}/100점</span>
             </div>
             <div className="mt-2 h-3 overflow-hidden rounded-full bg-gray-200">
-              <div className="h-full rounded-full bg-gradient-to-r from-[#1B3A5C] to-[#3B82F6]"
+              <div className="h-full rounded-full bg-gradient-to-r from-navy to-link"
                 style={{ width: `${d.summary.score}%` }} />
             </div>
           </div>
@@ -678,7 +678,7 @@ export default function ReportSamplePage() {
 
       {/* ═══ 9. 하단 CTA ═══ */}
       <section className="mb-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="bg-gradient-to-r from-navy-50 to-[#DBEAFE] p-6 text-center md:p-10">
+        <div className="bg-gradient-to-r from-navy-50 to-navy-100 p-6 text-center md:p-10">
           <h3 className="text-xl font-bold text-navy md:text-2xl">이 매물의 권리진단서를 발급받으세요</h3>
           <p className="mt-2 text-sm text-gray-500">지금 신청하면 <strong className="text-navy">10분 내 발급</strong> 완료</p>
 

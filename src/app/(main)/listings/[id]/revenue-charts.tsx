@@ -113,7 +113,7 @@ export function CostPieChart({
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div className="text-center">
           <p className="text-[10px] font-medium text-gray-400">순수익</p>
-          <p className="text-lg font-bold text-purple-600">
+          <p className="text-lg font-bold text-navy">
             {profitMan.toLocaleString()}만원
           </p>
         </div>

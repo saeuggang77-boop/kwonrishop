@@ -97,8 +97,8 @@ export default async function DashboardPage() {
         />
         <KpiCard
           icon={<MousePointerClick className="h-5 w-5" />}
-          accentColor="bg-purple-500"
-          iconColor="text-purple-500"
+          accentColor="bg-navy-400"
+          iconColor="text-navy-400"
           label="문의 전환율"
           value={formatPercent(ctr)}
           sub="조회 → 문의"

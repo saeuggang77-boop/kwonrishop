@@ -460,20 +460,20 @@ function DirectInputTab({
       {/* 결제 정보 */}
       <Section icon={<Crown className="h-5 w-5" />} title="결제 정보">
         {selectedPlan ? (
-          <div className="rounded-xl border-2 border-[#1B3A5C] bg-[#1B3A5C]/5 p-5">
+          <div className="rounded-xl border-2 border-navy bg-navy/5 p-5">
             <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-[#1B3A5C]/10 p-2 text-[#1B3A5C]">
+              <div className="rounded-lg bg-navy/10 p-2 text-navy">
                 <FileText className="h-5 w-5" />
               </div>
-              <h3 className="text-lg font-bold text-[#1B3A5C]">{selectedPlan.displayName}</h3>
+              <h3 className="text-lg font-bold text-navy">{selectedPlan.displayName}</h3>
             </div>
-            <p className="mt-3 text-2xl font-bold text-[#1B3A5C]">
+            <p className="mt-3 text-2xl font-bold text-navy">
               {formatKRW(selectedPlan.price)}
             </p>
             <ul className="mt-4 space-y-2">
               {(selectedPlan.features as string[]).map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1B3A5C]" />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-navy" />
                   {f}
                 </li>
               ))}
@@ -535,10 +535,10 @@ function Section({
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <div className="mb-5 flex items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1B3A5C]/10 text-[#1B3A5C]">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy/10 text-navy">
           {icon}
         </div>
-        <h2 className="text-lg font-bold text-[#1B3A5C]">{title}</h2>
+        <h2 className="text-lg font-bold text-navy">{title}</h2>
       </div>
       {children}
     </div>
