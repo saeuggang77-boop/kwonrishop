@@ -125,7 +125,7 @@ function FilterDropdown({
         <ChevronDown className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+        <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-xl border border-gray-200 bg-white py-1 shadow-xl">
           {options.map((opt, i) => (
             <button
               key={i}
@@ -211,11 +211,12 @@ export default function FranchisePage() {
   const hasFilters = subcatIdx > 0 || salesIdx > 0 || costIdx > 0 || storeIdx > 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-navy">프랜차이즈 정보</h1>
-      <p className="mt-1 text-sm text-gray-500">
-        브랜드별 매출, 창업비용, 가맹점 현황을 비교하세요
-      </p>
+    <div className="bg-surface-1">
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <h1 className="font-heading text-2xl font-bold text-navy">프랜차이즈 정보</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          브랜드별 매출, 창업비용, 가맹점 현황을 비교하세요
+        </p>
 
       {/* Category Tabs */}
       <div className="mt-6 flex gap-2">
@@ -223,7 +224,7 @@ export default function FranchisePage() {
           <button
             key={cat.value}
             onClick={() => setActiveTab(cat.value)}
-            className={`rounded-lg px-5 py-2 text-sm font-medium transition ${
+            className={`rounded-full px-5 py-2 text-sm font-medium transition ${
               activeTab === cat.value
                 ? "bg-navy text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -236,7 +237,7 @@ export default function FranchisePage() {
 
       {/* Search */}
       <div className="mt-4 flex gap-2">
-        <div className="relative flex-1">
+        <div className="relative flex-1 rounded-xl">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
@@ -317,7 +318,7 @@ export default function FranchisePage() {
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-52 animate-pulse rounded-xl bg-gray-200" />
+              <div key={i} className="h-52 animate-pulse rounded-2xl bg-gray-100" />
             ))}
           </div>
         ) : brands.length === 0 ? (
@@ -336,7 +337,7 @@ export default function FranchisePage() {
               <Link
                 key={brand.id}
                 href={`/franchise/${brand.id}`}
-                className="group rounded-xl border border-gray-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <div className="flex items-start gap-4">
                   {/* Avatar */}
@@ -418,7 +419,7 @@ export default function FranchisePage() {
           <button
             onClick={() => handlePageChange(meta.page - 1)}
             disabled={meta.page === 1}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             이전
           </button>
@@ -428,7 +429,7 @@ export default function FranchisePage() {
               <button
                 key={pageNum}
                 onClick={() => handlePageChange(pageNum)}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                className={`rounded-full px-3 py-2 text-sm font-medium transition ${
                   meta.page === pageNum
                     ? "bg-navy text-white"
                     : "border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -441,32 +442,33 @@ export default function FranchisePage() {
           <button
             onClick={() => handlePageChange(meta.page + 1)}
             disabled={meta.page === meta.totalPages}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             다음
           </button>
         </div>
       )}
 
-      {/* Bottom CTA Banner */}
-      <div className="mt-16 overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-r from-navy/5 via-white to-navy/5">
-        <div className="px-8 py-10 text-center">
-          <p className="text-sm font-medium text-navy/60">FOR FRANCHISE HQ</p>
-          <h2 className="mt-2 text-2xl font-bold text-navy">
-            프랜차이즈 본사 관계자이신가요?
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-gray-600">
-            지금 가입하시면 브랜드 로고, 상세 소개, 창업 프로모션을 직접 등록할 수 있습니다.
-            <br />
-            예비 창업자에게 브랜드를 효과적으로 알려보세요.
-          </p>
-          <Link
-            href="/register"
-            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-navy px-8 py-3 text-sm font-bold text-white transition hover:bg-navy/90"
-          >
-            본사 가입하기
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+        {/* Bottom CTA Banner */}
+        <div className="mt-16 overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-r from-navy/5 via-white to-navy/5">
+          <div className="px-8 py-10 text-center">
+            <p className="text-sm font-medium text-navy/60">FOR FRANCHISE HQ</p>
+            <h2 className="mt-2 text-2xl font-bold text-navy">
+              프랜차이즈 본사 관계자이신가요?
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-sm text-gray-600">
+              지금 가입하시면 브랜드 로고, 상세 소개, 창업 프로모션을 직접 등록할 수 있습니다.
+              <br />
+              예비 창업자에게 브랜드를 효과적으로 알려보세요.
+            </p>
+            <Link
+              href="/register"
+              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-navy px-8 py-3 text-sm font-bold text-white transition hover:bg-navy/90"
+            >
+              본사 가입하기
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

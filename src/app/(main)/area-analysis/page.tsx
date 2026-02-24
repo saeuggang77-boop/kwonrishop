@@ -123,7 +123,7 @@ export default function AreaAnalysisPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-end">
             <div className="flex-1">
               <label className="mb-1.5 block text-sm font-medium text-gray-700">분석할 주소</label>
-              <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2.5 focus-within:border-[#1B3A5C] focus-within:ring-1 focus-within:ring-[#1B3A5C]">
+              <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2.5 focus-within:border-navy focus-within:ring-1 focus-within:ring-navy">
                 <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
                 <input
                   type="text"
@@ -146,7 +146,7 @@ export default function AreaAnalysisPage() {
                     onClick={() => setRadius(opt.value)}
                     className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                       radius === opt.value
-                        ? "bg-[#1B3A5C] text-white"
+                        ? "bg-navy text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >
@@ -159,7 +159,7 @@ export default function AreaAnalysisPage() {
             <button
               onClick={handleSearch}
               disabled={isLoading || !address.trim()}
-              className="flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[#1B3A5C] px-6 text-sm font-bold text-white transition-colors hover:bg-[#15304D] disabled:opacity-50"
+              className="flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-navy px-6 text-sm font-bold text-white transition-colors hover:bg-navy-dark disabled:opacity-50"
             >
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
               분석하기
@@ -172,7 +172,7 @@ export default function AreaAnalysisPage() {
               <button
                 onClick={() => setSelectedCategory(null)}
                 className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                  !selectedCategory ? "bg-[#1B3A5C] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  !selectedCategory ? "bg-navy text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 전체
@@ -182,7 +182,7 @@ export default function AreaAnalysisPage() {
                   key={key}
                   onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
                   className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                    selectedCategory === key ? "bg-[#1B3A5C] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    selectedCategory === key ? "bg-navy text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
                   {label}
@@ -203,8 +203,8 @@ export default function AreaAnalysisPage() {
             {/* Summary stat cards */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-                <Store className="mx-auto h-6 w-6 text-[#1B3A5C]" />
-                <p className="mt-2 text-2xl font-bold text-[#1B3A5C]">{totalNearby}</p>
+                <Store className="mx-auto h-6 w-6 text-navy" />
+                <p className="mt-2 text-2xl font-bold text-navy">{totalNearby}</p>
                 <p className="text-xs text-gray-500">주변 점포</p>
               </div>
               <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">

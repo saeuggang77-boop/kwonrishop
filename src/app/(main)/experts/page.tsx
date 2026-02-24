@@ -347,14 +347,14 @@ function ExpertsPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-1">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#E8F0FE] to-[#BFDBFE] px-4 py-12 md:py-16">
+      <section className="bg-gradient-to-r from-navy-50 to-navy-100 px-4 py-12 md:py-16">
         <div className="mx-auto max-w-7xl text-center">
-          <h1 className="font-heading text-3xl font-bold text-[#1B3A5C] md:text-4xl">
+          <h1 className="font-heading text-3xl font-bold text-navy md:text-4xl">
             전문가 상담
           </h1>
-          <p className="mt-3 text-base text-[#1B3A5C]/70 md:text-lg">
+          <p className="mt-3 text-base text-navy/70 md:text-lg">
             검증된 전문가에게 상가 거래에 필요한 모든 상담을 받으세요
           </p>
         </div>
@@ -506,7 +506,7 @@ export default function ExpertsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-surface-1">
           <section className="bg-gradient-to-br from-navy to-navy-dark px-4 py-12 text-white md:py-16">
             <div className="mx-auto max-w-7xl text-center">
               <h1 className="font-heading text-3xl font-bold md:text-4xl">

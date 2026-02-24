@@ -317,7 +317,7 @@ export default function SimulatorPage() {
         <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-navy/10">
           <Calculator className="h-7 w-7 text-navy" />
         </div>
-        <h1 className="text-2xl font-bold text-navy">창업 시뮬레이터</h1>
+        <h1 className="font-heading text-2xl font-bold text-navy">창업 시뮬레이터</h1>
         <p className="mt-2 text-sm text-gray-500">
           내 조건에 맞는 창업 수익성을 분석해보세요
         </p>
@@ -443,7 +443,7 @@ export default function SimulatorPage() {
                 max={100}
                 value={state.area}
                 onChange={(e) => update("area", Number(e.target.value))}
-                className="w-full accent-[#1B3A5C]"
+                className="w-full accent-navy"
               />
               <div className="mt-1 flex justify-between text-xs text-gray-400">
                 <span>10평</span>
@@ -520,7 +520,7 @@ export default function SimulatorPage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold text-navy">예상 매출</h2>
                 <div className="flex items-center gap-3">
-                  <span className="text-lg font-bold text-purple-600">{fmt(monthlyRevenue)} 만원/월</span>
+                  <span className="text-lg font-bold text-navy">{fmt(monthlyRevenue)} 만원/월</span>
                   <button
                     type="button"
                     onClick={() => setShowResults(false)}
@@ -566,7 +566,7 @@ export default function SimulatorPage() {
                     <div>
                       <label className="mb-2 block text-sm font-medium text-gray-700">
                         일 평균 고객수:{" "}
-                        <span className="font-bold text-purple-600">
+                        <span className="font-bold text-navy">
                           {fmt(state.dailyCustomers)}명
                         </span>
                       </label>
@@ -578,7 +578,7 @@ export default function SimulatorPage() {
                         onChange={(e) =>
                           update("dailyCustomers", Number(e.target.value))
                         }
-                        className="w-full accent-[#1B3A5C]"
+                        className="w-full accent-navy"
                       />
                       <div className="mt-1 flex justify-between text-xs text-gray-400">
                         <span>10명</span>
@@ -590,7 +590,7 @@ export default function SimulatorPage() {
                     <div>
                       <label className="mb-2 block text-sm font-medium text-gray-700">
                         객단가:{" "}
-                        <span className="font-bold text-purple-600">
+                        <span className="font-bold text-navy">
                           {fmt(state.avgSpending)}원
                         </span>
                       </label>
@@ -603,7 +603,7 @@ export default function SimulatorPage() {
                         onChange={(e) =>
                           update("avgSpending", Number(e.target.value))
                         }
-                        className="w-full accent-[#1B3A5C]"
+                        className="w-full accent-navy"
                       />
                       <div className="mt-1 flex justify-between text-xs text-gray-400">
                         <span>5,000원</span>
@@ -620,9 +620,9 @@ export default function SimulatorPage() {
                     />
 
                     {/* 예상 월 매출 */}
-                    <div className="rounded-lg bg-purple-50 px-4 py-3 text-center">
+                    <div className="rounded-lg bg-navy-50 px-4 py-3 text-center">
                       <span className="text-sm text-gray-600">예상 월 매출 </span>
-                      <span className="text-xl font-bold text-purple-600">
+                      <span className="text-xl font-bold text-navy">
                         {fmt(monthlyRevenue)} 만원
                       </span>
                     </div>
@@ -712,8 +712,8 @@ export default function SimulatorPage() {
                   icon={<Percent className="h-5 w-5" />}
                   label="연 투자 수익률"
                   value={`${roi.toFixed(1)}%`}
-                  iconColor="text-purple-600"
-                  iconBg="bg-purple-100"
+                  iconColor="text-navy"
+                  iconBg="bg-navy-50"
                 />
               </div>
 
