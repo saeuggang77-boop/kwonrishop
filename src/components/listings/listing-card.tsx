@@ -222,13 +222,22 @@ function PremiumCard({ listing, isCarouselItem, priority = false }: { listing: L
         <p className={`font-extrabold text-base ${hasPremiumFee ? "text-red-600" : "text-gray-800"}`}>
           {hasPremiumFee ? `권리금 ${price(Number(listing.premiumFee))}` : "무권리"}
         </p>
-        {(hasRevenue || hasProfit) && <div className="h-px bg-gray-100" />}
         {(hasRevenue || hasProfit) && (
-          <p className="text-xs text-gray-500">
-            {hasRevenue && <>월매출 {price(Number(listing.monthlyRevenue))}</>}
-            {hasRevenue && hasProfit && <span className="mx-1 text-gray-300">|</span>}
-            {hasProfit && <>월순이익 {price(Number(listing.monthlyProfit))}</>}
-          </p>
+          <div className="flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-1.5">
+            {hasRevenue && (
+              <span className="text-xs">
+                <span className="text-gray-500">월매출</span>{" "}
+                <span className="font-bold text-blue-700">{price(Number(listing.monthlyRevenue))}</span>
+              </span>
+            )}
+            {hasRevenue && hasProfit && <span className="text-gray-300">|</span>}
+            {hasProfit && (
+              <span className="text-xs">
+                <span className="text-gray-500">월순이익</span>{" "}
+                <span className="font-bold text-green-700">{price(Number(listing.monthlyProfit))}</span>
+              </span>
+            )}
+          </div>
         )}
         {badges.length > 0 && (
           <div className="flex flex-wrap gap-1">
@@ -286,13 +295,22 @@ function RecommendCard({ listing, isCarouselItem, priority = false }: { listing:
         <p className={`font-extrabold text-base ${hasPremiumFee ? "text-red-600" : "text-gray-800"}`}>
           {hasPremiumFee ? `권리금 ${price(Number(listing.premiumFee))}` : "무권리"}
         </p>
-        {(hasRevenue || hasProfit) && <div className="h-px bg-gray-100" />}
         {(hasRevenue || hasProfit) && (
-          <p className="text-xs text-gray-500">
-            {hasRevenue && <>월매출 {price(Number(listing.monthlyRevenue))}</>}
-            {hasRevenue && hasProfit && <span className="mx-0.5 text-gray-300">|</span>}
-            {hasProfit && <>월순이익 {price(Number(listing.monthlyProfit))}</>}
-          </p>
+          <div className="flex items-center gap-1 rounded-md bg-blue-50 px-1.5 py-1">
+            {hasRevenue && (
+              <span className="text-[11px]">
+                <span className="text-gray-500">월매출</span>{" "}
+                <span className="font-bold text-blue-700">{price(Number(listing.monthlyRevenue))}</span>
+              </span>
+            )}
+            {hasRevenue && hasProfit && <span className="text-[10px] text-gray-300">|</span>}
+            {hasProfit && (
+              <span className="text-[11px]">
+                <span className="text-gray-500">월순이익</span>{" "}
+                <span className="font-bold text-green-700">{price(Number(listing.monthlyProfit))}</span>
+              </span>
+            )}
+          </div>
         )}
         {badges.length > 0 && (
           <div className="flex flex-wrap gap-0.5">

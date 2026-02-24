@@ -10,7 +10,6 @@ import {
   ChevronRight, ChevronLeft,
   ShieldCheck, Calculator, BarChart3,
   Sparkles, Menu, X,
-  CheckCircle2, Users, MessageCircle, MapPin,
 } from "lucide-react";
 import { AuthNavItems } from "./(main)/auth-nav";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
@@ -19,40 +18,6 @@ import { ListingCard, type ListingCardData } from "@/components/listings/listing
 const HomeBelowFold = dynamic(() => import("./_home-below-fold"), {
   loading: () => <div className="min-h-[600px]" />,
 });
-
-/* ─── CountUp ─── */
-function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [value, setValue] = useState(0);
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setStarted(true); obs.disconnect(); } },
-      { threshold: 0.3 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    const dur = 1400;
-    const t0 = performance.now();
-    let raf: number;
-    const tick = (now: number) => {
-      const p = Math.min((now - t0) / dur, 1);
-      setValue(Math.floor((1 - Math.pow(1 - p, 3)) * end));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [started, end]);
-
-  return <span ref={ref}>{value.toLocaleString("ko-KR")}{suffix}</span>;
-}
 
 /* ─── Skeleton Card ─── */
 function SkeletonCard() {
@@ -90,28 +55,6 @@ const QUICK_MENU = [
   { icon: ShieldCheck, label: "권리진단서", href: "/reports/request" },
   { icon: Calculator, label: "시뮬레이터", href: "/simulator" },
   { icon: BarChart3, label: "상권분석", href: "/area-analysis" },
-];
-
-const POPULAR_AREAS = [
-  { city: "서울", district: "강남구", label: "강남" },
-  { city: "서울", district: "마포구", label: "홍대" },
-  { city: "서울", district: "용산구", label: "이태원" },
-  { city: "서울", district: "서대문구", label: "신촌" },
-  { city: "서울", district: "성동구", label: "성수" },
-  { city: "서울", district: "송파구", label: "잠실" },
-  { city: "서울", district: "서초구", label: "서초" },
-  { city: "경기", district: "성남시", label: "분당" },
-  { city: "경기", district: "고양시", label: "일산" },
-  { city: "경기", district: "수원시", label: "수원" },
-  { city: "부산", district: "해운대구", label: "해운대" },
-  { city: "인천", district: "중구", label: "인천" },
-];
-
-const TRUST_STATS = [
-  { icon: Building2, label: "등록 매물", key: "listingsCount" as const },
-  { icon: CheckCircle2, label: "거래 완료", key: "soldCount" as const },
-  { icon: Users, label: "전문가", key: "expertsCount" as const },
-  { icon: MessageCircle, label: "누적 상담", key: "inquiriesCount" as const },
 ];
 
 /* ─── Hero Slides (CSS-only backgrounds) ─── */
@@ -183,6 +126,13 @@ function toCard(l: RawListingResponse): ListingCardData {
   };
 }
 
+/* ─── Helper function for city categorization ─── */
+function cityShort(city: string): string {
+  if (city.startsWith("서울")) return "서울";
+  if (city.startsWith("경기")) return "경기";
+  return "기타";
+}
+
 /* ═══════════════════════════════════════════════════════════ */
 export default function HomePage() {
   const router = useRouter();
@@ -196,7 +146,7 @@ export default function HomePage() {
   const [loadingPremium, setLoadingPremium] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [stats, setStats] = useState({ listingsCount: 0, soldCount: 0, expertsCount: 0, inquiriesCount: 0 });
+  const [recTab, setRecTab] = useState<string>("all");
 
   /* ─── fetch ─── */
   useEffect(() => {
@@ -214,7 +164,6 @@ export default function HomePage() {
         if (!listingsJ) return;
         setPremiumListings((listingsJ.premiumTop ?? []).map((l: RawListingResponse) => toCard(l)));
         setRecommendedListings((listingsJ.recommended ?? []).map((l: RawListingResponse) => toCard(l)));
-        if (listingsJ.stats) setStats(listingsJ.stats);
       }).finally(() => { if (!ac.signal.aborted) { setLoadingPremium(false); setLoadingRecommended(false); } });
 
     return () => ac.abort();
@@ -410,48 +359,6 @@ export default function HomePage() {
         </section>
       </RevealOnScroll>
 
-      {/* ═══ 2.5 Popular Area Tags ═══ */}
-      <RevealOnScroll>
-        <section className="border-t border-gray-100 bg-white py-5 md:py-6">
-          <div className="mx-auto max-w-[1200px] px-4">
-            <div className="flex items-center gap-1.5 mb-3">
-              <MapPin className="h-4 w-4 text-navy" />
-              <h2 className="text-sm font-bold text-gray-700 md:text-base">인기 지역</h2>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:flex-wrap md:overflow-visible">
-              {POPULAR_AREAS.map((area) => (
-                <Link
-                  key={`${area.city}-${area.district}`}
-                  href={`/listings?city=${encodeURIComponent(area.city)}&district=${encodeURIComponent(area.district)}`}
-                  className="flex-none rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-all hover:border-navy hover:bg-navy/5 hover:text-navy active:scale-95"
-                >
-                  {area.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
-      {/* ═══ 2.7 Trust Indicators ═══ */}
-      <RevealOnScroll>
-        <section className="bg-gradient-to-b from-white to-gray-50 py-8 md:py-10">
-          <div className="mx-auto max-w-3xl px-4">
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
-              {TRUST_STATS.map((s) => (
-                <div key={s.key} className="rounded-xl border border-gray-200 bg-white p-4 text-center shadow-sm md:p-5">
-                  <s.icon className="mx-auto h-7 w-7 text-navy md:h-8 md:w-8" />
-                  <div className="mt-2 text-xl font-bold text-navy md:text-2xl">
-                    <CountUp end={stats[s.key]} suffix={s.key === "inquiriesCount" ? "+" : ""} />
-                  </div>
-                  <p className="mt-1 text-[11px] text-gray-500 md:text-xs">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </RevealOnScroll>
-
       {/* ═══ 3. Premium Listings ═══ */}
       <RevealOnScroll>
         <section className="border-t border-gray-200 bg-gradient-to-b from-amber-50/50 to-white py-10 md:py-16">
@@ -481,6 +388,24 @@ export default function HomePage() {
               <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
               <Link href="/listings" className="flex items-center text-xs text-gray-500 transition-colors hover:text-navy md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
             </div>
+
+            {/* Tab buttons */}
+            <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide">
+              {["all", "서울", "경기", "기타"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setRecTab(tab)}
+                  className={`flex-none rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                    recTab === tab
+                      ? "bg-navy text-white"
+                      : "border border-gray-200 text-gray-600 hover:border-navy hover:text-navy"
+                  }`}
+                >
+                  {tab === "all" ? "전체" : tab}
+                </button>
+              ))}
+            </div>
+
             <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-6 md:gap-4">
               {loadingRecommended ? Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -488,11 +413,19 @@ export default function HomePage() {
                   <div className="space-y-1.5 p-2.5"><div className="h-3.5 w-3/4 animate-pulse rounded bg-gray-200" /><div className="h-3 w-1/2 animate-pulse rounded bg-gray-200" /></div>
                 </div>
               )) :
-                recommendedListings.length === 0 ? (
-                  <p className="col-span-6 py-6 text-center text-sm text-gray-400">추천 매물이 없습니다</p>
-                ) : recommendedListings.map(item => (
-                  <ListingCard key={item.id} listing={item} variant="recommend" />
-                ))
+                (() => {
+                  const filtered = recTab === "all"
+                    ? recommendedListings
+                    : recommendedListings.filter(l => {
+                        const short = cityShort(l.city);
+                        return short === recTab;
+                      });
+                  return filtered.length === 0 ? (
+                    <p className="col-span-6 py-6 text-center text-sm text-gray-400">해당 지역 매물이 없습니다</p>
+                  ) : filtered.map(item => (
+                    <ListingCard key={item.id} listing={item} variant="recommend" />
+                  ));
+                })()
               }
             </div>
           </div>
