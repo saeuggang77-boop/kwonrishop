@@ -9,7 +9,7 @@ import {
 import { ListingCard as ListingCardComponent } from "@/components/listings/listing-card";
 import { useDebounce } from "@/hooks/use-debounce";
 import dynamic from "next/dynamic";
-const ListingsMap = dynamic(() => import("@/components/listings/listings-map").then(m => m.ListingsMap), { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#1B3A5C]" /></div> });
+const ListingsMap = dynamic(() => import("@/components/listings/listings-map").then(m => m.ListingsMap), { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-navy" /></div> });
 import type { MapBounds } from "@/components/listings/listings-map";
 import {
   BUSINESS_CATEGORY_LABELS,
@@ -107,17 +107,17 @@ function ListingsPageSkeleton() {
   return (
     <div className="flex h-[calc(100dvh-57px)] flex-col overflow-hidden">
       <div className="shrink-0 border-b border-gray-200 bg-white p-4">
-        <div className="h-10 animate-pulse rounded-lg bg-gray-200" />
+        <div className="h-10 animate-pulse rounded-xl bg-gray-100" />
         <div className="mt-3 flex gap-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-8 w-20 animate-pulse rounded-lg bg-gray-200" />
+            <div key={i} className="h-8 w-20 animate-pulse rounded-xl bg-gray-100" />
           ))}
         </div>
       </div>
       <div className="flex-1 p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-44 animate-pulse rounded-xl bg-gray-200" />
+            <div key={i} className="h-44 animate-pulse rounded-2xl bg-gray-100" />
           ))}
         </div>
       </div>
@@ -407,24 +407,24 @@ function ListingsPageContent() {
         <div className="mx-auto flex max-w-screen-2xl border-b border-gray-100 px-4">
           <button
             onClick={() => setActiveTab("direct")}
-            className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
-              activeTab === "direct" ? "text-[#1B3A5C]" : "text-gray-400 hover:text-gray-600"
+            className={`relative px-5 py-3 text-sm transition-colors ${
+              activeTab === "direct" ? "text-navy font-bold" : "text-gray-400 hover:text-gray-600"
             }`}
           >
             직거래 매물 보기
             {activeTab === "direct" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1B3A5C]" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy rounded-full" />
             )}
           </button>
           <button
             onClick={() => setActiveTab("franchise")}
-            className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
-              activeTab === "franchise" ? "text-[#1B3A5C]" : "text-gray-400 hover:text-gray-600"
+            className={`relative px-5 py-3 text-sm transition-colors ${
+              activeTab === "franchise" ? "text-navy font-bold" : "text-gray-400 hover:text-gray-600"
             }`}
           >
             프랜차이즈 매물
             {activeTab === "franchise" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1B3A5C]" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy rounded-full" />
             )}
           </button>
         </div>
@@ -441,12 +441,12 @@ function ListingsPageContent() {
                 placeholder="지역, 상호명을 입력해 주세요"
                 value={filters.query}
                 onChange={(e) => setFilters((f) => ({ ...f, query: e.target.value }))}
-                className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-[#1B3A5C] focus:ring-1 focus:ring-[#1B3A5C]"
+                className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-navy focus:ring-2 focus:ring-navy/20"
               />
             </div>
             <button
               type="submit"
-              className="shrink-0 rounded-lg bg-[#1B3A5C] px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#15304D]"
+              className="shrink-0 rounded-xl bg-navy px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy-dark"
             >
               검색
             </button>
@@ -473,7 +473,7 @@ function ListingsPageContent() {
                   setFilters((f) => ({ ...f, sort: e.target.value }));
                 }}
                 aria-label="정렬 기준"
-                className="shrink-0 appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-xs font-medium text-gray-600 outline-none focus:border-[#1B3A5C]"
+                className="shrink-0 appearance-none rounded-full border border-gray-200 bg-white px-3 py-2 pr-8 text-xs font-medium text-gray-600 outline-none focus:border-navy focus:ring-1 focus:ring-navy/20"
               >
                 {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -526,7 +526,7 @@ function ListingsPageContent() {
             {/* Filter dropdowns */}
             {openFilter && (
               <div className="relative mt-2">
-                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
+                <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xl">
                 {openFilter === "region" && (
                   <RegionFilterDropdown
                     city={filters.city}
@@ -549,7 +549,7 @@ function ListingsPageContent() {
                         type="checkbox"
                         checked={filters.revenueVerified}
                         onChange={(e) => setFilters((f) => ({ ...f, revenueVerified: e.target.checked }))}
-                        className="h-4 w-4 rounded border-gray-300 accent-[#1B3A5C]"
+                        className="h-4 w-4 rounded border-gray-300 accent-navy"
                       />
                       매출증빙 완료 매물만 보기 (안전등급 A)
                     </label>
@@ -570,9 +570,9 @@ function ListingsPageContent() {
                               storeType: isActive ? "" : t.storeType,
                             }));
                           }}
-                          className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                             filters.theme === t.label
-                              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                              ? "border-navy bg-navy/10 text-navy"
                               : "border-gray-200 text-gray-600 hover:border-gray-300"
                           }`}
                         >
@@ -585,9 +585,9 @@ function ListingsPageContent() {
                           onClick={() => {
                             setFilters((f) => ({ ...f, theme: f.theme === feat ? "" : feat }));
                           }}
-                          className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                             filters.theme === feat
-                              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                              ? "border-navy bg-navy/10 text-navy"
                               : "border-gray-200 text-gray-600 hover:border-gray-300"
                           }`}
                         >
@@ -611,9 +611,9 @@ function ListingsPageContent() {
                               totalCostMin: isActive ? "" : opt.min,
                               totalCostMax: isActive ? "" : opt.max,
                             }))}
-                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                               isActive
-                                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                                ? "border-navy bg-navy text-white"
                                 : "border-gray-200 text-gray-600 hover:border-gray-300"
                             }`}
                           >
@@ -638,9 +638,9 @@ function ListingsPageContent() {
                               monthlyProfitMin: isActive ? "" : opt.min,
                               monthlyProfitMax: isActive ? "" : opt.max,
                             }))}
-                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                               isActive
-                                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                                ? "border-navy bg-navy text-white"
                                 : "border-gray-200 text-gray-600 hover:border-gray-300"
                             }`}
                           >
@@ -659,9 +659,9 @@ function ListingsPageContent() {
                         <button
                           key={opt.value}
                           onClick={() => setFilters((f) => ({ ...f, floor: f.floor === opt.value ? "" : opt.value }))}
-                          className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                             filters.floor === opt.value
-                              ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                              ? "border-navy bg-navy text-white"
                               : "border-gray-200 text-gray-600 hover:border-gray-300"
                           }`}
                         >
@@ -685,9 +685,9 @@ function ListingsPageContent() {
                               areaMin: isActive ? "" : String(opt.min),
                               areaMax: isActive ? "" : String(opt.max),
                             }))}
-                            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                               isActive
-                                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                                ? "border-navy bg-navy text-white"
                                 : "border-gray-200 text-gray-600 hover:border-gray-300"
                             }`}
                           >
@@ -712,7 +712,7 @@ function ListingsPageContent() {
           <div className="px-4 py-3">
             {/* Count */}
             <p className="mb-3 text-sm text-gray-500">
-              총 <span className="font-semibold text-[#1B3A5C]">{displayCount}</span>건
+              총 <span className="font-semibold text-navy">{displayCount}</span>건
             </p>
 
             {/* Loading skeleton */}
@@ -720,19 +720,19 @@ function ListingsPageContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="flex gap-4 rounded-xl border border-gray-100 bg-white p-4">
-                    <div className="h-36 w-36 shrink-0 animate-pulse rounded-lg bg-gray-200 sm:h-44 sm:w-44" />
+                    <div className="h-36 w-36 shrink-0 animate-pulse rounded-xl bg-gray-100 sm:h-44 sm:w-44" />
                     <div className="flex-1 space-y-3 py-1">
-                      <div className="h-5 w-24 animate-pulse rounded bg-gray-200" />
-                      <div className="h-5 w-3/4 animate-pulse rounded bg-gray-200" />
-                      <div className="h-5 w-1/2 animate-pulse rounded bg-gray-200" />
-                      <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
+                      <div className="h-5 w-24 animate-pulse rounded bg-gray-100" />
+                      <div className="h-5 w-3/4 animate-pulse rounded bg-gray-100" />
+                      <div className="h-5 w-1/2 animate-pulse rounded bg-gray-100" />
+                      <div className="h-4 w-1/3 animate-pulse rounded bg-gray-100" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : displayListings.length === 0 && (isFiltered || (premiumTop.length === 0 && recommendedTop.length === 0)) ? (
               <div className="py-20 text-center">
-                <Store className="mx-auto h-12 w-12 text-gray-300" />
+                <Store className="mx-auto h-12 w-12 text-gray-200" />
                 <p className="mt-4 text-lg font-medium text-gray-500">매물이 없습니다</p>
                 <p className="mt-1 text-sm text-gray-400">검색 조건을 변경해보세요.</p>
               </div>
@@ -793,7 +793,7 @@ function ListingsPageContent() {
                 )}
                 {hasMore && (
                   <div ref={sentinelRef} className="py-6 text-center">
-                    {isLoading && <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#1B3A5C]" />}
+                    {isLoading && <Loader2 className="mx-auto h-5 w-5 animate-spin text-navy" />}
                   </div>
                 )}
               </>
@@ -802,7 +802,7 @@ function ListingsPageContent() {
         </div>
 
         {/* Right: Map */}
-        <div className={`${mobileView === "list" ? "hidden" : "flex-1"} border-l border-gray-200 bg-gray-50 md:block md:w-[40%] md:flex-none`}>
+        <div className={`${mobileView === "list" ? "hidden" : "flex-1"} border-l border-gray-100 bg-surface-1 md:block md:w-[40%] md:flex-none`}>
           <ListingsMap filters={mapFilters} onBoundsChange={handleBoundsChange} />
         </div>
       </div>
@@ -811,7 +811,7 @@ function ListingsPageContent() {
       <div className="fixed bottom-6 left-1/2 z-20 -translate-x-1/2 md:hidden">
         <button
           onClick={() => setMobileView((v) => (v === "list" ? "map" : "list"))}
-          className="flex items-center gap-2 rounded-full bg-[#1B3A5C] px-5 py-3 text-sm font-semibold text-white shadow-lg transition-transform active:scale-95"
+          className="flex items-center gap-2 rounded-full bg-navy px-5 py-3 text-sm font-semibold text-white shadow-xl transition-transform active:scale-95"
         >
           {mobileView === "list" ? (
             <>
@@ -849,15 +849,15 @@ function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex shrink-0 items-center gap-1 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+      className={`flex shrink-0 items-center gap-1 rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
         isOpen || count > 0
-          ? "border-[#1B3A5C] bg-[#1B3A5C]/5 text-[#1B3A5C]"
+          ? "border-navy bg-navy/5 text-navy"
           : "border-gray-200 text-gray-600 hover:border-gray-300"
       }`}
     >
       {label}
       {count > 0 && (
-        <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#1B3A5C] px-1 text-[10px] font-bold text-white">
+        <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-navy px-1 text-[10px] font-bold text-white">
           {count}
         </span>
       )}
@@ -892,7 +892,7 @@ function CategoryFilterDropdown({
             onClick={() => setActiveGroup(activeGroup === group ? "" : group)}
             className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
               activeGroup === group
-                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                ? "border-navy bg-navy/10 text-navy"
                 : "border-gray-200 text-gray-500 hover:border-gray-300"
             }`}
           >
@@ -905,9 +905,9 @@ function CategoryFilterDropdown({
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => onChange("", "")}
-            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
               !value
-                ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+                ? "border-navy bg-navy text-white"
                 : "border-gray-200 text-gray-600 hover:border-gray-300"
             }`}
           >
@@ -925,9 +925,9 @@ function CategoryFilterDropdown({
                     onChange(sub.key, sub.subtype ?? "");
                   }
                 }}
-                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                   isActive
-                    ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+                    ? "border-navy bg-navy text-white"
                     : "border-gray-200 text-gray-600 hover:border-gray-300"
                 }`}
               >
@@ -963,7 +963,7 @@ function RegionFilterDropdown({
           onClick={() => onChange("", "")}
           className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
             !city
-              ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+              ? "border-navy bg-navy text-white"
               : "border-gray-200 text-gray-500 hover:border-gray-300"
           }`}
         >
@@ -975,7 +975,7 @@ function RegionFilterDropdown({
             onClick={() => onChange(city === c ? "" : c, "")}
             className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
               city === c
-                ? "border-[#1B3A5C] bg-[#1B3A5C]/10 text-[#1B3A5C]"
+                ? "border-navy bg-navy/10 text-navy"
                 : "border-gray-200 text-gray-500 hover:border-gray-300"
             }`}
           >
@@ -988,9 +988,9 @@ function RegionFilterDropdown({
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => onChange(city, "")}
-            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
               !district
-                ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+                ? "border-navy bg-navy text-white"
                 : "border-gray-200 text-gray-600 hover:border-gray-300"
             }`}
           >
@@ -1000,9 +1000,9 @@ function RegionFilterDropdown({
             <button
               key={d}
               onClick={() => onChange(city, district === d ? "" : d)}
-              className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                 district === d
-                  ? "border-[#1B3A5C] bg-[#1B3A5C] text-white"
+                  ? "border-navy bg-navy text-white"
                   : "border-gray-200 text-gray-600 hover:border-gray-300"
               }`}
             >
