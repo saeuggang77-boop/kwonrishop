@@ -323,22 +323,6 @@ export default function HomeClient({
           </div>
         </div>
 
-        {/* Popular keywords */}
-        {popularKeywords.length > 0 && (
-          <div className="relative z-10 mx-auto mt-3 flex max-w-2xl flex-wrap items-center justify-center gap-2 px-5">
-            <span className="text-[11px] text-white/50">인기</span>
-            {popularKeywords.map((kw) => (
-              <button
-                key={kw}
-                onClick={() => router.push(`/listings?search=${encodeURIComponent(kw)}`)}
-                className="rounded-full bg-white/15 px-3 py-1 text-xs text-white/80 backdrop-blur-sm transition-colors hover:bg-white/25"
-              >
-                {kw}
-              </button>
-            ))}
-          </div>
-        )}
-
         {/* Banner nav */}
         {bannerCount > 1 && (<>
           <button onClick={prevBanner} className="absolute left-2 top-[35%] -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/20 md:left-4 md:p-2.5" aria-label="이전">
@@ -356,6 +340,24 @@ export default function HomeClient({
           </div>
         </>)}
       </section>
+
+      {/* Popular keywords */}
+      {popularKeywords.length > 0 && (
+        <div className="bg-gradient-to-b from-navy/90 to-navy/70 py-2.5">
+          <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-center gap-2 px-5">
+            <span className="text-[11px] text-white/50">인기</span>
+            {popularKeywords.map((kw) => (
+              <button
+                key={kw}
+                onClick={() => router.push(`/listings?search=${encodeURIComponent(kw)}`)}
+                className="rounded-full bg-white/15 px-3 py-1 text-xs text-white/80 backdrop-blur-sm transition-colors hover:bg-white/25"
+              >
+                {kw}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ═══ 2. Quick Menu (6 items) ═══ */}
       <RevealOnScroll>
