@@ -109,6 +109,15 @@ export default function HomeClient({
   const [recTab, setRecTab] = useState<string>("all");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [popularKeywords, setPopularKeywords] = useState<string[]>([]);
+
+  /* ─── Popular keywords ─── */
+  useEffect(() => {
+    fetch("/api/popular-searches")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.keywords) setPopularKeywords(d.keywords); })
+      .catch(() => {});
+  }, []);
 
   /* ─── Hero auto-play ─── */
   useEffect(() => {
@@ -313,6 +322,22 @@ export default function HomeClient({
             </button>
           </div>
         </div>
+
+        {/* Popular keywords */}
+        {popularKeywords.length > 0 && (
+          <div className="relative z-10 mx-auto mt-3 flex max-w-2xl flex-wrap items-center justify-center gap-2 px-5">
+            <span className="text-[11px] text-white/50">인기</span>
+            {popularKeywords.map((kw) => (
+              <button
+                key={kw}
+                onClick={() => router.push(`/listings?search=${encodeURIComponent(kw)}`)}
+                className="rounded-full bg-white/15 px-3 py-1 text-xs text-white/80 backdrop-blur-sm transition-colors hover:bg-white/25"
+              >
+                {kw}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Banner nav */}
         {bannerCount > 1 && (<>
