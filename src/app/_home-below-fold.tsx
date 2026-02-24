@@ -7,7 +7,7 @@ import {
   ArrowRight, FileEdit, Eye, BarChart3, ShieldCheck, ClipboardList,
   MessageCircle, Search, Phone, Mail, Clock,
   ChevronDown, ChevronRight, Home, User, Users, Calculator,
-  Megaphone, BookOpen,
+  Megaphone, BookOpen, Lightbulb,
 } from "lucide-react";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 
@@ -57,6 +57,8 @@ export default function HomeBelowFold() {
   const [loadingFranchise, setLoadingFranchise] = useState(true);
   const [notices, setNotices] = useState<BoardPostItem[]>([]);
   const [guides, setGuides] = useState<BoardPostItem[]>([]);
+  const [startupTips, setStartupTips] = useState<BoardPostItem[]>([]);
+  const [franTab, setFranTab] = useState<string>("all");
 
   useEffect(() => {
     const onScroll = () => setShowFloating(window.scrollY > 400);
@@ -65,20 +67,25 @@ export default function HomeBelowFold() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/franchise?limit=6&sortBy=monthlyAvgSales")
+    setLoadingFranchise(true);
+    const params = new URLSearchParams({ limit: "6", sortBy: "monthlyAvgSales" });
+    if (franTab !== "all") params.set("category", franTab);
+    fetch(`/api/franchise?${params}`)
       .then(r => r.json())
       .then(json => setFranchises(json.data ?? []))
       .catch(() => setFranchises([]))
       .finally(() => setLoadingFranchise(false));
-  }, []);
+  }, [franTab]);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/bbs?category=공지사항&limit=5").then(r => r.json()).catch(() => ({ data: [] })),
       fetch("/api/bbs?category=이용가이드&limit=3").then(r => r.json()).catch(() => ({ data: [] })),
-    ]).then(([noticeRes, guideRes]) => {
+      fetch("/api/bbs?category=창업정보&limit=4").then(r => r.json()).catch(() => ({ data: [] })),
+    ]).then(([noticeRes, guideRes, tipsRes]) => {
       setNotices(noticeRes.data ?? []);
       setGuides(guideRes.data ?? []);
+      setStartupTips(tipsRes.data ?? []);
     });
   }, []);
 
@@ -93,6 +100,27 @@ export default function HomeBelowFold() {
               <Link href="/franchise" className="flex items-center text-xs text-gray-500 transition-colors hover:text-navy md:text-sm">
                 전체보기 <ChevronRight className="h-3.5 w-3.5" />
               </Link>
+            </div>
+
+            <div className="mt-3 flex gap-2">
+              {[
+                { key: "all", label: "전체" },
+                { key: "외식", label: "외식" },
+                { key: "도소매", label: "도소매" },
+                { key: "서비스", label: "서비스" },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setFranTab(tab.key)}
+                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                    franTab === tab.key
+                      ? "bg-navy text-white"
+                      : "border border-gray-200 text-gray-600 hover:border-navy hover:text-navy"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
             {loadingFranchise ? (
@@ -224,6 +252,48 @@ export default function HomeBelowFold() {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          </section>
+        </RevealOnScroll>
+      )}
+
+      {/* ═══ 창업정보 ═══ */}
+      {startupTips.length > 0 && (
+        <RevealOnScroll>
+          <section className="border-t border-gray-200 bg-white py-8 md:py-12">
+            <div className="mx-auto max-w-[1200px] px-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Lightbulb className="h-4 w-4 text-amber-500 md:h-5 md:w-5" />
+                  <h2 className="font-heading text-base font-bold text-navy md:text-xl">창업정보</h2>
+                </div>
+                <Link href="/bbs?category=창업정보" className="flex items-center text-xs text-gray-500 transition-colors hover:text-navy md:text-sm">
+                  전체보기 <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {startupTips.map((tip) => (
+                  <Link
+                    key={tip.id}
+                    href={`/bbs/${tip.id}`}
+                    className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                  >
+                    {tip.thumbnailUrl ? (
+                      <div className="relative h-32 bg-gray-100">
+                        <Image src={tip.thumbnailUrl} alt={tip.title} fill className="object-cover" sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 25vw" />
+                      </div>
+                    ) : (
+                      <div className="flex h-32 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50">
+                        <Lightbulb className="h-8 w-8 text-amber-300" />
+                      </div>
+                    )}
+                    <div className="p-3.5">
+                      <h3 className="text-sm font-bold text-gray-800 line-clamp-2 group-hover:text-navy">{tip.title}</h3>
+                      <p className="mt-1.5 text-xs text-gray-500 line-clamp-2">{tip.content.replace(/<[^>]*>/g, "").slice(0, 80)}</p>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </section>
