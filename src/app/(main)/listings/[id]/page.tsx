@@ -34,6 +34,7 @@ import { auth } from "@/lib/auth";
 import { ListingLocationSectionSafe as ListingLocationSection } from "./listing-location-section";
 import { PremiumOfferSection } from "./premium-offer-section";
 import { MobileBottomBar } from "./mobile-bottom-bar";
+import { PaymentConfirmHandler } from "@/components/listings/payment-confirm-handler";
 
 /** Recursively convert all BigInt values to Number to prevent RSC serialization errors */
 function toSerializable<T>(obj: T): T {
@@ -366,6 +367,9 @@ export default async function ListingDetailPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      {/* Payment confirmation handler */}
+      <PaymentConfirmHandler listingId={listing.id} />
+
       {/* [1] Image Gallery */}
       <ImageGallery
         images={listing.images}

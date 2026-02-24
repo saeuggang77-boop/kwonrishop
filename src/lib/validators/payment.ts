@@ -15,7 +15,7 @@ export const createSubscriptionSchema = z.object({
 });
 
 export const createPaymentSchema = z.object({
-  paymentType: z.enum(["PREMIUM_SUBSCRIPTION", "DEEP_REPORT", "FEATURED_LISTING", "ADVERTISEMENT"]),
+  paymentType: z.enum(["PREMIUM_SUBSCRIPTION", "DEEP_REPORT", "FEATURED_LISTING", "ADVERTISEMENT", "SINGLE_PURCHASE"]),
   tier: z.string().optional(),
   listingId: z.string().optional(),
   reportPlanId: z.string().optional(),

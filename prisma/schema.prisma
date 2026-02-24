@@ -102,6 +102,7 @@ enum PaymentType {
   DEEP_REPORT
   FEATURED_LISTING
   ADVERTISEMENT
+  SINGLE_PURCHASE
 }
 
 enum SubscriptionTier {
@@ -278,49 +279,49 @@ model VerificationToken {
 // ============================================================
 
 model User {
-  id               String           @id @default(cuid())
-  name             String?
-  email            String?          @unique
-  emailVerified    DateTime?
-  image            String?
-  phone            String?          @unique
-  hashedPassword   String?
-  role             UserRole         @default(BUYER)
-  accountStatus    AccountStatus    @default(ACTIVE)
-  businessName     String?
-  businessNumber   String?
-  subscriptionTier SubscriptionTier @default(FREE)
-  expertCategory   String?
-  isTrustedSeller  Boolean          @default(false)
-  smsNotificationEnabled Boolean    @default(true)
-  violationCount   Int              @default(0)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  id                     String           @id @default(cuid())
+  name                   String?
+  email                  String?          @unique
+  emailVerified          DateTime?
+  image                  String?
+  phone                  String?          @unique
+  hashedPassword         String?
+  role                   UserRole         @default(BUYER)
+  accountStatus          AccountStatus    @default(ACTIVE)
+  businessName           String?
+  businessNumber         String?
+  subscriptionTier       SubscriptionTier @default(FREE)
+  expertCategory         String?
+  isTrustedSeller        Boolean          @default(false)
+  smsNotificationEnabled Boolean          @default(true)
+  violationCount         Int              @default(0)
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
 
-  accounts        Account[]
-  sessions        Session[]
-  listings        Listing[]
-  documents       Document[]
-  inquiriesSent   Inquiry[]          @relation("InquirySender")
-  inquiriesRecv   Inquiry[]          @relation("InquiryReceiver")
-  payments        Payment[]
-  subscription    Subscription?
-  reports         Report[]
-  events          Event[]
-  fraudFlags      FraudViolation[]   @relation("FlaggedUser")
-  adminActions    AdminAuditLog[]    @relation("AdminActor")
-  settlements      Settlement[]
-  notifications    Notification[]
-  reportPurchases  ReportPurchase[]
-  simulations      Simulation[]
-  expertInquiries  ExpertInquiry[]
-  expertReviews    ExpertReview[]
-  listingLikes     ListingLike[]
-  listingComments  ListingComment[]
+  accounts          Account[]
+  sessions          Session[]
+  listings          Listing[]
+  documents         Document[]
+  inquiriesSent     Inquiry[]          @relation("InquirySender")
+  inquiriesRecv     Inquiry[]          @relation("InquiryReceiver")
+  payments          Payment[]
+  subscription      Subscription?
+  reports           Report[]
+  events            Event[]
+  fraudFlags        FraudViolation[]   @relation("FlaggedUser")
+  adminActions      AdminAuditLog[]    @relation("AdminActor")
+  settlements       Settlement[]
+  notifications     Notification[]
+  reportPurchases   ReportPurchase[]
+  simulations       Simulation[]
+  expertInquiries   ExpertInquiry[]
+  expertReviews     ExpertReview[]
+  listingLikes      ListingLike[]
+  listingComments   ListingComment[]
   salesIntegrations SalesIntegration[]
-  paidServices     PaidService[]
-  singlePurchases  SinglePurchase[]
-  premiumOffers    PremiumOffer[]
+  paidServices      PaidService[]
+  singlePurchases   SinglePurchase[]
+  premiumOffers     PremiumOffer[]
 
   @@index([role])
   @@index([accountStatus])
@@ -332,93 +333,93 @@ model User {
 // ============================================================
 
 model Listing {
-  id               String           @id @default(cuid())
-  sellerId         String
-  title            String
-  description      String           @db.Text
-  transferReason   String?          @db.Text  // 양도사유
-  businessCategory BusinessCategory
-  storeType        StoreType
-  businessSubtype  String?          // 세부업종 (자유입력)
-  price            BigInt           // 보증금
-  monthlyRent      BigInt?          // 월세
-  premiumFee       BigInt?          // 권리금
-  goodwillPremium     Int?          // 영업권리금 (만원)
-  goodwillPremiumDesc String?       @db.Text  // 영업권리금 설명
-  facilityPremium     Int?          // 시설권리금 (만원)
-  facilityPremiumDesc String?       @db.Text  // 시설권리금 설명
-  floorPremium        Int?          // 바닥권리금 (만원)
-  floorPremiumDesc    String?       @db.Text  // 바닥권리금 설명
-  managementFee    BigInt?          // 관리비
-  monthlyRevenue   BigInt?          // 월매출
-  monthlyProfit    BigInt?          // 월수익
-  operatingYears   Int?             // 영업기간(년)
-  address          String
-  addressDetail    String?
-  city             String
-  district         String
-  neighborhood     String?
-  postalCode       String?
-  latitude         Float?
-  longitude        Float?
-  areaM2           Float?
-  areaPyeong       Float?
-  floor            Int?
-  totalFloors      Int?
-  unit             String?          // 호수 (예: "101호")
-  status           ListingStatus    @default(DRAFT)
-  isFeatured       Boolean          @default(false)
-  safetyGrade      SafetyGrade?
-  safetyComment    String?          // 등급 판정 요약
-  isPremium        Boolean          @default(false)
-  isRecommended    Boolean          @default(false)
-  hasDiagnosisBadge Boolean         @default(false)
-  premiumRank      Int              @default(0)
-  premiumExposureOrder  Int         @default(0)
-  recommendExposureOrder Int        @default(0)
-  listingExposureOrder  Int         @default(0)
+  id                     String           @id @default(cuid())
+  sellerId               String
+  title                  String
+  description            String           @db.Text
+  transferReason         String?          @db.Text // 양도사유
+  businessCategory       BusinessCategory
+  storeType              StoreType
+  businessSubtype        String? // 세부업종 (자유입력)
+  price                  BigInt // 보증금
+  monthlyRent            BigInt? // 월세
+  premiumFee             BigInt? // 권리금
+  goodwillPremium        Int? // 영업권리금 (만원)
+  goodwillPremiumDesc    String?          @db.Text // 영업권리금 설명
+  facilityPremium        Int? // 시설권리금 (만원)
+  facilityPremiumDesc    String?          @db.Text // 시설권리금 설명
+  floorPremium           Int? // 바닥권리금 (만원)
+  floorPremiumDesc       String?          @db.Text // 바닥권리금 설명
+  managementFee          BigInt? // 관리비
+  monthlyRevenue         BigInt? // 월매출
+  monthlyProfit          BigInt? // 월수익
+  operatingYears         Int? // 영업기간(년)
+  address                String
+  addressDetail          String?
+  city                   String
+  district               String
+  neighborhood           String?
+  postalCode             String?
+  latitude               Float?
+  longitude              Float?
+  areaM2                 Float?
+  areaPyeong             Float?
+  floor                  Int?
+  totalFloors            Int?
+  unit                   String? // 호수 (예: "101호")
+  status                 ListingStatus    @default(DRAFT)
+  isFeatured             Boolean          @default(false)
+  safetyGrade            SafetyGrade?
+  safetyComment          String? // 등급 판정 요약
+  isPremium              Boolean          @default(false)
+  isRecommended          Boolean          @default(false)
+  hasDiagnosisBadge      Boolean          @default(false)
+  premiumRank            Int              @default(0)
+  premiumExposureOrder   Int              @default(0)
+  recommendExposureOrder Int              @default(0)
+  listingExposureOrder   Int              @default(0)
 
   // 점프업 (24시간 상단 고정)
-  isJumpUp              Boolean   @default(false)
-  jumpUpExpiresAt       DateTime?
-  jumpUpExposureOrder   Int       @default(0)
+  isJumpUp            Boolean   @default(false)
+  jumpUpExpiresAt     DateTime?
+  jumpUpExposureOrder Int       @default(0)
 
   // 급매 태그 (30일 빨간 뱃지)
-  isUrgent              Boolean   @default(false)
-  urgentExpiresAt       DateTime?
+  isUrgent        Boolean   @default(false)
+  urgentExpiresAt DateTime?
 
-  viewCount        Int              @default(0)
-  inquiryCount     Int              @default(0)
-  likeCount        Int              @default(0)
-  favoriteCount    Int              @default(0)
-  contactPhone     String?
-  contactEmail     String?
-  isPhonePublic    Boolean          @default(true)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  publishedAt      DateTime?
-  expiresAt        DateTime?
+  viewCount     Int       @default(0)
+  inquiryCount  Int       @default(0)
+  likeCount     Int       @default(0)
+  favoriteCount Int       @default(0)
+  contactPhone  String?
+  contactEmail  String?
+  isPhonePublic Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
+  expiresAt     DateTime?
 
-  seller          User              @relation(fields: [sellerId], references: [id])
-  images          ListingImage[]
-  documents       Document[]
-  inquiries       Inquiry[]
-  fraudViolations FraudViolation[]
-  comparisons     ListingComparison[]
-  reports         Report[]
-  events          Event[]
-  premiumListings  PremiumListing[]
-  reportPurchases  ReportPurchase[]
-  reportData       ReportData[]
-  simulations      Simulation[]
-  expertInquiries  ExpertInquiry[]
-  likes            ListingLike[]
-  comments         ListingComment[]
+  seller            User                @relation(fields: [sellerId], references: [id])
+  images            ListingImage[]
+  documents         Document[]
+  inquiries         Inquiry[]
+  fraudViolations   FraudViolation[]
+  comparisons       ListingComparison[]
+  reports           Report[]
+  events            Event[]
+  premiumListings   PremiumListing[]
+  reportPurchases   ReportPurchase[]
+  reportData        ReportData[]
+  simulations       Simulation[]
+  expertInquiries   ExpertInquiry[]
+  likes             ListingLike[]
+  comments          ListingComment[]
   salesIntegrations SalesIntegration[]
-  diagnosisReport  DiagnosisReport?
-  paidServices     PaidService[]
-  singlePurchases  SinglePurchase[]
-  premiumOffers    PremiumOffer[]
+  diagnosisReport   DiagnosisReport?
+  paidServices      PaidService[]
+  singlePurchases   SinglePurchase[]
+  premiumOffers     PremiumOffer[]
 
   @@index([sellerId])
   @@index([status])
@@ -436,7 +437,7 @@ model PremiumOffer {
   id          String   @id @default(cuid())
   listingId   String
   userId      String
-  offerAmount Int      // 제안 금액 (만원)
+  offerAmount Int // 제안 금액 (만원)
   reason      String   @db.Text
   status      String   @default("pending") // pending, accepted, rejected
   createdAt   DateTime @default(now())
@@ -493,26 +494,26 @@ model ListingImage {
 // ============================================================
 
 model Document {
-  id              String              @id @default(cuid())
-  uploaderId      String
-  listingId       String?
-  documentType    DocumentType
-  fileName        String
-  mimeType        String
-  sizeBytes       Int
-  s3Key           String
-  kmsKeyId        String?
-  encryptionIv    String?
-  accessLevel     DocumentAccessLevel @default(OWNER_ONLY)
-  expiresAt       DateTime?
-  isDeleted       Boolean             @default(false)
-  deletedAt       DateTime?
-  consentGiven    Boolean             @default(false)
-  consentGivenAt  DateTime?
-  hasClientMask   Boolean             @default(false)
-  maskRegions     Json?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
+  id             String              @id @default(cuid())
+  uploaderId     String
+  listingId      String?
+  documentType   DocumentType
+  fileName       String
+  mimeType       String
+  sizeBytes      Int
+  s3Key          String
+  kmsKeyId       String?
+  encryptionIv   String?
+  accessLevel    DocumentAccessLevel @default(OWNER_ONLY)
+  expiresAt      DateTime?
+  isDeleted      Boolean             @default(false)
+  deletedAt      DateTime?
+  consentGiven   Boolean             @default(false)
+  consentGivenAt DateTime?
+  hasClientMask  Boolean             @default(false)
+  maskRegions    Json?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
 
   uploader User     @relation(fields: [uploaderId], references: [id])
   listing  Listing? @relation(fields: [listingId], references: [id])
@@ -558,27 +559,27 @@ model Inquiry {
 // ============================================================
 
 model Payment {
-  id              String        @id @default(cuid())
-  userId          String
-  orderId         String        @unique
-  tossPaymentKey  String?       @unique
-  tossOrderName   String?
-  amount          BigInt
-  paymentType     PaymentType
-  paymentStatus   PaymentStatus @default(PENDING)
-  method          String?
-  cardCompany     String?
-  cardNumber      String?
-  receiptUrl      String?
-  refundAmount    BigInt?
-  refundReason    String?
-  refundedAt      DateTime?
-  metadata        Json?
-  paidAt          DateTime?
-  failedAt        DateTime?
-  failReason      String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  userId         String
+  orderId        String        @unique
+  tossPaymentKey String?       @unique
+  tossOrderName  String?
+  amount         BigInt
+  paymentType    PaymentType
+  paymentStatus  PaymentStatus @default(PENDING)
+  method         String?
+  cardCompany    String?
+  cardNumber     String?
+  receiptUrl     String?
+  refundAmount   BigInt?
+  refundReason   String?
+  refundedAt     DateTime?
+  metadata       Json?
+  paidAt         DateTime?
+  failedAt       DateTime?
+  failReason     String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   user         User        @relation(fields: [userId], references: [id])
   report       Report?
@@ -597,16 +598,16 @@ model Payment {
 // ============================================================
 
 model SubscriptionPlan {
-  id            String           @id @default(cuid())
-  name          SubscriptionTier @unique
-  displayName   String
-  price         Int              // monthly price in KRW (0, 9900, 29900)
-  yearlyPrice   Int              // yearly price in KRW (0, 95040, 287040) - 20% discount
-  features      Json             // array of feature objects
-  sortOrder     Int              @default(0)
-  isActive      Boolean          @default(true)
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  id          String           @id @default(cuid())
+  name        SubscriptionTier @unique
+  displayName String
+  price       Int // monthly price in KRW (0, 9900, 29900)
+  yearlyPrice Int // yearly price in KRW (0, 95040, 287040) - 20% discount
+  features    Json // array of feature objects
+  sortOrder   Int              @default(0)
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   subscriptions Subscription[]
 
@@ -625,7 +626,7 @@ model Subscription {
   cancelReason       String?
   planId             String?
   autoRenew          Boolean            @default(true)
-  paymentMethod      String?            // "CARD" or "TRANSFER"
+  paymentMethod      String? // "CARD" or "TRANSFER"
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
@@ -858,16 +859,16 @@ model Settlement {
 // ============================================================
 
 model Notification {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   userId     String
   title      String
-  message    String   @db.Text
+  message    String    @db.Text
   link       String?
-  isRead     Boolean  @default(false)
+  isRead     Boolean   @default(false)
   readAt     DateTime?
   sourceType String?
   sourceId   String?
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -942,13 +943,13 @@ model UserConsent {
 model Franchise {
   id              String   @id @default(cuid())
   brandName       String
-  category        String   // 외식/도소매/서비스
-  subcategory     String   // 한식/커피/치킨 등
+  category        String // 외식/도소매/서비스
+  subcategory     String // 한식/커피/치킨 등
   logoUrl         String?
-  monthlyAvgSales BigInt?  // 월 평균 매출액
-  startupCost     BigInt?  // 창업비용
-  storeCount      Int?     // 가맹+직영점 수
-  dataYear        Int?     // 데이터 기준년도
+  monthlyAvgSales BigInt? // 월 평균 매출액
+  startupCost     BigInt? // 창업비용
+  storeCount      Int? // 가맹+직영점 수
+  dataYear        Int? // 데이터 기준년도
   description     String?  @db.Text
   isPromoting     Boolean  @default(false)
   favoriteCount   Int      @default(0)
@@ -967,7 +968,7 @@ model Franchise {
 model BoardPost {
   id           String   @id @default(cuid())
   authorId     String?
-  category     String   // 창업정보, 뉴스, 팁 등
+  category     String // 창업정보, 뉴스, 팁 등
   title        String
   content      String   @db.Text
   thumbnailUrl String?
@@ -1002,32 +1003,33 @@ model Banner {
 // ============================================================
 
 model PremiumPlan {
-  id            String         @id @default(cuid())
-  name          PremiumAdTier  @unique
-  displayName   String
-  price         BigInt
-  durationDays  Int
-  features      Json
-  sortOrder     Int            @default(0)
-  isActive      Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id           String        @id @default(cuid())
+  name         PremiumAdTier @unique
+  displayName  String
+  price        BigInt
+  durationDays Int
+  features     Json
+  sortOrder    Int           @default(0)
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   subscriptions PremiumListing[]
+
   @@map("premium_plans")
 }
 
 model PremiumListing {
-  id             String          @id @default(cuid())
-  listingId      String
-  planId         String
-  status         PremiumAdStatus @default(ACTIVE)
-  startDate      DateTime        @default(now())
-  endDate        DateTime
-  paymentMethod  String?
-  paymentStatus  String          @default("PENDING")
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id            String          @id @default(cuid())
+  listingId     String
+  planId        String
+  status        PremiumAdStatus @default(ACTIVE)
+  startDate     DateTime        @default(now())
+  endDate       DateTime
+  paymentMethod String?
+  paymentStatus String          @default("PENDING")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
   listing Listing     @relation(fields: [listingId], references: [id])
   plan    PremiumPlan @relation(fields: [planId], references: [id])
@@ -1053,6 +1055,7 @@ model ReportPlan {
   updatedAt   DateTime       @updatedAt
 
   purchases ReportPurchase[]
+
   @@map("report_plans")
 }
 
@@ -1066,9 +1069,9 @@ model ReportPurchase {
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
 
-  user    User           @relation(fields: [userId], references: [id])
-  listing Listing?       @relation(fields: [listingId], references: [id])
-  plan    ReportPlan     @relation(fields: [planId], references: [id])
+  user    User        @relation(fields: [userId], references: [id])
+  listing Listing?    @relation(fields: [listingId], references: [id])
+  plan    ReportPlan  @relation(fields: [planId], references: [id])
   data    ReportData?
 
   @@index([userId])
@@ -1099,13 +1102,13 @@ model ReportData {
 
 model MarketPrice {
   id              String           @id @default(cuid())
-  region          String           // 시/도 (서울특별시)
-  subRegion       String           // 구/군 (강남구)
+  region          String // 시/도 (서울특별시)
+  subRegion       String // 구/군 (강남구)
   businessType    BusinessCategory
-  avgDeposit      BigInt           // 평균 보증금
-  avgMonthlyRent  BigInt           // 평균 월세
-  avgKeyMoney     BigInt           // 평균 권리금
-  avgMonthlySales BigInt           // 평균 월매출
+  avgDeposit      BigInt // 평균 보증금
+  avgMonthlyRent  BigInt // 평균 월세
+  avgKeyMoney     BigInt // 평균 권리금
+  avgMonthlySales BigInt // 평균 월매출
   sampleCount     Int              @default(0)
   updatedAt       DateTime         @updatedAt
   createdAt       DateTime         @default(now())
@@ -1141,28 +1144,28 @@ model Simulation {
 // ============================================================
 
 model Expert {
-  id            String          @id @default(cuid())
-  name          String
-  profileImage  String?
-  category      ExpertCategory
-  title         String          // 직함 (예: 변호사, 세무사)
-  company       String?
-  career        Int             // 경력 년수
-  description   String?         @db.Text
-  specialties   Json            // 전문분야 배열 ["권리금분쟁", "임대차계약"]
-  rating        Float           @default(0)
-  reviewCount   Int             @default(0)
-  consultCount  Int             @default(0)
-  phone         String?
-  email         String?
-  region        String          // 활동 지역 (예: "서울특별시")
-  isVerified    Boolean         @default(false)
-  isActive      Boolean         @default(true)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id           String         @id @default(cuid())
+  name         String
+  profileImage String?
+  category     ExpertCategory
+  title        String // 직함 (예: 변호사, 세무사)
+  company      String?
+  career       Int // 경력 년수
+  description  String?        @db.Text
+  specialties  Json // 전문분야 배열 ["권리금분쟁", "임대차계약"]
+  rating       Float          @default(0)
+  reviewCount  Int            @default(0)
+  consultCount Int            @default(0)
+  phone        String?
+  email        String?
+  region       String // 활동 지역 (예: "서울특별시")
+  isVerified   Boolean        @default(false)
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
-  inquiries     ExpertInquiry[]
-  reviews       ExpertReview[]
+  inquiries ExpertInquiry[]
+  reviews   ExpertReview[]
 
   @@index([category])
   @@index([region])
@@ -1171,21 +1174,21 @@ model Expert {
 }
 
 model ExpertInquiry {
-  id         String        @id @default(cuid())
-  expertId   String
-  userId     String
-  listingId  String?
-  category   String        // 상담 카테고리 (권리금분쟁, 임대차계약 등)
-  subject    String
-  message    String        @db.Text
-  status     InquiryStatus @default(PENDING)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  id        String        @id @default(cuid())
+  expertId  String
+  userId    String
+  listingId String?
+  category  String // 상담 카테고리 (권리금분쟁, 임대차계약 등)
+  subject   String
+  message   String        @db.Text
+  status    InquiryStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
-  expert     Expert        @relation(fields: [expertId], references: [id])
-  user       User          @relation(fields: [userId], references: [id])
-  listing    Listing?      @relation(fields: [listingId], references: [id])
-  review     ExpertReview?
+  expert  Expert        @relation(fields: [expertId], references: [id])
+  user    User          @relation(fields: [userId], references: [id])
+  listing Listing?      @relation(fields: [listingId], references: [id])
+  review  ExpertReview?
 
   @@index([expertId])
   @@index([userId])
@@ -1194,17 +1197,17 @@ model ExpertInquiry {
 }
 
 model ExpertReview {
-  id         String   @id @default(cuid())
-  expertId   String
-  userId     String
-  inquiryId  String   @unique
-  rating     Int      // 1~5
-  content    String   @db.Text
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  expertId  String
+  userId    String
+  inquiryId String   @unique
+  rating    Int // 1~5
+  content   String   @db.Text
+  createdAt DateTime @default(now())
 
-  expert     Expert        @relation(fields: [expertId], references: [id])
-  user       User          @relation(fields: [userId], references: [id])
-  inquiry    ExpertInquiry @relation(fields: [inquiryId], references: [id])
+  expert  Expert        @relation(fields: [expertId], references: [id])
+  user    User          @relation(fields: [userId], references: [id])
+  inquiry ExpertInquiry @relation(fields: [inquiryId], references: [id])
 
   @@index([expertId])
   @@map("expert_reviews")
@@ -1220,7 +1223,7 @@ model PaidService {
   listingId String
   type      PaidServiceType
   status    String          @default("ACTIVE") // ACTIVE, EXPIRED
-  reason    String?         // 급매 사유 (URGENT_TAG용)
+  reason    String? // 급매 사유 (URGENT_TAG용)
   price     Int
   startDate DateTime        @default(now())
   endDate   DateTime
@@ -1242,27 +1245,27 @@ model PaidService {
 model DiagnosisReport {
   id                  String   @id @default(cuid())
   listingId           String   @unique
-  fairPremiumBusiness Int      // 영업권리금
-  fairPremiumFacility Int      // 시설권리금
-  fairPremiumFloor    Int      // 바닥권리금
-  fairPremiumTotal    Int      // 적정 권리금 합계
-  premiumGap          Float    // (실제-적정)/적정 × 100
-  premiumVerdict      String   // 적정, 다소 높음, 매우 높음, 저평가
-  profitMargin        Float    // 영업이익률
-  avgProfitMargin     Float    // 업종 평균 영업이익률
-  roiMonths           Int      // 투자회수 기간(개월)
-  avgRoiMonths        Int      // 업종 평균 투자회수 기간
-  profitRating        Int      // 수익성 등급 (1-5)
-  footTraffic         String   // 유동인구 수준
-  competitorDensity   String   // 경쟁 밀도
-  stationDistance     String   // 역세권 여부
-  locationRating      Int      // 입지 등급 (1-5)
-  leaseRemaining      String   // 임대차 잔여기간
-  buildingAge         String   // 건물 연식
-  premiumProtection   Boolean  // 권리금 보호 대상 여부
-  riskRating          Int      // 리스크 등급 (1-5)
-  overallGrade        String   // 종합 등급 (A+, A, A-, B+, B, B-, C)
-  overallComment      String   // 종합 코멘트
+  fairPremiumBusiness Int // 영업권리금
+  fairPremiumFacility Int // 시설권리금
+  fairPremiumFloor    Int // 바닥권리금
+  fairPremiumTotal    Int // 적정 권리금 합계
+  premiumGap          Float // (실제-적정)/적정 × 100
+  premiumVerdict      String // 적정, 다소 높음, 매우 높음, 저평가
+  profitMargin        Float // 영업이익률
+  avgProfitMargin     Float // 업종 평균 영업이익률
+  roiMonths           Int // 투자회수 기간(개월)
+  avgRoiMonths        Int // 업종 평균 투자회수 기간
+  profitRating        Int // 수익성 등급 (1-5)
+  footTraffic         String // 유동인구 수준
+  competitorDensity   String // 경쟁 밀도
+  stationDistance     String // 역세권 여부
+  locationRating      Int // 입지 등급 (1-5)
+  leaseRemaining      String // 임대차 잔여기간
+  buildingAge         String // 건물 연식
+  premiumProtection   Boolean // 권리금 보호 대상 여부
+  riskRating          Int // 리스크 등급 (1-5)
+  overallGrade        String // 종합 등급 (A+, A, A-, B+, B, B-, C)
+  overallComment      String // 종합 코멘트
   diagnosisNumber     String   @unique // KR-2026-0001
   createdAt           DateTime @default(now())
 
@@ -1280,12 +1283,12 @@ model SalesIntegration {
   id           String    @id @default(cuid())
   userId       String
   listingId    String?
-  provider     String    // hometax, crefia, baemin, yogiyo, coupangeats
+  provider     String // hometax, crefia, baemin, yogiyo, coupangeats
   status       String    @default("pending") // pending, connected, failed, expired
-  accessToken  String?   // 암호화 저장 필요
-  refreshToken String?   // 암호화 저장 필요
+  accessToken  String? // 암호화 저장 필요
+  refreshToken String? // 암호화 저장 필요
   lastSynced   DateTime?
-  salesData    Json?     // 연동된 매출 데이터
+  salesData    Json? // 연동된 매출 데이터
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Lock, Check, Eye } from "lucide-react";
 import { VIEWER_PLANS, PAID_FEATURES, GRADE_A_FEATURES } from "@/lib/utils/subscription";
+
+const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "";
 
 interface PaywallOverlayProps {
   listingId: string;
@@ -17,6 +21,9 @@ export function PaywallOverlay({
   children,
   hasAccess,
 }: PaywallOverlayProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   // C/D grade or no grade: no paywall needed (no data to show)
   if (!safetyGrade || safetyGrade === "C" || safetyGrade === "D") {
     return <>{children}</>;
@@ -31,6 +38,48 @@ export function PaywallOverlay({
   const features = safetyGrade === "A"
     ? [...PAID_FEATURES, ...GRADE_A_FEATURES]
     : PAID_FEATURES;
+
+  const handleSinglePurchase = async () => {
+    setIsLoading(true);
+
+    try {
+      // 1) Create Payment record in DB
+      const createRes = await fetch("/api/payments/single", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId }),
+      });
+
+      if (!createRes.ok) {
+        const err = await createRes.json();
+        throw new Error(err.error?.message ?? "결제 생성에 실패했습니다.");
+      }
+
+      const { data } = await createRes.json();
+
+      // 2) TossPayments SDK 호출
+      const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
+      const tossPayments = await loadTossPayments(TOSS_CLIENT_KEY);
+      const payment = tossPayments.payment({ customerKey: crypto.randomUUID() });
+
+      await payment.requestPayment({
+        method: "CARD",
+        amount: { currency: "KRW", value: data.amount },
+        orderId: data.orderId,
+        orderName: data.orderName,
+        successUrl: `${window.location.origin}/listings/${listingId}?payment=success`,
+        failUrl: `${window.location.origin}/listings/${listingId}?payment=fail`,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("USER_CANCEL")) {
+        // User cancelled - do nothing
+      } else {
+        router.push(`/listings/${listingId}?payment=fail`);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative">
@@ -68,13 +117,14 @@ export function PaywallOverlay({
 
           {/* CTA buttons */}
           <div className="mt-6 space-y-2.5">
-            <Link
-              href={`/api/payments/single?listingId=${listingId}`}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-navy bg-white px-4 py-3 text-sm font-bold text-navy transition-colors hover:bg-navy/5"
+            <button
+              onClick={handleSinglePurchase}
+              disabled={isLoading}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-navy bg-white px-4 py-3 text-sm font-bold text-navy transition-colors hover:bg-navy/5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Eye className="h-4 w-4" />
-              건별 열람 {VIEWER_PLANS.SINGLE.price.toLocaleString()}원
-            </Link>
+              {isLoading ? "결제 준비 중..." : `건별 열람 ${VIEWER_PLANS.SINGLE.price.toLocaleString()}원`}
+            </button>
             <Link
               href="/pricing#viewer"
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-navy px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-navy/90"

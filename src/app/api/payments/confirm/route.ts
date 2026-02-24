@@ -66,7 +66,11 @@ export async function POST(req: NextRequest) {
       });
 
       if (report) {
-        await reportGenerationQueue.add("generate", { reportId: report.id });
+        await reportGenerationQueue.add("generate", {
+          reportId: report.id,
+          listingId: report.listingId,
+          userId: report.userId,
+        });
       }
     }
 
@@ -124,6 +128,36 @@ export async function POST(req: NextRequest) {
           await prisma.listing.update({
             where: { id: listingId },
             data: updateData,
+          });
+        }
+      }
+    }
+
+    if (payment.paymentType === "SINGLE_PURCHASE") {
+      const meta = payment.metadata as Record<string, string> | null;
+      const listingId = meta?.listingId;
+
+      if (listingId) {
+        // Check if purchase already exists and isn't expired
+        const existingPurchase = await prisma.singlePurchase.findFirst({
+          where: {
+            userId: session.user.id,
+            listingId,
+            expiresAt: { gt: new Date() },
+          },
+        });
+
+        if (!existingPurchase) {
+          // Create SinglePurchase record with 7 day access
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 7);
+
+          await prisma.singlePurchase.create({
+            data: {
+              userId: session.user.id,
+              listingId,
+              expiresAt,
+            },
           });
         }
       }
