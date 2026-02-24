@@ -8,13 +8,13 @@ import {
   Search, FileText, Building2,
   ChevronRight, ChevronLeft,
   ShieldCheck, Calculator, BarChart3,
-  Sparkles, Menu, X,
+  Sparkles, Clock,
 } from "lucide-react";
-import { AuthNavItems } from "./(main)/auth-nav";
 import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 import { ListingCard, type ListingCardData } from "@/components/listings/listing-card";
 import { REGION_DATA } from "@/lib/utils/constants";
 import { RecentListingsSection } from "@/components/home/recent-listings-section";
+import HomeBelowFold from "./_home-below-fold";
 
 /* ─── Constants ─── */
 const QUICK_MENU = [
@@ -105,7 +105,6 @@ export default function HomeClient({
   const [bannerIdx, setBannerIdx] = useState(0);
   const [bannerDir, setBannerDir] = useState<"left" | "right">("right");
   const [searchQuery, setSearchQuery] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [recTab, setRecTab] = useState<string>("all");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -152,68 +151,11 @@ export default function HomeClient({
 
   /* ═══════ RENDER ═══════ */
   return (
-    <div className="min-h-screen bg-gray-50 pb-32 md:pb-0">
-
-      {/* ═══ Header ═══ */}
-      <header className="sticky top-0 z-40 border-b border-navy-dark bg-navy backdrop-blur-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 md:py-3">
-          <Link href="/" className="flex items-center gap-1.5">
-            <Image src="/logos/krw_shop_logo_symbol_transparent.png" alt="권리샵" width={28} height={28} priority />
-            <span className="font-heading text-base font-bold text-white md:text-lg">권리샵</span>
-          </Link>
-
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-5 md:flex">
-            <Link href="/listings" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">점포 찾기</Link>
-            <Link href="/sell" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">점포 팔기</Link>
-            <Link href="/franchise" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">프랜차이즈</Link>
-            <Link href="/experts" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">전문가</Link>
-            <Link href="/simulator" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">시뮬레이터</Link>
-            <Link href="/area-analysis" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">상권분석</Link>
-            <Link href="/bbs" className="text-sm font-medium text-white/80 transition-colors hover:text-accent-light">이용가이드</Link>
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <div className="hidden md:block"><AuthNavItems /></div>
-            <button
-              className="flex h-10 w-10 items-center justify-center rounded-lg text-white/80 hover:bg-white/10 md:hidden"
-              onClick={() => setMobileMenuOpen(v => !v)}
-              aria-label="메뉴"
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu dropdown */}
-        {mobileMenuOpen && (
-          <div className="border-t border-white/10 bg-navy px-4 pb-4 pt-2 md:hidden">
-            <nav className="flex flex-col gap-1">
-              {[
-                { href: "/listings", label: "점포 찾기" },
-                { href: "/sell", label: "점포 팔기" },
-                { href: "/franchise", label: "프랜차이즈" },
-                { href: "/experts", label: "전문가" },
-                { href: "/simulator", label: "시뮬레이터" },
-                { href: "/area-analysis", label: "상권분석" },
-                { href: "/bbs", label: "이용가이드" },
-              ].map(l => (
-                <Link key={l.href} href={l.href} onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 hover:bg-white/10 active:bg-white/15">
-                  {l.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="mt-3 border-t border-white/10 pt-3">
-              <AuthNavItems />
-            </div>
-          </div>
-        )}
-      </header>
+    <div className="bg-surface-1">
 
       {/* ═══ 1. Hero Banner + Search Bar ═══ */}
       <section className="relative overflow-hidden">
-        <div className="relative h-[280px] md:h-[400px]">
+        <div className="relative h-[320px] md:h-[440px]">
           {slides.map((s, i) => (
             <div
               key={i}
@@ -254,10 +196,10 @@ export default function HomeClient({
 
               {/* Text content */}
               <div className="relative z-10 w-full px-5 text-center md:px-8">
-                <h2 className="font-heading text-xl font-bold leading-tight whitespace-pre-line text-white drop-shadow-sm md:text-4xl lg:text-5xl">
+                <h2 className="font-heading text-2xl font-bold leading-tight whitespace-pre-line text-white drop-shadow-sm md:text-5xl lg:text-6xl">
                   {s.title}
                 </h2>
-                <p className="mt-2 text-base text-white/70 md:mt-3 md:text-lg">
+                <p className="mt-2 text-base text-white/80 md:mt-3 md:text-xl">
                   {s.sub}
                 </p>
               </div>
@@ -268,28 +210,28 @@ export default function HomeClient({
         {/* Search bar + Region dropdown */}
         <div className="absolute bottom-3 left-0 right-0 z-20 px-4 md:bottom-8">
           {/* Text search bar */}
-          <form onSubmit={handleSearch} className="mx-auto flex max-w-xl overflow-hidden rounded-full border border-gray-200 bg-white shadow-xl">
-            <div className="flex flex-1 items-center gap-2 px-4">
-              <Search className="h-4 w-4 shrink-0 text-gray-400" />
+          <form onSubmit={handleSearch} className="mx-auto flex max-w-2xl overflow-hidden rounded-full border border-gray-200 bg-white shadow-2xl">
+            <div className="flex flex-1 items-center gap-3 px-5">
+              <Search className="h-5 w-5 shrink-0 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="지역, 업종으로 매물 검색 (예: 강남역 카페)"
-                className="h-12 w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none md:h-14 md:text-base"
+                className="h-14 w-full bg-transparent text-base text-gray-900 placeholder:text-gray-400 focus:outline-none md:h-16 md:text-lg"
               />
             </div>
-            <button type="submit" className="m-1.5 rounded-full bg-navy px-5 text-sm font-bold text-white transition-colors hover:bg-navy-dark active:scale-95 md:px-8">
+            <button type="submit" className="m-2 rounded-full bg-accent px-8 text-sm font-bold text-white transition-colors hover:bg-accent-dark active:scale-95">
               검색
             </button>
           </form>
 
           {/* Region dropdown row */}
-          <div className="mx-auto mt-2.5 flex max-w-xl items-center gap-2 rounded-xl bg-white/90 p-2 shadow-lg backdrop-blur-sm md:gap-3 md:p-3">
+          <div className="mx-auto mt-3 flex max-w-2xl items-center gap-2 rounded-2xl bg-white p-3 shadow-xl md:gap-3">
             <select
               value={selectedCity}
               onChange={(e) => handleCityChange(e.target.value)}
-              className="h-10 flex-1 rounded-lg border-0 bg-white px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-navy md:h-11"
+              className="h-11 flex-1 rounded-lg border-0 bg-white px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-navy md:h-12"
             >
               <option value="">시/도 선택</option>
               {Object.keys(REGION_DATA).map((city) => (
@@ -303,7 +245,7 @@ export default function HomeClient({
               value={selectedDistrict}
               onChange={(e) => setSelectedDistrict(e.target.value)}
               disabled={!selectedCity}
-              className="h-10 flex-1 rounded-lg border-0 bg-white px-3 text-sm text-gray-700 disabled:bg-gray-100 disabled:text-gray-400 focus:outline-none focus:ring-2 focus:ring-navy md:h-11"
+              className="h-11 flex-1 rounded-lg border-0 bg-white px-3 text-sm text-gray-700 disabled:bg-gray-100 disabled:text-gray-400 focus:outline-none focus:ring-2 focus:ring-navy md:h-12"
             >
               <option value="">구/군 선택</option>
               {selectedCity && REGION_DATA[selectedCity]?.map((district) => (
@@ -316,7 +258,7 @@ export default function HomeClient({
             <button
               onClick={handleRegionSearch}
               disabled={!selectedCity}
-              className="h-10 rounded-lg bg-navy px-4 text-sm font-bold text-white transition-colors hover:bg-navy-dark disabled:bg-gray-300 disabled:text-gray-500 active:scale-95 md:h-11 md:px-5"
+              className="h-11 rounded-lg bg-accent px-5 text-sm font-bold text-white transition-colors hover:bg-accent-dark disabled:bg-gray-300 disabled:text-gray-500 active:scale-95 md:h-12 md:px-6"
             >
               매물검색
             </button>
@@ -343,14 +285,14 @@ export default function HomeClient({
 
       {/* Popular keywords */}
       {popularKeywords.length > 0 && (
-        <div className="bg-gradient-to-b from-navy/90 to-navy/70 py-2.5">
+        <div className="bg-surface-2 py-3">
           <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-center gap-2 px-5">
-            <span className="text-[11px] text-white/50">인기</span>
+            <span className="text-accent font-semibold text-xs">인기</span>
             {popularKeywords.map((kw) => (
               <button
                 key={kw}
                 onClick={() => router.push(`/listings?search=${encodeURIComponent(kw)}`)}
-                className="rounded-full bg-white/15 px-3 py-1 text-xs text-white/80 backdrop-blur-sm transition-colors hover:bg-white/25"
+                className="rounded-full bg-navy/5 border border-navy/10 px-3 py-1 text-xs text-navy transition-colors hover:bg-navy/10"
               >
                 {kw}
               </button>
@@ -361,16 +303,18 @@ export default function HomeClient({
 
       {/* ═══ 2. Quick Menu (6 items) ═══ */}
       <RevealOnScroll>
-        <section className="bg-white py-6 md:py-8">
-          <div className="mx-auto max-w-3xl px-4">
+        <section className="bg-white py-8 md:py-10">
+          <div className="mx-auto max-w-4xl px-4">
             <div className="grid grid-cols-3 gap-3 md:grid-cols-6 md:gap-4">
               {QUICK_MENU.map(c => (
                 <Link key={c.label} href={c.href}
-                  className="group flex flex-col items-center gap-2 rounded-xl py-3 transition-all duration-200 md:gap-3 md:py-4 md:hover:-translate-y-0.5 md:hover:shadow-md active:bg-gray-50">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 transition-all duration-200 md:h-16 md:w-16 md:group-hover:bg-navy md:group-hover:shadow-md">
-                    <c.icon className="h-7 w-7 text-gray-600 transition-colors md:h-8 md:w-8 md:group-hover:text-white" />
+                  className="group rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-navy/20 active:bg-gray-50">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-navy-50 transition-all duration-200 md:h-16 md:w-16 md:group-hover:bg-navy">
+                      <c.icon className="h-7 w-7 text-navy transition-colors md:h-8 md:w-8 md:group-hover:text-white" />
+                    </div>
+                    <span className="text-[11px] font-semibold leading-tight text-gray-700 md:text-xs">{c.label}</span>
                   </div>
-                  <span className="text-[11px] font-semibold leading-tight text-gray-700 md:text-xs">{c.label}</span>
                 </Link>
               ))}
             </div>
@@ -383,16 +327,16 @@ export default function HomeClient({
 
       {/* ═══ 3. Premium Listings ═══ */}
       <RevealOnScroll>
-        <section className="border-t border-gray-200 bg-gradient-to-b from-amber-50/50 to-white py-10 md:py-16">
+        <section className="border-t border-gray-200 bg-white py-12 md:py-20">
           <div className="mx-auto max-w-[1200px] px-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-yellow-500 md:h-5 md:w-5" />
-                <h2 className="font-heading text-base font-bold text-navy md:text-xl">프리미엄 매물</h2>
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-yellow-500 md:h-6 md:w-6" />
+                <h2 className="font-heading text-lg font-bold text-navy md:text-2xl">프리미엄 매물</h2>
               </div>
               <Link href="/listings" className="flex items-center text-xs text-gray-500 transition-colors hover:text-navy md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
             </div>
-            <div className="mt-4 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-5 md:gap-4 md:overflow-visible">
+            <div className="mt-6 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-5 md:gap-4 md:overflow-visible">
               {premiumListings.length > 0 ? premiumListings.map((item, idx) => (
                 <ListingCard key={item.id} listing={item} variant="premium" isCarouselItem priority={idx < 3} />
               )) : <p className="col-span-5 py-8 text-center text-sm text-gray-400">프리미엄 매물이 없습니다</p>}
@@ -403,23 +347,23 @@ export default function HomeClient({
 
       {/* ═══ 4. Today's Recommended ═══ */}
       <RevealOnScroll>
-        <section className="bg-white py-10 md:py-16">
+        <section className="bg-surface-1 py-12 md:py-20">
           <div className="mx-auto max-w-[1200px] px-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-heading text-base font-bold text-navy md:text-xl">오늘의 추천 매물</h2>
+              <h2 className="font-heading text-lg font-bold text-navy md:text-2xl">오늘의 추천 매물</h2>
               <Link href="/listings" className="flex items-center text-xs text-gray-500 transition-colors hover:text-navy md:text-sm">전체보기 <ChevronRight className="h-3.5 w-3.5" /></Link>
             </div>
 
             {/* Tab buttons */}
-            <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide">
+            <div className="mt-4 flex gap-2 overflow-x-auto scrollbar-hide">
               {["all", "서울", "경기", "기타"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setRecTab(tab)}
-                  className={`flex-none rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                  className={`flex-none rounded-full px-5 py-2 text-sm font-medium transition-colors ${
                     recTab === tab
-                      ? "bg-navy text-white"
-                      : "border border-gray-200 text-gray-600 hover:border-navy hover:text-navy"
+                      ? "bg-navy text-white shadow-sm"
+                      : "bg-white border border-gray-200 text-gray-600 hover:border-navy/30"
                   }`}
                 >
                   {tab === "all" ? "전체" : tab}
@@ -427,7 +371,7 @@ export default function HomeClient({
               ))}
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-6 md:gap-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-6 md:gap-4">
               {(() => {
                 const filtered = recTab === "all"
                   ? recommendedListings
@@ -445,6 +389,32 @@ export default function HomeClient({
           </div>
         </section>
       </RevealOnScroll>
+
+      {/* ═══ 5. Trust Indicators ═══ */}
+      <RevealOnScroll>
+        <section className="bg-white py-12 md:py-16">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
+              {[
+                { value: "1,200+", label: "등록 매물", icon: Building2 },
+                { value: "5,000+", label: "AI 진단 완료", icon: ShieldCheck },
+                { value: "98%", label: "거래 만족도", icon: "⭐" },
+                { value: "24시간", label: "매물 노출", icon: Clock },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-navy-50 text-navy md:h-14 md:w-14">
+                    {typeof stat.icon === "string" ? <span className="text-xl">{stat.icon}</span> : <stat.icon className="h-6 w-6" />}
+                  </div>
+                  <p className="mt-3 font-heading text-2xl font-bold text-navy md:text-3xl">{stat.value}</p>
+                  <p className="mt-1 text-sm text-gray-500">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </RevealOnScroll>
+
+      <HomeBelowFold />
     </div>
   );
 }
