@@ -27,7 +27,7 @@ export function MobileTabBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-gray-200 bg-white/95 backdrop-blur-sm md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-gray-100 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)] md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       {tabs.map((item) => {
@@ -36,18 +36,22 @@ export function MobileTabBar() {
           <Link
             key={item.href}
             href={item.href}
-            className="relative flex flex-1 flex-col items-center gap-1 py-2 text-xs transition-colors"
+            className="relative flex flex-1 flex-col items-center gap-0.5 py-2 transition-colors"
             aria-current={active ? "page" : undefined}
           >
             {/* Active indicator dot */}
             {active && (
-              <div className="absolute top-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-navy" />
+              <div className="absolute top-0 left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-accent" />
             )}
 
             <item.icon
-              className={`h-5 w-5 ${active ? "text-navy" : "text-gray-500"}`}
+              className={`h-5 w-5 ${active ? "text-navy" : "text-gray-400"}`}
             />
-            <span className={active ? "text-navy font-medium" : "text-gray-500"}>
+            <span
+              className={`text-[10px] ${
+                active ? "font-semibold text-navy" : "text-gray-400"
+              }`}
+            >
               {item.label}
             </span>
           </Link>

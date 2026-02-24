@@ -95,7 +95,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 bg-black/50 transition-opacity duration-200",
+          "fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-200",
           visible ? "opacity-100" : "opacity-0"
         )}
         onClick={onClose}
@@ -105,7 +105,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       <div
         ref={panelRef}
         className={cn(
-          "relative z-10 mx-4 w-full max-w-lg rounded-xl bg-white p-6 shadow-xl",
+          "relative z-10 mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl",
           "transition-all duration-200",
           visible
             ? "opacity-100 scale-100 translate-y-0"
@@ -120,7 +120,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
           )}
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-navy/50 focus-visible:outline-none"
+            className="rounded-lg p-1 text-gray-400 transition-colors hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-navy/50 focus-visible:outline-none"
             aria-label="닫기"
           >
             <X className="h-5 w-5" />
