@@ -23,8 +23,7 @@ export default function TossPayment({
 }: TossPaymentProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const paymentWidgetRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const widgetsRef = useRef<any>(null);
 
   useEffect(() => {
     const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
@@ -37,7 +36,7 @@ export default function TossPayment({
 
     async function loadTossPayments() {
       try {
-        // Load Toss Payments SDK
+        // Load Toss Payments Widget SDK
         if (!window.TossPayments) {
           const script = document.createElement("script");
           script.src = "https://js.tosspayments.com/v2/standard";
@@ -50,17 +49,25 @@ export default function TossPayment({
           });
         }
 
-        // Initialize payment widget
         const tossPayments = window.TossPayments(clientKey);
-        const paymentWidget = tossPayments.widgets({
-          customerKey: orderId, // Using orderId as customer key
+        const widgets = tossPayments.widgets({
+          customerKey: `customer_${orderId}`,
         });
 
-        paymentWidgetRef.current = paymentWidget;
+        await widgets.setAmount({ currency: "KRW", value: amount });
 
-        // Render payment methods
-        await paymentWidget.render(containerRef.current);
+        await Promise.all([
+          widgets.renderPaymentMethods({
+            selector: "#toss-payment-method",
+            variantKey: "DEFAULT",
+          }),
+          widgets.renderAgreement({
+            selector: "#toss-agreement",
+            variantKey: "AGREEMENT",
+          }),
+        ]);
 
+        widgetsRef.current = widgets;
         setLoading(false);
       } catch (err) {
         console.error("Toss Payments loading error:", err);
@@ -70,19 +77,18 @@ export default function TossPayment({
     }
 
     loadTossPayments();
-  }, [orderId]);
+  }, [orderId, amount]);
 
   async function handlePayment() {
-    if (!paymentWidgetRef.current) {
+    if (!widgetsRef.current) {
       alert("결제 위젯이 준비되지 않았습니다.");
       return;
     }
 
     try {
-      await paymentWidgetRef.current.requestPayment({
+      await widgetsRef.current.requestPayment({
         orderId,
         orderName,
-        amount,
         successUrl: `${window.location.origin}/payments/success`,
         failUrl: `${window.location.origin}/payments/fail`,
         customerName,
@@ -142,7 +148,11 @@ export default function TossPayment({
         </div>
       </div>
 
-      <div ref={containerRef} className="mb-4" />
+      {/* 결제 수단 선택 */}
+      <div id="toss-payment-method" className="mb-4" />
+
+      {/* 약관 동의 */}
+      <div id="toss-agreement" className="mb-4" />
 
       <button
         onClick={handlePayment}
