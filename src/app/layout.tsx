@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import SessionProvider from "@/components/providers/SessionProvider";
 import ThemeProvider from "@/components/providers/ThemeProvider";
@@ -26,11 +26,12 @@ export const metadata: Metadata = {
     title: "권리샵 - 상가직거래 플랫폼",
     description: "권리금 직거래로 중개수수료 없이 상가를 사고파세요.",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: "#2563eb",
 };
 

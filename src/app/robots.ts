@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin", "/api", "/mypage", "/sell", "/chat"],
     },
-    sitemap: "https://kwonrishop.com/sitemap.xml",
+    sitemap: "https://www.kwonrishop.com/sitemap.xml",
   };
 }
