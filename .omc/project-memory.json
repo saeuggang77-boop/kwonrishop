@@ -1,0 +1,438 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1773073593041,
+  "projectRoot": "/Users/admin/자료실/claude/권리샵최종/kwonrishop",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.1.6",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.3",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.3",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "prisma": {
+      "path": "prisma",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1773073592937,
+      "keyFiles": [
+        "schema.prisma"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 5,
+      "lastAccessed": 1773073592937,
+      "keyFiles": [
+        "file.svg",
+        "globe.svg",
+        "next.svg",
+        "vercel.svg",
+        "window.svg"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1773073592945,
+      "keyFiles": []
+    },
+    "src/app": {
+      "path": "src/app",
+      "purpose": "Application code",
+      "fileCount": 4,
+      "lastAccessed": 1773073592946,
+      "keyFiles": [
+        "favicon.ico",
+        "globals.css",
+        "layout.tsx"
+      ]
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1773073592946,
+      "keyFiles": []
+    },
+    "src/lib": {
+      "path": "src/lib",
+      "purpose": "Library code",
+      "fileCount": 0,
+      "lastAccessed": 1773073592946,
+      "keyFiles": []
+    },
+    "src/types": {
+      "path": "src/types",
+      "purpose": "Type definitions",
+      "fileCount": 0,
+      "lastAccessed": 1773073592947,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/app/(main)/listings/[id]/page.tsx",
+      "accessCount": 36,
+      "lastAccessed": 1773085109939,
+      "type": "file"
+    },
+    {
+      "path": "src/components/layout/Header.tsx",
+      "accessCount": 33,
+      "lastAccessed": 1773079518207,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "accessCount": 29,
+      "lastAccessed": 1773089476201,
+      "type": "file"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "accessCount": 21,
+      "lastAccessed": 1773084726334,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/listings/route.ts",
+      "accessCount": 16,
+      "lastAccessed": 1773084721759,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(main)/listings/page.tsx",
+      "accessCount": 15,
+      "lastAccessed": 1773078496200,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(main)/page.tsx",
+      "accessCount": 14,
+      "lastAccessed": 1773079652460,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/ListingCard.tsx",
+      "accessCount": 13,
+      "lastAccessed": 1773079612069,
+      "type": "file"
+    },
+    {
+      "path": "prisma/seed.ts",
+      "accessCount": 10,
+      "lastAccessed": 1773079042969,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/chat/[roomId]/messages/route.ts",
+      "accessCount": 10,
+      "lastAccessed": 1773079548687,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 10,
+      "lastAccessed": 1773084737528,
+      "type": "file"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1773079449697,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/prisma.ts",
+      "accessCount": 9,
+      "lastAccessed": 1773088721781,
+      "type": "file"
+    },
+    {
+      "path": "src/store/listingForm.ts",
+      "accessCount": 8,
+      "lastAccessed": 1773076358541,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/upload/route.ts",
+      "accessCount": 8,
+      "lastAccessed": 1773078052586,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/auth/business-verify/route.ts",
+      "accessCount": 8,
+      "lastAccessed": 1773084734672,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(main)/layout.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1773079669708,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/listings/[id]/route.ts",
+      "accessCount": 6,
+      "lastAccessed": 1773084709063,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/community/route.ts",
+      "accessCount": 5,
+      "lastAccessed": 1773077631389,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(main)/community/[id]/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1773076798839,
+      "type": "file"
+    },
+    {
+      "path": "src/middleware.ts",
+      "accessCount": 4,
+      "lastAccessed": 1773077553213,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/steps/Step7Confirm.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1773077610122,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/steps/Step6Photos.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1773077614848,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/listings/[id]/favorite/route.ts",
+      "accessCount": 4,
+      "lastAccessed": 1773079515939,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 4,
+      "lastAccessed": 1773088403662,
+      "type": "directory"
+    },
+    {
+      "path": "src/app/api/categories/route.ts",
+      "accessCount": 3,
+      "lastAccessed": 1773077618614,
+      "type": "file"
+    },
+    {
+      "path": "prisma.config.ts",
+      "accessCount": 3,
+      "lastAccessed": 1773087815674,
+      "type": "file"
+    },
+    {
+      "path": "src/types/next-auth.d.ts",
+      "accessCount": 3,
+      "lastAccessed": 1773088410105,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/steps/Step4Additional.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1773074859107,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/community/[id]/route.ts",
+      "accessCount": 2,
+      "lastAccessed": 1773075831492,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/api/nts.ts",
+      "accessCount": 2,
+      "lastAccessed": 1773084710163,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 2,
+      "lastAccessed": 1773084987037,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773073632826,
+      "type": "file"
+    },
+    {
+      "path": "src/generated/prisma",
+      "accessCount": 1,
+      "lastAccessed": 1773073771286,
+      "type": "directory"
+    },
+    {
+      "path": "src/generated/prisma/client.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773073774748,
+      "type": "file"
+    },
+    {
+      "path": "src/components/providers/SessionProvider.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074374215,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(auth)/login/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074388396,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(auth)/verify-business/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074448664,
+      "type": "file"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074463954,
+      "type": "file"
+    },
+    {
+      "path": "src/app/sell/layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074653436,
+      "type": "file"
+    },
+    {
+      "path": "src/app/sell/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074663668,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/StepIndicator.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074673978,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/auth/check-verification/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773074676051,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/steps/Step1Location.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074693458,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/steps/Step2Category.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074719566,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/steps/Step3BasicInfo.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074750277,
+      "type": "file"
+    },
+    {
+      "path": "src/components/listing/steps/Step5Description.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773074775968,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/chat/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773075319708,
+      "type": "file"
+    },
+    {
+      "path": "src/app/api/community/[id]/comments/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773075344457,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(main)/community/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773075360474,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

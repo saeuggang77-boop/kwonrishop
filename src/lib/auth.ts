@@ -8,7 +8,6 @@ import { welcomeEmail } from "@/lib/email-templates";
 import type { UserRole } from "@/generated/prisma/client";
 
 export const authOptions: NextAuthOptions = {
-  debug: true,
   secret: process.env.AUTH_SECRET,
   adapter: CustomPrismaAdapter(),
   providers: [
