@@ -60,6 +60,22 @@ export default function RootLayout({
             `,
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "권리샵",
+              "url": "https://www.kwonrishop.com",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.kwonrishop.com/listings?keyword={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }),
+          }}
+        />
       </head>
       <body className={`${geist.variable} font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
         <SkipLink />

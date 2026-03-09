@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import JsonLd from "@/components/seo/JsonLd";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
   loading: () => <div className="py-4 border-b border-gray-100"><div className="h-20 bg-gray-100 rounded animate-pulse" /></div>,
@@ -85,6 +86,12 @@ export default function ListingDetailPage() {
       });
   }, [params.id, router]);
 
+  useEffect(() => {
+    if (listing) {
+      document.title = `${listing.storeName || listing.addressRoad || "매물"} - 권리샵`;
+    }
+  }, [listing]);
+
   async function handleFavorite() {
     if (!session) {
       router.push("/login");
@@ -148,8 +155,25 @@ export default function ListingDetailPage() {
 
   const fmt = (n: number) => n.toLocaleString();
 
+  // JSON-LD structured data
+  const jsonLdData = listing.latitude && listing.longitude ? {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": listing.storeName || listing.addressRoad || "매물",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": listing.addressRoad || "",
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": listing.latitude,
+      "longitude": listing.longitude,
+    },
+  } : null;
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
+      {jsonLdData && <JsonLd data={jsonLdData} />}
       {/* 이미지 갤러리 */}
       <div className="relative aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none">
         {listing.images.length > 0 ? (

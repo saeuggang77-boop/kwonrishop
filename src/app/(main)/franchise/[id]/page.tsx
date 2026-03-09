@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import JsonLd from "@/components/seo/JsonLd";
 
 const IndustryRevenueSection = dynamic(
   () => import("@/components/franchise/IndustryRevenueSection"),
@@ -65,6 +66,12 @@ export default function FranchiseDetailPage() {
       .catch(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    if (brand) {
+      document.title = `${brand.brandName} - 프랜차이즈 - 권리샵`;
+    }
+  }, [brand]);
+
   async function handleInquirySubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!session) {
@@ -108,8 +115,18 @@ export default function FranchiseDetailPage() {
     );
   }
 
+  // JSON-LD structured data
+  const jsonLdData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": brand.brandName,
+    "description": brand.description || `${brand.brandName} 프랜차이즈 정보`,
+    "url": brand.website || undefined,
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
+      <JsonLd data={jsonLdData} />
       {/* Banner */}
       {brand.bannerImage && (
         <div className="mb-6 rounded-xl overflow-hidden relative h-64">
