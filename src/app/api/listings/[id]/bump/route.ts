@@ -1,0 +1,100 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+// 끌어올리기
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  try {
+    // 매물 조회 및 소유권 확인
+    const listing = await prisma.listing.findUnique({
+      where: { id },
+      select: { id: true, userId: true, status: true },
+    });
+
+    if (!listing) {
+      return NextResponse.json(
+        { error: "매물을 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    if (listing.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "본인의 매물만 끌어올릴 수 있습니다." },
+        { status: 403 }
+      );
+    }
+
+    if (listing.status !== "ACTIVE") {
+      return NextResponse.json(
+        { error: "활성 상태의 매물만 끌어올릴 수 있습니다." },
+        { status: 400 }
+      );
+    }
+
+    // 활성화된 끌어올리기 구매권 확인
+    const activeBumpPurchase = await prisma.adPurchase.findFirst({
+      where: {
+        userId: session.user.id,
+        listingId: id,
+        status: "PAID",
+        expiresAt: {
+          gte: new Date(),
+        },
+        product: {
+          type: "SINGLE",
+        },
+      },
+      include: {
+        product: {
+          select: { name: true },
+        },
+      },
+    });
+
+    if (!activeBumpPurchase) {
+      return NextResponse.json(
+        {
+          error: "끌어올리기 구매가 필요합니다.",
+          message: "끌어올리기를 사용하려면 먼저 상품을 구매해주세요.",
+          needsPurchase: true,
+        },
+        { status: 403 }
+      );
+    }
+
+    // 끌어올리기 실행
+    const updatedListing = await prisma.listing.update({
+      where: { id },
+      data: { bumpedAt: new Date() },
+      select: {
+        id: true,
+        bumpedAt: true,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "매물이 끌어올려졌습니다.",
+      bumpedAt: updatedListing.bumpedAt,
+    });
+  } catch (error) {
+    console.error("끌어올리기 오류:", error);
+    return NextResponse.json(
+      { error: "끌어올리기 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
+  }
+}

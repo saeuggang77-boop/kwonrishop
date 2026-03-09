@@ -1,0 +1,79 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
+import { listingFavoritedEmail } from "@/lib/email-templates";
+
+export async function POST(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
+
+  const { id: listingId } = await params;
+
+  const existing = await prisma.favorite.findUnique({
+    where: {
+      userId_listingId: {
+        userId: session.user.id,
+        listingId,
+      },
+    },
+  });
+
+  if (existing) {
+    // 이미 찜 → 해제
+    await prisma.$transaction([
+      prisma.favorite.delete({ where: { id: existing.id } }),
+      prisma.listing.update({
+        where: { id: listingId },
+        data: { favoriteCount: { decrement: 1 } },
+      }),
+    ]);
+    return NextResponse.json({ favorited: false });
+  } else {
+    // 찜 추가
+    await prisma.$transaction([
+      prisma.favorite.create({
+        data: { userId: session.user.id, listingId },
+      }),
+      prisma.listing.update({
+        where: { id: listingId },
+        data: { favoriteCount: { increment: 1 } },
+      }),
+    ]);
+
+    // 매물 소유자에게 이메일 알림 (비차단)
+    (async () => {
+      try {
+        const listing = await prisma.listing.findUnique({
+          where: { id: listingId },
+          select: {
+            storeName: true,
+            addressRoad: true,
+            user: {
+              select: { email: true, name: true },
+            },
+          },
+        });
+
+        if (listing && listing.user.email) {
+          const storeName = listing.storeName || listing.addressRoad || "매물";
+          const { subject, html } = listingFavoritedEmail(
+            listing.user.name || "회원",
+            storeName
+          );
+          await sendEmail(listing.user.email, subject, html);
+        }
+      } catch (error) {
+        console.error("[Email] Failed to send favorite notification:", error);
+      }
+    })();
+
+    return NextResponse.json({ favorited: true });
+  }
+}

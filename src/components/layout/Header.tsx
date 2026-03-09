@@ -1,0 +1,349 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
+import { useState, useEffect } from "react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import { usePathname } from "next/navigation";
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  link: string | null;
+  createdAt: string;
+  read: boolean;
+}
+
+export default function Header() {
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchNotifications();
+    }
+  }, [status]);
+
+  async function fetchNotifications() {
+    try {
+      const res = await fetch("/api/notifications?limit=5");
+      const data = await res.json();
+      setNotifications(data.notifications || []);
+      setUnreadCount(data.unreadCount || 0);
+    } catch (err) {
+      console.error("Failed to fetch notifications", err);
+    }
+  }
+
+  async function markAllRead() {
+    try {
+      await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      });
+      setUnreadCount(0);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (err) {
+      console.error("Failed to mark notifications as read", err);
+    }
+  }
+
+  function timeAgo(date: string) {
+    const now = new Date();
+    const then = new Date(date);
+    const diff = Math.floor((now.getTime() - then.getTime()) / 1000);
+    if (diff < 60) return "방금 전";
+    if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+    return `${Math.floor(diff / 86400)}일 전`;
+  }
+
+  return (
+    <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+        <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
+          권리샵
+        </Link>
+
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600 dark:text-gray-300" aria-label="주요 메뉴">
+          <Link
+            href="/listings"
+            className="hover:text-gray-900 dark:hover:text-gray-100"
+            aria-current={pathname === "/listings" ? "page" : undefined}
+          >
+            매물검색
+          </Link>
+          <Link
+            href="/franchise"
+            className="hover:text-gray-900 dark:hover:text-gray-100"
+            aria-current={pathname === "/franchise" ? "page" : undefined}
+          >
+            프랜차이즈
+          </Link>
+          <Link
+            href="/community"
+            className="hover:text-gray-900 dark:hover:text-gray-100"
+            aria-current={pathname === "/community" ? "page" : undefined}
+          >
+            커뮤니티
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          {status === "loading" ? (
+            <div className="w-20 h-8 bg-gray-100 rounded-lg animate-pulse" />
+          ) : session ? (
+            <>
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
+              {/* Notification Bell */}
+              <div className="relative">
+                <button
+                  onClick={() => setNotifOpen(!notifOpen)}
+                  className="relative p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                  aria-label="알림"
+                  aria-expanded={notifOpen}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                  </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center" aria-label={`읽지 않은 알림 ${unreadCount}개`}>
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {notifOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0"
+                      onClick={() => setNotifOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50 max-h-96 overflow-y-auto" role="menu">
+                      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                        <h3 className="font-bold text-gray-900 dark:text-gray-100">알림</h3>
+                        {unreadCount > 0 && (
+                          <button
+                            onClick={markAllRead}
+                            className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                          >
+                            모두 읽음
+                          </button>
+                        )}
+                      </div>
+                      {notifications.length === 0 ? (
+                        <p className="px-4 py-6 text-sm text-gray-400 dark:text-gray-500 text-center">
+                          알림이 없습니다
+                        </p>
+                      ) : (
+                        notifications.map((notif) => (
+                          <Link
+                            key={notif.id}
+                            href={notif.link || "#"}
+                            onClick={() => setNotifOpen(false)}
+                            className={`block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-50 dark:border-gray-700 ${
+                              !notif.read ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
+                            }`}
+                          >
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {notif.title}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              {notif.message}
+                            </p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                              {timeAgo(notif.createdAt)}
+                            </p>
+                          </Link>
+                        ))
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                aria-expanded={menuOpen}
+                aria-label="사용자 메뉴"
+              >
+                {session.user.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
+                    {session.user.name?.[0] || "U"}
+                  </div>
+                )}
+                <span className="hidden sm:inline">
+                  {session.user.name || "사용자"}
+                </span>
+              </button>
+
+              {menuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0"
+                    onClick={() => setMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50" role="menu">
+                    <Link
+                      href="/mypage"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      마이페이지
+                    </Link>
+                    <Link
+                      href="/sell"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      매물등록
+                    </Link>
+                    <hr className="my-1 border-gray-200 dark:border-gray-700" />
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="w-full text-left px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              로그인
+            </Link>
+          )}
+
+          {/* 모바일 메뉴 버튼 */}
+          <button
+            className="md:hidden p-1"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-expanded={mobileMenuOpen}
+            aria-label="모바일 메뉴"
+          >
+            <svg
+              className="w-6 h-6 text-gray-600 dark:text-gray-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {mobileMenuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="fixed top-14 left-0 right-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-50 md:hidden">
+            <nav className="px-4 py-3 space-y-1">
+              <Link
+                href="/listings"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                매물검색
+              </Link>
+              <Link
+                href="/franchise"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                프랜차이즈
+              </Link>
+              <Link
+                href="/community"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                커뮤니티
+              </Link>
+              {session && (
+                <>
+                  <hr className="my-2 border-gray-200 dark:border-gray-700" />
+                  <Link
+                    href="/mypage"
+                    className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    마이페이지
+                  </Link>
+                  <Link
+                    href="/sell"
+                    className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    매물등록
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      signOut({ callbackUrl: "/" });
+                    }}
+                    className="w-full text-left px-4 py-3 text-sm font-medium text-red-500 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                  >
+                    로그아웃
+                  </button>
+                </>
+              )}
+            </nav>
+          </div>
+        </>
+      )}
+    </header>
+  );
+}

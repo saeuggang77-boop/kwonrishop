@@ -1,0 +1,12 @@
+import { MetadataRoute } from "next";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/admin", "/api", "/mypage", "/sell", "/chat"],
+    },
+    sitemap: "https://kwonrishop.com/sitemap.xml",
+  };
+}

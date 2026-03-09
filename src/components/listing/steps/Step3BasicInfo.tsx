@@ -1,0 +1,227 @@
+"use client";
+
+import { useListingFormStore } from "@/store/listingForm";
+
+const THEMES = ["무권리", "급매", "신규인테리어", "역세권", "대로변", "1층", "배달전문", "프랜차이즈"];
+
+interface Props {
+  onNext: () => void;
+  onPrev: () => void;
+}
+
+export default function Step3BasicInfo({ onNext, onPrev }: Props) {
+  const { data, updateData } = useListingFormStore();
+
+  function toggleTheme(theme: string) {
+    const current = data.themes || [];
+    if (current.includes(theme)) {
+      updateData({ themes: current.filter((t) => t !== theme) });
+    } else {
+      updateData({ themes: [...current, theme] });
+    }
+  }
+
+  function handlePyeongChange(value: string) {
+    const pyeong = value === "" ? null : parseFloat(value);
+    updateData({
+      areaPyeong: pyeong,
+      areaSqm: pyeong !== null ? Math.round(pyeong * 3.3058 * 100) / 100 : null,
+    });
+  }
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <h2 className="text-lg font-bold text-gray-900 mb-1">기본정보</h2>
+      <p className="text-sm text-gray-500 mb-6">매물의 기본 정보를 입력해주세요</p>
+
+      <div className="space-y-5">
+        {/* 브랜드 타입 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">운영 형태</label>
+          <div className="flex gap-3">
+            {[
+              { value: "PRIVATE" as const, label: "개인매장" },
+              { value: "FRANCHISE" as const, label: "프랜차이즈" },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => updateData({ brandType: opt.value })}
+                className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
+                  data.brandType === opt.value
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 상호명 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            상호명 <span className="text-gray-400">(선택)</span>
+          </label>
+          <input
+            type="text"
+            placeholder="상호명을 입력하세요"
+            value={data.storeName}
+            onChange={(e) => updateData({ storeName: e.target.value })}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          />
+        </div>
+
+        {/* 층수 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">층수</label>
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-1.5 text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={data.isBasement}
+                onChange={(e) => updateData({ isBasement: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              지하/반지하
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-2">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">해당층</label>
+              <input
+                type="number"
+                placeholder="예: 1"
+                value={data.currentFloor ?? ""}
+                onChange={(e) =>
+                  updateData({ currentFloor: e.target.value ? parseInt(e.target.value) : null })
+                }
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">전체층</label>
+              <input
+                type="number"
+                placeholder="예: 5"
+                value={data.totalFloor ?? ""}
+                onChange={(e) =>
+                  updateData({ totalFloor: e.target.value ? parseInt(e.target.value) : null })
+                }
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 면적 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">면적</label>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">평수</label>
+              <input
+                type="number"
+                step="0.1"
+                placeholder="예: 15"
+                value={data.areaPyeong ?? ""}
+                onChange={(e) => handlePyeongChange(e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">m² (자동계산)</label>
+              <input
+                type="text"
+                readOnly
+                value={data.areaSqm !== null ? `${data.areaSqm} m²` : ""}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 테마 태그 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            테마 <span className="text-gray-400">(선택, 복수 가능)</span>
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {THEMES.map((theme) => (
+              <button
+                key={theme}
+                type="button"
+                onClick={() => toggleTheme(theme)}
+                className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                  data.themes?.includes(theme)
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                {theme}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 주차 */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">주차</label>
+          <label className="flex items-center gap-1.5 text-sm text-gray-600 mb-2">
+            <input
+              type="checkbox"
+              checked={data.parkingNone}
+              onChange={(e) => updateData({ parkingNone: e.target.checked })}
+              className="rounded border-gray-300"
+            />
+            주차 불가
+          </label>
+          {!data.parkingNone && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">전체 주차</label>
+                <input
+                  type="number"
+                  placeholder="대"
+                  value={data.parkingTotal ?? ""}
+                  onChange={(e) =>
+                    updateData({ parkingTotal: e.target.value ? parseInt(e.target.value) : null })
+                  }
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">세대당 주차</label>
+                <input
+                  type="number"
+                  placeholder="대"
+                  value={data.parkingPerUnit ?? ""}
+                  onChange={(e) =>
+                    updateData({ parkingPerUnit: e.target.value ? parseInt(e.target.value) : null })
+                  }
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-8 flex justify-between">
+        <button
+          onClick={onPrev}
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+        >
+          이전
+        </button>
+        <button
+          onClick={onNext}
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+        >
+          다음
+        </button>
+      </div>
+    </div>
+  );
+}
