@@ -104,10 +104,10 @@ src/
 
 주요 환경변수:
 - `DATABASE_URL`: PostgreSQL 연결 문자열
-- `NEXTAUTH_SECRET`: NextAuth 시크릿
-- `KAKAO_CLIENT_ID/SECRET`: 카카오 OAuth
-- `NAVER_CLIENT_ID/SECRET`: 네이버 OAuth
-- `NEXT_PUBLIC_KAKAO_JS_KEY`: 카카오맵 API 키
+- `AUTH_SECRET`: NextAuth 시크릿
+- `AUTH_KAKAO_ID/SECRET`: 카카오 OAuth
+- `AUTH_NAVER_ID/SECRET`: 네이버 OAuth
+- `NEXT_PUBLIC_KAKAO_MAP_KEY`: 카카오맵 API 키
 - `NTS_API_KEY`: 국세청 API 키
 - `FTC_API_KEY`: 공정거래위원회 API 키
 - `TOSS_CLIENT_KEY/SECRET`: 토스페이먼츠

@@ -35,5 +35,5 @@ jobs:
       - run: npm run test:e2e
     env:
       DATABASE_URL: "postgresql://test:test@localhost:5432/test"
-      NEXTAUTH_SECRET: "test-secret-for-ci"
+      AUTH_SECRET: "test-secret-for-ci"
       NEXTAUTH_URL: "http://localhost:3000"

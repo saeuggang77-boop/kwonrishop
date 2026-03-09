@@ -122,7 +122,7 @@ export default function ListingMapView({ listings }: ListingMapViewProps) {
   }, [validListings, router]);
 
   useEffect(() => {
-    const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+    const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
     if (!kakaoKey) {
       setError("Kakao Map API 키가 설정되지 않았습니다.");

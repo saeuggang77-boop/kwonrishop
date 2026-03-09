@@ -32,7 +32,7 @@ export default function ShareButton({ listingId, title }: ShareButtonProps) {
   }, [showDropdown]);
 
   async function handleKakaoShare() {
-    const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+    const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
     if (!kakaoKey) {
       alert("카카오톡 공유 기능이 설정되지 않았습니다.");

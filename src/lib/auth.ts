@@ -7,15 +7,16 @@ import { sendEmail } from "@/lib/email";
 import { welcomeEmail } from "@/lib/email-templates";
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
   providers: [
     KakaoProvider({
-      clientId: process.env.KAKAO_CLIENT_ID!,
-      clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+      clientId: process.env.AUTH_KAKAO_ID!,
+      clientSecret: process.env.AUTH_KAKAO_SECRET!,
     }),
     NaverProvider({
-      clientId: process.env.NAVER_CLIENT_ID!,
-      clientSecret: process.env.NAVER_CLIENT_SECRET!,
+      clientId: process.env.AUTH_NAVER_ID!,
+      clientSecret: process.env.AUTH_NAVER_SECRET!,
     }),
   ],
   session: {
