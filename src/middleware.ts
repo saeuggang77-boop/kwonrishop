@@ -1,7 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedPaths = ["/sell", "/mypage", "/verify-business"];
+const protectedPaths = ["/sell", "/mypage", "/verify-business", "/admin"];
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req });
@@ -33,5 +33,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login"],
+  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login", "/admin/:path*"],
 };

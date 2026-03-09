@@ -38,8 +38,8 @@ export async function GET(request: Request) {
 
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { location: { contains: search, mode: "insensitive" } },
+        { storeName: { contains: search, mode: "insensitive" } },
+        { addressRoad: { contains: search, mode: "insensitive" } },
       ];
     }
 

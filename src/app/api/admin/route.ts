@@ -47,6 +47,7 @@ export async function GET() {
 
     return NextResponse.json({
       totalUsers,
+      activeListings,
       listings: {
         active: activeListings,
         reserved: reservedListings,
