@@ -4,6 +4,19 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const IndustryRevenueSection = dynamic(
+  () => import("@/components/franchise/IndustryRevenueSection"),
+  {
+    loading: () => (
+      <div className="space-y-4">
+        <div className="h-32 bg-gray-100 rounded-xl animate-pulse" />
+        <div className="h-48 bg-gray-100 rounded-xl animate-pulse" />
+      </div>
+    ),
+  }
+);
 
 interface FranchiseBrand {
   id: string;
@@ -144,6 +157,7 @@ export default function FranchiseDetailPage() {
             { id: "info", label: "기본정보" },
             { id: "fees", label: "창업비용" },
             { id: "benefits", label: "창업특혜" },
+            { id: "analysis", label: "업종분석" },
             { id: "inquiry", label: "문의하기" },
           ].map((tab) => (
             <button
@@ -292,6 +306,15 @@ export default function FranchiseDetailPage() {
                 </div>
               )}
             </div>
+          )}
+
+          {/* 업종분석 */}
+          {activeTab === "analysis" && (
+            <IndustryRevenueSection
+              industry={brand.industry}
+              brandName={brand.brandName}
+              brandAvgRevenue={brand.avgRevenue}
+            />
           )}
 
           {/* 문의하기 */}

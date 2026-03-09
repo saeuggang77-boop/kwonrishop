@@ -19,6 +19,10 @@ const ShareButton = dynamic(() => import("@/components/listing/ShareButton"), {
   ssr: false,
 });
 
+const CommercialDistrictSection = dynamic(() => import("@/components/listing/CommercialDistrictSection"), {
+  loading: () => <div className="py-4 border-b border-gray-100"><div className="h-40 bg-gray-100 rounded-xl animate-pulse" /></div>,
+});
+
 interface ListingDetail {
   id: string;
   status: string;
@@ -321,6 +325,17 @@ export default function ListingDetailPage() {
               {listing.addressDetail && ` ${listing.addressDetail}`}
             </p>
           </div>
+        </Section>
+      )}
+
+      {/* 상권분석 */}
+      {listing.latitude && listing.longitude && (
+        <Section title="상권분석">
+          <CommercialDistrictSection
+            latitude={listing.latitude}
+            longitude={listing.longitude}
+            categoryId={listing.category?.name}
+          />
         </Section>
       )}
 
