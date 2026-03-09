@@ -1,5 +1,4 @@
 import { NextAuthOptions } from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import KakaoProvider from "next-auth/providers/kakao";
 import NaverProvider from "next-auth/providers/naver";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +9,7 @@ import type { UserRole } from "@/generated/prisma/client";
 export const authOptions: NextAuthOptions = {
   debug: true,
   secret: process.env.AUTH_SECRET,
-  adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
+  // adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],  // temporarily disabled for testing
   providers: [
     KakaoProvider({
       clientId: process.env.AUTH_KAKAO_ID!,
