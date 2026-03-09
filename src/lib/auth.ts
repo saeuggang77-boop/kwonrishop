@@ -5,6 +5,7 @@ import NaverProvider from "next-auth/providers/naver";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { welcomeEmail } from "@/lib/email-templates";
+import type { UserRole } from "@/generated/prisma/client";
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -23,7 +24,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   events: {
     createUser: async ({ user }) => {
@@ -41,17 +42,25 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
+    async jwt({ token, user }) {
+      if (user) {
         const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
           select: { id: true, role: true, phone: true },
         });
         if (dbUser) {
-          session.user.id = dbUser.id;
-          session.user.role = dbUser.role;
-          session.user.phone = dbUser.phone;
+          token.id = dbUser.id;
+          token.role = dbUser.role;
+          token.phone = dbUser.phone;
         }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+        session.user.phone = (token.phone as string) || null;
       }
       return session;
     },
