@@ -14,10 +14,12 @@ export const authOptions: NextAuthOptions = {
     KakaoProvider({
       clientId: process.env.AUTH_KAKAO_ID!,
       clientSecret: process.env.AUTH_KAKAO_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
     NaverProvider({
       clientId: process.env.AUTH_NAVER_ID!,
       clientSecret: process.env.AUTH_NAVER_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   session: {
