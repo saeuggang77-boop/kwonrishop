@@ -7,6 +7,7 @@ import { sendEmail } from "@/lib/email";
 import { welcomeEmail } from "@/lib/email-templates";
 
 export const authOptions: NextAuthOptions = {
+  debug: true,
   secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
   providers: [
