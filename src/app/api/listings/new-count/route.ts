@@ -13,12 +13,16 @@ export async function GET(req: NextRequest) {
       status: "ACTIVE",
     };
 
+    const andConditions = [];
+
     // Region filter
     if (region) {
-      where.OR = [
-        { addressRoad: { contains: region } },
-        { addressJibun: { contains: region } },
-      ];
+      andConditions.push({
+        OR: [
+          { addressRoad: { contains: region } },
+          { addressJibun: { contains: region } },
+        ],
+      });
     }
 
     // Category filter
@@ -28,10 +32,16 @@ export async function GET(req: NextRequest) {
 
     // Premium filter
     if (maxPremium) {
-      where.OR = [
-        { premiumNone: true },
-        { premium: { lte: parseInt(maxPremium) } },
-      ];
+      andConditions.push({
+        OR: [
+          { premiumNone: true },
+          { premium: { lte: parseInt(maxPremium) } },
+        ],
+      });
+    }
+
+    if (andConditions.length > 0) {
+      where.AND = andConditions;
     }
 
     // Since filter

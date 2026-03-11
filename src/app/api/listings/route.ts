@@ -7,8 +7,8 @@ import { prisma } from "@/lib/prisma";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "20");
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1") || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20") || 20));
   const categoryId = searchParams.get("categoryId");
   const subCategoryId = searchParams.get("subCategoryId");
   const sort = searchParams.get("sort") || "latest";
@@ -52,19 +52,10 @@ export async function GET(req: NextRequest) {
 
   // Region filter (new)
   if (region) {
-    where.addressRoad = { contains: region, mode: "insensitive" };
-  }
-
-  if (minDeposit || maxDeposit) {
-    where.deposit = {};
-    if (minDeposit) (where.deposit as Record<string, number>).gte = parseInt(minDeposit);
-    if (maxDeposit) (where.deposit as Record<string, number>).lte = parseInt(maxDeposit);
-  }
-
-  if (minPremium || maxPremium) {
-    where.premium = {};
-    if (minPremium) (where.premium as Record<string, number>).gte = parseInt(minPremium);
-    if (maxPremium) (where.premium as Record<string, number>).lte = parseInt(maxPremium);
+    if (!where.AND) where.AND = [];
+    (where.AND as Array<Record<string, unknown>>).push({
+      addressRoad: { contains: region, mode: "insensitive" },
+    });
   }
 
   // New advanced filters for premium range
@@ -217,46 +208,46 @@ export async function POST(req: NextRequest) {
         addressDetail: body.addressDetail || null,
         latitude: body.latitude || null,
         longitude: body.longitude || null,
-        categoryId: body.categoryId || null,
-        subCategoryId: body.subCategoryId || null,
-        deposit: body.deposit || 0,
-        monthlyRent: body.monthlyRent || 0,
-        premium: body.premium || 0,
-        premiumNone: body.premiumNone || false,
-        premiumNegotiable: body.premiumNegotiable || false,
-        premiumBusiness: body.premiumBusiness || null,
-        premiumBusinessDesc: body.premiumBusinessDesc || null,
-        premiumFacility: body.premiumFacility || null,
-        premiumFacilityDesc: body.premiumFacilityDesc || null,
-        premiumLocation: body.premiumLocation || null,
-        premiumLocationDesc: body.premiumLocationDesc || null,
-        maintenanceFee: body.maintenanceFee || null,
+        categoryId: body.categoryId ?? null,
+        subCategoryId: body.subCategoryId ?? null,
+        deposit: body.deposit ?? 0,
+        monthlyRent: body.monthlyRent ?? 0,
+        premium: body.premium ?? 0,
+        premiumNone: body.premiumNone ?? false,
+        premiumNegotiable: body.premiumNegotiable ?? false,
+        premiumBusiness: body.premiumBusiness ?? null,
+        premiumBusinessDesc: body.premiumBusinessDesc ?? null,
+        premiumFacility: body.premiumFacility ?? null,
+        premiumFacilityDesc: body.premiumFacilityDesc ?? null,
+        premiumLocation: body.premiumLocation ?? null,
+        premiumLocationDesc: body.premiumLocationDesc ?? null,
+        maintenanceFee: body.maintenanceFee ?? null,
         brandType: body.brandType || "PRIVATE",
-        storeName: body.storeName || null,
-        currentFloor: body.currentFloor || null,
-        totalFloor: body.totalFloor || null,
-        isBasement: body.isBasement || false,
-        areaPyeong: body.areaPyeong || null,
-        areaSqm: body.areaSqm || null,
+        storeName: body.storeName ?? null,
+        currentFloor: body.currentFloor ?? null,
+        totalFloor: body.totalFloor ?? null,
+        isBasement: body.isBasement ?? false,
+        areaPyeong: body.areaPyeong ?? null,
+        areaSqm: body.areaSqm ?? null,
         themes: body.themes || [],
-        parkingTotal: body.parkingTotal || null,
-        parkingPerUnit: body.parkingPerUnit || null,
-        parkingNone: body.parkingNone || false,
-        monthlyRevenue: body.monthlyRevenue || null,
-        expenseMaterial: body.expenseMaterial || null,
-        expenseLabor: body.expenseLabor || null,
+        parkingTotal: body.parkingTotal ?? null,
+        parkingPerUnit: body.parkingPerUnit ?? null,
+        parkingNone: body.parkingNone ?? false,
+        monthlyRevenue: body.monthlyRevenue ?? null,
+        expenseMaterial: body.expenseMaterial ?? null,
+        expenseLabor: body.expenseLabor ?? null,
         operationType: body.operationType || "SOLO",
-        familyWorkers: body.familyWorkers || null,
-        employeesFull: body.employeesFull || null,
-        employeesPart: body.employeesPart || null,
-        expenseRent: body.expenseRent || null,
-        expenseMaintenance: body.expenseMaintenance || null,
-        expenseUtility: body.expenseUtility || null,
-        expenseOther: body.expenseOther || null,
-        monthlyProfit: body.monthlyProfit || null,
-        profitDescription: body.profitDescription || null,
-        description: body.description || null,
-        contactPublic: body.contactPublic || false,
+        familyWorkers: body.familyWorkers ?? null,
+        employeesFull: body.employeesFull ?? null,
+        employeesPart: body.employeesPart ?? null,
+        expenseRent: body.expenseRent ?? null,
+        expenseMaintenance: body.expenseMaintenance ?? null,
+        expenseUtility: body.expenseUtility ?? null,
+        expenseOther: body.expenseOther ?? null,
+        monthlyProfit: body.monthlyProfit ?? null,
+        profitDescription: body.profitDescription ?? null,
+        description: body.description ?? null,
+        contactPublic: body.contactPublic ?? false,
         images: {
           create: (body.images || []).map(
             (img: { url: string; type: string; sortOrder: number }) => ({

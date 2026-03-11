@@ -144,7 +144,7 @@ export default function HomePage() {
             ].map((cat) => (
               <Link
                 key={cat.name}
-                href={`/listings?category=${encodeURIComponent(cat.name)}`}
+                href={`/listings?keyword=${encodeURIComponent(cat.name)}`}
                 className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <span className="text-3xl" aria-hidden="true">{cat.icon}</span>

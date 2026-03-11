@@ -39,6 +39,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "권한이 없습니다" }, { status: 403 });
     }
 
+    if (order.status !== "PENDING") {
+      return NextResponse.json(
+        { error: "이미 처리된 주문입니다" },
+        { status: 409 }
+      );
+    }
+
     if (order.amount !== amount) {
       return NextResponse.json(
         { error: "결제 금액이 일치하지 않습니다" },

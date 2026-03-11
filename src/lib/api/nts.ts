@@ -23,8 +23,6 @@ interface NtsStatusResponse {
 
 export async function validateBusiness(
   businessNumber: string,
-  startDate: string,
-  representativeName: string,
 ): Promise<{
   valid: boolean;
   message: string;

@@ -17,7 +17,7 @@ export async function POST(
 
     const listing = await prisma.listing.findUnique({
       where: { id },
-      select: { userId: true, status: true },
+      select: { userId: true, status: true, expiresAt: true },
     });
 
     if (!listing) {
@@ -26,6 +26,25 @@ export async function POST(
 
     if (listing.userId !== session.user.id) {
       return NextResponse.json({ error: "권한이 없습니다" }, { status: 403 });
+    }
+
+    // Only ACTIVE or EXPIRED listings can be extended
+    if (listing.status !== "ACTIVE" && listing.status !== "EXPIRED") {
+      return NextResponse.json(
+        { error: "활성 또는 만료된 매물만 연장할 수 있습니다." },
+        { status: 400 }
+      );
+    }
+
+    // Prevent extending if expiry is still more than 7 days away
+    if (listing.status === "ACTIVE" && listing.expiresAt) {
+      const daysUntilExpiry = (new Date(listing.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+      if (daysUntilExpiry > 7) {
+        return NextResponse.json(
+          { error: `만료 7일 전부터 연장할 수 있습니다. (남은 일수: ${Math.ceil(daysUntilExpiry)}일)` },
+          { status: 400 }
+        );
+      }
     }
 
     // Extend by 30 days from now

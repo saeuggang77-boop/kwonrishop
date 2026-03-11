@@ -44,16 +44,25 @@ export async function GET(
     return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
   }
 
-  // 조회수 증가
-  await prisma.listing.update({
+  // 비활성 매물은 소유자만 조회 가능
+  if (listing.status !== "ACTIVE" && listing.status !== "RESERVED" && listing.status !== "SOLD") {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id || session.user.id !== listing.userId) {
+      return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
+    }
+  }
+
+  // 조회수 증가 (atomic)
+  const updated = await prisma.listing.update({
     where: { id },
     data: { viewCount: { increment: 1 } },
+    select: { viewCount: true },
   });
 
   // 연락처 비공개인 경우 전화번호 마스킹
   const result = {
     ...listing,
-    viewCount: listing.viewCount + 1,
+    viewCount: updated.viewCount,
     user: {
       ...listing.user,
       phone: listing.contactPublic ? listing.user.phone : null,

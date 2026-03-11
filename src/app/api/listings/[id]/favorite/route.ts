@@ -34,6 +34,13 @@ export async function POST(
         data: { favoriteCount: { decrement: 1 } },
       }),
     ]);
+
+    // Ensure favoriteCount doesn't go below 0
+    await prisma.listing.updateMany({
+      where: { id: listingId, favoriteCount: { lt: 0 } },
+      data: { favoriteCount: 0 },
+    });
+
     return NextResponse.json({ favorited: false });
   } else {
     // 찜 추가

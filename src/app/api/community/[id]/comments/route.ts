@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sanitizeInput } from "@/lib/sanitize";
 
 export async function POST(
   req: NextRequest,
@@ -23,7 +24,7 @@ export async function POST(
     data: {
       postId,
       authorId: session.user.id,
-      content: content.trim(),
+      content: sanitizeInput(content).trim(),
       parentId: parentId || null,
     },
     include: {

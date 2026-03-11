@@ -34,7 +34,7 @@ export function welcomeEmail(name: string): { subject: string; html: string } {
 
         <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
           <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-            © 2024 권리샵. All rights reserved.
+            © ${new Date().getFullYear()} 권리샵. All rights reserved.
           </p>
         </div>
       </div>
@@ -73,7 +73,7 @@ export function listingExpiredEmail(name: string, storeName: string): { subject:
 
         <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
           <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-            © 2024 권리샵. All rights reserved.
+            © ${new Date().getFullYear()} 권리샵. All rights reserved.
           </p>
         </div>
       </div>
@@ -112,7 +112,7 @@ export function newChatMessageEmail(name: string, senderName: string, listingNam
 
         <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
           <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-            © 2024 권리샵. All rights reserved.
+            © ${new Date().getFullYear()} 권리샵. All rights reserved.
           </p>
         </div>
       </div>
@@ -151,7 +151,7 @@ export function listingFavoritedEmail(name: string, storeName: string): { subjec
 
         <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
           <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-            © 2024 권리샵. All rights reserved.
+            © ${new Date().getFullYear()} 권리샵. All rights reserved.
           </p>
         </div>
       </div>
