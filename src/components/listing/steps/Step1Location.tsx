@@ -12,15 +12,34 @@ export default function Step1Location({ onNext }: Props) {
   const [error, setError] = useState("");
 
   function handleAddressSearch() {
-    // 카카오 주소 API (다음 우편번호 서비스)
     if (typeof window === "undefined") return;
 
     const daum = (window as unknown as { daum?: { Postcode: new (opts: { oncomplete: (data: Record<string, string>) => void }) => { open: () => void } } }).daum;
-    if (!daum?.Postcode) {
-      setError("주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+
+    if (daum?.Postcode) {
+      openPostcode(daum);
       return;
     }
 
+    // 다음 우편번호 SDK 동적 로딩
+    setError("");
+    const script = document.createElement("script");
+    script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    script.onload = () => {
+      const d = (window as unknown as { daum?: { Postcode: new (opts: { oncomplete: (data: Record<string, string>) => void }) => { open: () => void } } }).daum;
+      if (d?.Postcode) {
+        openPostcode(d);
+      } else {
+        setError("주소 검색 서비스를 불러올 수 없습니다.");
+      }
+    };
+    script.onerror = () => {
+      setError("주소 검색 서비스를 불러올 수 없습니다.");
+    };
+    document.head.appendChild(script);
+  }
+
+  function openPostcode(daum: { Postcode: new (opts: { oncomplete: (data: Record<string, string>) => void }) => { open: () => void } }) {
     new daum.Postcode({
       oncomplete: (result: Record<string, string>) => {
         updateData({
