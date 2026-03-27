@@ -58,6 +58,7 @@ function ListingsContent() {
 
   const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
   const [categoryId, setCategoryId] = useState(searchParams.get("categoryId") || "");
+  const [subCategoryId, setSubCategoryId] = useState(searchParams.get("subCategoryId") || "");
   const [sort, setSort] = useState(searchParams.get("sort") || "latest");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
@@ -81,6 +82,7 @@ function ListingsContent() {
     const params = new URLSearchParams();
     params.set("page", String(page));
     if (categoryId) params.set("categoryId", categoryId);
+    if (subCategoryId) params.set("subCategoryId", subCategoryId);
     if (debouncedKeyword) params.set("keyword", debouncedKeyword);
     params.set("sort", sort);
 
@@ -102,7 +104,7 @@ function ListingsContent() {
     setTotal(data.pagination?.total || 0);
     setTotalPages(data.pagination?.totalPages || 1);
     setLoading(false);
-  }, [page, categoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes]);
+  }, [page, categoryId, subCategoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes]);
 
   useEffect(() => {
     fetch("/api/categories")
@@ -128,8 +130,16 @@ function ListingsContent() {
 
   function handleCategoryClick(id: string) {
     setCategoryId(categoryId === id ? "" : id);
+    setSubCategoryId("");
     setPage(1);
   }
+
+  function handleSubCategoryClick(id: string) {
+    setSubCategoryId(subCategoryId === id ? "" : id);
+    setPage(1);
+  }
+
+  const selectedCategory = categories.find((c) => c.id === categoryId);
 
   function handleThemeToggle(theme: string) {
     setSelectedThemes((prev) =>
@@ -149,6 +159,7 @@ function ListingsContent() {
     setAreaMin("");
     setAreaMax("");
     setSelectedThemes([]);
+    setSubCategoryId("");
     setPage(1);
   }
 
@@ -209,6 +220,37 @@ function ListingsContent() {
           </button>
         ))}
       </div>
+
+      {/* 소분류 필터 */}
+      {selectedCategory && selectedCategory.subCategories.length > 0 && (
+        <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSubCategoryId("")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                !subCategoryId
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+              }`}
+            >
+              전체
+            </button>
+            {selectedCategory.subCategories.map((sub) => (
+              <button
+                key={sub.id}
+                onClick={() => handleSubCategoryClick(sub.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  subCategoryId === sub.id
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                }`}
+              >
+                {sub.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 상세 필터 버튼 */}
       <div className="mb-4">
