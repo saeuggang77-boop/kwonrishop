@@ -2,7 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedPaths = ["/sell", "/mypage", "/verify-business", "/admin", "/partners/register"];
-const roleExemptPaths = ["/select-role", "/api/", "/login", "/_next/", "/favicon"];
+const roleExemptPaths = ["/select-role", "/api/", "/login", "/signup", "/forgot-password", "/reset-password", "/_next/", "/favicon"];
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req });
@@ -33,7 +33,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // 이미 로그인 된 상태에서 로그인 페이지 접근 시 홈으로
-  if (pathname === "/login" && token) {
+  if ((pathname === "/login" || pathname === "/signup") && token) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
@@ -75,5 +75,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login", "/admin/:path*", "/partners/register", "/select-role", "/"],
+  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login", "/signup", "/forgot-password", "/admin/:path*", "/partners/register", "/select-role", "/"],
 };

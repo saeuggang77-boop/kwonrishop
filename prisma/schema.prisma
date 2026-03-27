@@ -18,6 +18,7 @@ model User {
   name          String?
   phone         String?
   image         String?
+  password      String?
   role          UserRole  @default(BUYER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

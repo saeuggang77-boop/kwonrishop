@@ -1,10 +1,12 @@
 import { NextAuthOptions } from "next-auth";
 import KakaoProvider from "next-auth/providers/kakao";
 import NaverProvider from "next-auth/providers/naver";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { CustomPrismaAdapter } from "@/lib/auth-adapter";
 import { sendEmail } from "@/lib/email";
 import { welcomeEmail } from "@/lib/email-templates";
+import { verifyPassword } from "@/lib/password";
 import type { UserRole } from "@/generated/prisma/client";
 
 export const authOptions: NextAuthOptions = {
@@ -20,6 +22,51 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.AUTH_NAVER_ID!,
       clientSecret: process.env.AUTH_NAVER_SECRET!,
       allowDangerousEmailAccountLinking: true,
+    }),
+    CredentialsProvider({
+      id: "credentials",
+      name: "이메일",
+      credentials: {
+        email: { label: "이메일", type: "email" },
+        password: { label: "비밀번호", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("이메일과 비밀번호를 입력해주세요.");
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email.toLowerCase() },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            password: true,
+            emailVerified: true,
+          },
+        });
+
+        if (!user || !user.password) {
+          throw new Error("이메일 또는 비밀번호가 올바르지 않습니다.");
+        }
+
+        if (!user.emailVerified) {
+          throw new Error("EMAIL_NOT_VERIFIED");
+        }
+
+        const isValid = await verifyPassword(credentials.password, user.password);
+        if (!isValid) {
+          throw new Error("이메일 또는 비밀번호가 올바르지 않습니다.");
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        };
+      },
     }),
   ],
   session: {
