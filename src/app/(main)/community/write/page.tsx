@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -8,15 +8,28 @@ const TAGS = ["자유", "양도후기", "창업팁", "질문", "상권정보"];
 
 export default function CommunityWritePage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tag, setTag] = useState("자유");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login?callbackUrl=/community/write");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-20 text-center">
+        <div className="animate-pulse">로딩 중...</div>
+      </div>
+    );
+  }
+
   if (!session) {
-    router.push("/login?callbackUrl=/community/write");
     return null;
   }
 

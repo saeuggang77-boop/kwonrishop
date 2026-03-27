@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { notifyPaymentSuccess } from "@/lib/kakao-alimtalk";
 
 export async function POST(request: NextRequest) {
   try {
@@ -111,6 +112,45 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Tier activation based on categoryScope
+    const categoryScope = order.product.categoryScope;
+    const features = order.product.features as Record<string, any>;
+    const badge = features?.badge as string | undefined;
+
+    if (categoryScope === "FRANCHISE" && badge) {
+      const tierMap: Record<string, string> = {
+        "브론즈": "BRONZE",
+        "실버": "SILVER",
+        "골드": "GOLD",
+      };
+      const newTier = tierMap[badge];
+      if (newTier) {
+        await prisma.franchiseBrand.updateMany({
+          where: { managerId: session.user.id },
+          data: {
+            tier: newTier as any,
+            tierExpiresAt: order.product.duration ? expiresAt : null,
+          },
+        });
+      }
+    } else if (categoryScope === "PARTNER" && badge) {
+      const tierMap: Record<string, string> = {
+        "베이직": "BASIC",
+        "프리미엄": "PREMIUM",
+        "VIP": "VIP",
+      };
+      const newTier = tierMap[badge];
+      if (newTier) {
+        await prisma.partnerService.updateMany({
+          where: { userId: session.user.id },
+          data: {
+            tier: newTier as any,
+            tierExpiresAt: order.product.duration ? expiresAt : null,
+          },
+        });
+      }
+    }
+
     // Create notification
     await prisma.notification.create({
       data: {
@@ -121,6 +161,26 @@ export async function POST(request: NextRequest) {
         link: "/mypage",
       },
     });
+
+    // 알림톡: 결제 완료 알림 (non-blocking)
+    (async () => {
+      try {
+        const user = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { phone: true },
+        });
+
+        if (user?.phone) {
+          notifyPaymentSuccess(
+            user.phone,
+            order.product.name,
+            order.amount
+          ).catch(() => {});
+        }
+      } catch (error) {
+        console.error("[Alimtalk] Failed to send payment notification:", error);
+      }
+    })();
 
     return NextResponse.json({
       success: true,

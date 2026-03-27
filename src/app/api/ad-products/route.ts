@@ -1,16 +1,25 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // 광고 상품 목록 조회 (공개 API)
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const scope = searchParams.get("scope");
+
+    const where: any = { active: true };
+    if (scope && ["LISTING", "FRANCHISE", "PARTNER", "COMMON"].includes(scope)) {
+      where.categoryScope = scope;
+    }
+
     const products = await prisma.adProduct.findMany({
-      where: { active: true },
+      where,
       orderBy: { sortOrder: "asc" },
       select: {
         id: true,
         name: true,
         type: true,
+        categoryScope: true,
         price: true,
         duration: true,
         features: true,

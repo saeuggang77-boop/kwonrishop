@@ -19,6 +19,8 @@ interface MyData {
   listing: { id: string; status: string; storeName: string | null; viewCount: number; favoriteCount: number } | null;
   favoriteCount: number;
   chatCount: number;
+  partnerService: { id: string; status: string; companyName: string; serviceType: string; viewCount: number; tier: string } | null;
+  franchiseBrand: { id: string; brandName: string; tier: string } | null;
 }
 
 export default function MyPage() {
@@ -52,9 +54,10 @@ export default function MyPage() {
   }
 
   const roleLabel = {
-    BUYER: "매수자",
-    SELLER: "매도자",
-    FRANCHISE_HQ: "프랜차이즈 본사",
+    BUYER: "예비창업자",
+    SELLER: "사장님",
+    FRANCHISE: "프랜차이즈 본사",
+    PARTNER: "협력업체",
     ADMIN: "관리자",
   }[data.user.role] || data.user.role;
 
@@ -127,10 +130,10 @@ export default function MyPage() {
         {data.listing ? (
           <Link
             href={`/listings/${data.listing.id}`}
-            className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="block p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            <p className="font-medium text-gray-900">{data.listing.storeName || "매물"}</p>
-            <div className="flex gap-3 mt-1 text-xs text-gray-400">
+            <p className="font-medium text-gray-900 dark:text-gray-100">{data.listing.storeName || "매물"}</p>
+            <div className="flex gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500">
               <span>상태: {data.listing.status}</span>
               <span>조회 {data.listing.viewCount}</span>
               <span>관심 {data.listing.favoriteCount}</span>
@@ -144,9 +147,72 @@ export default function MyPage() {
             매물 등록하기
           </Link>
         ) : (
-          <p className="text-sm text-gray-400">사업자인증 후 매물을 등록할 수 있습니다</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">사업자인증 후 매물을 등록할 수 있습니다</p>
         )}
       </div>
+
+      {/* 내 서비스 (PARTNER) */}
+      {data.user.role === "PARTNER" && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100">내 서비스</h3>
+            {data.partnerService && (
+              <Link
+                href="/partners/edit"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                서비스 수정
+              </Link>
+            )}
+          </div>
+          {data.partnerService ? (
+            <Link
+              href={`/partners/${data.partnerService.id}`}
+              className="block p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <p className="font-medium text-gray-900 dark:text-gray-100">{data.partnerService.companyName}</p>
+              <div className="flex gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500">
+                <span>유형: {data.partnerService.serviceType}</span>
+                <span>등급: {data.partnerService.tier}</span>
+                <span>조회 {data.partnerService.viewCount}</span>
+              </div>
+            </Link>
+          ) : data.verification?.verified ? (
+            <Link
+              href="/partners/register"
+              className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
+            >
+              서비스 등록하기
+            </Link>
+          ) : (
+            <p className="text-sm text-gray-400 dark:text-gray-500">사업자인증 후 서비스를 등록할 수 있습니다</p>
+          )}
+        </div>
+      )}
+
+      {/* 내 브랜드 (FRANCHISE) */}
+      {data.user.role === "FRANCHISE" && data.franchiseBrand && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100">내 브랜드</h3>
+            <Link
+              href="/franchise/edit"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              브랜드 수정
+            </Link>
+          </div>
+          <Link
+            href={`/franchise/${data.franchiseBrand.id}`}
+            className="block p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <p className="font-medium text-gray-900 dark:text-gray-100">{data.franchiseBrand.brandName}</p>
+            <div className="flex gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500">
+              <span>등급: {data.franchiseBrand.tier}</span>
+            </div>
+          </Link>
+        </div>
+      )}
 
       {/* 메뉴 */}
       <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">

@@ -158,3 +158,42 @@ export function listingFavoritedEmail(name: string, storeName: string): { subjec
     `,
   };
 }
+
+export function adExpiredEmail(name: string, productName: string, targetName: string): { subject: string; html: string } {
+  return {
+    subject: "[권리샵] 광고 상품이 만료되었습니다",
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h1 style="color: #2563eb; font-size: 28px; margin: 0;">권리샵</h1>
+          <p style="color: #6b7280; font-size: 14px; margin-top: 8px;">상가 직거래 플랫폼</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 32px;">
+          <h2 style="color: #111827; font-size: 24px; margin: 0 0 16px;">${name}님</h2>
+          <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
+            <strong style="color: #111827;">${targetName}</strong>의 광고 상품 <strong style="color: #2563eb;">${productName}</strong>이(가) 만료되었습니다.
+          </p>
+
+          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 24px 0; border-radius: 4px;">
+            <p style="color: #92400e; font-size: 14px; margin: 0; line-height: 1.6;">
+              광고 혜택이 종료되었습니다. 계속해서 프리미엄 노출과 추가 기능을 이용하시려면 상품을 재구매해주세요.
+            </p>
+          </div>
+
+          <div style="margin: 32px 0;">
+            <a href="https://kwonrishop.com/mypage/ads" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+              광고 상품 구매하기
+            </a>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+          <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+            © ${new Date().getFullYear()} 권리샵. All rights reserved.
+          </p>
+        </div>
+      </div>
+    `,
+  };
+}

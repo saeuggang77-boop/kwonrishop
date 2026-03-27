@@ -14,7 +14,10 @@ interface AdminUser {
 
 const ROLE_OPTIONS = [
   { value: "", label: "전체" },
-  { value: "USER", label: "일반회원" },
+  { value: "BUYER", label: "예비창업자" },
+  { value: "SELLER", label: "사장님" },
+  { value: "FRANCHISE", label: "프랜차이즈 본사" },
+  { value: "PARTNER", label: "협력업체" },
   { value: "ADMIN", label: "관리자" },
 ];
 
@@ -127,10 +130,22 @@ export default function AdminUsersPage() {
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         user.role === "ADMIN"
                           ? "bg-purple-100 text-purple-800"
-                          : "bg-gray-100 text-gray-800"
+                          : user.role === "SELLER"
+                          ? "bg-green-100 text-green-800"
+                          : user.role === "FRANCHISE"
+                          ? "bg-orange-100 text-orange-800"
+                          : user.role === "PARTNER"
+                          ? "bg-indigo-100 text-indigo-800"
+                          : "bg-blue-100 text-blue-800"
                       }`}
                     >
-                      {user.role}
+                      {({
+                        BUYER: "예비창업자",
+                        SELLER: "사장님",
+                        FRANCHISE: "프랜차이즈 본사",
+                        PARTNER: "협력업체",
+                        ADMIN: "관리자",
+                      } as Record<string, string>)[user.role] || user.role}
                     </span>
                   </td>
                   <td className="px-6 py-4">

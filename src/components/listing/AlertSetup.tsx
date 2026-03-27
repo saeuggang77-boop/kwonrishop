@@ -8,8 +8,15 @@ interface AlertPreference {
   maxPremium: string;
 }
 
+interface CategoryOption {
+  id: string;
+  name: string;
+  icon: string | null;
+}
+
 export default function AlertSetup() {
   const [isOpen, setIsOpen] = useState(false);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [preferences, setPreferences] = useState<AlertPreference>({
     region: "",
     categoryId: "",
@@ -30,6 +37,12 @@ export default function AlertSetup() {
         console.error("Failed to parse alert preferences", err);
       }
     }
+
+    // Load categories from API
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data: CategoryOption[]) => setCategories(data))
+      .catch(() => {});
 
     // Check for new listings
     checkNewListings();
@@ -173,16 +186,11 @@ export default function AlertSetup() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">전체</option>
-                    <option value="1">🍽️ 음식점</option>
-                    <option value="2">☕ 카페</option>
-                    <option value="3">🛒 편의점/마트</option>
-                    <option value="4">💇 미용/뷰티</option>
-                    <option value="5">🏋️ 헬스/운동</option>
-                    <option value="6">🎓 학원/교육</option>
-                    <option value="7">🏥 의료/약국</option>
-                    <option value="8">👕 의류/패션</option>
-                    <option value="9">📱 전자/통신</option>
-                    <option value="10">🎮 오락/여가</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.icon} {cat.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

@@ -24,6 +24,10 @@ const CommercialDistrictSection = dynamic(() => import("@/components/listing/Com
   loading: () => <div className="py-4 border-b border-gray-100"><div className="h-40 bg-gray-100 rounded-xl animate-pulse" /></div>,
 });
 
+const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
+  ssr: false,
+});
+
 interface ListingDetail {
   id: string;
   status: string;
@@ -391,6 +395,9 @@ export default function ListingDetailPage() {
 
       {/* 리뷰 섹션 */}
       <ReviewSection listingId={listing.id} />
+
+      {/* 크로스셀 추천 */}
+      <CrossSellSection type="listing" id={listing.id} />
 
       {/* 하단 액션 바 */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-10 md:static md:border-0 md:p-0 md:mt-6">

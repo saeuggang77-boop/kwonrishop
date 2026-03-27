@@ -101,7 +101,9 @@ export async function POST(req: NextRequest) {
       prisma.user.update({
         where: { id: session.user.id },
         data: {
-          role: session.user.role === "FRANCHISE_HQ" ? "FRANCHISE_HQ" : "SELLER",
+          role: body.requestedRole && ["SELLER", "FRANCHISE", "PARTNER"].includes(body.requestedRole)
+            ? body.requestedRole
+            : "SELLER",
         },
       }),
     ]);

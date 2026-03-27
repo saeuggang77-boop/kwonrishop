@@ -141,6 +141,57 @@ export default function Step7Confirm({ onPrev }: Props) {
         </Section>
       </div>
 
+      {/* 매출 매입자료 연동 */}
+      <div className="mt-6 pt-6 border-t border-gray-200">
+        <h3 className="text-base font-semibold text-gray-900 mb-1">매출 매입자료 연동 (선택)</h3>
+        <p className="text-sm text-gray-500 mb-4">매출 데이터를 연동하면 매물 신뢰도가 높아집니다</p>
+
+        <div className="space-y-3">
+          <DataConnectionCard
+            icon="🏛️"
+            title="홈택스"
+            description="간편인증으로 매출 데이터 연동"
+            disabled
+          />
+          <DataConnectionCard
+            icon="💳"
+            title="여신금융협회"
+            description="카드매출 데이터 연동"
+            disabled
+          />
+          <DataConnectionCard
+            icon="🛵"
+            title="배달의민족"
+            description="배달 매출 데이터 연동"
+            disabled
+          />
+          <DataConnectionCard
+            icon="🍔"
+            title="요기요"
+            description="배달 매출 데이터 연동"
+            disabled
+          />
+          <DataConnectionCard
+            icon="📦"
+            title="쿠팡이츠"
+            description="배달 매출 데이터 연동"
+            disabled
+          />
+        </div>
+
+        <div className="mt-4 flex items-start space-x-2">
+          <input
+            type="checkbox"
+            id="data-consent"
+            disabled
+            className="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+          />
+          <label htmlFor="data-consent" className="text-sm text-gray-500">
+            매출 데이터 제3자 제공 및 활용에 동의합니다
+          </label>
+        </div>
+      </div>
+
       {error && (
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
           {error}
@@ -180,6 +231,34 @@ function Info({ label, value }: { label: string; value: string }) {
     <div className="flex text-sm">
       <span className="w-20 text-gray-400 shrink-0">{label}</span>
       <span className="text-gray-700">{value || "-"}</span>
+    </div>
+  );
+}
+
+function DataConnectionCard({
+  icon,
+  title,
+  description,
+  disabled,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  disabled: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+      <div className="text-3xl shrink-0">{icon}</div>
+      <div className="flex-1 min-w-0">
+        <h4 className="text-sm font-medium text-gray-900">{title}</h4>
+        <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+      </div>
+      <button
+        disabled={disabled}
+        className="px-4 py-2 text-sm font-medium rounded-lg bg-white border border-gray-300 text-gray-400 cursor-not-allowed"
+      >
+        준비 중
+      </button>
     </div>
   );
 }

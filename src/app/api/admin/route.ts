@@ -31,6 +31,9 @@ export async function GET() {
       deletedListings,
       pendingReports,
       totalRevenue,
+      activePartners,
+      totalFranchises,
+      usersByRole,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.listing.count({ where: { status: "ACTIVE" } }),
@@ -42,6 +45,12 @@ export async function GET() {
       prisma.adPurchase.aggregate({
         _sum: { amount: true },
         where: { status: "PAID" },
+      }),
+      prisma.partnerService.count({ where: { status: "ACTIVE" } }),
+      prisma.franchiseBrand.count(),
+      prisma.user.groupBy({
+        by: ["role"],
+        _count: true,
       }),
     ]);
 
@@ -57,6 +66,9 @@ export async function GET() {
       },
       pendingReports,
       totalRevenue: totalRevenue._sum?.amount || 0,
+      activePartners,
+      totalFranchises,
+      usersByRole,
     });
   } catch (error) {
     console.error("Error fetching admin dashboard stats:", error);

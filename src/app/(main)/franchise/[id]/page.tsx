@@ -19,6 +19,10 @@ const IndustryRevenueSection = dynamic(
   }
 );
 
+const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
+  ssr: false,
+});
+
 interface FranchiseBrand {
   id: string;
   brandName: string;
@@ -381,6 +385,9 @@ export default function FranchiseDetailPage() {
           )}
         </div>
       </div>
+
+      {/* 크로스셀 추천 */}
+      <CrossSellSection type="franchise" id={id} />
     </div>
   );
 }

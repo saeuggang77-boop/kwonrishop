@@ -7,7 +7,9 @@ import { useEffect, useState } from "react";
 const ADMIN_MENU = [
   { href: "/admin", label: "대시보드", icon: "📊" },
   { href: "/admin/listings", label: "매물관리", icon: "🏪" },
+  { href: "/admin/partners", label: "협력업체", icon: "🤝" },
   { href: "/admin/franchise", label: "프랜차이즈", icon: "🏢" },
+  { href: "/admin/products", label: "광고상품", icon: "💎" },
   { href: "/admin/reports", label: "신고관리", icon: "⚠️" },
   { href: "/admin/users", label: "회원관리", icon: "👥" },
   { href: "/admin/notices", label: "공지사항", icon: "📢" },

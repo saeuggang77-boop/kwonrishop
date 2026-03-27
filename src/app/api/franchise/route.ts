@@ -8,6 +8,36 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "12");
     const search = searchParams.get("search") || "";
     const industry = searchParams.get("industry") || "";
+    const featured = searchParams.get("featured") === "true";
+
+    // Handle featured brands request
+    if (featured) {
+      const featuredBrands = await prisma.franchiseBrand.findMany({
+        where: {
+          tier: {
+            in: ["GOLD", "SILVER", "BRONZE"]
+          }
+        },
+        take: 10,
+        include: {
+          _count: { select: { inquiries: true } },
+        },
+        orderBy: [
+          { tier: "desc" },
+          { totalStores: "desc" },
+        ],
+      });
+
+      const transformed = featuredBrands.map((brand) => {
+        const { _count, ...rest } = brand;
+        return {
+          ...rest,
+          inquiryCount: _count.inquiries,
+        };
+      });
+
+      return NextResponse.json({ brands: transformed, featured: true });
+    }
 
     const skip = (page - 1) * limit;
 

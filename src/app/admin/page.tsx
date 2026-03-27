@@ -7,6 +7,9 @@ interface AdminStats {
   activeListings: number;
   pendingReports: number;
   totalRevenue: number;
+  activePartners: number;
+  totalFranchises: number;
+  usersByRole: { role: string; _count: number }[];
 }
 
 export default function AdminDashboardPage() {
@@ -37,6 +40,18 @@ export default function AdminDashboardPage() {
       color: "bg-green-50 text-green-600",
     },
     {
+      label: "활성 협력업체",
+      value: stats?.activePartners.toLocaleString() || "0",
+      icon: "🤝",
+      color: "bg-indigo-50 text-indigo-600",
+    },
+    {
+      label: "프랜차이즈 수",
+      value: stats?.totalFranchises.toLocaleString() || "0",
+      icon: "🏢",
+      color: "bg-cyan-50 text-cyan-600",
+    },
+    {
       label: "대기중 신고",
       value: stats?.pendingReports.toLocaleString() || "0",
       icon: "⚠️",
@@ -50,28 +65,52 @@ export default function AdminDashboardPage() {
     },
   ];
 
+  const roleLabel: Record<string, string> = {
+    BUYER: "예비창업자",
+    SELLER: "사장님",
+    FRANCHISE: "프랜차이즈본사",
+    PARTNER: "협력업체",
+    ADMIN: "관리자",
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">대시보드</h1>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="bg-white rounded-xl h-32 animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {statCards.map((card, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className={`w-12 h-12 rounded-full ${card.color} flex items-center justify-center text-2xl mb-3`}>
-                {card.icon}
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {statCards.map((card, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className={`w-12 h-12 rounded-full ${card.color} flex items-center justify-center text-2xl mb-3`}>
+                  {card.icon}
+                </div>
+                <p className="text-sm text-gray-600 mb-1">{card.label}</p>
+                <p className="text-2xl font-bold text-gray-900">{card.value}</p>
               </div>
-              <p className="text-sm text-gray-600 mb-1">{card.label}</p>
-              <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+            ))}
+          </div>
+
+          {stats?.usersByRole && stats.usersByRole.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mt-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">역할별 회원 분포</h2>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {stats.usersByRole.map((item) => (
+                  <div key={item.role} className="text-center p-4 bg-gray-50 rounded-lg">
+                    <p className="text-2xl font-bold text-gray-900">{item._count.toLocaleString()}</p>
+                    <p className="text-sm text-gray-500 mt-1">{roleLabel[item.role] || item.role}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

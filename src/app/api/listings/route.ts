@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   const maxPremium = searchParams.get("maxPremium");
   const premiumNone = searchParams.get("premiumNone");
   const brandType = searchParams.get("brandType");
+  const featured = searchParams.get("featured") === "true";
 
   // New advanced filters
   const region = searchParams.get("region");
@@ -31,6 +32,77 @@ export async function GET(req: NextRequest) {
   const areaMin = searchParams.get("areaMin");
   const areaMax = searchParams.get("areaMax");
   const themes = searchParams.get("themes");
+
+  // Featured listings query - return early
+  if (featured) {
+    const featuredListings = await prisma.listing.findMany({
+      where: {
+        status: "ACTIVE",
+        adPurchases: {
+          some: {
+            status: "PAID",
+            expiresAt: { gt: new Date() },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        status: true,
+        addressRoad: true,
+        addressJibun: true,
+        latitude: true,
+        longitude: true,
+        categoryId: true,
+        subCategoryId: true,
+        deposit: true,
+        monthlyRent: true,
+        premium: true,
+        premiumNone: true,
+        premiumNegotiable: true,
+        brandType: true,
+        storeName: true,
+        areaPyeong: true,
+        currentFloor: true,
+        themes: true,
+        viewCount: true,
+        favoriteCount: true,
+        createdAt: true,
+        bumpedAt: true,
+        category: { select: { name: true, icon: true } },
+        subCategory: { select: { name: true } },
+        images: {
+          take: 1,
+          orderBy: { sortOrder: "asc" },
+          select: { url: true },
+        },
+        adPurchases: {
+          where: {
+            status: "PAID",
+            expiresAt: { gt: new Date() },
+          },
+          include: { product: { select: { id: true, price: true } } },
+          take: 1,
+          orderBy: { createdAt: "desc" },
+        },
+      },
+    });
+
+    // Add featuredTier and sort by tier level
+    const tierOrder = { vip: 0, premium: 1, basic: 2 };
+    const withTier = featuredListings.map((l) => {
+      const productId = l.adPurchases[0]?.product?.id || "";
+      const tier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : "BASIC";
+      return { ...l, featuredTier: tier, adPurchases: undefined };
+    }).sort((a, b) => {
+      const aOrder = tierOrder[a.featuredTier.toLowerCase() as keyof typeof tierOrder] ?? 99;
+      const bOrder = tierOrder[b.featuredTier.toLowerCase() as keyof typeof tierOrder] ?? 99;
+      return aOrder - bOrder;
+    });
+
+    return NextResponse.json({ listings: withTier, featured: true });
+  }
 
   const where: Record<string, unknown> = {
     status: "ACTIVE",

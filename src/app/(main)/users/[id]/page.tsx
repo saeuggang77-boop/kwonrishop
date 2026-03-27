@@ -47,7 +47,13 @@ export default async function UserProfilePage({
     month: "long",
   });
 
-  const roleLabel = user.role === "SELLER" ? "판매자" : "구매자";
+  const roleLabel = {
+    BUYER: "예비창업자",
+    SELLER: "사장님",
+    FRANCHISE: "프랜차이즈 본사",
+    PARTNER: "협력업체",
+    ADMIN: "관리자",
+  }[user.role] || user.role;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

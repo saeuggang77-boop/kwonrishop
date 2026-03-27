@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { listingExpiredEmail } from "@/lib/email-templates";
+import { notifyListingExpiring } from "@/lib/kakao-alimtalk";
 
 export async function GET(request: NextRequest) {
   try {
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest) {
           select: {
             email: true,
             name: true,
+            phone: true,
           },
         },
       },
@@ -73,12 +75,14 @@ export async function GET(request: NextRequest) {
         data: notifications,
       });
 
-      // 매물 소유자에게 만료 이메일 전송 (비차단)
+      // 매물 소유자에게 만료 이메일 & 알림톡 전송 (비차단)
       expiredListings.forEach((listing: any) => {
+        const storeName = listing.storeName || listing.addressRoad || "매물";
+
+        // 이메일 알림
         if (listing.user.email) {
           (async () => {
             try {
-              const storeName = listing.storeName || listing.addressRoad || "매물";
               const { subject, html } = listingExpiredEmail(
                 listing.user.name || "회원",
                 storeName
@@ -88,6 +92,11 @@ export async function GET(request: NextRequest) {
               console.error("[Email] Failed to send expiration email:", error);
             }
           })();
+        }
+
+        // 알림톡 (non-blocking) - 만료 알림은 0일 남음으로 처리
+        if (listing.user.phone) {
+          notifyListingExpiring(listing.user.phone, storeName, 0).catch(() => {});
         }
       });
 

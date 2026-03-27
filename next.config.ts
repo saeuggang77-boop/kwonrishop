@@ -49,6 +49,10 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['date-fns'],
+    staleTimes: {
+      dynamic: 0,
+      static: 0,
+    },
   },
 };
 

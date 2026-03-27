@@ -8,6 +8,7 @@ import { validateOrigin } from "@/lib/csrf";
 import { pusher } from "@/lib/pusher";
 import { sendEmail } from "@/lib/email";
 import { newChatMessageEmail } from "@/lib/email-templates";
+import { notifyNewChat } from "@/lib/kakao-alimtalk";
 
 // 메시지 조회
 export async function GET(
@@ -142,7 +143,7 @@ export async function POST(
     }
   }
 
-  // 이메일 알림: 상대방에게 전송 (비차단, fire and forget)
+  // 이메일 & 알림톡: 상대방에게 전송 (비차단, fire and forget)
   (async () => {
     try {
       const chatRoom = await prisma.chatRoom.findUnique({
@@ -151,15 +152,17 @@ export async function POST(
           listing: { select: { storeName: true, addressRoad: true } },
           participants: {
             where: { userId: { not: session.user.id } },
-            select: { user: { select: { email: true, name: true } } },
+            select: { user: { select: { email: true, name: true, phone: true } } },
           },
         },
       });
 
       if (chatRoom && chatRoom.participants.length > 0) {
         const otherUser = chatRoom.participants[0].user;
+        const listingName = chatRoom.listing.storeName || chatRoom.listing.addressRoad || "매물";
+
+        // 이메일 알림
         if (otherUser.email) {
-          const listingName = chatRoom.listing.storeName || chatRoom.listing.addressRoad || "매물";
           const { subject, html } = newChatMessageEmail(
             otherUser.name || "회원",
             session.user.name || "사용자",
@@ -167,9 +170,18 @@ export async function POST(
           );
           await sendEmail(otherUser.email, subject, html);
         }
+
+        // 알림톡 (non-blocking)
+        if (otherUser.phone) {
+          notifyNewChat(
+            otherUser.phone,
+            session.user.name || "사용자",
+            listingName
+          ).catch(() => {});
+        }
       }
     } catch (error) {
-      console.error("[Email] Failed to send chat notification:", error);
+      console.error("[Notification] Failed to send chat notification:", error);
     }
   })();
 

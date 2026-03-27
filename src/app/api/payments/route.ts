@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { productId, listingId } = body;
+    const { productId, listingId, partnerServiceId } = body;
 
     if (!productId) {
       return NextResponse.json(
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 상품 조회
+    // 상품 조회 (categoryScope 포함)
     const product = await prisma.adProduct.findUnique({
       where: { id: productId },
       select: {
@@ -92,6 +92,7 @@ export async function POST(req: NextRequest) {
         price: true,
         active: true,
         duration: true,
+        categoryScope: true,
       },
     });
 
@@ -108,6 +109,40 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // 역할-카테고리 스코프 검증
+    const userRole = session.user.role;
+    const scope = product.categoryScope;
+
+    if (scope === "LISTING") {
+      if (userRole !== "SELLER" && userRole !== "ADMIN") {
+        return NextResponse.json(
+          { error: "매도자만 매물 광고 상품을 구매할 수 있습니다." },
+          { status: 403 }
+        );
+      }
+      if (!listingId) {
+        return NextResponse.json(
+          { error: "매물 ID가 필요합니다." },
+          { status: 400 }
+        );
+      }
+    } else if (scope === "FRANCHISE") {
+      if (userRole !== "FRANCHISE" && userRole !== "ADMIN") {
+        return NextResponse.json(
+          { error: "프랜차이즈 본사만 프랜차이즈 상품을 구매할 수 있습니다." },
+          { status: 403 }
+        );
+      }
+    } else if (scope === "PARTNER") {
+      if (userRole !== "PARTNER" && userRole !== "ADMIN") {
+        return NextResponse.json(
+          { error: "협력업체만 협력업체 상품을 구매할 수 있습니다." },
+          { status: 403 }
+        );
+      }
+    }
+    // COMMON: 모든 인증 사용자 가능
 
     // 매물 ID가 제공된 경우 소유권 확인
     if (listingId) {
@@ -131,12 +166,35 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 협력업체 서비스 ID가 제공된 경우 소유권 확인
+    if (partnerServiceId) {
+      const partnerService = await prisma.partnerService.findUnique({
+        where: { id: partnerServiceId },
+        select: { userId: true },
+      });
+
+      if (!partnerService) {
+        return NextResponse.json(
+          { error: "협력업체 서비스를 찾을 수 없습니다." },
+          { status: 404 }
+        );
+      }
+
+      if (partnerService.userId !== session.user.id) {
+        return NextResponse.json(
+          { error: "본인의 협력업체 서비스만 광고를 구매할 수 있습니다." },
+          { status: 403 }
+        );
+      }
+    }
+
     // AdPurchase 생성 (PENDING 상태)
     const adPurchase = await prisma.adPurchase.create({
       data: {
         userId: session.user.id,
         productId,
         listingId: listingId || null,
+        partnerServiceId: partnerServiceId || null,
         status: "PENDING",
         amount: product.price,
       },

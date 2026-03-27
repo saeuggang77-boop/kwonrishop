@@ -45,12 +45,13 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
-          select: { id: true, role: true, phone: true },
+          select: { id: true, role: true, phone: true, roleSelectedAt: true },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.phone = dbUser.phone;
+          token.roleSelected = !!dbUser.roleSelectedAt;
         }
       }
       return token;
@@ -60,6 +61,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
         session.user.phone = (token.phone as string) || null;
+        session.user.roleSelected = (token.roleSelected as boolean) ?? false;
       }
       return session;
     },

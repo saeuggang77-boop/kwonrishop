@@ -29,7 +29,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
               <li>
                 <Link
-                  href="/search"
+                  href="/listings"
                   className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   매물검색
@@ -37,7 +37,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/listings/new"
+                  href="/sell"
                   className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   매물등록
@@ -49,6 +49,14 @@ export default function Footer() {
                   className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   프랜차이즈
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/partners"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  협력업체
                 </Link>
               </li>
               <li>
@@ -68,10 +76,26 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
               <li>
                 <Link
+                  href="/guide"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  이용가이드
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/faq"
                   className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   자주 묻는 질문
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  고객센터
                 </Link>
               </li>
               <li>

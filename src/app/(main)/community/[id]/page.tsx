@@ -86,10 +86,32 @@ export default function CommunityDetailPage() {
           </span>
         )}
         <h1 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h1>
-        <div className="flex items-center gap-3 text-sm text-gray-400">
-          <span>{post.author.name || "익명"}</span>
-          <span>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
-          <span>조회 {post.viewCount}</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 text-sm text-gray-400">
+            <span>{post.author.name || "익명"}</span>
+            <span>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
+            <span>조회 {post.viewCount}</span>
+          </div>
+          {session?.user?.id === post.author.id && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => router.push(`/community/${params.id}/edit`)}
+                className="text-sm text-gray-500 hover:text-blue-600"
+              >
+                수정
+              </button>
+              <button
+                onClick={async () => {
+                  if (!confirm("정말 삭제하시겠습니까?")) return;
+                  const res = await fetch(`/api/community/${params.id}`, { method: "DELETE" });
+                  if (res.ok) router.push("/community");
+                }}
+                className="text-sm text-gray-500 hover:text-red-600"
+              >
+                삭제
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

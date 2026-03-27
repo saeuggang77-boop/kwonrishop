@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ListingCard from "@/components/listing/ListingCard";
 import ListingMapView from "@/components/map/ListingMapView";
+import PremiumCarousel from "@/components/shared/PremiumCarousel";
 import { useDebounce } from "@/hooks/useDebounce";
 
 interface Category {
@@ -18,6 +19,7 @@ function ListingsContent() {
   const router = useRouter();
 
   const [listings, setListings] = useState<Record<string, unknown>[]>([]);
+  const [featuredListings, setFeaturedListings] = useState<(Record<string, unknown> & { featuredTier?: string })[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -76,6 +78,12 @@ function ListingsContent() {
     fetch("/api/categories")
       .then((r) => r.json())
       .then(setCategories);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/listings?featured=true")
+      .then((r) => r.json())
+      .then((data) => setFeaturedListings(data.listings || []));
   }, []);
 
   useEffect(() => {
@@ -342,6 +350,74 @@ function ListingsContent() {
           </div>
         </div>
       )}
+
+      {/* 프리미엄 매물 캐러셀 */}
+      <PremiumCarousel
+        title="프리미엄 매물"
+        subtitle="유료 광고 매물을 먼저 확인하세요"
+        count={featuredListings.length}
+      >
+        {featuredListings.map((listing) => {
+          const tierColors: Record<string, string> = {
+            VIP: "border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20",
+            PREMIUM: "border-gray-400 bg-gray-50 dark:bg-gray-700/30",
+            BASIC: "border-blue-400 bg-blue-50 dark:bg-blue-900/20",
+          };
+          const tierBadgeColors: Record<string, string> = {
+            VIP: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+            PREMIUM: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+            BASIC: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+          };
+          const tier = (listing.featuredTier as string) || "BASIC";
+          const address = (listing.addressRoad || listing.addressJibun || "주소 미입력") as string;
+          const shortAddress = address.split(" ").slice(0, 3).join(" ");
+          const images = listing.images as { url: string }[];
+
+          return (
+            <div
+              key={listing.id as string}
+              onClick={() => router.push(`/listings/${listing.id}`)}
+              className={`min-w-[280px] max-w-[280px] snap-start rounded-xl border-2 ${tierColors[tier] || tierColors.BASIC} overflow-hidden cursor-pointer hover:shadow-lg transition-shadow shrink-0`}
+            >
+              <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
+                {images?.[0] ? (
+                  <img src={images[0].url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-300">
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                )}
+                <span className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${tierBadgeColors[tier] || tierBadgeColors.BASIC}`}>
+                  {tier}
+                </span>
+              </div>
+              <div className="p-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate mb-1">{shortAddress}</p>
+                <p className="text-sm">
+                  <span className="text-gray-500 dark:text-gray-400">보증금/월세 </span>
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                    {(listing.deposit as number)?.toLocaleString()} / {(listing.monthlyRent as number)?.toLocaleString()}만
+                  </span>
+                </p>
+                <p className="text-sm">
+                  <span className="text-gray-500 dark:text-gray-400">권리금 </span>
+                  <span className="font-bold text-blue-600 dark:text-blue-400">
+                    {listing.premiumNone
+                      ? "무권리"
+                      : `${(listing.premium as number)?.toLocaleString()}만`}
+                  </span>
+                </p>
+                <div className="flex gap-2 mt-1 text-xs text-gray-400">
+                  {listing.areaPyeong ? <span>{listing.areaPyeong as number}평</span> : null}
+                  {listing.currentFloor ? <span>{listing.currentFloor as number}층</span> : null}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </PremiumCarousel>
 
       {/* 보기 모드 전환 + 정렬 + 결과수 */}
       <div className="flex items-center justify-between mb-4">
