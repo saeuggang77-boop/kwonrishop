@@ -352,6 +352,15 @@ export async function POST(req: NextRequest) {
             }),
           ),
         },
+        documents: {
+          create: (body.documents || []).map(
+            (doc: { url: string; sortOrder?: number }) => ({
+              url: doc.url,
+              type: "REVENUE_PROOF",
+              sortOrder: doc.sortOrder || 0,
+            }),
+          ),
+        },
       },
     });
 

@@ -9,6 +9,9 @@ const noopStorage: StateStorage = {
 };
 
 export interface ListingFormData {
+  // Step 0: 약관동의
+  agreedToTerms: boolean;
+
   // Step 1: 위치정보
   zipCode: string;
   addressJibun: string;
@@ -66,8 +69,9 @@ export interface ListingFormData {
   // Step 5: 매물설명
   description: string;
 
-  // Step 6: 사진/연락처
+  // Step 6: 사진/연락처/매출증빙
   images: { file?: File; url: string; type: string; sortOrder: number }[];
+  documents: { file?: File; url: string; sortOrder: number }[];
   contactPublic: boolean;
 }
 
@@ -80,6 +84,8 @@ interface ListingFormStore {
 }
 
 const initialData: ListingFormData = {
+  agreedToTerms: false,
+
   zipCode: "",
   addressJibun: "",
   addressRoad: "",
@@ -133,6 +139,7 @@ const initialData: ListingFormData = {
   description: "",
 
   images: [],
+  documents: [],
   contactPublic: false,
 };
 
@@ -155,10 +162,14 @@ export const useListingFormStore = create<ListingFormStore>()(
         currentStep: state.currentStep,
         data: {
           ...state.data,
-          // File 객체는 persist 불가 - 이미지 URL만 저장
+          // File 객체는 persist 불가 - URL만 저장
           images: state.data.images.map(({ url, type, sortOrder }) => ({
             url,
             type,
+            sortOrder,
+          })),
+          documents: state.data.documents.map(({ url, sortOrder }) => ({
+            url,
             sortOrder,
           })),
         },

@@ -11,6 +11,37 @@ const IMAGE_TYPES = [
   { value: "OTHER", label: "기타" },
 ];
 
+const PHOTO_GUIDES = [
+  {
+    label: "외부사진",
+    desc: "간판, 출입구가 보이도록",
+    icon: (
+      <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "내부(홀)사진",
+    desc: "테이블, 좌석 배치 전경",
+    icon: (
+      <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21" />
+      </svg>
+    ),
+  },
+  {
+    label: "내부(주방)사진",
+    desc: "주방 설비, 조리 공간",
+    icon: (
+      <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+      </svg>
+    ),
+  },
+];
+
 interface Props {
   onNext: () => void;
   onPrev: () => void;
@@ -19,10 +50,17 @@ interface Props {
 export default function Step6Photos({ onNext, onPrev }: Props) {
   const { data, updateData } = useListingFormStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
+
+  const hasExterior = data.images.some((img) => img.type === "EXTERIOR");
+  const hasInterior = data.images.some((img) => img.type === "INTERIOR");
+  const photoRequirementMet = hasExterior && hasInterior;
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
-    const newImages = files.map((file, i) => ({
+    const remaining = 15 - data.images.length;
+    const filesToAdd = files.slice(0, remaining);
+    const newImages = filesToAdd.map((file, i) => ({
       file,
       url: URL.createObjectURL(file),
       type: "OTHER",
@@ -44,19 +82,57 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
     updateData({ images: updated });
   }
 
+  function handleDocSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    const newDocs = files.map((file, i) => ({
+      file,
+      url: URL.createObjectURL(file),
+      sortOrder: data.documents.length + i,
+    }));
+    updateData({ documents: [...data.documents, ...newDocs] });
+    if (docInputRef.current) docInputRef.current.value = "";
+  }
+
+  function removeDoc(index: number) {
+    const updated = data.documents.filter((_, i) => i !== index);
+    updateData({ documents: updated });
+  }
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6">
-      <h2 className="text-lg font-bold text-gray-900 mb-1">사진 / 연락처</h2>
-      <p className="text-sm text-gray-500 mb-6">매물 사진을 등록하고 연락처 공개 여부를 설정해주세요</p>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">사진 / 연락처</h2>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">매물 사진을 등록하고 연락처 공개 여부를 설정해주세요</p>
 
       <div className="space-y-6">
+        {/* 사진 가이드 예시 */}
+        <div>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">촬영 가이드</p>
+          <div className="grid grid-cols-3 gap-2">
+            {PHOTO_GUIDES.map((guide) => (
+              <div
+                key={guide.label}
+                className="flex flex-col items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 border-dashed rounded-xl"
+              >
+                {guide.icon}
+                <div className="text-center">
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{guide.label}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{guide.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-red-500 font-medium">
+            * 내부 사진, 외부 사진 각각 1장 이상 필수 첨부
+          </p>
+        </div>
+
         {/* 사진 업로드 */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <label className="text-sm font-medium text-gray-700">
-              매물 사진 <span className="text-gray-400">(최대 15장)</span>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              매물 사진 <span className="text-gray-400 dark:text-gray-500">(최대 15장)</span>
             </label>
-            <span className="text-sm text-gray-400">{data.images.length}/15</span>
+            <span className="text-sm text-gray-400 dark:text-gray-500">{data.images.length}/15</span>
           </div>
 
           <input
@@ -70,7 +146,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
 
           <div className="grid grid-cols-3 gap-3">
             {data.images.map((img, i) => (
-              <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200">
+              <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
                 <Image
                   src={img.url}
                   alt={`사진 ${i + 1}`}
@@ -103,7 +179,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-400 transition-colors"
+                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-blue-400 hover:text-blue-400 transition-colors"
               >
                 <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
@@ -112,38 +188,113 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               </button>
             )}
           </div>
+
+          {/* 사진 유형 필수 체크 */}
+          {data.images.length > 0 && !photoRequirementMet && (
+            <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <p className="text-xs text-yellow-700 dark:text-yellow-300 font-medium">
+                {!hasExterior && !hasInterior
+                  ? "외부 사진 1장, 내부 사진 1장 이상 필요합니다. 사진 유형을 선택해주세요."
+                  : !hasExterior
+                    ? "외부 사진이 1장 이상 필요합니다. 사진 유형을 '외부'로 변경해주세요."
+                    : "내부 사진이 1장 이상 필요합니다. 사진 유형을 '내부'로 변경해주세요."}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* 매출 증빙자료 */}
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">매출 증빙자료</label>
+            <span className="text-xs text-gray-400 dark:text-gray-500">(선택)</span>
+          </div>
+          <p className="text-xs text-blue-600 dark:text-blue-400 mb-3 font-medium">
+            매출 증빙자료를 공개해 주세요! 더욱 빠른 거래가 가능합니다.
+          </p>
+
+          <input
+            ref={docInputRef}
+            type="file"
+            accept="image/jpeg,image/jpg,image/png"
+            multiple
+            onChange={handleDocSelect}
+            className="hidden"
+          />
+
+          <div className="flex flex-wrap gap-3">
+            {data.documents.map((doc, i) => (
+              <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                <Image src={doc.url} alt={`증빙 ${i + 1}`} fill className="object-cover" sizes="80px" />
+                <button
+                  type="button"
+                  onClick={() => removeDoc(i)}
+                  className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 text-white rounded-full flex items-center justify-center text-[10px]"
+                >
+                  X
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => docInputRef.current?.click()}
+              className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-blue-400 hover:text-blue-400 transition-colors"
+            >
+              <svg className="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="text-[10px]">추가</span>
+            </button>
+          </div>
+          <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2">JPG, PNG 형식만 가능</p>
         </div>
 
         {/* 연락처 공개 */}
-        <div className="border-t pt-6">
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={data.contactPublic}
-              onChange={(e) => updateData({ contactPublic: e.target.checked })}
-              className="mt-0.5 rounded border-gray-300"
-            />
-            <div>
-              <span className="text-sm font-medium text-gray-900">연락처 공개</span>
-              <p className="text-xs text-gray-500 mt-0.5">
-                체크하면 매물 상세 페이지에서 연락처가 바로 노출됩니다.
-                체크하지 않으면 채팅으로만 연락 가능합니다.
-              </p>
-            </div>
-          </label>
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">연락처 공개 여부</label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => updateData({ contactPublic: true })}
+              className={`flex-1 py-3 rounded-lg border text-sm font-medium transition-colors ${
+                data.contactPublic
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                  : "border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
+              }`}
+            >
+              공개
+            </button>
+            <button
+              type="button"
+              onClick={() => updateData({ contactPublic: false })}
+              className={`flex-1 py-3 rounded-lg border text-sm font-medium transition-colors ${
+                !data.contactPublic
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                  : "border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
+              }`}
+            >
+              비공개
+            </button>
+          </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+            {data.contactPublic
+              ? "매물 상세 페이지에서 연락처가 바로 노출됩니다."
+              : "비공개 시 채팅으로만 연락 가능합니다. (추천)"}
+          </p>
         </div>
       </div>
 
       <div className="mt-8 flex justify-between">
         <button
           onClick={onPrev}
-          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+          className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           이전
         </button>
         <button
           onClick={onNext}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          disabled={data.images.length === 0 || !photoRequirementMet}
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

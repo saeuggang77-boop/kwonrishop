@@ -1,6 +1,6 @@
 # 권리샵 사이트 구조 분석
 
-> 최종 업데이트: 2026-03-28 (보완작업: 크론잡/리뷰/커뮤니티수정/역할별관리/이용가이드/고객센터/Step7연동UI/알림톡)
+> 최종 업데이트: 2026-03-28 (매물등록 위저드 7단계 개선: 약관동의 모달, 업종 UX, 자동계산, 유효성검증, 사진가이드, 외부연동 모달)
 
 ---
 
@@ -12,7 +12,7 @@
 | 언어 | TypeScript 5 |
 | React | 19.2.3 |
 | DB/ORM | PostgreSQL + Prisma 7.4.2 |
-| 인증 | NextAuth 4.24 (카카오/네이버 소셜) |
+| 인증 | NextAuth 4.24 (카카오/네이버 소셜 + 이메일/비밀번호) |
 | 스타일링 | Tailwind CSS 4 |
 | 상태관리 | Zustand 5 |
 | 폼 | React Hook Form 7 + Zod 4 |
@@ -29,16 +29,22 @@
 
 | 역할 코드 | 한글명 | 가입 조건 | 핵심 기능 |
 |-----------|--------|----------|----------|
-| BUYER | 예비창업자 | 소셜 로그인만 | 매물 검색/찜/채팅 |
-| SELLER | 사장님 | 소셜 로그인 + 사업자 인증 | 매물 1건 등록/관리 |
-| FRANCHISE | 프랜차이즈 본사 | 소셜 로그인 + 사업자 인증 | 브랜드 페이지 편집 |
-| PARTNER | 협력업체 | 소셜 로그인 + 사업자 인증 | 서비스 1건 등록/관리 |
+| BUYER | 예비창업자 | 소셜/이메일 로그인 | 매물 검색/찜/채팅 |
+| SELLER | 사장님 | 소셜/이메일 로그인 + 사업자 인증 | 매물 1건 등록/관리 |
+| FRANCHISE | 프랜차이즈 본사 | 소셜/이메일 로그인 + 사업자 인증 | 브랜드 페이지 편집 |
+| PARTNER | 협력업체 | 소셜/이메일 로그인 + 사업자 인증 | 서비스 1건 등록/관리 |
 | ADMIN | 관리자 | 시스템 계정 | 전체 관리 |
 
 ### 가입 플로우
+**소셜 로그인 (카카오/네이버):**
 1. 소셜 로그인 → `/select-role`에서 역할 선택
 2. BUYER → 즉시 완료 (홈 이동)
 3. SELLER/FRANCHISE/PARTNER → `/verify-business?role=XXX`에서 사업자 인증
+
+**이메일 가입:**
+1. `/signup`에서 이름/이메일/비밀번호 입력 → 인증 이메일 발송
+2. 이메일 인증 링크 클릭 → `/login?verified=true`로 리다이렉트
+3. 이메일 로그인 → `/select-role`에서 역할 선택 (이후 소셜과 동일)
 
 ---
 
@@ -117,7 +123,9 @@
 
 | 경로 | 페이지 | 설명 |
 |------|--------|------|
-| `/login` | 로그인 | 카카오/네이버 소셜 로그인 |
+| `/login` | 로그인 | 카카오/네이버 소셜 + 이메일 로그인, 가치제안 표시 |
+| `/signup` | 이메일 회원가입 | 이름/이메일/비밀번호 + 약관동의 → 인증메일 발송 |
+| `/forgot-password` | 비밀번호 찾기/재설정 | 이메일 입력 → 재설정 링크 발송, ?step=reset으로 비밀번호 변경 |
 | `/select-role` | 역할 선택 | 최초 가입 시 4종 역할 선택 |
 | `/verify-business` | 사업자 인증 | 국세청 API 진위확인 (role 파라미터 지원) |
 
@@ -152,6 +160,11 @@
 | POST | `/api/auth/business-verify` | 국세청 사업자 진위확인 (SELLER/FRANCHISE/PARTNER 분기) |
 | GET | `/api/auth/check-verification` | 사업자인증 상태 확인 |
 | POST | `/api/auth/select-role` | 역할 선택 (BUYER/SELLER/FRANCHISE/PARTNER) |
+| POST | `/api/auth/signup` | 이메일 회원가입 (이름/이메일/비밀번호) |
+| GET | `/api/auth/verify-email` | 이메일 인증 (토큰 검증 → 로그인 리다이렉트) |
+| POST | `/api/auth/forgot-password` | 비밀번호 찾기 (재설정 이메일 발송) |
+| POST | `/api/auth/reset-password` | 비밀번호 재설정 (토큰+새 비밀번호) |
+| POST | `/api/auth/resend-verification` | 인증 메일 재발송 |
 
 ### 매물
 | 메서드 | 경로 | 설명 |
@@ -250,7 +263,7 @@
 
 | 모델 | 설명 |
 |------|------|
-| User | 사용자 (BUYER/SELLER/FRANCHISE/PARTNER/ADMIN), roleSelectedAt |
+| User | 사용자 (BUYER/SELLER/FRANCHISE/PARTNER/ADMIN), roleSelectedAt, password(이메일가입용) |
 | Account / Session / VerificationToken | NextAuth 표준 |
 | BusinessVerification | 사업자 인증 정보 |
 | Category / SubCategory | 업종 대분류/소분류 |
@@ -285,15 +298,16 @@
 - `CrossSellSection.tsx` — 크로스셀 추천 (상세 페이지 하단, 수평 스크롤)
 - `PremiumCarousel.tsx` — 프리미엄 캐러셀 (목록 페이지 상단, 유료 등급별 수평 스크롤)
 
-### 매물등록 위저드 (7단계)
-- `StepIndicator.tsx` — 단계 표시
+### 매물등록 위저드 (7단계, 아싸점포거래소 참조 개선)
+- `sell/page.tsx` — 위저드 메인: Step 0 공정거래 약관동의 모달 → Step 1~7 순서 진행
+- `StepIndicator.tsx` — 단계 표시 (각 단계 아이콘 + 현재 단계명 강조)
 - `Step1Location.tsx` — 카카오 주소검색
-- `Step2Category.tsx` — 업종 선택 + 금액
+- `Step2Category.tsx` — 업종 선택 UX (대분류 카드→칩 축소 + 소분류 아이콘 카드 + 질문형 헤딩)
 - `Step3BasicInfo.tsx` — 브랜드/상호/층수/평수/테마/주차
-- `Step4Additional.tsx` — 매출/지출/인력/순이익
-- `Step5Description.tsx` — 매물 설명
-- `Step6Photos.tsx` — 사진 + 증빙자료 업로드
-- `Step7Confirm.tsx` — 최종 확인 + 제출
+- `Step4Additional.tsx` — 투자금 자동합산, 매출대비% 자동계산, 순이익 자동계산, 인력구성
+- `Step5Description.tsx` — 매물 설명 (최소 10자 검증 + 연락처 기재 금지 감지 + 글자수 카운터)
+- `Step6Photos.tsx` — 촬영 가이드 3종 + 외부/내부 필수 검증 + 매출 증빙자료 업로드 + 연락처 공개/비공개 버튼
+- `Step7Confirm.tsx` — 최종 확인 + 외부 연동 모달 (홈택스/여신금융/배민/요기요/쿠팡이츠) + 저장
 
 ### 매물 관련
 - `ListingCard.tsx` — 매물 카드 UI
@@ -324,7 +338,8 @@
 
 - **보호 경로**: `/sell`, `/mypage`, `/verify-business`, `/admin`, `/partners/register` → 미로그인 시 로그인 리다이렉트
 - **역할 선택**: roleSelectedAt이 null인 인증 유저 → `/select-role`로 리다이렉트
-- **로그인 경로**: 이미 로그인 시 홈으로 리다이렉트
+- **로그인 경로**: `/login`, `/signup` — 이미 로그인 시 홈으로 리다이렉트
+- **역할 면제 경로**: `/select-role`, `/api/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/_next/`, `/favicon`
 - **보안 헤더**: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy
 
 ---
@@ -332,7 +347,7 @@
 ## 상태관리 (Zustand)
 
 - `compareStore.ts` — 매물 비교 목록 상태
-- `listingForm.ts` — 매물등록 7단계 폼 데이터
+- `listingForm.ts` — 매물등록 7단계 폼 데이터 (agreedToTerms 약관동의 + documents 매출증빙자료 포함)
 
 ---
 
@@ -351,7 +366,8 @@
 
 | 파일 | 용도 |
 |------|------|
-| `lib/auth.ts` | NextAuth 설정 (roleSelectedAt JWT 포함) |
+| `lib/auth.ts` | NextAuth 설정 (카카오/네이버/Credentials, roleSelectedAt JWT 포함) |
+| `lib/password.ts` | 비밀번호 해싱(bcrypt)/검증/토큰생성/SHA-256 해싱 |
 | `lib/auth-adapter.ts` | Prisma Auth 어댑터 |
 | `lib/prisma.ts` | Prisma 클라이언트 싱글톤 |
 | `lib/constants.ts` | SERVICE_TYPE_LABELS, REGION_OPTIONS |
@@ -370,16 +386,16 @@
 ## 사용자 흐름
 
 ### 예비창업자 (BUYER)
-1. 소셜 로그인 → 역할 선택 → 매물 검색/필터 → 매물 상세 확인 → 찜/채팅/문의 → 직거래
+1. 소셜/이메일 로그인 → 역할 선택 → 매물 검색/필터 → 매물 상세 확인 → 찜/채팅/문의 → 직거래
 
 ### 사장님 (SELLER)
-1. 소셜 로그인 → 역할 선택 → 사업자 인증 → 매물등록 7단계 위저드 → 매물 관리 → 광고 상품 구매 (베이직/프리미엄/VIP) → 채팅 응대
+1. 소셜/이메일 로그인 → 역할 선택 → 사업자 인증 → 매물등록 7단계 위저드 → 매물 관리 → 광고 상품 구매 (베이직/프리미엄/VIP) → 채팅 응대
 
 ### 프랜차이즈 본사 (FRANCHISE)
-1. 소셜 로그인 → 역할 선택 → 사업자 인증 → 공정위 자동 매칭 → 브랜드 페이지 편집 → 유료 구독 (브론즈/실버/골드)
+1. 소셜/이메일 로그인 → 역할 선택 → 사업자 인증 → 공정위 자동 매칭 → 브랜드 페이지 편집 → 유료 구독 (브론즈/실버/골드)
 
 ### 협력업체 (PARTNER)
-1. 소셜 로그인 → 역할 선택 → 사업자 인증 → 서비스 등록 (단일 페이지) → 서비스 관리 → 광고 상품 구매 (베이직/프리미엄/VIP)
+1. 소셜/이메일 로그인 → 역할 선택 → 사업자 인증 → 서비스 등록 (단일 페이지) → 서비스 관리 → 광고 상품 구매 (베이직/프리미엄/VIP)
 
 ### 관리자 (ADMIN)
 1. 로그인 → 대시보드 (6개 통계 + 역할별 분포) → 매물/협력업체/회원/신고/공지/광고상품 관리 → 프랜차이즈 데이터 동기화
