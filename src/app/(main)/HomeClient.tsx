@@ -27,6 +27,7 @@ interface Listing {
   category: { name: string; icon: string | null } | null;
   subCategory: { name: string } | null;
   images: { url: string }[];
+  featuredTier?: string;
 }
 
 interface FranchiseBrand {
@@ -65,7 +66,6 @@ const SERVICE_TYPE_LABELS: Record<string, string> = {
 export default function HomeClient() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [latestListings, setLatestListings] = useState<Listing[]>([]);
-  const [popularListings, setPopularListings] = useState<Listing[]>([]);
   const [franchiseBrands, setFranchiseBrands] = useState<FranchiseBrand[]>([]);
   const [partnerServices, setPartnerServices] = useState<PartnerService[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,22 +74,19 @@ export default function HomeClient() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [latestRes, popularRes, franchiseRes, partnerRes] = await Promise.all([
-        fetch("/api/listings?limit=8&sort=latest"),
-        fetch("/api/listings?limit=4&sort=popular"),
+      const [latestRes, franchiseRes, partnerRes] = await Promise.all([
+        fetch("/api/listings?limit=20&sort=latest"),
         fetch("/api/franchise?limit=4"),
         fetch("/api/partners?limit=4"),
       ]);
 
-      const [latestData, popularData, franchiseData, partnerData] = await Promise.all([
+      const [latestData, franchiseData, partnerData] = await Promise.all([
         latestRes.json(),
-        popularRes.json(),
         franchiseRes.json(),
         partnerRes.json(),
       ]);
 
       setLatestListings(latestData.listings || []);
-      setPopularListings(popularData.listings || []);
       setFranchiseBrands(franchiseData.brands || []);
       setPartnerServices(partnerData.partners || []);
     } catch (error) {
@@ -191,51 +188,63 @@ export default function HomeClient() {
           </div>
         </section>
 
-        {/* 최신 등록 매물 */}
-        <section className="py-12 border-t border-gray-100 dark:border-gray-800">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">최신 등록 매물</h2>
-            <Link href="/listings" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-              더보기 →
-            </Link>
-          </div>
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl h-64 animate-pulse" />
-              ))}
+        {/* VIP 매물 */}
+        {!loading && latestListings.filter((l) => l.featuredTier === "VIP").length > 0 && (
+          <section className="py-12 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <span className="text-yellow-500">VIP</span> 매물
+              </h2>
+              <Link href="/listings" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                더보기 →
+              </Link>
             </div>
-          ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {latestListings.slice(0, 8).map((listing) => (
+              {latestListings.filter((l) => l.featuredTier === "VIP").map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        )}
 
-        {/* 인기 매물 */}
-        <section className="py-12 border-t border-gray-100 dark:border-gray-800">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">인기 매물 (조회수 높은)</h2>
-            <Link href="/listings?sort=popular" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-              더보기 →
-            </Link>
-          </div>
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl h-64 animate-pulse" />
-              ))}
+        {/* 프리미엄 매물 */}
+        {!loading && latestListings.filter((l) => l.featuredTier === "PREMIUM").length > 0 && (
+          <section className="py-12 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <span className="text-purple-600">프리미엄</span> 매물
+              </h2>
+              <Link href="/listings" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                더보기 →
+              </Link>
             </div>
-          ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {popularListings.map((listing) => (
+              {latestListings.filter((l) => l.featuredTier === "PREMIUM").map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        )}
+
+        {/* 베이직 매물 */}
+        {!loading && latestListings.filter((l) => l.featuredTier === "BASIC").length > 0 && (
+          <section className="py-12 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <span className="text-blue-600">베이직</span> 매물
+              </h2>
+              <Link href="/listings" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                더보기 →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {latestListings.filter((l) => l.featuredTier === "BASIC").map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+          </section>
+        )}
+
 
         {/* 추천 프랜차이즈 */}
         <section className="py-12 border-t border-gray-100 dark:border-gray-800">

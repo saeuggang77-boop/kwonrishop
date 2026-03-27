@@ -38,6 +38,7 @@ interface ListingItem {
   category: { name: string; icon: string | null } | null;
   subCategory: { name: string } | null;
   images: { url: string }[];
+  featuredTier?: string;
 }
 
 interface FeaturedListingItem extends ListingItem {

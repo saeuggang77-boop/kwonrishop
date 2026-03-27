@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCompareStore } from "@/store/compareStore";
+import TierBadge from "@/components/shared/TierBadge";
 
 interface ListingCardProps {
   listing: {
@@ -25,6 +26,7 @@ interface ListingCardProps {
     category: { name: string; icon: string | null } | null;
     subCategory: { name: string } | null;
     images: { url: string }[];
+    featuredTier?: string;
   };
 }
 
@@ -33,6 +35,14 @@ export default function ListingCard({ listing }: ListingCardProps) {
   const shortAddress = address.split(" ").slice(0, 3).join(" ");
   const { addToCompare, removeFromCompare, isInCompare } = useCompareStore();
   const inCompare = isInCompare(listing.id);
+
+  const tier = listing.featuredTier || "FREE";
+  const tierStyles: Record<string, string> = {
+    VIP: "border-2 border-yellow-400 bg-yellow-50/50 dark:bg-yellow-900/10",
+    PREMIUM: "border-2 border-gray-400 bg-gray-50/50 dark:bg-gray-700/10",
+    BASIC: "border-2 border-blue-300 bg-blue-50/50 dark:bg-blue-900/10",
+    FREE: "border border-gray-200 dark:border-gray-700",
+  };
 
   const handleCompareToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,7 +59,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
   };
 
   return (
-    <div className="relative block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+    <div className={`relative block bg-white dark:bg-gray-800 rounded-xl ${tierStyles[tier] || tierStyles.FREE} overflow-hidden hover:shadow-md transition-shadow`}>
       <Link href={`/listings/${listing.id}`}>
       {/* 이미지 */}
       <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
@@ -81,6 +91,13 @@ export default function ListingCard({ listing }: ListingCardProps) {
                 {theme}
               </span>
             ))}
+          </div>
+        )}
+
+        {/* 유료 광고 배지 */}
+        {tier !== "FREE" && (
+          <div className="absolute bottom-2 left-2">
+            <TierBadge tier={tier} size="sm" />
           </div>
         )}
 

@@ -221,13 +221,29 @@ export async function GET(req: NextRequest) {
           orderBy: { sortOrder: "asc" },
           select: { url: true },
         },
+        adPurchases: {
+          where: {
+            status: "PAID",
+            expiresAt: { gt: new Date() },
+          },
+          include: { product: { select: { id: true } } },
+          take: 1,
+          orderBy: { createdAt: "desc" as const },
+        },
       },
     }),
     prisma.listing.count({ where }),
   ]);
 
+  const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2, FREE: 3 };
+  const listingsWithTier = listings.map((l: any) => {
+    const productId = l.adPurchases?.[0]?.product?.id || "";
+    const tier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
+    return { ...l, featuredTier: tier, adPurchases: undefined };
+  }).sort((a: any, b: any) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3));
+
   return NextResponse.json({
-    listings,
+    listings: listingsWithTier,
     pagination: {
       page,
       limit,
