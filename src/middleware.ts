@@ -15,6 +15,21 @@ export async function middleware(req: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
+
+    // 역할 기반 접근 제어
+    const userRole = token.role as string | undefined;
+
+    if (pathname.startsWith("/admin") && userRole !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (pathname.startsWith("/sell") && userRole !== "SELLER" && userRole !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (pathname.startsWith("/partners/register") && userRole !== "PARTNER" && userRole !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
   }
 
   // 이미 로그인 된 상태에서 로그인 페이지 접근 시 홈으로
@@ -37,6 +52,19 @@ export async function middleware(req: NextRequest) {
   response.headers.set("X-XSS-Protection", "1; mode=block");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Permissions-Policy", "camera=(), microphone=()");
+  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  response.headers.set(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://t1.daumcdn.net https://cdn.vercel-insights.com https://dapi.kakao.com",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https: http:",
+      "font-src 'self' data:",
+      "connect-src 'self' https://api.tosspayments.com https://dapi.kakao.com https://*.pusher.com wss://*.pusher.com",
+      "frame-src 'self' https://api.tosspayments.com https://nid.naver.com https://kauth.kakao.com",
+    ].join("; ")
+  );
 
   // 메인 페이지는 항상 최신 데이터를 보여줘야 하므로 브라우저 캐시 방지
   if (pathname === "/") {

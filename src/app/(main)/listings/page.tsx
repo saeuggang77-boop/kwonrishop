@@ -6,6 +6,7 @@ import ListingCard from "@/components/listing/ListingCard";
 import ListingMapView from "@/components/map/ListingMapView";
 import PremiumCarousel from "@/components/shared/PremiumCarousel";
 import { useDebounce } from "@/hooks/useDebounce";
+import Image from "next/image";
 
 interface Category {
   id: string;
@@ -14,12 +15,41 @@ interface Category {
   subCategories: { id: string; name: string }[];
 }
 
+interface ListingItem {
+  id: string;
+  addressRoad: string | null;
+  addressJibun: string | null;
+  deposit: number;
+  monthlyRent: number;
+  premium: number;
+  premiumNone: boolean;
+  premiumNegotiable: boolean;
+  brandType: string;
+  storeName: string | null;
+  areaPyeong: number | null;
+  currentFloor: number | null;
+  themes: string[];
+  viewCount: number;
+  favoriteCount: number;
+  createdAt: string;
+  bumpedAt: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  category: { name: string; icon: string | null } | null;
+  subCategory: { name: string } | null;
+  images: { url: string }[];
+}
+
+interface FeaturedListingItem extends ListingItem {
+  featuredTier?: string;
+}
+
 function ListingsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [listings, setListings] = useState<Record<string, unknown>[]>([]);
-  const [featuredListings, setFeaturedListings] = useState<(Record<string, unknown> & { featuredTier?: string })[]>([]);
+  const [listings, setListings] = useState<ListingItem[]>([]);
+  const [featuredListings, setFeaturedListings] = useState<FeaturedListingItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -368,20 +398,20 @@ function ListingsContent() {
             PREMIUM: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
             BASIC: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
           };
-          const tier = (listing.featuredTier as string) || "BASIC";
-          const address = (listing.addressRoad || listing.addressJibun || "주소 미입력") as string;
+          const tier = listing.featuredTier || "BASIC";
+          const address = listing.addressRoad || listing.addressJibun || "주소 미입력";
           const shortAddress = address.split(" ").slice(0, 3).join(" ");
-          const images = listing.images as { url: string }[];
+          const images = listing.images;
 
           return (
             <div
-              key={listing.id as string}
+              key={listing.id}
               onClick={() => router.push(`/listings/${listing.id}`)}
               className={`min-w-[280px] max-w-[280px] snap-start rounded-xl border-2 ${tierColors[tier] || tierColors.BASIC} overflow-hidden cursor-pointer hover:shadow-lg transition-shadow shrink-0`}
             >
               <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
                 {images?.[0] ? (
-                  <img src={images[0].url} alt="" className="w-full h-full object-cover" />
+                  <Image src={images[0].url} alt="" fill className="object-cover" unoptimized />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300">
                     <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -398,7 +428,7 @@ function ListingsContent() {
                 <p className="text-sm">
                   <span className="text-gray-500 dark:text-gray-400">보증금/월세 </span>
                   <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    {(listing.deposit as number)?.toLocaleString()} / {(listing.monthlyRent as number)?.toLocaleString()}만
+                    {listing.deposit.toLocaleString()} / {listing.monthlyRent.toLocaleString()}만
                   </span>
                 </p>
                 <p className="text-sm">
@@ -406,12 +436,12 @@ function ListingsContent() {
                   <span className="font-bold text-blue-600 dark:text-blue-400">
                     {listing.premiumNone
                       ? "무권리"
-                      : `${(listing.premium as number)?.toLocaleString()}만`}
+                      : `${listing.premium.toLocaleString()}만`}
                   </span>
                 </p>
                 <div className="flex gap-2 mt-1 text-xs text-gray-400">
-                  {listing.areaPyeong ? <span>{listing.areaPyeong as number}평</span> : null}
-                  {listing.currentFloor ? <span>{listing.currentFloor as number}층</span> : null}
+                  {listing.areaPyeong ? <span>{listing.areaPyeong}평</span> : null}
+                  {listing.currentFloor ? <span>{listing.currentFloor}층</span> : null}
                 </div>
               </div>
             </div>
@@ -467,7 +497,17 @@ function ListingsContent() {
             <p className="text-sm text-gray-500">로딩 중...</p>
           </div>
         ) : (
-          <ListingMapView listings={listings as any[]} />
+          <ListingMapView listings={listings as Array<{
+            id: string;
+            latitude: number | null;
+            longitude: number | null;
+            storeName: string | null;
+            addressRoad: string | null;
+            premium: number;
+            deposit: number;
+            monthlyRent: number;
+            category: { name: string; icon: string } | null;
+          }>} />
         )
       ) : loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -484,8 +524,8 @@ function ListingsContent() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {listings.map((listing) => (
             <ListingCard
-              key={listing.id as string}
-              listing={listing as ListingCardProps["listing"]}
+              key={listing.id}
+              listing={listing}
             />
           ))}
         </div>

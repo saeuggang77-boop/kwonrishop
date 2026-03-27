@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SERVICE_TYPE_LABELS, REGION_OPTIONS } from "@/lib/constants";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -40,7 +41,14 @@ export default function PartnerRegisterPage() {
     }
 
     if (status === "authenticated") {
-      // Check role and business verification
+      // 역할 확인 (session에서 직접 가져옴)
+      if (session?.user?.role !== "PARTNER" && session?.user?.role !== "ADMIN") {
+        alert("협력업체 회원만 등록할 수 있습니다.");
+        router.push("/");
+        return;
+      }
+
+      // 사업자인증 확인
       fetch("/api/auth/check-verification")
         .then((res) => res.json())
         .then((data) => {
@@ -48,17 +56,7 @@ export default function PartnerRegisterPage() {
             alert("사업자인증이 필요합니다.");
             router.push("/verify-business");
           } else {
-            // Check if user is PARTNER role
-            fetch("/api/auth/session")
-              .then((res) => res.json())
-              .then((sessionData) => {
-                if (sessionData.user?.role !== "PARTNER") {
-                  alert("협력업체 회원만 등록할 수 있습니다.");
-                  router.push("/");
-                } else {
-                  setCheckingVerification(false);
-                }
-              });
+            setCheckingVerification(false);
           }
         })
         .catch(() => setCheckingVerification(false));
@@ -370,12 +368,12 @@ export default function PartnerRegisterPage() {
           {images.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mt-3">
               {images.map((img, idx) => (
-                <div key={idx} className="relative">
-                  <img src={img.url} alt="" className="w-full h-24 object-cover rounded-lg" />
+                <div key={idx} className="relative h-24">
+                  <Image src={img.url} alt="" fill className="object-cover rounded-lg" unoptimized />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white rounded-full text-xs hover:bg-red-700"
+                    className="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white rounded-full text-xs hover:bg-red-700 z-10"
                   >
                     ×
                   </button>

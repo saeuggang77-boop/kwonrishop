@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { validateOrigin } from "@/lib/csrf";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 // 내 채팅방 목록
 export async function GET() {
@@ -44,6 +46,16 @@ export async function GET() {
 
 // 채팅방 생성 (또는 기존 채팅방 반환)
 export async function POST(req: NextRequest) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
+  const ip = getClientIp(req);
+  const rl = rateLimit(ip, 10, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });

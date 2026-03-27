@@ -19,20 +19,14 @@ interface FranchiseBrand {
   ftcRawData: any;
 }
 
-const INDUSTRIES = [
-  { value: "", label: "전체" },
-  { value: "FOOD", label: "음식점" },
-  { value: "CAFE", label: "카페" },
-  { value: "RETAIL", label: "소매점" },
-  { value: "SERVICE", label: "서비스" },
-  { value: "EDUCATION", label: "교육" },
-  { value: "OTHER", label: "기타" },
-];
+// 업종 필터는 DB에서 동적으로 로드 (공정위 API 원본 데이터 기반)
+const DEFAULT_INDUSTRIES = [{ value: "", label: "전체" }];
 
 export default function FranchisePage() {
   const router = useRouter();
   const [brands, setBrands] = useState<FranchiseBrand[]>([]);
   const [featuredBrands, setFeaturedBrands] = useState<FranchiseBrand[]>([]);
+  const [industries, setIndustries] = useState(DEFAULT_INDUSTRIES);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -61,9 +55,22 @@ export default function FranchisePage() {
   }, [fetchBrands]);
 
   useEffect(() => {
-    fetch("/api/franchise?featured=true")
-      .then((r) => r.json())
-      .then((data) => setFeaturedBrands(data.brands || []));
+    // 프리미엄 브랜드 + 업종 필터 동적 로드
+    Promise.all([
+      fetch("/api/franchise?featured=true").then((r) => r.json()),
+      fetch("/api/franchise?limit=1000").then((r) => r.json()),
+    ]).then(([featuredData, allData]) => {
+      setFeaturedBrands(featuredData.brands || []);
+      // DB에 존재하는 실제 업종값으로 필터 생성
+      const allBrands = allData.brands || [];
+      const uniqueIndustries = [...new Set(allBrands.map((b: FranchiseBrand) => b.industry).filter(Boolean))] as string[];
+      if (uniqueIndustries.length > 0) {
+        setIndustries([
+          { value: "", label: "전체" },
+          ...uniqueIndustries.sort().map((ind) => ({ value: ind, label: ind })),
+        ]);
+      }
+    });
   }, []);
 
   function handleSearch(e: React.FormEvent) {
@@ -120,7 +127,7 @@ export default function FranchisePage() {
 
       {/* Industry Filters */}
       <div className="flex gap-2 overflow-x-auto pb-3 mb-6">
-        {INDUSTRIES.map((ind) => (
+        {industries.map((ind) => (
           <button
             key={ind.value}
             onClick={() => handleIndustryClick(ind.value)}

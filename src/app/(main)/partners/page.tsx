@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { SERVICE_TYPE_LABELS, REGION_OPTIONS } from "@/lib/constants";
 import PremiumCarousel from "@/components/shared/PremiumCarousel";
+import Image from "next/image";
 
 interface Partner {
   id: string;
@@ -175,9 +176,9 @@ export default function PartnersPage() {
               onClick={() => router.push(`/partners/${partner.id}`)}
               className={`min-w-[280px] max-w-[280px] snap-start rounded-xl border-2 ${tierColors[tier] || tierColors.BASIC} overflow-hidden cursor-pointer hover:shadow-lg transition-shadow shrink-0`}
             >
-              <div className="h-36 bg-gray-100 dark:bg-gray-700">
+              <div className="relative h-36 bg-gray-100 dark:bg-gray-700">
                 {partner.images.length > 0 ? (
-                  <img src={partner.images[0].url} alt={partner.companyName} className="w-full h-full object-cover" />
+                  <Image src={partner.images[0].url} alt={partner.companyName} fill className="object-cover" unoptimized />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-blue-100 dark:bg-blue-900">
                     <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
@@ -238,11 +239,13 @@ export default function PartnersPage() {
               {/* Image or Placeholder */}
               <div className="mb-4">
                 {partner.images.length > 0 ? (
-                  <div className="w-full h-40 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                    <img
+                  <div className="relative w-full h-40 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                    <Image
                       src={partner.images[0].url}
                       alt={partner.companyName}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      unoptimized
                     />
                   </div>
                 ) : (

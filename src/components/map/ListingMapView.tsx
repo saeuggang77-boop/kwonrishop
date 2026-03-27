@@ -14,7 +14,7 @@ interface Listing {
   premium: number;
   deposit: number;
   monthlyRent: number;
-  category: { name: string; icon: string } | null;
+  category: { name: string; icon: string | null } | null;
 }
 
 interface ListingMapViewProps {

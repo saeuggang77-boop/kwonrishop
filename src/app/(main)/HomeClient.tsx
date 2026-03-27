@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import NoticeBanner from "@/components/NoticeBanner";
 import ListingCard from "@/components/listing/ListingCard";
+import Image from "next/image";
 
 interface Listing {
   id: string;
@@ -260,11 +261,15 @@ export default function HomeClient() {
                 >
                   <div className="flex items-center gap-3 mb-2">
                     {brand.logo ? (
-                      <img
-                        src={brand.logo}
-                        alt={brand.brandName}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                        <Image
+                          src={brand.logo}
+                          alt={brand.brandName}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold text-lg">
                         {brand.brandName.charAt(0)}
@@ -308,11 +313,15 @@ export default function HomeClient() {
                 >
                   <div className="flex items-center gap-3 mb-2">
                     {partner.images[0] ? (
-                      <img
-                        src={partner.images[0].url}
-                        alt={partner.companyName}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                        <Image
+                          src={partner.images[0].url}
+                          alt={partner.companyName}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 flex items-center justify-center font-bold text-lg">
                         {partner.companyName.charAt(0)}

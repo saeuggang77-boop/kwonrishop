@@ -2,9 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sanitizeInput } from "@/lib/sanitize";
+import { validateOrigin } from "@/lib/csrf";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 // 프로필 업데이트
 export async function PATCH(req: NextRequest) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
+  const ip = getClientIp(req);
+  const rl = rateLimit(ip, 10, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -17,8 +30,8 @@ export async function PATCH(req: NextRequest) {
 
     // 업데이트할 데이터 구성 (값이 있는 필드만 포함)
     const updateData: { name?: string; phone?: string; image?: string } = {};
-    if (name !== undefined) updateData.name = name;
-    if (phone !== undefined) updateData.phone = phone;
+    if (name !== undefined) updateData.name = sanitizeInput(name);
+    if (phone !== undefined) updateData.phone = sanitizeInput(phone);
     if (image !== undefined) updateData.image = image;
 
     // 업데이트할 내용이 없는 경우

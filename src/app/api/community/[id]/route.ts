@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
+import { validateOrigin } from "@/lib/csrf";
 
 export async function GET(
   _req: NextRequest,
@@ -45,6 +47,10 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
@@ -73,9 +79,9 @@ export async function PUT(
   const updated = await prisma.post.update({
     where: { id },
     data: {
-      title: title.trim(),
-      content: content.trim(),
-      tag: tag || null,
+      title: sanitizeInput(title),
+      content: sanitizeHtml(content),
+      tag: tag ? sanitizeInput(tag) : null,
     },
   });
 

@@ -3,6 +3,7 @@
 import { useCompareStore } from "@/store/compareStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface ListingPreview {
   id: string;
@@ -58,10 +59,12 @@ export default function CompareBar() {
                   className="relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-100 group"
                 >
                   {listing.images[0] ? (
-                    <img
+                    <Image
                       src={listing.images[0].url}
                       alt=""
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -72,7 +75,7 @@ export default function CompareBar() {
                   )}
                   <button
                     onClick={() => removeFromCompare(listing.id)}
-                    className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-bl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                    className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-bl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10"
                     title="제거"
                   >
                     ×

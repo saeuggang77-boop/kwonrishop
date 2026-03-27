@@ -116,10 +116,10 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/notices"
+                  href="/pricing"
                   className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  공지사항
+                  요금안내
                 </Link>
               </li>
             </ul>

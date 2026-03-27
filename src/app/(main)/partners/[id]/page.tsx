@@ -109,13 +109,13 @@ export default function PartnerDetailPage() {
                 <button
                   key={idx}
                   onClick={() => setCurrentImageIndex(idx)}
-                  className={`w-20 h-20 rounded-lg overflow-hidden shrink-0 ${
+                  className={`relative w-20 h-20 rounded-lg overflow-hidden shrink-0 ${
                     idx === currentImageIndex
                       ? "ring-2 ring-blue-600"
                       : "opacity-50 hover:opacity-100"
                   }`}
                 >
-                  <img src={img.url} alt="" className="w-full h-full object-cover" />
+                  <Image src={img.url} alt="" fill className="object-cover" unoptimized />
                 </button>
               ))}
             </div>

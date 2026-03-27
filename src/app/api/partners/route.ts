@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
+import { validateOrigin } from "@/lib/csrf";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 // 협력업체 목록 조회
 export async function GET(req: NextRequest) {
@@ -130,6 +133,16 @@ export async function GET(req: NextRequest) {
 
 // 협력업체 등록
 export async function POST(req: NextRequest) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
+  const ip = getClientIp(req);
+  const rl = rateLimit(ip, 5, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -179,15 +192,15 @@ export async function POST(req: NextRequest) {
       data: {
         userId: session.user.id,
         status: "ACTIVE",
-        companyName: body.companyName,
+        companyName: sanitizeInput(body.companyName),
         serviceType: body.serviceType,
-        description: body.description || null,
-        contactPhone: body.contactPhone || null,
-        contactEmail: body.contactEmail || null,
-        website: body.website || null,
-        addressRoad: body.addressRoad || null,
-        addressJibun: body.addressJibun || null,
-        addressDetail: body.addressDetail || null,
+        description: body.description ? sanitizeHtml(body.description) : null,
+        contactPhone: body.contactPhone ? sanitizeInput(body.contactPhone) : null,
+        contactEmail: body.contactEmail ? sanitizeInput(body.contactEmail) : null,
+        website: body.website ? sanitizeInput(body.website) : null,
+        addressRoad: body.addressRoad ? sanitizeInput(body.addressRoad) : null,
+        addressJibun: body.addressJibun ? sanitizeInput(body.addressJibun) : null,
+        addressDetail: body.addressDetail ? sanitizeInput(body.addressDetail) : null,
         latitude: body.latitude || null,
         longitude: body.longitude || null,
         serviceArea: body.serviceArea || [],

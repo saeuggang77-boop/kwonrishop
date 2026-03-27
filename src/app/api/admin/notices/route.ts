@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
+import { validateOrigin } from "@/lib/csrf";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 // GET - 공지사항 목록 조회 (누구나 가능)
 export async function GET(request: NextRequest) {
@@ -40,6 +43,16 @@ export async function GET(request: NextRequest) {
 
 // POST - 공지사항 작성 (관리자만)
 export async function POST(request: NextRequest) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
+  const ip = getClientIp(request);
+  const rl = rateLimit(ip, 10, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
 
@@ -67,8 +80,8 @@ export async function POST(request: NextRequest) {
 
     const notice = await prisma.post.create({
       data: {
-        title,
-        content,
+        title: sanitizeInput(title),
+        content: sanitizeHtml(content),
         tag: "공지",
         authorId: session.user.id,
       },

@@ -54,6 +54,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ count });
   } catch (error) {
     console.error("New count error:", error);
-    return NextResponse.json({ count: 0 });
+    return NextResponse.json(
+      { error: "서버 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }
