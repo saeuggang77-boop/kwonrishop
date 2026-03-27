@@ -103,9 +103,83 @@ export async function GET(request: NextRequest) {
       console.log(`Expired ${expiredListings.length} listings`);
     }
 
+    // Equipment expiration
+    const expiredEquipments = await prisma.equipment.findMany({
+      where: {
+        status: "ACTIVE",
+        expiresAt: {
+          lt: new Date(),
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        userId: true,
+        title: true,
+        user: {
+          select: {
+            email: true,
+            name: true,
+            phone: true,
+          },
+        },
+      },
+    });
+
+    if (expiredEquipments.length > 0) {
+      await prisma.equipment.updateMany({
+        where: {
+          id: {
+            in: expiredEquipments.map((e: any) => e.id),
+          },
+        },
+        data: {
+          status: "EXPIRED",
+        },
+      });
+
+      const equipmentNotifications = expiredEquipments.map((equip: any) => ({
+        userId: equip.userId,
+        type: "LISTING_EXPIRED",
+        title: "집기 매물이 만료되었습니다",
+        message: `${equip.title || "집기 매물"}이(가) 만료되었습니다. 연장하려면 클릭하세요.`,
+        link: `/equipment/${equip.id}`,
+      }));
+
+      await prisma.notification.createMany({
+        data: equipmentNotifications,
+      });
+
+      // 집기 소유자에게 만료 이메일 전송 (비차단)
+      expiredEquipments.forEach((equip: any) => {
+        const equipTitle = equip.title || "집기 매물";
+
+        if (equip.user.email) {
+          (async () => {
+            try {
+              const { subject, html } = listingExpiredEmail(
+                equip.user.name || "회원",
+                equipTitle
+              );
+              await sendEmail(equip.user.email, subject, html);
+            } catch (error) {
+              console.error("[Email] Failed to send equipment expiration email:", error);
+            }
+          })();
+        }
+
+        if (equip.user.phone) {
+          notifyListingExpiring(equip.user.phone, equipTitle, 0).catch(() => {});
+        }
+      });
+
+      console.log(`Expired ${expiredEquipments.length} equipment items`);
+    }
+
     return NextResponse.json({
       success: true,
       expiredCount: expiredListings.length,
+      expiredEquipmentCount: expiredEquipments.length,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

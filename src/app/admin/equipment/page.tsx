@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import { EQUIPMENT_CATEGORY_LABELS } from "@/lib/constants";
 
 interface AdminEquipment {
   id: string;
@@ -24,7 +25,17 @@ const STATUS_OPTIONS = [
   { value: "SOLD", label: "판매완료" },
   { value: "EXPIRED", label: "만료" },
   { value: "DELETED", label: "삭제됨" },
+  { value: "DRAFT", label: "임시저장" },
 ];
+
+const STATUS_LABELS: Record<string, string> = {
+  ACTIVE: "활성",
+  RESERVED: "예약",
+  SOLD: "판매완료",
+  EXPIRED: "만료",
+  DELETED: "삭제",
+  DRAFT: "임시저장",
+};
 
 export default function AdminEquipmentPage() {
   const [equipment, setEquipment] = useState<AdminEquipment[]>([]);
@@ -38,16 +49,22 @@ export default function AdminEquipmentPage() {
 
   const fetchEquipment = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    params.set("page", String(page));
-    if (statusFilter) params.set("status", statusFilter);
-    if (keyword) params.set("keyword", keyword);
+    try {
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      if (statusFilter) params.set("status", statusFilter);
+      if (keyword) params.set("keyword", keyword);
 
-    const res = await fetch(`/api/admin/equipment?${params}`);
-    const data = await res.json();
-    setEquipment(data.equipment || []);
-    setTotal(data.pagination?.total || 0);
-    setTotalPages(data.pagination?.totalPages || 1);
+      const res = await fetch(`/api/admin/equipment?${params}`);
+      const data = await res.json();
+      setEquipment(data.equipment || []);
+      setTotal(data.pagination?.total || 0);
+      setTotalPages(data.pagination?.totalPages || 1);
+    } catch {
+      setEquipment([]);
+      setTotal(0);
+      setTotalPages(1);
+    }
     setLoading(false);
   }, [page, statusFilter, keyword]);
 
@@ -56,7 +73,8 @@ export default function AdminEquipmentPage() {
   }, [fetchEquipment]);
 
   async function handleStatusChange(id: string, newStatus: string) {
-    if (!confirm(`상태를 "${newStatus}"(으)로 변경하시겠습니까?`)) return;
+    const label = STATUS_LABELS[newStatus] || newStatus;
+    if (!confirm(`상태를 "${label}"(으)로 변경하시겠습니까?`)) return;
 
     const res = await fetch(`/api/admin/equipment/${id}`, {
       method: "PUT",
@@ -91,10 +109,10 @@ export default function AdminEquipmentPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">집기장터 관리</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">집기장터 관리</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 mb-6">
         <div className="flex gap-4">
           <select
             value={statusFilter}
@@ -102,7 +120,7 @@ export default function AdminEquipmentPage() {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg outline-none"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg outline-none"
           >
             {STATUS_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -115,7 +133,7 @@ export default function AdminEquipmentPage() {
             placeholder="제목, 설명 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg outline-none"
+            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg outline-none"
           />
           <button
             onClick={() => setPage(1)}
@@ -128,45 +146,45 @@ export default function AdminEquipmentPage() {
 
       {/* Result Count */}
       <div className="mb-4">
-        <p className="text-sm text-gray-500">
-          총 <span className="font-medium text-gray-900">{total.toLocaleString()}</span>건
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          총 <span className="font-medium text-gray-900 dark:text-white">{total.toLocaleString()}</span>건
         </p>
       </div>
 
       {/* Table */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="space-y-3">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+              <div key={i} className="h-12 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
             ))}
           </div>
         </div>
       ) : equipment.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-20 text-center">
-          <p className="text-gray-400">집기가 없습니다</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-20 text-center">
+          <p className="text-gray-400 dark:text-gray-500">집기가 없습니다</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">사진</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">제목</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">카테고리</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">가격</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">판매자</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">사진</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">제목</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">카테고리</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">가격</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">판매자</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">상태</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">등록일</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">액션</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {equipment.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   <td className="px-6 py-4">
                     {item.images?.[0]?.url ? (
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
                         <Image
                           src={item.images[0].url}
                           alt={item.title}
@@ -175,42 +193,42 @@ export default function AdminEquipmentPage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                      <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs">
                         사진없음
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate">
                     {item.title}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {item.category}
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                    {EQUIPMENT_CATEGORY_LABELS[item.category] || item.category}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 font-medium">
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
                     {item.price.toLocaleString()}원
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                     <div>{item.user.name}</div>
-                    <div className="text-xs text-gray-400">{item.user.email}</div>
+                    <div className="text-xs text-gray-400 dark:text-gray-500">{item.user.email}</div>
                   </td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         item.status === "ACTIVE"
-                          ? "bg-green-100 text-green-800"
+                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                           : item.status === "RESERVED"
-                            ? "bg-yellow-100 text-yellow-800"
+                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                             : item.status === "SOLD"
-                              ? "bg-blue-100 text-blue-800"
+                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                               : item.status === "EXPIRED"
-                                ? "bg-orange-100 text-orange-800"
-                                : "bg-gray-100 text-gray-800"
+                                ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                                : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                       }`}
                     >
-                      {item.status}
+                      {STATUS_LABELS[item.status] || item.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
@@ -218,7 +236,7 @@ export default function AdminEquipmentPage() {
                       <select
                         value={item.status}
                         onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                        className="text-sm px-3 py-1 border border-gray-300 rounded-lg outline-none"
+                        className="text-sm px-3 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg outline-none"
                       >
                         {STATUS_OPTIONS.filter((opt) => opt.value).map((opt) => (
                           <option key={opt.value} value={opt.value}>
@@ -228,7 +246,7 @@ export default function AdminEquipmentPage() {
                       </select>
                       <button
                         onClick={() => handleDelete(item.id, item.title)}
-                        className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                        className="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                       >
                         삭제
                       </button>
@@ -251,7 +269,7 @@ export default function AdminEquipmentPage() {
               className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
                 page === p
                   ? "bg-blue-600 text-white"
-                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
               {p}

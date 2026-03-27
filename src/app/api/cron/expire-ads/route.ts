@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
         userId: true,
         listingId: true,
         partnerServiceId: true,
+        equipmentId: true,
         product: {
           select: {
             name: true,
@@ -55,6 +56,11 @@ export async function GET(request: NextRequest) {
         partnerService: {
           select: {
             companyName: true,
+          },
+        },
+        equipment: {
+          select: {
+            title: true,
           },
         },
       },
@@ -124,13 +130,13 @@ export async function GET(request: NextRequest) {
 
     // Create notifications for each expired ad
     const notifications = expiredAds.map((ad: any) => {
-      const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || "서비스";
+      const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
       return {
         userId: ad.userId,
         type: "AD_EXPIRED",
         title: "광고 상품이 만료되었습니다",
         message: `${ad.product.name} 상품이 만료되었습니다. ${targetName}의 광고 혜택이 종료됩니다.`,
-        link: ad.listingId ? `/mypage/listings` : `/mypage/partner`,
+        link: ad.listingId ? `/mypage/listings` : ad.equipmentId ? `/equipment/${ad.equipmentId}` : `/mypage/partner`,
       };
     });
 
@@ -143,7 +149,7 @@ export async function GET(request: NextRequest) {
       if (ad.user.email) {
         (async () => {
           try {
-            const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || "서비스";
+            const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
             const { subject, html } = adExpiredEmail(
               ad.user.name || "회원",
               ad.product.name,

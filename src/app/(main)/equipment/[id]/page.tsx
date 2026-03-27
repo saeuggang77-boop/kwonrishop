@@ -12,9 +12,6 @@ const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
   loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
 });
 
-const ShareButton = dynamic(() => import("@/components/listing/ShareButton"), {
-  ssr: false,
-});
 
 const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
   ssr: false,
@@ -46,8 +43,9 @@ interface EquipmentDetail {
     id: string;
     name: string | null;
     image: string | null;
-    businessVerified: boolean;
+    businessVerification?: { verified: boolean } | null;
   };
+  favorited?: boolean;
 }
 
 export default function EquipmentDetailPage() {
@@ -73,6 +71,7 @@ export default function EquipmentDetailPage() {
           return;
         }
         setEquipment(data);
+        setFavorited(!!data.favorited);
         setLoading(false);
       })
       .catch(() => {
@@ -115,7 +114,7 @@ export default function EquipmentDetailPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        router.push(`/chat?roomId=${data.id}`);
+        router.push(`/chat?roomId=${data.chatRoomId}`);
       } else {
         alert(data.error || "채팅방 생성에 실패했습니다.");
       }
@@ -135,10 +134,10 @@ export default function EquipmentDetailPage() {
     }
     setReporting(true);
     try {
-      const res = await fetch(`/api/equipment/${id}/report`, {
+      const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: reportReason }),
+        body: JSON.stringify({ targetId: id, targetType: "EQUIPMENT", reason: reportReason }),
       });
       if (res.ok) {
         alert("신고가 접수되었습니다.");
@@ -318,7 +317,7 @@ export default function EquipmentDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <p className="font-medium text-gray-900 dark:text-white">{equipment.user.name || "판매자"}</p>
-              {equipment.user.businessVerified && (
+              {equipment.user.businessVerification?.verified && (
                 <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-[10px] font-medium rounded">
                   사업자인증
                 </span>
@@ -351,10 +350,25 @@ export default function EquipmentDetailPage() {
           >
             {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{equipment.favoriteCount}</span>
           </button>
-          <ShareButton
-            listingId={equipment.id}
-            title={equipment.title}
-          />
+          <button
+            onClick={async () => {
+              const url = `${window.location.origin}/equipment/${id}`;
+              if (navigator.share) {
+                try { await navigator.share({ title: equipment.title, url }); } catch {}
+              } else {
+                try {
+                  await navigator.clipboard.writeText(url);
+                  alert("링크가 복사되었습니다.");
+                } catch { alert("링크 복사에 실패했습니다."); }
+              }
+            }}
+            className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"
+            aria-label="공유하기"
+          >
+            <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+          </button>
           <button
             onClick={() => setReportOpen(true)}
             className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"

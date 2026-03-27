@@ -9,12 +9,17 @@ import type { Channel } from "pusher-js";
 
 interface ChatRoom {
   id: string;
-  listing: {
+  listing?: {
     id: string;
     storeName: string | null;
     addressRoad: string | null;
     images: { url: string }[];
-  };
+  } | null;
+  equipment?: {
+    id: string;
+    title: string;
+    images: { url: string }[];
+  } | null;
   participants: {
     user: { id: string; name: string | null; image: string | null };
   }[];
@@ -188,7 +193,7 @@ function ChatContent() {
                         )}
                       </div>
                       <p className="text-xs text-gray-400 truncate mt-0.5">
-                        {room.listing.storeName || room.listing.addressRoad || "매물"}
+                        {room.listing?.storeName || room.listing?.addressRoad || room.equipment?.title || "매물"}
                       </p>
                       {lastMsg && (
                         <p className="text-xs text-gray-500 truncate mt-0.5">
@@ -222,7 +227,7 @@ function ChatContent() {
                 <div className="flex-1">
                   <p className="font-medium text-gray-900">{otherUser?.name || "상대방"}</p>
                   <p className="text-xs text-gray-400">
-                    {activeRoomData?.listing.storeName || activeRoomData?.listing.addressRoad}
+                    {activeRoomData?.listing?.storeName || activeRoomData?.listing?.addressRoad || activeRoomData?.equipment?.title || "매물"}
                   </p>
                 </div>
               </div>

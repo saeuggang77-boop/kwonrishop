@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
 
-  const [user, verification, listing, favoriteCount, chatCount, partnerService, franchiseBrand] =
+  const [user, verification, listing, favoriteCount, chatCount, partnerService, franchiseBrand, equipmentCount, equipmentFavoriteCount] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: session.user.id },
@@ -57,6 +57,12 @@ export async function GET() {
           tier: true,
         },
       }),
+      prisma.equipment.count({
+        where: { userId: session.user.id, status: { not: "DELETED" } },
+      }),
+      prisma.equipmentFavorite.count({
+        where: { userId: session.user.id },
+      }),
     ]);
 
   return NextResponse.json({
@@ -67,5 +73,7 @@ export async function GET() {
     chatCount,
     partnerService: partnerService?.status !== "DELETED" ? partnerService : null,
     franchiseBrand,
+    equipmentCount,
+    equipmentFavoriteCount,
   });
 }

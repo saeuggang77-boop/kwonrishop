@@ -35,24 +35,45 @@ export async function GET(
     return NextResponse.json({ error: "집기를 찾을 수 없습니다." }, { status: 404 });
   }
 
+  // 세션 확인 (선택적 - 조회수 스킵 및 비활성 집기 접근 제어용)
+  const session = await getServerSession(authOptions);
+
   // 비활성 집기는 소유자만 조회 가능
   if (equipment.status !== "ACTIVE" && equipment.status !== "SOLD") {
-    const session = await getServerSession(authOptions);
     if (!session?.user?.id || session.user.id !== equipment.userId) {
       return NextResponse.json({ error: "집기를 찾을 수 없습니다." }, { status: 404 });
     }
   }
 
-  // 조회수 증가 (atomic)
-  const updated = await prisma.equipment.update({
-    where: { id },
-    data: { viewCount: { increment: 1 } },
-    select: { viewCount: true },
-  });
+  // 조회수 증가 (소유자 본인 조회 제외)
+  let viewCount = equipment.viewCount;
+  if (!session?.user?.id || session.user.id !== equipment.userId) {
+    const updated = await prisma.equipment.update({
+      where: { id },
+      data: { viewCount: { increment: 1 } },
+      select: { viewCount: true },
+    });
+    viewCount = updated.viewCount;
+  }
+
+  // Check if current user has favorited
+  let favorited = false;
+  if (session?.user?.id) {
+    const fav = await prisma.equipmentFavorite.findUnique({
+      where: {
+        userId_equipmentId: {
+          userId: session.user.id,
+          equipmentId: id,
+        },
+      },
+    });
+    favorited = !!fav;
+  }
 
   return NextResponse.json({
     ...equipment,
-    viewCount: updated.viewCount,
+    viewCount,
+    favorited,
   });
 }
 
@@ -104,8 +125,24 @@ export async function PUT(
   try {
     const body = await req.json();
 
+    // Validate status - only ADMIN can set any status; users limited to allowed values
+    const allowedUserStatuses = ["ACTIVE", "RESERVED", "SOLD"];
+    let newStatus = equipment.status;
+    if (body.status) {
+      if (user?.role === "ADMIN") {
+        newStatus = body.status;
+      } else if (allowedUserStatuses.includes(body.status)) {
+        newStatus = body.status;
+      } else {
+        return NextResponse.json(
+          { error: "허용되지 않는 상태값입니다." },
+          { status: 400 }
+        );
+      }
+    }
+
     const updateData: Record<string, unknown> = {
-      status: body.status || equipment.status,
+      status: newStatus,
       title: body.title ? sanitizeInput(body.title) : undefined,
       description: body.description ? sanitizeHtml(body.description) : undefined,
       category: body.category || undefined,

@@ -30,6 +30,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/equipment`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
   ];
 
   try {
@@ -70,7 +76,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-    return [...staticPages, ...listingPages, ...franchisePages, ...communityPages];
+    // Dynamic equipment pages
+    const equipments = await prisma.equipment.findMany({
+      where: { status: "ACTIVE" },
+      select: { id: true, updatedAt: true },
+    });
+
+    const equipmentPages: MetadataRoute.Sitemap = equipments.map((equip) => ({
+      url: `${baseUrl}/equipment/${equip.id}`,
+      lastModified: equip.updatedAt,
+      changeFrequency: "daily",
+      priority: 0.7,
+    }));
+
+    return [...staticPages, ...listingPages, ...franchisePages, ...communityPages, ...equipmentPages];
   } catch (error) {
     console.error("Error generating sitemap:", error);
     // Return at least static pages if database query fails

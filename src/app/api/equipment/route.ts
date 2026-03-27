@@ -67,9 +67,18 @@ export async function GET(req: NextRequest) {
   if (tradeMethod) where.tradeMethod = tradeMethod;
 
   if (minPrice || maxPrice) {
-    where.price = {};
-    if (minPrice) (where.price as Record<string, number>).gte = parseInt(minPrice);
-    if (maxPrice) (where.price as Record<string, number>).lte = parseInt(maxPrice);
+    const priceFilter: Record<string, number> = {};
+    if (minPrice) {
+      const val = parseInt(minPrice);
+      if (!isNaN(val)) priceFilter.gte = val;
+    }
+    if (maxPrice) {
+      const val = parseInt(maxPrice);
+      if (!isNaN(val)) priceFilter.lte = val;
+    }
+    if (Object.keys(priceFilter).length > 0) {
+      where.price = priceFilter;
+    }
   }
 
   if (keyword) {

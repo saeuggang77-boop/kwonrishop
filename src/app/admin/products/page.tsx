@@ -18,6 +18,7 @@ const CATEGORY_SCOPE_LABEL: Record<string, string> = {
   LISTING: "매물",
   FRANCHISE: "프랜차이즈",
   PARTNER: "협력업체",
+  EQUIPMENT: "집기장터",
   COMMON: "공통",
 };
 
@@ -196,6 +197,7 @@ export default function AdminProductsPage() {
                 <option value="LISTING">매물</option>
                 <option value="FRANCHISE">프랜차이즈</option>
                 <option value="PARTNER">협력업체</option>
+                <option value="EQUIPMENT">집기장터</option>
                 <option value="COMMON">공통</option>
               </select>
             </div>

@@ -8,18 +8,19 @@ interface AdProduct {
   id: string;
   name: string;
   type: "PACKAGE" | "SINGLE";
-  categoryScope: "LISTING" | "FRANCHISE" | "PARTNER" | "COMMON";
+  categoryScope: "LISTING" | "FRANCHISE" | "PARTNER" | "EQUIPMENT" | "COMMON";
   price: number;
   duration: number | null;
   features: Record<string, any>;
 }
 
-type TabKey = "LISTING" | "FRANCHISE" | "PARTNER";
+type TabKey = "LISTING" | "FRANCHISE" | "PARTNER" | "EQUIPMENT";
 
 const TABS: { key: TabKey; label: string; role: string }[] = [
   { key: "LISTING", label: "사장님 매물", role: "SELLER" },
   { key: "FRANCHISE", label: "프랜차이즈", role: "FRANCHISE" },
   { key: "PARTNER", label: "협력업체", role: "PARTNER" },
+  { key: "EQUIPMENT", label: "집기장터", role: "SELLER" },
 ];
 
 export default function PricingPage() {
@@ -323,6 +324,19 @@ function buildFeatureList(
       list.push({ icon: "📂", text: features.portfolio >= 999 ? "포트폴리오 무제한" : `포트폴리오 ${features.portfolio}건` });
     if (features.mainRecommend)
       list.push({ icon: "🏠", text: "추천업체 연동" });
+  } else if (scope === "EQUIPMENT") {
+    if (features.photos)
+      list.push({ icon: "📸", text: features.photos >= 999 ? "사진 무제한" : `사진 ${features.photos}장` });
+    if (features.topExposure)
+      list.push({ icon: "⭐", text: "상위 노출" });
+    if (features.highlight)
+      list.push({ icon: "✨", text: "하이라이트 강조" });
+    if (features.bumpCount)
+      list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회` });
+    if (features.verified)
+      list.push({ icon: "✅", text: "인증 배지" });
+    if (features.analytics)
+      list.push({ icon: "📊", text: "조회수/관심수 통계" });
   }
 
   return list;

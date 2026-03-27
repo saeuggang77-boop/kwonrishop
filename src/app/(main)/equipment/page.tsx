@@ -51,14 +51,14 @@ export default function EquipmentListPage() {
     if (category) params.set("category", category);
     if (condition) params.set("condition", condition);
     if (tradeMethod) params.set("tradeMethod", tradeMethod);
-    if (priceMin) params.set("priceMin", priceMin);
-    if (priceMax) params.set("priceMax", priceMax);
+    if (priceMin) params.set("minPrice", priceMin);
+    if (priceMax) params.set("maxPrice", priceMax);
     if (sort) params.set("sort", sort);
 
     try {
       const res = await fetch(`/api/equipment?${params}`);
       const data = await res.json();
-      setEquipments(data.equipments || []);
+      setEquipments(data.equipment || []);
       setTotal(data.pagination?.total || 0);
       setTotalPages(data.pagination?.totalPages || 1);
     } catch {
@@ -74,14 +74,13 @@ export default function EquipmentListPage() {
   useEffect(() => {
     fetch("/api/equipment?featured=true")
       .then((r) => r.json())
-      .then((data) => setFeaturedEquipments(data.equipments || []))
+      .then((data) => setFeaturedEquipments(data.equipment || []))
       .catch(() => {});
   }, []);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setPage(1);
-    fetchEquipments();
   }
 
   function handleCategoryChange(value: string) {

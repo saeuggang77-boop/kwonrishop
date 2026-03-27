@@ -162,6 +162,7 @@ export async function POST(request: NextRequest) {
         });
       }
     }
+    // EQUIPMENT scope: no tier update needed (equipment doesn't have tiers)
 
     // Create notification
     await prisma.notification.create({

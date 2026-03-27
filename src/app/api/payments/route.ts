@@ -38,6 +38,12 @@ export async function GET(req: NextRequest) {
               addressRoad: true,
             },
           },
+          equipment: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
         },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
@@ -86,7 +92,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { productId, listingId, partnerServiceId } = body;
+    const { productId, listingId, partnerServiceId, equipmentId } = body;
 
     if (!productId) {
       return NextResponse.json(
@@ -153,6 +159,19 @@ export async function POST(req: NextRequest) {
           { status: 403 }
         );
       }
+    } else if (scope === "EQUIPMENT") {
+      if (userRole !== "SELLER" && userRole !== "FRANCHISE" && userRole !== "PARTNER" && userRole !== "ADMIN") {
+        return NextResponse.json(
+          { error: "사업자만 집기장터 상품을 구매할 수 있습니다." },
+          { status: 403 }
+        );
+      }
+      if (!equipmentId) {
+        return NextResponse.json(
+          { error: "집기 ID가 필요합니다." },
+          { status: 400 }
+        );
+      }
     }
     // COMMON: 모든 인증 사용자 가능
 
@@ -200,6 +219,28 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 집기 ID가 제공된 경우 소유권 확인
+    if (equipmentId) {
+      const equipment = await prisma.equipment.findUnique({
+        where: { id: equipmentId },
+        select: { userId: true },
+      });
+
+      if (!equipment) {
+        return NextResponse.json(
+          { error: "집기 매물을 찾을 수 없습니다." },
+          { status: 404 }
+        );
+      }
+
+      if (equipment.userId !== session.user.id) {
+        return NextResponse.json(
+          { error: "본인의 집기 매물만 광고를 구매할 수 있습니다." },
+          { status: 403 }
+        );
+      }
+    }
+
     // AdPurchase 생성 (PENDING 상태)
     const adPurchase = await prisma.adPurchase.create({
       data: {
@@ -207,6 +248,7 @@ export async function POST(req: NextRequest) {
         productId,
         listingId: listingId || null,
         partnerServiceId: partnerServiceId || null,
+        equipmentId: equipmentId || null,
         status: "PENDING",
         amount: product.price,
       },

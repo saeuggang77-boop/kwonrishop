@@ -30,6 +30,10 @@ export async function middleware(req: NextRequest) {
     if (pathname.startsWith("/partners/register") && userRole !== "PARTNER" && userRole !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
+
+    if (pathname.startsWith("/equipment/register") && !["SELLER", "FRANCHISE", "PARTNER", "ADMIN"].includes(userRole || "")) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
   }
 
   // 이미 로그인 된 상태에서 로그인 페이지 접근 시 홈으로

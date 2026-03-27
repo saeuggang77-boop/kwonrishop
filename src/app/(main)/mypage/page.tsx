@@ -21,6 +21,8 @@ interface MyData {
   chatCount: number;
   partnerService: { id: string; status: string; companyName: string; serviceType: string; viewCount: number; tier: string } | null;
   franchiseBrand: { id: string; brandName: string; tier: string } | null;
+  equipmentCount: number;
+  equipmentFavoriteCount: number;
 }
 
 export default function MyPage() {
@@ -214,6 +216,29 @@ export default function MyPage() {
         </div>
       )}
 
+      {/* 내 집기 */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-bold text-gray-900">내 집기</h3>
+          <Link
+            href="/equipment/register"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          >
+            집기 등록
+          </Link>
+        </div>
+        {data.equipmentCount > 0 ? (
+          <Link
+            href="/equipment?mine=true"
+            className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <p className="font-medium text-gray-900">등록 집기 {data.equipmentCount}건</p>
+          </Link>
+        ) : (
+          <p className="text-sm text-gray-400">등록된 집기가 없습니다</p>
+        )}
+      </div>
+
       {/* 메뉴 */}
       <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
         {data.listing && (
@@ -226,7 +251,7 @@ export default function MyPage() {
         )}
         <Link href="/mypage/favorites" className="flex items-center justify-between px-5 py-4 hover:bg-gray-50">
           <span className="text-sm font-medium text-gray-700">관심매물</span>
-          <span className="text-sm text-gray-400">{data.favoriteCount}건</span>
+          <span className="text-sm text-gray-400">{data.favoriteCount + data.equipmentFavoriteCount}건</span>
         </Link>
         <Link href="/chat" className="flex items-center justify-between px-5 py-4 hover:bg-gray-50">
           <span className="text-sm font-medium text-gray-700">채팅</span>

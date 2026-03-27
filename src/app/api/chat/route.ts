@@ -27,6 +27,13 @@ export async function GET() {
           images: { take: 1, select: { url: true } },
         },
       },
+      equipment: {
+        select: {
+          id: true,
+          title: true,
+          images: { take: 1, select: { url: true } },
+        },
+      },
       participants: {
         include: {
           user: { select: { id: true, name: true, image: true } },
