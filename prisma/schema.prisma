@@ -30,6 +30,8 @@ model User {
   listing              Listing?
   franchiseBrand       FranchiseBrand?
   partnerService       PartnerService?
+  equipment            Equipment[]
+  equipmentFavorites   EquipmentFavorite[]
   chatParticipants     ChatParticipant[]
   messages             Message[]
   posts                Post[]
@@ -465,6 +467,7 @@ enum AdCategoryScope {
   FRANCHISE
   PARTNER
   COMMON
+  EQUIPMENT
 }
 
 model AdPurchase {
@@ -472,6 +475,7 @@ model AdPurchase {
   userId           String
   listingId        String?
   partnerServiceId String?
+  equipmentId      String?
   productId        String
   status           PaymentStatus @default(PENDING)
   amount           Int
@@ -483,6 +487,7 @@ model AdPurchase {
   user           User            @relation(fields: [userId], references: [id])
   listing        Listing?        @relation(fields: [listingId], references: [id])
   partnerService PartnerService? @relation(fields: [partnerServiceId], references: [id])
+  equipment      Equipment?      @relation(fields: [equipmentId], references: [id])
   product        AdProduct       @relation(fields: [productId], references: [id])
 
   @@index([userId, status])
@@ -501,12 +506,14 @@ enum PaymentStatus {
 // ==========================================
 
 model ChatRoom {
-  id        String   @id @default(cuid())
-  listingId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  listingId   String?
+  equipmentId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  listing      Listing           @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listing      Listing?          @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  equipment    Equipment?        @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
   participants ChatParticipant[]
   messages     Message[]
 }
@@ -638,4 +645,110 @@ enum ReportStatus {
   REVIEWED
   RESOLVED
   DISMISSED
+}
+
+// ==========================================
+// 집기장터
+// ==========================================
+
+enum EquipmentCondition {
+  EXCELLENT  // 상
+  GOOD       // 중
+  FAIR       // 하
+}
+
+enum TradeMethod {
+  DIRECT     // 직거래
+  DELIVERY   // 택배
+  BOTH       // 둘 다
+}
+
+enum EquipmentCategory {
+  KITCHEN        // 주방기기
+  REFRIGERATION  // 냉장/냉동
+  TABLE_CHAIR    // 테이블/의자
+  DISPLAY        // 진열장/쇼케이스
+  COOKING_TOOL   // 조리도구
+  POS_ELECTRONIC // POS/전자기기
+  SIGN           // 간판/사인물
+  INTERIOR       // 인테리어 소품
+  OTHER          // 기타
+}
+
+model Equipment {
+  id          String             @id @default(cuid())
+  userId      String
+  status      ListingStatus      @default(DRAFT)
+
+  // 기본 정보
+  title       String
+  description String             @db.Text
+  category    EquipmentCategory
+  condition   EquipmentCondition
+
+  // 가격
+  price       Int                // 0 = 무료 나눔
+  negotiable  Boolean            @default(false)
+
+  // 거래
+  tradeMethod TradeMethod        @default(DIRECT)
+
+  // 위치 (직거래용)
+  addressRoad   String?
+  addressJibun  String?
+  addressDetail String?
+  latitude      Float?
+  longitude     Float?
+
+  // 상세
+  brand         String?
+  modelName     String?
+  purchaseYear  Int?
+  quantity      Int              @default(1)
+
+  // 카운터
+  viewCount     Int              @default(0)
+  favoriteCount Int              @default(0)
+  bumpedAt      DateTime?
+  expiresAt     DateTime?
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // 관계
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images        EquipmentImage[]
+  favorites     EquipmentFavorite[]
+  chatRooms     ChatRoom[]
+  adPurchases   AdPurchase[]
+
+  @@index([category])
+  @@index([status, bumpedAt])
+  @@index([status, createdAt])
+  @@index([userId])
+  @@index([latitude, longitude])
+}
+
+model EquipmentImage {
+  id          String    @id @default(cuid())
+  equipmentId String
+  url         String
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@index([equipmentId])
+}
+
+model EquipmentFavorite {
+  id          String    @id @default(cuid())
+  userId      String
+  equipmentId String
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, equipmentId])
 }

@@ -1,28 +1,40 @@
-// 국세청 사업자등록 상태조회 API
-const NTS_STATUS_URL =
-  "https://api.odcloud.kr/api/nts-businessman/v1/status";
+// 국세청 사업자등록 진위확인 API (사업자번호 + 대표자명 + 개업일 3개 대조)
+const NTS_VALIDATE_URL =
+  "https://api.odcloud.kr/api/nts-businessman/v1/validate";
 
-interface NtsStatusResponse {
-  request_cnt: number;
-  match_cnt: number;
+interface NtsValidateResponse {
   status_code: string;
+  request_cnt: number;
+  valid_cnt: number;
   data: Array<{
     b_no: string;
-    b_stt: string; // "계속사업자", "휴업자", "폐업자"
-    b_stt_cd: string; // "01" = 계속, "02" = 휴업, "03" = 폐업
-    tax_type: string;
-    tax_type_cd: string;
-    end_dt: string;
-    utcc_yn: string;
-    tax_type_change_dt: string;
-    invoice_apply_dt: string;
-    rbf_tax_type: string;
-    rbf_tax_type_cd: string;
+    valid: string; // "01" = 일치, "02" = 불일치
+    valid_msg: string;
+    request_param: {
+      b_no: string;
+      start_dt: string;
+      p_nm: string;
+      b_nm: string;
+    };
+    status: {
+      b_no: string;
+      b_stt: string; // "계속사업자", "휴업자", "폐업자"
+      b_stt_cd: string; // "01" = 계속, "02" = 휴업, "03" = 폐업
+      tax_type: string;
+      tax_type_cd: string;
+      end_dt: string;
+      utcc_yn: string;
+      tax_type_change_dt: string;
+      invoice_apply_dt: string;
+    };
   }>;
 }
 
 export async function validateBusiness(
   businessNumber: string,
+  representativeName: string,
+  openDate: string,
+  businessName?: string,
 ): Promise<{
   valid: boolean;
   message: string;
@@ -40,14 +52,23 @@ export async function validateBusiness(
   }
 
   const cleanNumber = businessNumber.replace(/-/g, "");
+  const cleanDate = openDate.replace(/-/g, "");
 
-  // 사업자번호 상태조회 API 사용 (진위확인보다 안정적)
   const res = await fetch(
-    `${NTS_STATUS_URL}?serviceKey=${encodeURIComponent(apiKey)}`,
+    `${NTS_VALIDATE_URL}?serviceKey=${encodeURIComponent(apiKey)}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ b_no: [cleanNumber] }),
+      body: JSON.stringify({
+        businesses: [
+          {
+            b_no: cleanNumber,
+            start_dt: cleanDate,
+            p_nm: representativeName,
+            b_nm: businessName || "",
+          },
+        ],
+      }),
     },
   );
 
@@ -55,7 +76,7 @@ export async function validateBusiness(
     throw new Error(`국세청 API 호출 실패: ${res.status}`);
   }
 
-  const data: NtsStatusResponse = await res.json();
+  const data: NtsValidateResponse = await res.json();
 
   if (!data.data || data.data.length === 0) {
     return { valid: false, message: "조회 결과가 없습니다." };
@@ -63,28 +84,41 @@ export async function validateBusiness(
 
   const result = data.data[0];
 
-  // 계속사업자(01)만 인증 통과
-  if (result.b_stt_cd === "01") {
+  // 진위확인 결과: "02" = 불일치
+  if (result.valid === "02") {
     return {
-      valid: true,
-      message: `사업자 인증이 완료되었습니다. (${result.b_stt}, ${result.tax_type})`,
+      valid: false,
+      message: "사업자 정보가 일치하지 않습니다. 사업자등록번호, 대표자명, 개업일자를 정확히 입력해주세요.",
     };
   }
 
-  // 휴업자(02)
-  if (result.b_stt_cd === "02") {
-    return {
-      valid: false,
-      message: "휴업 상태인 사업자입니다. 계속사업자만 등록 가능합니다.",
-    };
-  }
+  // 진위확인 통과 ("01") → 사업 상태 추가 확인
+  if (result.valid === "01") {
+    const status = result.status;
 
-  // 폐업자(03)
-  if (result.b_stt_cd === "03") {
-    return {
-      valid: false,
-      message: `폐업된 사업자입니다. (폐업일: ${result.end_dt || "미상"})`,
-    };
+    // 계속사업자(01)만 인증 통과
+    if (status?.b_stt_cd === "01") {
+      return {
+        valid: true,
+        message: `사업자 인증이 완료되었습니다. (${status.b_stt}, ${status.tax_type})`,
+      };
+    }
+
+    // 휴업자(02)
+    if (status?.b_stt_cd === "02") {
+      return {
+        valid: false,
+        message: "휴업 상태인 사업자입니다. 계속사업자만 등록 가능합니다.",
+      };
+    }
+
+    // 폐업자(03)
+    if (status?.b_stt_cd === "03") {
+      return {
+        valid: false,
+        message: `폐업된 사업자입니다. (폐업일: ${status.end_dt || "미상"})`,
+      };
+    }
   }
 
   return {

@@ -33,3 +33,30 @@ export const REGION_OPTIONS = [
   "경남",
   "제주",
 ];
+
+// Equipment Category Labels
+export const EQUIPMENT_CATEGORY_LABELS: Record<string, string> = {
+  KITCHEN: "주방기기",
+  REFRIGERATION: "냉장/냉동",
+  TABLE_CHAIR: "테이블/의자",
+  DISPLAY: "진열장/쇼케이스",
+  COOKING_TOOL: "조리도구",
+  POS_ELECTRONIC: "POS/전자기기",
+  SIGN: "간판/사인물",
+  INTERIOR: "인테리어 소품",
+  OTHER: "기타",
+};
+
+// Equipment Condition Labels
+export const EQUIPMENT_CONDITION_LABELS: Record<string, string> = {
+  EXCELLENT: "상",
+  GOOD: "중",
+  FAIR: "하",
+};
+
+// Trade Method Labels
+export const TRADE_METHOD_LABELS: Record<string, string> = {
+  DIRECT: "직거래",
+  DELIVERY: "택배",
+  BOTH: "직거래/택배",
+};

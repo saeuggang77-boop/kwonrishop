@@ -61,6 +61,14 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  href="/equipment"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  집기장터
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/community"
                   className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >

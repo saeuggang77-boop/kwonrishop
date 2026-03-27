@@ -159,7 +159,7 @@ export async function POST(
 
       if (chatRoom && chatRoom.participants.length > 0) {
         const otherUser = chatRoom.participants[0].user;
-        const listingName = chatRoom.listing.storeName || chatRoom.listing.addressRoad || "매물";
+        const listingName = chatRoom.listing?.storeName || chatRoom.listing?.addressRoad || "매물";
 
         // 이메일 알림
         if (otherUser.email) {

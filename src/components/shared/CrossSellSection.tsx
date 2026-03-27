@@ -6,7 +6,7 @@ import Image from "next/image";
 import TierBadge from "./TierBadge";
 
 interface CrossSellProps {
-  type: "listing" | "franchise" | "partner";
+  type: "listing" | "franchise" | "partner" | "equipment";
   id: string;
 }
 
@@ -47,7 +47,8 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
   const hasContent =
     data.franchises?.length > 0 ||
     data.partners?.length > 0 ||
-    data.listings?.length > 0;
+    data.listings?.length > 0 ||
+    data.equipments?.length > 0;
   if (!hasContent) return null;
 
   return (
@@ -180,6 +181,56 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
                 <p className="text-xs text-gray-400 mt-0.5">
                   {l.category?.icon} {l.category?.name}
                   {l.areaPyeong && ` · ${l.areaPyeong}평`}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </RecommendBlock>
+      )}
+
+      {/* 추천 집기 (매물/프랜차이즈/협력업체 상세에서) 또는 관련 매물/협력업체 (집기 상세에서) */}
+      {data.equipments?.length > 0 && (
+        <RecommendBlock
+          title="추천 집기"
+          link="/equipment"
+          linkLabel="전체보기"
+        >
+          {data.equipments.map((eq: any) => (
+            <Link
+              key={eq.id}
+              href={`/equipment/${eq.id}`}
+              className="block w-56 shrink-0 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
+            >
+              <div className="h-28 bg-gray-100 dark:bg-gray-700 relative">
+                {eq.images?.[0]?.url ? (
+                  <Image
+                    src={eq.images[0].url}
+                    alt={eq.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 text-sm">
+                    사진 없음
+                  </div>
+                )}
+                {eq.price === 0 && (
+                  <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-green-500 text-white text-[10px] font-medium rounded">
+                    나눔
+                  </span>
+                )}
+              </div>
+              <div className="p-3">
+                <p className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                  {eq.title}
+                </p>
+                <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-0.5">
+                  {eq.price === 0
+                    ? "무료 나눔"
+                    : `${eq.price?.toLocaleString()}원`}
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                  {eq.category}
                 </p>
               </div>
             </Link>

@@ -96,6 +96,13 @@ export default function Header() {
             협력업체
           </Link>
           <Link
+            href="/equipment"
+            className="hover:text-gray-900 dark:hover:text-gray-100"
+            aria-current={pathname === "/equipment" ? "page" : undefined}
+          >
+            집기장터
+          </Link>
+          <Link
             href="/community"
             className="hover:text-gray-900 dark:hover:text-gray-100"
             aria-current={pathname === "/community" ? "page" : undefined}
@@ -318,6 +325,13 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 협력업체
+              </Link>
+              <Link
+                href="/equipment"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                집기장터
               </Link>
               <Link
                 href="/community"

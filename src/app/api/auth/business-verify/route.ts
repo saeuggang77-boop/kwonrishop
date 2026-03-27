@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 
   // 국세청 API 진위확인
   try {
-    const result = await validateBusiness(cleanNumber);
+    const result = await validateBusiness(cleanNumber, cleanRepName, openDate, cleanBusinessName || undefined);
 
     if (!result.valid) {
       return NextResponse.json({ error: result.message }, { status: 400 });

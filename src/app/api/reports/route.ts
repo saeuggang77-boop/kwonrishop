@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     }
 
     // Validate targetType
-    const validTargetTypes = ["LISTING", "POST", "USER"];
+    const validTargetTypes = ["LISTING", "POST", "USER", "EQUIPMENT"];
     if (!validTargetTypes.includes(targetType)) {
       return NextResponse.json(
         { error: "Invalid targetType. Must be LISTING, POST, or USER" },

@@ -34,6 +34,8 @@ export async function GET() {
       activePartners,
       totalFranchises,
       usersByRole,
+      activeEquipment,
+      totalEquipment,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.listing.count({ where: { status: "ACTIVE" } }),
@@ -52,6 +54,8 @@ export async function GET() {
         by: ["role"],
         _count: true,
       }),
+      prisma.equipment.count({ where: { status: "ACTIVE" } }),
+      prisma.equipment.count(),
     ]);
 
     return NextResponse.json({
@@ -69,6 +73,10 @@ export async function GET() {
       activePartners,
       totalFranchises,
       usersByRole,
+      equipment: {
+        active: activeEquipment,
+        total: totalEquipment,
+      },
     });
   } catch (error) {
     console.error("Error fetching admin dashboard stats:", error);

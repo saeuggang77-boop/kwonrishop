@@ -61,31 +61,61 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
 
-  const { listingId } = await req.json();
-  if (!listingId) {
-    return NextResponse.json({ error: "매물 ID가 필요합니다." }, { status: 400 });
+  const { listingId, equipmentId } = await req.json();
+
+  if (!listingId && !equipmentId) {
+    return NextResponse.json({ error: "매물 또는 집기 ID가 필요합니다." }, { status: 400 });
   }
 
-  const listing = await prisma.listing.findUnique({
-    where: { id: listingId },
-    select: { id: true, userId: true },
-  });
+  let sellerId: string;
+  let roomFilter: Record<string, unknown>;
+  let roomData: Record<string, unknown>;
 
-  if (!listing) {
-    return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
-  }
+  if (equipmentId) {
+    // 집기 채팅
+    const equipment = await prisma.equipment.findUnique({
+      where: { id: equipmentId },
+      select: { id: true, userId: true },
+    });
 
-  if (listing.userId === session.user.id) {
-    return NextResponse.json({ error: "본인의 매물에는 채팅할 수 없습니다." }, { status: 400 });
+    if (!equipment) {
+      return NextResponse.json({ error: "집기를 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    if (equipment.userId === session.user.id) {
+      return NextResponse.json({ error: "본인의 집기에는 채팅할 수 없습니다." }, { status: 400 });
+    }
+
+    sellerId = equipment.userId;
+    roomFilter = { equipmentId };
+    roomData = { equipmentId };
+  } else {
+    // 매물 채팅
+    const listing = await prisma.listing.findUnique({
+      where: { id: listingId },
+      select: { id: true, userId: true },
+    });
+
+    if (!listing) {
+      return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    if (listing.userId === session.user.id) {
+      return NextResponse.json({ error: "본인의 매물에는 채팅할 수 없습니다." }, { status: 400 });
+    }
+
+    sellerId = listing.userId;
+    roomFilter = { listingId };
+    roomData = { listingId };
   }
 
   // 이미 존재하는 채팅방 확인
   const existingRoom = await prisma.chatRoom.findFirst({
     where: {
-      listingId,
+      ...roomFilter,
       AND: [
         { participants: { some: { userId: session.user.id } } },
-        { participants: { some: { userId: listing.userId } } },
+        { participants: { some: { userId: sellerId } } },
       ],
     },
   });
@@ -97,11 +127,11 @@ export async function POST(req: NextRequest) {
   // 새 채팅방 생성
   const chatRoom = await prisma.chatRoom.create({
     data: {
-      listingId,
+      ...roomData,
       participants: {
         create: [
           { userId: session.user.id },
-          { userId: listing.userId },
+          { userId: sellerId },
         ],
       },
     },

@@ -1,6 +1,6 @@
 # 권리샵 사이트 구조 분석
 
-> 최종 업데이트: 2026-03-28 (매물등록 위저드 7단계 개선: 약관동의 모달, 업종 UX, 자동계산, 유효성검증, 사진가이드, 외부연동 모달)
+> 최종 업데이트: 2026-03-28 (매물등록 위저드 7단계 개선: 약관동의 모달, 업종 UX, 자동계산, 유효성검증, 사진가이드, 외부연동 모달 / 집기장터 추가: 9종 카테고리, 사업자인증 판매, 1인10개 제한, 나눔 지원, 유료광고)
 
 ---
 
@@ -73,6 +73,13 @@
 | 프리미엄 | 30만 | 30일 | 상위노출, 포트폴리오20건 |
 | VIP | 50만 | 30일 | 최상위노출, 추천업체 연동 |
 
+**집기장터 (EQUIPMENT):**
+| 등급 | 가격 | 기간 | 핵심 혜택 |
+|------|------|------|----------|
+| 베이직 | 3만 | 30일 | 사진10장, 상단노출 |
+| 프리미엄 | 5만 | 30일 | 최상단노출, 사진20장, 프리미엄배지 |
+| VIP | 10만 | 30일 | 프리미엄 캐러셀, 사진무제한, VIP배지, 메인노출 |
+
 **공통 단건 (COMMON):**
 | 이름 | 가격 | 설명 |
 |------|------|------|
@@ -97,6 +104,10 @@
 | `/partners` | 협력업체 목록 | **프리미엄 캐러셀**(VIP/PREMIUM/BASIC) + 검색/필터/그리드 |
 | `/partners/[id]` | 협력업체 상세 | 업체 정보, 이미지, 연락처, 크로스셀 추천 |
 | `/partners/register` | 협력업체 등록 | 단일 페이지 등록 폼 (PARTNER만) |
+| `/equipment` | 집기장터 목록 | **프리미엄 캐러셀**(VIP/PREMIUM/BASIC) + 카테고리/상태/거래방식 필터, 가격범위, 검색, 정렬 |
+| `/equipment/[id]` | 집기 상세 | 이미지 갤러리, 가격/나눔배지, 상품정보, 지도, 판매자정보, 채팅/찜/공유/신고 |
+| `/equipment/register` | 집기 등록 | 단일 페이지 폼 (SELLER/FRANCHISE/PARTNER + 사업자인증 필수, 최대 10개) |
+| `/equipment/[id]/edit` | 집기 수정 | 소유자만 수정 가능 |
 | `/community` | 커뮤니티(게시판) | 글 목록, 카테고리 태그 |
 | `/community/[id]` | 게시글 상세 | 댓글/대댓글, 신고, 수정/삭제 버튼(작성자만) |
 | `/community/[id]/edit` | 글 수정 | 기존 글 수정 (작성자 권한 확인) |
@@ -143,6 +154,7 @@
 | `/admin` | 대시보드 | 6개 통계카드 + 역할별 회원분포 |
 | `/admin/listings` | 매물 관리 | 매물 상태 변경/삭제 |
 | `/admin/partners` | 협력업체 관리 | 협력업체 상태변경/삭제 |
+| `/admin/equipment` | 집기장터 관리 | 집기 목록/상태변경/삭제 |
 | `/admin/franchise` | 프랜차이즈 관리 | 공정위 데이터 동기화 |
 | `/admin/products` | 광고상품 관리 | categoryScope별 CRUD, 가격/기간 인라인 수정 |
 | `/admin/reports` | 신고 관리 | 신고 접수/처리 |
@@ -184,6 +196,14 @@
 |--------|------|------|
 | GET/POST | `/api/partners` | 협력업체 목록/등록 (PARTNER만 등록가능) |
 | GET/PUT/DELETE | `/api/partners/[id]` | 협력업체 상세/수정/삭제 |
+
+### 집기장터
+| 메서드 | 경로 | 설명 |
+|--------|------|------|
+| GET/POST | `/api/equipment` | 집기 목록 조회 / 등록 |
+| GET/PUT/DELETE | `/api/equipment/[id]` | 집기 상세 / 수정 / 삭제 |
+| POST | `/api/equipment/[id]/favorite` | 찜 토글 |
+| POST | `/api/equipment/[id]/bump` | 끌어올리기 |
 
 ### 프랜차이즈
 | 메서드 | 경로 | 설명 |
@@ -233,6 +253,8 @@
 | PUT/DELETE | `/api/admin/listings/[id]` | 매물 상태변경/삭제 |
 | GET | `/api/admin/partners` | 협력업체 관리 목록 |
 | PUT/DELETE | `/api/admin/partners/[id]` | 협력업체 상태변경/삭제 |
+| GET | `/api/admin/equipment` | 관리자 집기 목록 |
+| PUT/DELETE | `/api/admin/equipment/[id]` | 관리자 집기 상태변경/삭제 |
 | GET | `/api/admin/users` | 회원 목록 |
 | GET/POST | `/api/admin/notices` | 공지사항 CRUD |
 | PUT/DELETE | `/api/admin/notices/[id]` | 공지 수정/삭제 |
@@ -272,10 +294,13 @@
 | ListingExternalData | 외부 연동 데이터 (홈택스 등) |
 | PartnerService | 협력업체 서비스 (1업체1등록, PartnerTier: FREE/BASIC/PREMIUM/VIP) |
 | PartnerImage | 협력업체 이미지 |
+| Equipment | 집기 (1인 최대10개, 9종 카테고리, 가격0=나눔, 상/중/하 상태) |
+| EquipmentImage | 집기 이미지 (sortOrder) |
+| EquipmentFavorite | 집기 찜 |
 | FranchiseBrand | 프랜차이즈 브랜드 (FranchiseTier: FREE/BRONZE/SILVER/GOLD) |
 | FranchiseInquiry | 가맹 문의 |
-| AdProduct | 광고 상품 (AdCategoryScope: LISTING/FRANCHISE/PARTNER/COMMON) |
-| AdPurchase | 광고 구매 내역 (listingId/partnerServiceId 지원) |
+| AdProduct | 광고 상품 (AdCategoryScope: LISTING/FRANCHISE/PARTNER/EQUIPMENT/COMMON) |
+| AdPurchase | 광고 구매 내역 (listingId/partnerServiceId/equipmentId 지원) |
 | ChatRoom / ChatParticipant / Message | 채팅 시스템 |
 | Post / Comment | 커뮤니티 게시판 |
 | Favorite | 관심매물 |
@@ -285,10 +310,22 @@
 
 ---
 
+## Enum 값 설명
+
+### Equipment 관련
+- **EquipmentCategory**: KITCHEN(주방기기), REFRIGERATION(냉장/냉동), TABLE_CHAIR(테이블/의자), DISPLAY(진열/보관), COOKING_TOOL(조리도구), POS_ELECTRONIC(POS/전자기기), SIGN(간판/사인물), INTERIOR(인테리어), OTHER(기타)
+- **EquipmentCondition**: EXCELLENT(상), GOOD(중), FAIR(하)
+- **TradeMethod**: DIRECT(직거래), DELIVERY(택배), BOTH(둘다)
+
+### AdCategoryScope
+- LISTING(매물), FRANCHISE(프랜차이즈), PARTNER(협력업체), EQUIPMENT(집기), COMMON(공통)
+
+---
+
 ## 주요 컴포넌트
 
 ### 레이아웃
-- `Header.tsx` — 로고, 네비게이션 (매물검색/프랜차이즈/협력업체/커뮤니티), 알림벨, 사용자메뉴, 모바일메뉴
+- `Header.tsx` — 로고, 네비게이션 (매물검색/프랜차이즈/협력업체/집기장터/커뮤니티), 알림벨, 사용자메뉴, 모바일메뉴
 - `Footer.tsx` — 회사정보, 서비스/고객지원/회사 링크 (협력업체 포함)
 - `CompareBar.tsx` — 매물 비교 하단 바 (Zustand `compareStore`)
 
@@ -297,6 +334,9 @@
 - `TierBadge.tsx` — 등급 배지 (FREE/BASIC/PREMIUM/VIP/BRONZE/SILVER/GOLD)
 - `CrossSellSection.tsx` — 크로스셀 추천 (상세 페이지 하단, 수평 스크롤)
 - `PremiumCarousel.tsx` — 프리미엄 캐러셀 (목록 페이지 상단, 유료 등급별 수평 스크롤)
+
+### 집기장터
+- `EquipmentCard.tsx` — 집기 카드 (이미지, 가격/나눔배지, 상태칩, 카테고리, 조회수/찜수)
 
 ### 매물등록 위저드 (7단계, 아싸점포거래소 참조 개선)
 - `sell/page.tsx` — 위저드 메인: Step 0 공정거래 약관동의 모달 → Step 1~7 순서 진행
@@ -336,7 +376,7 @@
 
 ## 미들웨어
 
-- **보호 경로**: `/sell`, `/mypage`, `/verify-business`, `/admin`, `/partners/register` → 미로그인 시 로그인 리다이렉트
+- **보호 경로**: `/sell`, `/mypage`, `/verify-business`, `/admin`, `/partners/register`, `/equipment/register` → 미로그인 시 로그인 리다이렉트
 - **역할 선택**: roleSelectedAt이 null인 인증 유저 → `/select-role`로 리다이렉트
 - **로그인 경로**: `/login`, `/signup` — 이미 로그인 시 홈으로 리다이렉트
 - **역할 면제 경로**: `/select-role`, `/api/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/_next/`, `/favicon`
@@ -397,5 +437,11 @@
 ### 협력업체 (PARTNER)
 1. 소셜/이메일 로그인 → 역할 선택 → 사업자 인증 → 서비스 등록 (단일 페이지) → 서비스 관리 → 광고 상품 구매 (베이직/프리미엄/VIP)
 
+### 집기장터 판매자 (SELLER/FRANCHISE/PARTNER)
+1. 로그인 → 사업자인증 완료 → `/equipment/register`에서 집기 등록 (최대 10개) → 채팅으로 구매자와 소통 → 직거래/택배 거래
+
+### 집기장터 구매자 (모든 로그인 회원)
+1. `/equipment`에서 집기 검색/필터 → 상세 확인 → 찜/채팅 → 직거래/택배 거래
+
 ### 관리자 (ADMIN)
-1. 로그인 → 대시보드 (6개 통계 + 역할별 분포) → 매물/협력업체/회원/신고/공지/광고상품 관리 → 프랜차이즈 데이터 동기화
+1. 로그인 → 대시보드 (6개 통계 + 역할별 분포) → 매물/협력업체/집기/회원/신고/공지/광고상품 관리 → 프랜차이즈 데이터 동기화
