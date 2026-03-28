@@ -10,10 +10,36 @@ interface CrossSellProps {
   id: string;
 }
 
+interface ListingRecommendation {
+  id: string;
+  storeName: string;
+  addressRoad: string;
+  deposit: number;
+  monthlyRent: number;
+  premium: number;
+  premiumNone: boolean;
+  areaPyeong: number;
+  viewCount: number;
+  favoriteCount: number;
+  category: { name: string; icon: string };
+  images: { url: string }[];
+  createdAt?: string;
+}
+
+interface CrossSellData {
+  franchises?: any[];
+  partners?: any[];
+  listings?: any[];
+  equipments?: any[];
+  sameIndustry?: ListingRecommendation[];
+  recentListings?: ListingRecommendation[];
+  trendingListings?: ListingRecommendation[];
+}
+
 // 이 컴포넌트는 각 상세 페이지 하단에 삽입됨
 // type에 따라 다른 카테고리의 추천 아이템을 수평 스크롤로 표시
 export default function CrossSellSection({ type, id }: CrossSellProps) {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<CrossSellData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,22 +71,69 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
   if (!data) return null;
 
   const hasContent =
-    data.franchises?.length > 0 ||
-    data.partners?.length > 0 ||
-    data.listings?.length > 0 ||
-    data.equipments?.length > 0;
+    (data.franchises?.length ?? 0) > 0 ||
+    (data.partners?.length ?? 0) > 0 ||
+    (data.listings?.length ?? 0) > 0 ||
+    (data.equipments?.length ?? 0) > 0 ||
+    (data.sameIndustry?.length ?? 0) > 0 ||
+    (data.recentListings?.length ?? 0) > 0 ||
+    (data.trendingListings?.length ?? 0) > 0;
   if (!hasContent) return null;
 
   return (
     <div className="space-y-8 mt-8">
+      {/* 매물 상세일 때: 3종 매물 추천을 먼저 표시 */}
+      {type === "listing" && (
+        <>
+          {/* 같은 업종 추천 */}
+          {data.sameIndustry && data.sameIndustry.length > 0 && (
+            <RecommendBlock
+              title="🏪 지역 내 같은 업종 추천 매물"
+              link={`/listings?category=${data.sameIndustry[0]?.category?.name || ""}`}
+              linkLabel="전체보기"
+            >
+              {data.sameIndustry.map((l) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </RecommendBlock>
+          )}
+
+          {/* 최근 등록 매물 */}
+          {data.recentListings && data.recentListings.length > 0 && (
+            <RecommendBlock
+              title="🆕 최근 등록 매물"
+              link="/listings?sort=latest"
+              linkLabel="전체보기"
+            >
+              {data.recentListings.map((l) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </RecommendBlock>
+          )}
+
+          {/* 인기 급상승 매물 */}
+          {data.trendingListings && data.trendingListings.length > 0 && (
+            <RecommendBlock
+              title="🔥 인기 급상승 매물"
+              link="/listings?sort=popular"
+              linkLabel="전체보기"
+            >
+              {data.trendingListings.map((l) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </RecommendBlock>
+          )}
+        </>
+      )}
+
       {/* 추천 프랜차이즈 (매물 상세에서) */}
-      {data.franchises?.length > 0 && (
+      {(data.franchises?.length ?? 0) > 0 && (
         <RecommendBlock
           title="추천 프랜차이즈"
           link="/franchise"
           linkLabel="전체보기"
         >
-          {data.franchises.map((f: any) => (
+          {data.franchises!.map((f: any) => (
             <Link
               key={f.id}
               href={`/franchise/${f.id}`}
@@ -99,13 +172,13 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
       )}
 
       {/* 추천 협력업체 (매물 상세에서) */}
-      {data.partners?.length > 0 && (
+      {(data.partners?.length ?? 0) > 0 && (
         <RecommendBlock
           title="추천 협력업체"
           link="/partners"
           linkLabel="전체보기"
         >
-          {data.partners.map((p: any) => (
+          {data.partners!.map((p: any) => (
             <Link
               key={p.id}
               href={`/partners/${p.id}`}
@@ -142,13 +215,13 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
       )}
 
       {/* 관련 매물 (프랜차이즈/협력업체 상세에서) */}
-      {data.listings?.length > 0 && (
+      {(data.listings?.length ?? 0) > 0 && (
         <RecommendBlock
           title="관련 매물"
           link="/listings"
           linkLabel="전체보기"
         >
-          {data.listings.map((l: any) => (
+          {data.listings!.map((l: any) => (
             <Link
               key={l.id}
               href={`/listings/${l.id}`}
@@ -189,13 +262,13 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
       )}
 
       {/* 추천 집기 (매물/프랜차이즈/협력업체 상세에서) 또는 관련 매물/협력업체 (집기 상세에서) */}
-      {data.equipments?.length > 0 && (
+      {(data.equipments?.length ?? 0) > 0 && (
         <RecommendBlock
           title="추천 집기"
           link="/equipment"
           linkLabel="전체보기"
         >
-          {data.equipments.map((eq: any) => (
+          {data.equipments!.map((eq: any) => (
             <Link
               key={eq.id}
               href={`/equipment/${eq.id}`}
@@ -238,6 +311,45 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
         </RecommendBlock>
       )}
     </div>
+  );
+}
+
+function ListingCard({ listing }: { listing: ListingRecommendation }) {
+  return (
+    <Link
+      href={`/listings/${listing.id}`}
+      className="block w-56 shrink-0 bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+    >
+      <div className="h-28 bg-gray-100 relative">
+        {listing.images?.[0]?.url ? (
+          <Image
+            src={listing.images[0].url}
+            alt={listing.storeName || "매물"}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">
+            사진 없음
+          </div>
+        )}
+      </div>
+      <div className="p-3">
+        <p className="font-medium text-gray-900 text-sm truncate">
+          {listing.storeName || listing.addressRoad || "매물"}
+        </p>
+        <p className="text-xs text-blue-600 font-medium mt-0.5">
+          {listing.premiumNone
+            ? "무권리"
+            : `권리금 ${listing.premium?.toLocaleString()}만`}
+          {" · "}보증금 {listing.deposit?.toLocaleString()}만
+        </p>
+        <p className="text-xs text-gray-400 mt-0.5">
+          {listing.category?.icon} {listing.category?.name}
+          {listing.areaPyeong && ` · ${listing.areaPyeong}평`}
+        </p>
+      </div>
+    </Link>
   );
 }
 

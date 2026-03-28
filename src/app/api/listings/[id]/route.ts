@@ -50,6 +50,10 @@ export async function GET(
         take: 1,
         orderBy: { createdAt: "desc" as const },
       },
+      priceHistory: {
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      },
     },
   });
 
@@ -72,9 +76,9 @@ export async function GET(
     select: { viewCount: true },
   });
 
-  // featuredTier 계산
-  const productId = listing.adPurchases?.[0]?.product?.id || "";
-  const featuredTier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
+  // featuredTier 계산 (product.name 기반: "VIP", "프리미엄", "베이직" 등)
+  const productName = listing.adPurchases?.[0]?.product?.name || "";
+  const featuredTier = productName.includes("VIP") ? "VIP" : productName.includes("프리미엄") ? "PREMIUM" : productName ? "BASIC" : "FREE";
 
   // 판매자 신뢰도 점수 계산 (리뷰 기반)
   const reviewCount = listing.reviews.length;
@@ -89,7 +93,15 @@ export async function GET(
     };
   }
 
-  // 연락처 비공개인 경우 전화번호 마스킹
+  // 연락처 비공개인 경우 전화번호 제거 (spread 오버라이드 방지를 위해 명시적 재구성)
+  const safeUser = {
+    id: listing.user.id,
+    name: listing.user.name,
+    image: listing.user.image,
+    phone: listing.contactPublic ? listing.user.phone : null,
+    createdAt: listing.user.createdAt,
+  };
+
   const result = {
     ...listing,
     viewCount: updated.viewCount,
@@ -97,10 +109,7 @@ export async function GET(
     sellerTrust,
     adPurchases: undefined,
     reviews: undefined,
-    user: {
-      ...listing.user,
-      phone: listing.contactPublic ? listing.user.phone : null,
-    },
+    user: safeUser,
   };
 
   return NextResponse.json(result);
@@ -139,7 +148,13 @@ export async function PUT(
     return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
   }
 
-  if (listing.userId !== session.user.id) {
+  // 소유자 또는 관리자 권한 확인
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
+
+  if (listing.userId !== session.user.id && currentUser?.role !== "ADMIN") {
     return NextResponse.json(
       { error: "본인의 매물만 수정할 수 있습니다." },
       { status: 403 }
@@ -233,6 +248,20 @@ export async function PUT(
     const changes = priceFields.filter((f) => f.old !== f.new && (f.old > 0 || f.new > 0));
 
     if (changes.length > 0) {
+      // 가격 변동 이력 저장 (실패해도 매물 수정 결과에 영향 없도록 격리)
+      try {
+        await prisma.priceHistory.createMany({
+          data: changes.map(c => ({
+            listingId: id,
+            field: c.name === "보증금" ? "deposit" : c.name === "월세" ? "monthlyRent" : "premium",
+            oldValue: c.old,
+            newValue: c.new,
+          })),
+        });
+      } catch (historyErr) {
+        console.error("[PriceHistory] 이력 저장 실패:", historyErr);
+      }
+
       (async () => {
         try {
           // 24시간 내 동일 매물 가격변동 알림이 이미 있으면 스킵 (SMS 폭탄 방지)
@@ -267,7 +296,7 @@ export async function PUT(
 
           for (const fav of favoriteUsers) {
             if (fav.user.phone) {
-              notifyPriceChange(fav.user.phone, storeName, changes[0].old, changes[0].new).catch(() => {});
+              notifyPriceChange(fav.user.phone, storeName, changeText).catch(() => {});
             }
           }
         } catch (err) {

@@ -219,6 +219,7 @@ model Listing {
   adPurchases  AdPurchase[]
   reviews      Review[]
   externalData ListingExternalData?
+  priceHistory PriceHistory[]
 
   @@index([categoryId, subCategoryId])
   @@index([status, bumpedAt])
@@ -776,4 +777,21 @@ model EquipmentFavorite {
   equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
 
   @@unique([userId, equipmentId])
+}
+
+// ==========================================
+// 가격 변동 이력
+// ==========================================
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  listingId String
+  field     String   // "deposit", "monthlyRent", "premium"
+  oldValue  Int
+  newValue  Int
+  createdAt DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, createdAt])
 }

@@ -101,17 +101,25 @@ export async function notifyNewChat(
 
 /**
  * 관심매물 가격 변동 알림
+ * changeText 오버로드: 여러 항목의 변동사항을 한 번에 전달할 때 사용
  */
 export async function notifyPriceChange(
   recipientPhone: string,
   listingName: string,
-  oldPrice: number,
-  newPrice: number
+  oldPriceOrChangeText: number | string,
+  newPrice?: number
 ): Promise<boolean> {
-  const change = newPrice > oldPrice ? "인상" : "인하";
+  let body: string;
+  if (typeof oldPriceOrChangeText === "string") {
+    // changeText 형태: "보증금: 1,000→900만원, 월세: 100→80만원"
+    body = `[권리샵] 관심매물 "${listingName}" 가격이 변동되었습니다. ${oldPriceOrChangeText}`;
+  } else {
+    const change = (newPrice ?? 0) > oldPriceOrChangeText ? "인상" : "인하";
+    body = `[권리샵] 관심매물 "${listingName}" 가격이 ${change}되었습니다. ${oldPriceOrChangeText.toLocaleString()}만→${(newPrice ?? 0).toLocaleString()}만원`;
+  }
   return sendSms({
     to: recipientPhone,
-    text: `[권리샵] 관심매물 "${listingName}" 가격이 ${change}되었습니다. ${oldPrice.toLocaleString()}만→${newPrice.toLocaleString()}만원`,
+    text: body,
   });
 }
 
