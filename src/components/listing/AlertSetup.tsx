@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "@/lib/toast";
 
 interface AlertPreference {
   region: string;
@@ -75,7 +76,7 @@ export default function AlertSetup() {
 
   function handleSave() {
     if (!preferences.region && !preferences.categoryId && !preferences.maxPremium) {
-      alert("최소 하나 이상의 조건을 설정해주세요");
+      toast.info("최소 하나 이상의 조건을 설정해주세요");
       return;
     }
 
@@ -84,7 +85,7 @@ export default function AlertSetup() {
     setSavedPreferences(preferences);
     setNewListingsCount(0);
     setIsOpen(false);
-    alert("관심 지역 알림이 설정되었습니다");
+    toast.success("관심 지역 알림이 설정되었습니다");
   }
 
   function handleClear() {

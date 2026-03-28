@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "@/lib/toast";
 
 interface AdProduct {
   id: string;
@@ -64,12 +65,12 @@ export default function AdminProductsPage() {
     });
 
     if (res.ok) {
-      alert("수정되었습니다");
+      toast.success("수정되었습니다");
       setEditingId(null);
       setEditForm({});
       fetchProducts();
     } else {
-      alert("수정에 실패했습니다");
+      toast.error("수정에 실패했습니다");
     }
   }
 
@@ -83,13 +84,13 @@ export default function AdminProductsPage() {
     if (res.ok) {
       fetchProducts();
     } else {
-      alert("상태 변경에 실패했습니다");
+      toast.error("상태 변경에 실패했습니다");
     }
   }
 
   async function handleCreate() {
     if (!newProduct.name || !newProduct.price) {
-      alert("필수 정보를 입력해주세요");
+      toast.info("필수 정보를 입력해주세요");
       return;
     }
 
@@ -100,7 +101,7 @@ export default function AdminProductsPage() {
     });
 
     if (res.ok) {
-      alert("상품이 추가되었습니다");
+      toast.success("상품이 추가되었습니다");
       setShowAddForm(false);
       setNewProduct({
         name: "",
@@ -114,7 +115,7 @@ export default function AdminProductsPage() {
       });
       fetchProducts();
     } else {
-      alert("추가에 실패했습니다");
+      toast.error("추가에 실패했습니다");
     }
   }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast";
 
 interface FranchiseBrand {
   id: string;
@@ -68,13 +69,13 @@ export default function AdminFranchisePage() {
     });
 
     if (res.ok) {
-      alert("브랜드를 성공적으로 가져왔습니다");
+      toast.success("브랜드를 성공적으로 가져왔습니다");
       setShowSearchModal(false);
       setSearchQuery("");
       setSearchResults([]);
       fetchBrands();
     } else {
-      alert("브랜드 가져오기에 실패했습니다");
+      toast.error("브랜드 가져오기에 실패했습니다");
     }
     setSyncing(false);
   }

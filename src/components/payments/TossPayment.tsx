@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { toast } from "@/lib/toast";
 
 interface TossPaymentProps {
   orderId: string;
@@ -81,7 +82,7 @@ export default function TossPayment({
 
   async function handlePayment() {
     if (!widgetsRef.current) {
-      alert("결제 위젯이 준비되지 않았습니다.");
+      toast.error("결제 위젯이 준비되지 않았습니다.");
       return;
     }
 
@@ -96,7 +97,7 @@ export default function TossPayment({
     } catch (err: any) {
       console.error("Payment request error:", err);
       if (err.code !== "USER_CANCEL") {
-        alert("결제 요청에 실패했습니다.");
+        toast.error("결제 요청에 실패했습니다.");
       }
     }
   }

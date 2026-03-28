@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { toast } from "@/lib/toast";
 
 interface AdminPartner {
   id: string;
@@ -81,10 +82,10 @@ export default function AdminPartnersPage() {
     });
 
     if (res.ok) {
-      alert("상태가 변경되었습니다");
+      toast.success("상태가 변경되었습니다");
       fetchPartners();
     } else {
-      alert("상태 변경에 실패했습니다");
+      toast.error("상태 변경에 실패했습니다");
     }
   }
 
@@ -96,10 +97,10 @@ export default function AdminPartnersPage() {
     });
 
     if (res.ok) {
-      alert("삭제되었습니다");
+      toast.success("삭제되었습니다");
       fetchPartners();
     } else {
-      alert("삭제에 실패했습니다");
+      toast.error("삭제에 실패했습니다");
     }
   }
 

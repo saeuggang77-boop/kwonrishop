@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { toast } from "@/lib/toast";
 
 interface AdProduct {
   id: string;
@@ -97,11 +98,11 @@ function PricingContent() {
         });
         router.push(`/payments/checkout?${params.toString()}`);
       } else {
-        alert(data.error || "구매 중 오류가 발생했습니다.");
+        toast.error(data.error || "구매 중 오류가 발생했습니다.");
         setPurchasing(null);
       }
     } catch {
-      alert("구매 요청 중 오류가 발생했습니다.");
+      toast.error("구매 요청 중 오류가 발생했습니다.");
       setPurchasing(null);
     }
   }

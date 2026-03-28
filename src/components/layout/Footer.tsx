@@ -168,7 +168,7 @@ export default function Footer() {
         {/* Bottom Section - Copyright */}
         <div className="pt-8 border-t border-gray-300 dark:border-gray-600 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            © 2024 권리샵. All rights reserved.
+            © {new Date().getFullYear()} 권리샵. All rights reserved.
           </p>
         </div>
       </div>

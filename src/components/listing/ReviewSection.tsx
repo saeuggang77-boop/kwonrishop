@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "@/lib/toast";
 
 interface Review {
   id: string;
@@ -81,10 +82,10 @@ export default function ReviewSection({ listingId }: ReviewSectionProps) {
         fetchReviews();
       } else {
         const data = await res.json();
-        alert(data.error || "리뷰 작성에 실패했습니다.");
+        toast.error(data.error || "리뷰 작성에 실패했습니다.");
       }
     } catch (err) {
-      alert("오류가 발생했습니다.");
+      toast.error("오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { toast } from "@/lib/toast";
 
 interface ShareButtonProps {
   listingId: string;
@@ -35,7 +36,7 @@ export default function ShareButton({ listingId, title }: ShareButtonProps) {
     const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
     if (!kakaoKey) {
-      alert("카카오톡 공유 기능이 설정되지 않았습니다.");
+      toast.error("카카오톡 공유 기능이 설정되지 않았습니다.");
       return;
     }
 
@@ -86,7 +87,7 @@ export default function ShareButton({ listingId, title }: ShareButtonProps) {
       setShowDropdown(false);
     } catch (error) {
       console.error("Kakao share error:", error);
-      alert("카카오톡 공유에 실패했습니다.");
+      toast.error("카카오톡 공유에 실패했습니다.");
     }
   }
 
@@ -103,7 +104,7 @@ export default function ShareButton({ listingId, title }: ShareButtonProps) {
       }, 2000);
     } catch (error) {
       console.error("Copy link error:", error);
-      alert("링크 복사에 실패했습니다.");
+      toast.error("링크 복사에 실패했습니다.");
     }
   }
 

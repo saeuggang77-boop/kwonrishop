@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { SERVICE_TYPE_LABELS, REGION_OPTIONS } from "@/lib/constants";
 import Image from "next/image";
+import { toast } from "@/lib/toast";
 
 declare global {
   interface Window {
@@ -43,7 +44,7 @@ export default function PartnerRegisterPage() {
     if (status === "authenticated") {
       // 역할 확인 (session에서 직접 가져옴)
       if (session?.user?.role !== "PARTNER" && session?.user?.role !== "ADMIN") {
-        alert("협력업체 회원만 등록할 수 있습니다.");
+        toast.info("협력업체 회원만 등록할 수 있습니다.");
         router.push("/");
         return;
       }
@@ -53,7 +54,7 @@ export default function PartnerRegisterPage() {
         .then((res) => res.json())
         .then((data) => {
           if (!data.verified) {
-            alert("사업자인증이 필요합니다.");
+            toast.info("사업자인증이 필요합니다.");
             router.push("/verify-business");
           } else {
             setCheckingVerification(false);
@@ -75,7 +76,7 @@ export default function PartnerRegisterPage() {
 
   function handleAddressSearch() {
     if (!window.daum) {
-      alert("주소 검색 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+      toast.info("주소 검색 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
 
@@ -124,7 +125,7 @@ export default function PartnerRegisterPage() {
       ]);
     } catch (error) {
       console.error("Image upload error:", error);
-      alert("이미지 업로드에 실패했습니다.");
+      toast.error("이미지 업로드에 실패했습니다.");
     } finally {
       setUploading(false);
     }
@@ -138,22 +139,22 @@ export default function PartnerRegisterPage() {
     e.preventDefault();
 
     if (!companyName.trim()) {
-      alert("업체명을 입력해주세요.");
+      toast.info("업체명을 입력해주세요.");
       return;
     }
 
     if (!serviceType) {
-      alert("서비스 유형을 선택해주세요.");
+      toast.info("서비스 유형을 선택해주세요.");
       return;
     }
 
     if (!description || description.length < 10) {
-      alert("서비스 소개를 10자 이상 입력해주세요.");
+      toast.info("서비스 소개를 10자 이상 입력해주세요.");
       return;
     }
 
     if (serviceArea.length === 0) {
-      alert("서비스 가능 지역을 최소 1개 이상 선택해주세요.");
+      toast.info("서비스 가능 지역을 최소 1개 이상 선택해주세요.");
       return;
     }
 
@@ -183,14 +184,14 @@ export default function PartnerRegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("협력업체가 등록되었습니다!");
+        toast.success("협력업체가 등록되었습니다!");
         router.push(`/partners/${data.id}`);
       } else {
-        alert(data.error || "등록에 실패했습니다.");
+        toast.error(data.error || "등록에 실패했습니다.");
       }
     } catch (error) {
       console.error("Submit error:", error);
-      alert("등록 중 오류가 발생했습니다.");
+      toast.error("등록 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
     }

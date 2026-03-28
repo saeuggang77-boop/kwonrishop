@@ -7,6 +7,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { toast } from "@/lib/toast";
 
 const IndustryRevenueSection = dynamic(
   () => import("@/components/franchise/IndustryRevenueSection"),
@@ -80,7 +81,7 @@ export default function FranchiseDetailPage() {
   async function handleInquirySubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!session) {
-      alert("로그인이 필요합니다");
+      toast.info("로그인이 필요합니다");
       router.push("/auth/login");
       return;
     }
@@ -93,12 +94,12 @@ export default function FranchiseDetailPage() {
     });
 
     if (res.ok) {
-      alert("문의가 접수되었습니다");
+      toast.success("문의가 접수되었습니다");
       setName("");
       setPhone("");
       setMessage("");
     } else {
-      alert("문의 접수에 실패했습니다");
+      toast.error("문의 접수에 실패했습니다");
     }
     setSubmitting(false);
   }

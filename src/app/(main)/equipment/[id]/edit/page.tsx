@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/constants";
 import Image from "next/image";
+import { toast } from "@/lib/toast";
 
 declare global {
   interface Window {
@@ -65,14 +66,14 @@ export default function EquipmentEditPage() {
         .then((r) => r.json())
         .then((data) => {
           if (data.error) {
-            alert("집기를 찾을 수 없습니다.");
+            toast.error("집기를 찾을 수 없습니다.");
             router.push("/equipment");
             return;
           }
 
           // Owner check
           if (data.user?.id !== (session?.user as any)?.id && (session?.user as any)?.role !== "ADMIN") {
-            alert("수정 권한이 없습니다.");
+            toast.error("수정 권한이 없습니다.");
             router.push(`/equipment/${id}`);
             return;
           }
@@ -103,7 +104,7 @@ export default function EquipmentEditPage() {
           setLoading(false);
         })
         .catch(() => {
-          alert("데이터를 불러올 수 없습니다.");
+          toast.error("데이터를 불러올 수 없습니다.");
           router.push("/equipment");
         });
     }
@@ -121,7 +122,7 @@ export default function EquipmentEditPage() {
 
   function handleAddressSearch() {
     if (!window.daum) {
-      alert("주소 검색 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+      toast.info("주소 검색 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
 
@@ -162,7 +163,7 @@ export default function EquipmentEditPage() {
       ]);
     } catch (error) {
       console.error("Image upload error:", error);
-      alert("이미지 업로드에 실패했습니다.");
+      toast.error("이미지 업로드에 실패했습니다.");
     } finally {
       setUploading(false);
     }
@@ -176,27 +177,27 @@ export default function EquipmentEditPage() {
     e.preventDefault();
 
     if (!title.trim()) {
-      alert("제목을 입력해주세요.");
+      toast.info("제목을 입력해주세요.");
       return;
     }
     if (!category) {
-      alert("카테고리를 선택해주세요.");
+      toast.info("카테고리를 선택해주세요.");
       return;
     }
     if (!condition) {
-      alert("상태를 선택해주세요.");
+      toast.info("상태를 선택해주세요.");
       return;
     }
     if (!tradeMethod) {
-      alert("거래방식을 선택해주세요.");
+      toast.info("거래방식을 선택해주세요.");
       return;
     }
     if (!description || description.length < 10) {
-      alert("설명을 10자 이상 입력해주세요.");
+      toast.info("설명을 10자 이상 입력해주세요.");
       return;
     }
     if (images.length === 0) {
-      alert("사진을 최소 1장 이상 업로드해주세요.");
+      toast.info("사진을 최소 1장 이상 업로드해주세요.");
       return;
     }
 
@@ -230,14 +231,14 @@ export default function EquipmentEditPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("집기가 수정되었습니다!");
+        toast.success("집기가 수정되었습니다!");
         router.push(`/equipment/${id}`);
       } else {
-        alert(data.error || "수정에 실패했습니다.");
+        toast.error(data.error || "수정에 실패했습니다.");
       }
     } catch (error) {
       console.error("Submit error:", error);
-      alert("수정 중 오류가 발생했습니다.");
+      toast.error("수정 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
     }

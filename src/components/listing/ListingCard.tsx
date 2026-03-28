@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCompareStore } from "@/store/compareStore";
 import TierBadge from "@/components/shared/TierBadge";
+import { toast } from "@/lib/toast";
 
 interface ListingCardProps {
   listing: {
@@ -53,7 +54,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
     } else {
       const success = addToCompare(listing.id);
       if (!success) {
-        alert("최대 3개까지 비교 가능합니다");
+        toast.info("최대 3개까지 비교 가능합니다");
       }
     }
   };

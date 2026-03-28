@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { EQUIPMENT_CATEGORY_LABELS } from "@/lib/constants";
+import { toast } from "@/lib/toast";
 
 interface AdminEquipment {
   id: string;
@@ -83,11 +84,11 @@ export default function AdminEquipmentPage() {
     });
 
     if (res.ok) {
-      alert("상태가 변경되었습니다");
+      toast.success("상태가 변경되었습니다");
       fetchEquipment();
     } else {
       const error = await res.json();
-      alert(error.error || "상태 변경에 실패했습니다");
+      toast.error(error.error || "상태 변경에 실패했습니다");
     }
   }
 
@@ -99,11 +100,11 @@ export default function AdminEquipmentPage() {
     });
 
     if (res.ok) {
-      alert("삭제되었습니다");
+      toast.success("삭제되었습니다");
       fetchEquipment();
     } else {
       const error = await res.json();
-      alert(error.error || "삭제에 실패했습니다");
+      toast.error(error.error || "삭제에 실패했습니다");
     }
   }
 

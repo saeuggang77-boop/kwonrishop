@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import PremiumCarousel from "@/components/shared/PremiumCarousel";
+import { toast } from "@/lib/toast";
 
 interface FranchiseBrand {
   id: string;
@@ -282,7 +283,7 @@ export default function FranchisePage() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      alert("공정위 정보공개서 보기 기능은 상세페이지에서 확인할 수 있습니다");
+                      toast.info("공정위 정보공개서 보기 기능은 상세페이지에서 확인할 수 있습니다");
                     }}
                     className="text-xs text-blue-600 hover:text-blue-700 font-medium"
                   >

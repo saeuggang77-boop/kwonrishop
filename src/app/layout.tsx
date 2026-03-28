@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import SessionProvider from "@/components/providers/SessionProvider";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import SkipLink from "@/components/ui/SkipLink";
+import Toaster from "@/components/ui/Toaster";
 import "./globals.css";
 
 const geist = Geist({
@@ -82,6 +83,7 @@ export default function RootLayout({
         <SessionProvider>
           <ThemeProvider>
             <div id="main-content">{children}</div>
+            <Toaster />
           </ThemeProvider>
         </SessionProvider>
       </body>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/constants";
 import Image from "next/image";
+import { toast } from "@/lib/toast";
 
 declare global {
   interface Window {
@@ -60,7 +61,7 @@ export default function EquipmentRegisterPage() {
     if (status === "authenticated") {
       const role = (session?.user as any)?.role;
       if (!["SELLER", "FRANCHISE", "PARTNER", "ADMIN"].includes(role)) {
-        alert("사업자 회원만 집기를 등록할 수 있습니다.");
+        toast.info("사업자 회원만 집기를 등록할 수 있습니다.");
         router.push("/");
         return;
       }
@@ -70,7 +71,7 @@ export default function EquipmentRegisterPage() {
         .then((res) => res.json())
         .then((data) => {
           if (!data.verified) {
-            alert("사업자인증이 필요합니다.");
+            toast.info("사업자인증이 필요합니다.");
             router.push("/verify-business");
           } else {
             // 등록 수 제한 확인
@@ -78,7 +79,7 @@ export default function EquipmentRegisterPage() {
               .then((r) => r.json())
               .then((countData) => {
                 if (countData.count >= 10) {
-                  alert("집기는 최대 10개까지 등록할 수 있습니다.");
+                  toast.info("집기는 최대 10개까지 등록할 수 있습니다.");
                   router.push("/equipment");
                 } else {
                   setCheckingVerification(false);
@@ -103,7 +104,7 @@ export default function EquipmentRegisterPage() {
 
   function handleAddressSearch() {
     if (!window.daum) {
-      alert("주소 검색 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+      toast.info("주소 검색 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
 
@@ -144,7 +145,7 @@ export default function EquipmentRegisterPage() {
       ]);
     } catch (error) {
       console.error("Image upload error:", error);
-      alert("이미지 업로드에 실패했습니다.");
+      toast.error("이미지 업로드에 실패했습니다.");
     } finally {
       setUploading(false);
     }
@@ -158,27 +159,27 @@ export default function EquipmentRegisterPage() {
     e.preventDefault();
 
     if (!title.trim()) {
-      alert("제목을 입력해주세요.");
+      toast.info("제목을 입력해주세요.");
       return;
     }
     if (!category) {
-      alert("카테고리를 선택해주세요.");
+      toast.info("카테고리를 선택해주세요.");
       return;
     }
     if (!condition) {
-      alert("상태를 선택해주세요.");
+      toast.info("상태를 선택해주세요.");
       return;
     }
     if (!tradeMethod) {
-      alert("거래방식을 선택해주세요.");
+      toast.info("거래방식을 선택해주세요.");
       return;
     }
     if (!description || description.length < 10) {
-      alert("설명을 10자 이상 입력해주세요.");
+      toast.info("설명을 10자 이상 입력해주세요.");
       return;
     }
     if (images.length === 0) {
-      alert("사진을 최소 1장 이상 업로드해주세요.");
+      toast.info("사진을 최소 1장 이상 업로드해주세요.");
       return;
     }
 
@@ -212,14 +213,14 @@ export default function EquipmentRegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("집기가 등록되었습니다!");
+        toast.success("집기가 등록되었습니다!");
         router.push(`/equipment/${data.id}`);
       } else {
-        alert(data.error || "등록에 실패했습니다.");
+        toast.error(data.error || "등록에 실패했습니다.");
       }
     } catch (error) {
       console.error("Submit error:", error);
-      alert("등록 중 오류가 발생했습니다.");
+      toast.error("등록 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { toast } from "@/lib/toast";
 
 interface AdminListing {
   id: string;
@@ -59,10 +60,10 @@ export default function AdminListingsPage() {
     });
 
     if (res.ok) {
-      alert("상태가 변경되었습니다");
+      toast.success("상태가 변경되었습니다");
       fetchListings();
     } else {
-      alert("상태 변경에 실패했습니다");
+      toast.error("상태 변경에 실패했습니다");
     }
   }
 

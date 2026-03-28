@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import TierBadge from "@/components/shared/TierBadge";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { toast } from "@/lib/toast";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
   loading: () => <div className="py-4 border-b border-gray-100"><div className="h-20 bg-gray-100 rounded animate-pulse" /></div>,
@@ -127,7 +128,7 @@ export default function ListingDetailPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert(data.message || "매물이 끌어올려졌습니다!");
+        toast.success(data.message || "매물이 끌어올려졌습니다!");
         window.location.reload();
       } else {
         if (data.needsPurchase) {
@@ -136,11 +137,11 @@ export default function ListingDetailPage() {
             router.push("/pricing");
           }
         } else {
-          alert(data.error || "끌어올리기에 실패했습니다.");
+          toast.error(data.error || "끌어올리기에 실패했습니다.");
         }
       }
     } catch (error) {
-      alert("끌어올리기 요청 중 오류가 발생했습니다.");
+      toast.error("끌어올리기 요청 중 오류가 발생했습니다.");
     } finally {
       setBumping(false);
     }

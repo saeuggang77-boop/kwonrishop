@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast";
 
 interface Notice {
   id: string;
@@ -34,7 +35,7 @@ export default function AdminNoticesPage() {
       setNotices(data);
     } catch (error) {
       console.error(error);
-      alert("공지사항을 불러오지 못했습니다");
+      toast.error("공지사항을 불러오지 못했습니다");
     } finally {
       setLoading(false);
     }
@@ -43,7 +44,7 @@ export default function AdminNoticesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.content.trim()) {
-      alert("제목과 내용을 입력해주세요");
+      toast.info("제목과 내용을 입력해주세요");
       return;
     }
 
@@ -57,13 +58,13 @@ export default function AdminNoticesPage() {
 
       if (!res.ok) throw new Error("공지사항 작성 실패");
 
-      alert("공지사항이 등록되었습니다");
+      toast.success("공지사항이 등록되었습니다");
       setFormData({ title: "", content: "" });
       setShowForm(false);
       fetchNotices();
     } catch (error) {
       console.error(error);
-      alert("공지사항 등록에 실패했습니다");
+      toast.error("공지사항 등록에 실패했습니다");
     } finally {
       setSubmitting(false);
     }
@@ -79,11 +80,11 @@ export default function AdminNoticesPage() {
 
       if (!res.ok) throw new Error("삭제 실패");
 
-      alert("공지사항이 삭제되었습니다");
+      toast.success("공지사항이 삭제되었습니다");
       fetchNotices();
     } catch (error) {
       console.error(error);
-      alert("공지사항 삭제에 실패했습니다");
+      toast.error("공지사항 삭제에 실패했습니다");
     }
   };
 

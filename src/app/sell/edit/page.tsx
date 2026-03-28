@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast";
 
 export default function ListingEditPage() {
   const { data: session, status } = useSession();
@@ -114,14 +115,14 @@ export default function ListingEditPage() {
       });
 
       if (res.ok) {
-        alert("매물이 삭제되었습니다.");
+        toast.success("매물이 삭제되었습니다.");
         router.push("/mypage");
       } else {
         const data = await res.json();
-        alert(data.error || "삭제에 실패했습니다.");
+        toast.error(data.error || "삭제에 실패했습니다.");
       }
     } catch (err) {
-      alert("오류가 발생했습니다.");
+      toast.error("오류가 발생했습니다.");
     } finally {
       setDeleting(false);
     }

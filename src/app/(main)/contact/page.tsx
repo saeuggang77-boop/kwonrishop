@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "@/lib/toast";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Placeholder: 실제로는 API 호출
-    alert("문의가 접수되었습니다. 빠른 시일 내에 답변 드리겠습니다.");
+    toast.success("문의가 접수되었습니다. 빠른 시일 내에 답변 드리겠습니다.");
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
 

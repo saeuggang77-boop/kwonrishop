@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "@/lib/toast";
 
 const ADMIN_MENU = [
   { href: "/admin", label: "대시보드", icon: "📊" },
@@ -29,7 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       return;
     }
     if (session.user.role !== "ADMIN") {
-      alert("관리자만 접근 가능합니다");
+      toast.error("관리자만 접근 가능합니다");
       router.push("/");
     }
   }, [session, status, router]);

@@ -6,6 +6,7 @@ import { SERVICE_TYPE_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { toast } from "@/lib/toast";
 
 const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
   ssr: false,
@@ -245,7 +246,7 @@ export default function PartnerDetailPage() {
       {/* Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 md:hidden">
         <button
-          onClick={() => alert("채팅 기능은 곧 지원됩니다")}
+          onClick={() => toast.info("채팅 기능은 곧 지원됩니다")}
           className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
         >
           문의하기

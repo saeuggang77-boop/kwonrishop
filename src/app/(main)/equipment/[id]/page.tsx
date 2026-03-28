@@ -8,6 +8,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS, TRADE_METHOD_LABELS } from "@/lib/constants";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { toast } from "@/lib/toast";
 
 const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
   loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
@@ -117,10 +118,10 @@ export default function EquipmentDetailPage() {
       if (res.ok) {
         router.push(`/chat?roomId=${data.chatRoomId}`);
       } else {
-        alert(data.error || "채팅방 생성에 실패했습니다.");
+        toast.error(data.error || "채팅방 생성에 실패했습니다.");
       }
     } catch {
-      alert("채팅 요청 중 오류가 발생했습니다.");
+      toast.error("채팅 요청 중 오류가 발생했습니다.");
     }
   }
 
@@ -130,7 +131,7 @@ export default function EquipmentDetailPage() {
       return;
     }
     if (!reportReason.trim()) {
-      alert("신고 사유를 입력해주세요.");
+      toast.info("신고 사유를 입력해주세요.");
       return;
     }
     setReporting(true);
@@ -141,15 +142,15 @@ export default function EquipmentDetailPage() {
         body: JSON.stringify({ targetId: id, targetType: "EQUIPMENT", reason: reportReason }),
       });
       if (res.ok) {
-        alert("신고가 접수되었습니다.");
+        toast.success("신고가 접수되었습니다.");
         setReportOpen(false);
         setReportReason("");
       } else {
         const data = await res.json();
-        alert(data.error || "신고에 실패했습니다.");
+        toast.error(data.error || "신고에 실패했습니다.");
       }
     } catch {
-      alert("신고 요청 중 오류가 발생했습니다.");
+      toast.error("신고 요청 중 오류가 발생했습니다.");
     } finally {
       setReporting(false);
     }
@@ -360,8 +361,8 @@ export default function EquipmentDetailPage() {
               } else {
                 try {
                   await navigator.clipboard.writeText(url);
-                  alert("링크가 복사되었습니다.");
-                } catch { alert("링크 복사에 실패했습니다."); }
+                  toast.success("링크가 복사되었습니다.");
+                } catch { toast.error("링크 복사에 실패했습니다."); }
               }
             }}
             className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"
