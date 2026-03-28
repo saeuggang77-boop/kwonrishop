@@ -53,7 +53,7 @@ function ListingsContent() {
   const [featuredListings, setFeaturedListings] = useState<FeaturedListingItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1") || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
@@ -63,18 +63,18 @@ function ListingsContent() {
   const [sort, setSort] = useState(searchParams.get("sort") || "latest");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
-  // Advanced filters
-  const [showFilters, setShowFilters] = useState(false);
-  const [region, setRegion] = useState("");
-  const [premiumMin, setPremiumMin] = useState("");
-  const [premiumMax, setPremiumMax] = useState("");
-  const [depositMin, setDepositMin] = useState("");
-  const [depositMax, setDepositMax] = useState("");
-  const [rentMin, setRentMin] = useState("");
-  const [rentMax, setRentMax] = useState("");
-  const [areaMin, setAreaMin] = useState("");
-  const [areaMax, setAreaMax] = useState("");
-  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  // Advanced filters (URL에서 복원)
+  const [showFilters, setShowFilters] = useState(!!searchParams.get("region") || !!searchParams.get("premiumMin") || !!searchParams.get("depositMin") || !!searchParams.get("rentMin") || !!searchParams.get("areaMin") || !!searchParams.get("themes"));
+  const [region, setRegion] = useState(searchParams.get("region") || "");
+  const [premiumMin, setPremiumMin] = useState(searchParams.get("premiumMin") || "");
+  const [premiumMax, setPremiumMax] = useState(searchParams.get("premiumMax") || "");
+  const [depositMin, setDepositMin] = useState(searchParams.get("depositMin") || "");
+  const [depositMax, setDepositMax] = useState(searchParams.get("depositMax") || "");
+  const [rentMin, setRentMin] = useState(searchParams.get("rentMin") || "");
+  const [rentMax, setRentMax] = useState(searchParams.get("rentMax") || "");
+  const [areaMin, setAreaMin] = useState(searchParams.get("areaMin") || "");
+  const [areaMax, setAreaMax] = useState(searchParams.get("areaMax") || "");
+  const [selectedThemes, setSelectedThemes] = useState<string[]>(searchParams.get("themes")?.split(",").filter(Boolean) || []);
 
   const debouncedKeyword = useDebounce(keyword, 300);
 
@@ -98,6 +98,9 @@ function ListingsContent() {
     if (areaMin) params.set("areaMin", areaMin);
     if (areaMax) params.set("areaMax", areaMax);
     if (selectedThemes.length > 0) params.set("themes", selectedThemes.join(","));
+
+    // URL 동기화 (뒤로가기 시 필터 유지)
+    router.replace(`/listings?${params.toString()}`, { scroll: false });
 
     const res = await fetch(`/api/listings?${params}`);
     const data = await res.json();
