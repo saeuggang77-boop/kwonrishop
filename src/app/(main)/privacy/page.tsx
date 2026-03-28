@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "개인정보처리방침 - 권리샵",
+  description: "권리샵의 개인정보처리방침을 확인하세요. 회원의 개인정보 수집, 이용, 보관, 파기에 관한 정책.",
+  openGraph: {
+    title: "개인정보처리방침 - 권리샵",
+    description: "권리샵의 개인정보처리방침을 확인하세요.",
+  },
+};
+
 export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">

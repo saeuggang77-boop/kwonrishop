@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { productId, listingId, partnerServiceId, equipmentId } = body;
+    let { productId, listingId, partnerServiceId, equipmentId } = body;
 
     if (!productId) {
       return NextResponse.json(
@@ -139,11 +139,24 @@ export async function POST(req: NextRequest) {
           { status: 403 }
         );
       }
+      // listingId가 없으면 사용자의 활성 매물 자동 탐지 (1인 1매물)
       if (!listingId) {
-        return NextResponse.json(
-          { error: "매물 ID가 필요합니다." },
-          { status: 400 }
-        );
+        const userListing = await prisma.listing.findFirst({
+          where: {
+            userId: session.user.id,
+            status: "ACTIVE",
+          },
+          select: { id: true },
+        });
+
+        if (!userListing) {
+          return NextResponse.json(
+            { error: "활성 매물이 없습니다. 먼저 매물을 등록해주세요." },
+            { status: 400 }
+          );
+        }
+
+        listingId = userListing.id;
       }
     } else if (scope === "FRANCHISE") {
       if (userRole !== "FRANCHISE" && userRole !== "ADMIN") {

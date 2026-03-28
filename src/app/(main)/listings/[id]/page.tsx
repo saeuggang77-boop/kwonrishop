@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
+import TierBadge from "@/components/shared/TierBadge";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
   loading: () => <div className="py-4 border-b border-gray-100"><div className="h-20 bg-gray-100 rounded animate-pulse" /></div>,
@@ -65,6 +66,7 @@ interface ListingDetail {
   images: { id: string; url: string; type: string }[];
   user: { id: string; name: string | null; image: string | null; phone: string | null; createdAt: string };
   _count: { favorites: number; chatRooms: number };
+  featuredTier?: string;
 }
 
 export default function ListingDetailPage() {
@@ -228,6 +230,13 @@ export default function ListingDetailPage() {
         </div>
       )}
 
+      {/* 광고 티어 배지 */}
+      {listing.featuredTier && listing.featuredTier !== "FREE" && (
+        <div className="mb-3">
+          <TierBadge tier={listing.featuredTier} />
+        </div>
+      )}
+
       {/* 카테고리 & 주소 */}
       <div className="text-sm text-gray-500 mb-1">
         {listing.category?.icon} {listing.category?.name}
@@ -383,7 +392,7 @@ export default function ListingDetailPage() {
                 {bumping ? "처리 중..." : "🔥 끌어올리기"}
               </button>
               <Link
-                href="/pricing"
+                href={`/pricing?listingId=${listing.id}`}
                 className="flex-1 py-2.5 px-4 bg-blue-600 text-white rounded-lg font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm"
               >
                 📦 광고 상품 보기

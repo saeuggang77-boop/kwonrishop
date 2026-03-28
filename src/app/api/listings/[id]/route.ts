@@ -40,6 +40,15 @@ export async function GET(
       _count: {
         select: { favorites: true, chatRooms: true },
       },
+      adPurchases: {
+        where: {
+          status: "PAID",
+          expiresAt: { gt: new Date() },
+        },
+        include: { product: { select: { id: true, name: true, price: true } } },
+        take: 1,
+        orderBy: { createdAt: "desc" as const },
+      },
     },
   });
 
@@ -62,10 +71,16 @@ export async function GET(
     select: { viewCount: true },
   });
 
+  // featuredTier 계산
+  const productId = listing.adPurchases?.[0]?.product?.id || "";
+  const featuredTier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
+
   // 연락처 비공개인 경우 전화번호 마스킹
   const result = {
     ...listing,
     viewCount: updated.viewCount,
+    featuredTier,
+    adPurchases: undefined,
     user: {
       ...listing.user,
       phone: listing.contactPublic ? listing.user.phone : null,

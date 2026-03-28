@@ -245,6 +245,25 @@ export default function HomeClient() {
           </section>
         )}
 
+        {/* 유료 매물 없을 때 최신 매물 폴백 */}
+        {!loading && latestListings.length > 0 &&
+         !latestListings.some((l) => l.featuredTier && l.featuredTier !== "FREE") && (
+          <section className="py-12 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                최신 매물
+              </h2>
+              <Link href="/listings" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                더보기 →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {latestListings.slice(0, 8).map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* 추천 프랜차이즈 */}
         <section className="py-12 border-t border-gray-100 dark:border-gray-800">

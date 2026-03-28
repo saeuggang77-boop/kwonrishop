@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "이용약관 - 권리샵",
+  description: "권리샵의 이용약관을 확인하세요. 서비스 이용에 관한 권리와 의무, 책임 사항 등을 안내합니다.",
+  openGraph: {
+    title: "이용약관 - 권리샵",
+    description: "권리샵의 이용약관을 확인하세요. 서비스 이용에 관한 권리와 의무.",
+  },
+};
+
 export default function TermsPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">

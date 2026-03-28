@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useMemo, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 interface AdProduct {
@@ -23,8 +23,9 @@ const TABS: { key: TabKey; label: string; role: string }[] = [
   { key: "EQUIPMENT", label: "집기장터", role: "SELLER" },
 ];
 
-export default function PricingPage() {
+function PricingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const [products, setProducts] = useState<AdProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,10 +71,19 @@ export default function PricingPage() {
     setPurchasing(productId);
 
     try {
+      // Build request body with target entity IDs from URL params
+      const requestBody: Record<string, string> = { productId };
+      const listingId = searchParams.get("listingId");
+      const equipmentId = searchParams.get("equipmentId");
+      const partnerServiceId = searchParams.get("partnerServiceId");
+      if (listingId) requestBody.listingId = listingId;
+      if (equipmentId) requestBody.equipmentId = equipmentId;
+      if (partnerServiceId) requestBody.partnerServiceId = partnerServiceId;
+
       const res = await fetch("/api/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await res.json();
@@ -391,5 +401,25 @@ function Feature({ icon, text }: { icon: string; text: string }) {
       <span className="text-lg">{icon}</span>
       <span className="text-sm">{text}</span>
     </li>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="animate-pulse space-y-8">
+          <div className="h-12 bg-gray-200 rounded w-1/3 mx-auto" />
+          <div className="h-10 bg-gray-200 rounded w-2/3 mx-auto" />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-96 bg-gray-200 rounded-xl" />
+            ))}
+          </div>
+        </div>
+      </div>
+    }>
+      <PricingContent />
+    </Suspense>
   );
 }

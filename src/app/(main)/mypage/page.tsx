@@ -249,6 +249,13 @@ export default function MyPage() {
             </svg>
           </Link>
         )}
+        <Link href="/mypage/ads" className="flex items-center justify-between px-5 py-4 hover:bg-gray-50">
+          <span className="text-sm font-medium text-gray-700">광고 관리</span>
+          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+          </svg>
+        </Link>
         <Link href="/mypage/favorites" className="flex items-center justify-between px-5 py-4 hover:bg-gray-50">
           <span className="text-sm font-medium text-gray-700">관심매물</span>
           <span className="text-sm text-gray-400">{data.favoriteCount + data.equipmentFavoriteCount}건</span>
