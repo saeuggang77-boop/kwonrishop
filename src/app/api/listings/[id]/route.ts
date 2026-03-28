@@ -235,6 +235,16 @@ export async function PUT(
     if (changes.length > 0) {
       (async () => {
         try {
+          // 24시간 내 동일 매물 가격변동 알림이 이미 있으면 스킵 (SMS 폭탄 방지)
+          const recentNotification = await prisma.notification.findFirst({
+            where: {
+              type: "PRICE_CHANGE",
+              link: `/listings/${id}`,
+              createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+            },
+          });
+          if (recentNotification) return;
+
           const favoriteUsers = await prisma.favorite.findMany({
             where: { listingId: id },
             include: { user: { select: { id: true, phone: true } } },

@@ -59,6 +59,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 상품 원가와 주문 금액 일치 확인 (DB 변조 방어)
+    if (order.product && order.amount !== order.product.price) {
+      console.error(`[Security] Order amount mismatch: order=${order.amount}, product=${order.product.price}, orderId=${orderId}`);
+      return NextResponse.json(
+        { error: "결제 금액 오류가 발생했습니다" },
+        { status: 400 }
+      );
+    }
+
     if (order.amount !== amount) {
       return NextResponse.json(
         { error: "결제 금액이 일치하지 않습니다" },

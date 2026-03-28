@@ -41,17 +41,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "파일 크기는 10MB 이하만 가능합니다." }, { status: 400 });
   }
 
-  // 이미지 파일만 허용
+  // 이미지 파일만 허용 (MIME type 검사)
   if (!file.type.startsWith("image/")) {
     return NextResponse.json({ error: "이미지 파일만 업로드 가능합니다." }, { status: 400 });
+  }
+
+  // 파일 확장자 화이트리스트 검증
+  const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"];
+  const ext = path.extname(file.name).toLowerCase() || ".jpg";
+  if (!ALLOWED_EXTENSIONS.includes(ext)) {
+    return NextResponse.json(
+      { error: "허용되지 않은 파일 형식입니다. (jpg, png, gif, webp만 가능)" },
+      { status: 400 }
+    );
   }
 
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    // 파일명 생성
-    const ext = path.extname(file.name) || ".jpg";
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 15);
     const filename = `${timestamp}-${random}${ext}`;
