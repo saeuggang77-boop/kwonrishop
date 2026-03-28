@@ -26,6 +26,9 @@ export async function GET(
           image: true,
           phone: true,
           createdAt: true,
+          businessVerification: {
+            select: { verified: true },
+          },
         },
       },
       reviews: {
@@ -100,6 +103,7 @@ export async function GET(
     image: listing.user.image,
     phone: listing.contactPublic ? listing.user.phone : null,
     createdAt: listing.user.createdAt,
+    businessVerified: listing.user.businessVerification?.verified ?? false,
   };
 
   const result = {

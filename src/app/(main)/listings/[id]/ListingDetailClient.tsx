@@ -83,7 +83,7 @@ interface ListingDetail {
   category: { id?: string; name: string; icon: string } | null;
   subCategory: { name: string } | null;
   images: { id: string; url: string; type: string }[];
-  user: { id: string; name: string | null; image: string | null; phone: string | null; createdAt: string };
+  user: { id: string; name: string | null; image: string | null; phone: string | null; createdAt: string; businessVerified?: boolean };
   _count: { favorites: number; chatRooms: number };
   featuredTier?: string;
   sellerTrust?: { avgRating: number; reviewCount: number };
@@ -198,7 +198,7 @@ export default function ListingDetailClient() {
       // Show other listings (exclude current)
       setRecentlyViewed(filtered.slice(0, 10));
     } catch {}
-  }, [listingId]);
+  }, [listing?.id]);
 
   // Filtered images by tab
   const filteredImages = useMemo(() => {
@@ -337,7 +337,7 @@ export default function ListingDetailClient() {
   // Premium breakdown data
   const hasPremiumBreakdown = !listing.premiumNone && (
     listing.premiumBusiness || listing.premiumFacility || listing.premiumLocation
-  );
+  ) && ((listing.premiumBusiness || 0) + (listing.premiumFacility || 0) + (listing.premiumLocation || 0)) > 0;
   const premiumTotal = (listing.premiumBusiness || 0) + (listing.premiumFacility || 0) + (listing.premiumLocation || 0);
 
   // Financial data
@@ -347,10 +347,6 @@ export default function ListingDetailClient() {
     listing.monthlyProfit;
 
   const investmentTotal = listing.deposit + (listing.premiumNone ? 0 : listing.premium);
-
-  // ROI calculation
-  const hasROI = investmentTotal > 0 && listing.monthlyProfit && listing.monthlyProfit > 0;
-  const roiMonths = hasROI ? investmentTotal / listing.monthlyProfit! : 0;
 
   // Price history
   const hasPriceHistory = listing.priceHistory && listing.priceHistory.length > 0;
@@ -397,7 +393,7 @@ export default function ListingDetailClient() {
         {filteredImages.length > 0 ? (
           <>
             <Image
-              src={filteredImages[currentImage]?.url || listing.images[0].url}
+              src={filteredImages[currentImage]?.url || listing.images[0]?.url || ""}
               alt={`매물 사진 ${currentImage + 1}`}
               fill
               sizes="(max-width: 768px) 100vw, 896px"
@@ -437,6 +433,29 @@ export default function ListingDetailClient() {
         )}
       </div>
 
+      {/* ===== 1-1. 사진 썸네일 바 (5장 이상) ===== */}
+      {filteredImages.length >= 5 && (
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-2 mb-2 -mx-1 px-1">
+          {filteredImages.map((img, idx) => (
+            <button
+              key={img.id}
+              onClick={() => setCurrentImage(idx)}
+              className={`shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-colors ${
+                currentImage === idx ? "border-blue-500" : "border-transparent hover:border-gray-300"
+              }`}
+            >
+              <Image
+                src={img.url}
+                alt={`썸네일 ${idx + 1}`}
+                width={64}
+                height={48}
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* ===== 2. 테마 태그 + TierBadge ===== */}
       {listing.themes.length > 0 && (
         <div className="flex gap-2 mb-3">
@@ -462,12 +481,28 @@ export default function ListingDetailClient() {
           <span className="ml-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded">프랜차이즈</span>
         )}
       </div>
-      <h1 className="text-xl font-bold text-gray-900 mb-1">
-        {listing.storeName || listing.addressRoad || "매물 상세"}
-      </h1>
-      <p className="text-sm text-gray-500 mb-4">
+      <div className="flex items-center gap-2 mb-1">
+        <h1 className="text-xl font-bold text-gray-900">
+          {listing.storeName || listing.addressRoad || "매물 상세"}
+        </h1>
+        {listing.status === "ACTIVE" && (
+          <span className="shrink-0 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">판매중</span>
+        )}
+        {listing.status === "RESERVED" && (
+          <span className="shrink-0 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">예약중</span>
+        )}
+        {listing.status === "SOLD" && (
+          <span className="shrink-0 px-2 py-0.5 bg-gray-200 text-gray-500 text-xs font-medium rounded-full">거래완료</span>
+        )}
+      </div>
+      <p className="text-sm text-gray-500 mb-1">
         {listing.addressRoad}
         {listing.addressDetail && ` ${listing.addressDetail}`}
+      </p>
+      <p className="text-xs text-gray-400 mb-4">
+        등록 {(() => { const days = Math.floor((Date.now() - new Date(listing.createdAt).getTime()) / (1000 * 60 * 60 * 24)); return days === 0 ? "오늘" : `${days}일째`; })()}
+        <span className="mx-1">·</span>조회 {listing.viewCount}
+        <span className="mx-1">·</span>관심 {listing._count.favorites}
       </p>
 
       {/* ===== 4. 가격 요약 ===== */}
@@ -495,6 +530,38 @@ export default function ListingDetailClient() {
           </p>
         )}
       </div>
+
+      {/* ===== 4-1. 핵심 투자 지표 카드 ===== */}
+      {(() => {
+        const cards: { icon: string; label: string; value: string; color: string }[] = [];
+        if (listing.monthlyRevenue && listing.monthlyRevenue > 0) {
+          cards.push({ icon: "📊", label: "월매출", value: `${fmt(listing.monthlyRevenue)}만`, color: "bg-blue-50 text-blue-700" });
+        }
+        if (listing.monthlyProfit && listing.monthlyRevenue && listing.monthlyRevenue > 0) {
+          const profitRate = ((listing.monthlyProfit / listing.monthlyRevenue) * 100).toFixed(0);
+          cards.push({ icon: "💰", label: "순이익률", value: `${profitRate}%`, color: "bg-green-50 text-green-700" });
+        }
+        if (investmentTotal > 0 && listing.monthlyProfit && listing.monthlyProfit > 0) {
+          const months = (investmentTotal / listing.monthlyProfit).toFixed(0);
+          cards.push({ icon: "⏱", label: "회수기간", value: `${months}개월`, color: "bg-amber-50 text-amber-700" });
+          const annualReturn = ((listing.monthlyProfit * 12) / investmentTotal * 100).toFixed(0);
+          cards.push({ icon: "📈", label: "연수익률", value: `${annualReturn}%`, color: "bg-purple-50 text-purple-700" });
+        }
+        if (cards.length === 0) return null;
+        return (
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {cards.map((c) => (
+              <div key={c.label} className={`rounded-xl p-3 ${c.color}`}>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-base">{c.icon}</span>
+                  <span className="text-xs font-medium opacity-80">{c.label}</span>
+                </div>
+                <p className="text-lg font-bold">{c.value}</p>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* ===== 5. 권리금 해부하기 ===== */}
       {hasPremiumBreakdown && (
@@ -562,7 +629,7 @@ export default function ListingDetailClient() {
       {/* ===== 6. 기본 정보 ===== */}
       <Section title="기본 정보">
         <InfoGrid>
-          {listing.areaPyeong && <InfoItem label="면적" value={`${listing.areaPyeong}평 (${listing.areaSqm}m²)`} />}
+          {listing.areaPyeong && <InfoItem label="면적" value={`${listing.areaPyeong}평${listing.areaSqm ? ` (${listing.areaSqm}m²)` : ""}`} />}
           {listing.currentFloor && (
             <InfoItem label="층수" value={`${listing.isBasement ? "지하 " : ""}${listing.currentFloor}층 / ${listing.totalFloor}층`} />
           )}
@@ -571,74 +638,116 @@ export default function ListingDetailClient() {
         </InfoGrid>
       </Section>
 
-      {/* ===== 7. 월간 재무현황 테이블 ===== */}
-      {hasFinancialData && (
-        <Section title="월간 재무현황">
-          <div className="bg-gray-50 rounded-xl overflow-hidden">
-            {/* 투자금 & 매출 */}
-            <div className="px-4 py-3 space-y-2">
+      {/* ===== 7. 평균 매출정보 (도넛 차트) ===== */}
+      {hasFinancialData && listing.monthlyRevenue != null && listing.monthlyRevenue > 0 && (() => {
+        const rev = listing.monthlyRevenue!;
+        const expenses = [
+          { label: "재료비", value: listing.expenseMaterial || 0, color: "#9CA3AF" },
+          { label: "인건비", value: listing.expenseLabor || 0, color: "#EF4444" },
+          { label: "월세", value: listing.expenseRent || 0, color: "#22C55E" },
+          { label: "관리비", value: listing.expenseMaintenance || 0, color: "#F59E0B" },
+          { label: "공과금", value: listing.expenseUtility || 0, color: "#F97316" },
+          { label: "기타경비", value: listing.expenseOther || 0, color: "#6366F1" },
+        ].filter(e => e.value > 0);
+        const totalExpense = expenses.reduce((s, e) => s + e.value, 0);
+        const profit = listing.monthlyProfit || (rev - totalExpense);
+        const profitPct = rev > 0 ? ((profit / rev) * 100).toFixed(0) : "0";
+        const segments = [
+          ...expenses.map(e => ({ ...e, pct: rev > 0 ? (e.value / rev) * 100 : 0 })),
+          { label: "월수익", value: profit, color: "#3B82F6", pct: rev > 0 ? (profit / rev) * 100 : 0 },
+        ].filter(s => s.pct > 0);
+
+        // SVG 도넛 차트 데이터
+        const radius = 80;
+        const cx = 100;
+        const cy = 100;
+        const strokeWidth = 32;
+        const circumference = 2 * Math.PI * radius;
+        let cumulativePct = 0;
+
+        return (
+          <Section title="평균 매출정보">
+            <p className="text-xs text-gray-400 mb-4">허위 기재 시 원아웃 제도로 영구 정지 당할 수 있습니다.</p>
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              {/* 도넛 차트 */}
+              <div className="relative flex-shrink-0">
+                <svg width="200" height="200" viewBox="0 0 200 200">
+                  {/* 배경 원 */}
+                  <circle cx={cx} cy={cy} r={radius} fill="none" stroke="#F3F4F6" strokeWidth={strokeWidth} />
+                  {/* 세그먼트 */}
+                  {segments.map((seg, i) => {
+                    const dashLen = (seg.pct / 100) * circumference;
+                    const dashOffset = -(cumulativePct / 100) * circumference;
+                    cumulativePct += seg.pct;
+                    return (
+                      <circle
+                        key={i}
+                        cx={cx}
+                        cy={cy}
+                        r={radius}
+                        fill="none"
+                        stroke={seg.color}
+                        strokeWidth={strokeWidth}
+                        strokeDasharray={`${dashLen} ${circumference - dashLen}`}
+                        strokeDashoffset={dashOffset}
+                        transform={`rotate(-90 ${cx} ${cy})`}
+                        className="transition-all duration-500"
+                      />
+                    );
+                  })}
+                </svg>
+                {/* 중앙 텍스트 */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-xl font-bold text-gray-900">{fmt(rev)}만원</span>
+                  <span className="text-xs text-gray-400">월 매출</span>
+                </div>
+              </div>
+
+              {/* 항목별 상세 */}
+              <div className="flex-1 w-full space-y-1">
+                {segments.map((seg, i) => (
+                  <div key={i} className="flex items-center gap-2 py-1">
+                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: seg.color }} />
+                    <span className="text-xs text-gray-500 w-14 flex-shrink-0">{seg.label}</span>
+                    <div className="flex-1 flex items-center gap-2">
+                      <div className="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(seg.pct, 100)}%`, backgroundColor: seg.color }} />
+                      </div>
+                      <span className="text-sm font-bold text-gray-800 w-20 text-right">{fmt(seg.value)}만</span>
+                      <span className="text-xs text-gray-400 w-8 text-right">{seg.pct.toFixed(0)}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 투자금 & 순이익 요약 */}
+            <div className="mt-6 space-y-3">
               {investmentTotal > 0 && (
-                <FinanceRow
-                  label="투자금"
-                  value={investmentTotal}
-                  sub={`보증금 ${fmt(listing.deposit)} + 권리금 ${listing.premiumNone ? "0" : fmt(listing.premium)}`}
-                  bold
-                />
+                <div className="flex justify-between items-center py-3 border-t border-gray-100">
+                  <span className="text-sm font-medium text-gray-700">투자금</span>
+                  <div className="text-right">
+                    <span className="text-base font-bold text-gray-900">{fmt(investmentTotal)}만원</span>
+                    <span className="text-xs text-gray-400 ml-1">(보증금 {fmt(listing.deposit)} + 권리금 {listing.premiumNone ? "0" : fmt(listing.premium)})</span>
+                  </div>
+                </div>
               )}
-              {listing.monthlyRevenue != null && listing.monthlyRevenue > 0 && (
-                <FinanceRow label="월 매출" value={listing.monthlyRevenue} bold />
+
+              {profit > 0 && (
+                <div className="flex justify-between items-center py-3 border-t-2 border-blue-200 bg-blue-50 rounded-lg px-4">
+                  <span className="text-sm font-bold text-blue-700">월 수익</span>
+                  <span className="text-lg font-bold text-blue-600">+{fmt(profit)}만원 <span className="text-sm">{profitPct}%</span></span>
+                </div>
+              )}
+
+              {listing.profitDescription && (
+                <p className="text-xs text-gray-500 px-1">{listing.profitDescription}</p>
               )}
             </div>
 
-            {/* 지출 내역 */}
-            {(listing.expenseMaterial || listing.expenseLabor || listing.expenseRent ||
-              listing.expenseMaintenance || listing.expenseUtility || listing.expenseOther) && (
-              <div className="border-t border-gray-200 px-4 py-3 space-y-2">
-                <p className="text-xs text-gray-400 mb-1">지출 내역</p>
-                {listing.expenseMaterial != null && listing.expenseMaterial > 0 && (
-                  <FinanceRow label="재료비" value={listing.expenseMaterial} revenue={listing.monthlyRevenue} />
-                )}
-                {listing.expenseLabor != null && listing.expenseLabor > 0 && (
-                  <FinanceRow label="인건비" value={listing.expenseLabor} revenue={listing.monthlyRevenue} />
-                )}
-                {listing.expenseRent != null && listing.expenseRent > 0 && (
-                  <FinanceRow label="월세" value={listing.expenseRent} revenue={listing.monthlyRevenue} />
-                )}
-                {listing.expenseMaintenance != null && listing.expenseMaintenance > 0 && (
-                  <FinanceRow label="관리비" value={listing.expenseMaintenance} revenue={listing.monthlyRevenue} />
-                )}
-                {listing.expenseUtility != null && listing.expenseUtility > 0 && (
-                  <FinanceRow label="공과금" value={listing.expenseUtility} revenue={listing.monthlyRevenue} />
-                )}
-                {listing.expenseOther != null && listing.expenseOther > 0 && (
-                  <FinanceRow label="기타" value={listing.expenseOther} revenue={listing.monthlyRevenue} />
-                )}
-              </div>
-            )}
-
-            {/* 순이익 */}
-            {listing.monthlyProfit != null && listing.monthlyProfit > 0 && (
-              <div className="border-t-2 border-blue-200 bg-blue-50 px-4 py-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-bold text-blue-700">순이익</span>
-                  <div className="text-right">
-                    <span className="text-base font-bold text-blue-700">{fmt(listing.monthlyProfit)}만</span>
-                    {listing.monthlyRevenue != null && listing.monthlyRevenue > 0 && (
-                      <span className="text-xs text-blue-500 ml-1">
-                        ({((listing.monthlyProfit / listing.monthlyRevenue) * 100).toFixed(1)}%)
-                      </span>
-                    )}
-                  </div>
-                </div>
-                {listing.profitDescription && (
-                  <p className="text-xs text-gray-500 mt-1">{listing.profitDescription}</p>
-                )}
-              </div>
-            )}
-
             {/* 인력구성 */}
-            {(listing.operationType || listing.familyWorkers || listing.employeesFull || listing.employeesPart) && (
-              <div className="border-t border-gray-200 px-4 py-3">
+            {(listing.familyWorkers || listing.employeesFull || listing.employeesPart || listing.operationType !== "SOLO") && (
+              <div className="mt-4 pt-3 border-t border-gray-100">
                 <p className="text-xs text-gray-400 mb-1">인력구성</p>
                 <p className="text-sm text-gray-700">
                   {listing.operationType === "SOLO" && "혼자 운영"}
@@ -654,37 +763,10 @@ export default function ListingDetailClient() {
                 </p>
               </div>
             )}
-          </div>
-        </Section>
-      )}
+          </Section>
+        );
+      })()}
 
-      {/* ===== 8. 투자금 회수 기간 ===== */}
-      {hasROI && (
-        <Section title="투자금 회수 예상">
-          <div className={`rounded-xl p-4 ${
-            roiMonths <= 12 ? "bg-green-50" : roiMonths <= 24 ? "bg-amber-50" : "bg-red-50"
-          }`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-lg">
-                {roiMonths <= 12 ? "\uD83D\uDCC8" : roiMonths <= 24 ? "\u23F3" : "\u26A0\uFE0F"}
-              </span>
-              <span className={`text-lg font-bold ${
-                roiMonths <= 12 ? "text-green-700" : roiMonths <= 24 ? "text-amber-700" : "text-red-700"
-              }`}>
-                약 {roiMonths.toFixed(1)}개월
-              </span>
-            </div>
-            <p className="text-sm text-gray-600">
-              투자금 {fmt(investmentTotal)}만 / 월순이익 {fmt(listing.monthlyProfit!)}만 = 약 {roiMonths.toFixed(1)}개월
-            </p>
-            <div className="mt-2 flex items-center gap-2 text-xs text-gray-400">
-              <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" />12개월 이내</span>
-              <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" />12~24개월</span>
-              <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" />24개월 초과</span>
-            </div>
-          </div>
-        </Section>
-      )}
 
       {/* ===== 9. 지역 시세 비교 ===== */}
       {areaStats && (
@@ -754,24 +836,34 @@ export default function ListingDetailClient() {
 
       {/* ===== 12. 판매자 정보 ===== */}
       <Section title="판매자">
-        <div className="flex items-center gap-3">
-          {listing.user.image ? (
-            <Image src={listing.user.image} alt={`${listing.user.name || '판매자'} 프로필 사진`} width={40} height={40} className="rounded-full" />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
-              {listing.user.name?.[0] || "U"}
-            </div>
-          )}
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <Link href={`/users/${listing.user.id}`} className="font-medium text-gray-900 hover:text-blue-600">{listing.user.name || "판매자"}</Link>
-              {listing.sellerTrust && listing.sellerTrust.reviewCount > 0 && (
-                <SellerTrustBadge avgRating={listing.sellerTrust.avgRating} reviewCount={listing.sellerTrust.reviewCount} />
+        <div className="bg-gray-50 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            {listing.user.image ? (
+              <Image src={listing.user.image} alt={`${listing.user.name || '판매자'} 프로필 사진`} width={48} height={48} className="rounded-full" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
+                {listing.user.name?.[0] || "U"}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Link href={`/users/${listing.user.id}`} className="font-medium text-gray-900 hover:text-blue-600">{listing.user.name || "판매자"}</Link>
+                {listing.user.businessVerified && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    사업자 인증완료
+                  </span>
+                )}
+                {listing.sellerTrust && listing.sellerTrust.reviewCount > 0 && (
+                  <SellerTrustBadge avgRating={listing.sellerTrust.avgRating} reviewCount={listing.sellerTrust.reviewCount} />
+                )}
+              </div>
+              {listing.contactPublic && listing.user.phone && (
+                <p className="text-sm text-blue-600 mt-1">{listing.user.phone}</p>
               )}
             </div>
-            {listing.contactPublic && listing.user.phone && (
-              <p className="text-sm text-blue-600">{listing.user.phone}</p>
-            )}
           </div>
         </div>
       </Section>
@@ -884,10 +976,6 @@ export default function ListingDetailClient() {
         </div>
       </div>
 
-      {/* ===== 20. 조회수/관심/등록일 ===== */}
-      <div className="text-xs text-gray-400 text-center mt-4">
-        조회 {listing.viewCount} · 관심 {listing.favoriteCount} · {new Date(listing.createdAt).toLocaleDateString("ko-KR")}
-      </div>
     </div>
   );
 }
