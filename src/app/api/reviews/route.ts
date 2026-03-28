@@ -97,8 +97,6 @@ export async function POST(req: NextRequest) {
         reviewer: {
           select: {
             id: true,
-            name: true,
-            image: true,
           },
         },
       },
@@ -133,8 +131,6 @@ export async function GET(req: NextRequest) {
         reviewer: {
           select: {
             id: true,
-            name: true,
-            image: true,
           },
         },
       },

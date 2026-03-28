@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 interface Review {
   id: string;
@@ -13,11 +12,6 @@ interface Review {
   conditionRating: number;
   content: string | null;
   createdAt: string;
-  reviewer?: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  };
   listing: {
     id: string;
     storeName: string | null;
@@ -155,24 +149,16 @@ export default function ReviewsPage() {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   {activeTab === "received" ? (
-                    // 받은 리뷰: 작성자 정보
+                    // 받은 리뷰: 블라인드 처리 (익명)
                     <>
-                      {review.reviewer?.image ? (
-                        <Image
-                          src={review.reviewer.image}
-                          alt=""
-                          width={40}
-                          height={40}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
-                          {review.reviewer?.name?.[0] || "?"}
-                        </div>
-                      )}
+                      <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">
-                          {review.reviewer?.name || "익명"}
+                          익명 리뷰어
                         </p>
                         <Link
                           href={`/listings/${review.listing.id}`}

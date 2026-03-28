@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -142,10 +143,50 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">권리샵</h1>
-          <p className="mt-1 text-gray-500 dark:text-gray-400">이메일 회원가입</p>
+          <p className="mt-1 text-gray-500 dark:text-gray-400">회원가입</p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          {/* Social Login */}
+          <div className="space-y-2.5 mb-5">
+            <button
+              onClick={() => signIn("kakao", { callbackUrl: "/" })}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-[#191919] bg-[#FEE500] hover:bg-[#FDD800] transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M10 3C5.58 3 2 5.79 2 9.25c0 2.2 1.46 4.13 3.65 5.22-.16.56-.58 2.04-.66 2.36-.1.4.15.39.31.28.13-.08 2.04-1.38 2.86-1.95.6.09 1.21.13 1.84.13 4.42 0 8-2.79 8-6.25S14.42 3 10 3Z"
+                  fill="#191919"
+                />
+              </svg>
+              카카오로 시작하기
+            </button>
+
+            <button
+              onClick={() => signIn("naver", { callbackUrl: "/" })}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-white bg-[#03C75A] hover:bg-[#02b351] transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M13.16 10.64L6.54 3H3v14h3.84V9.36L13.46 17H17V3h-3.84v7.64Z"
+                  fill="white"
+                />
+              </svg>
+              네이버로 시작하기
+            </button>
+
+            <p className="text-center text-[11px] text-gray-400 dark:text-gray-500 mt-2">
+              소셜 로그인은 별도 가입 없이 바로 시작됩니다
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+            <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">또는 이메일로 회원가입</span>
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
@@ -305,17 +346,11 @@ export default function SignupPage() {
           </form>
 
           {/* Links */}
-          <div className="mt-4 text-center space-y-1">
+          <div className="mt-4 text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               이미 계정이 있으신가요?{" "}
               <Link href="/login" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
                 로그인
-              </Link>
-            </p>
-            <p className="text-xs text-gray-400 dark:text-gray-500">
-              또는{" "}
-              <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
-                소셜 계정으로 바로 시작하기
               </Link>
             </p>
           </div>

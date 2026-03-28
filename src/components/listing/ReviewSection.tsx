@@ -14,8 +14,6 @@ interface ReviewData {
   createdAt: string;
   reviewer: {
     id: string;
-    name: string | null;
-    image: string | null;
   };
 }
 

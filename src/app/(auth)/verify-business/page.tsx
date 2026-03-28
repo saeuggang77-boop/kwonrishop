@@ -20,6 +20,7 @@ function VerifyBusinessContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [matchedBrandId, setMatchedBrandId] = useState<string | null>(null);
 
   // 역할별 메시지
   const roleMessages = {
@@ -77,6 +78,9 @@ function VerifyBusinessContent() {
         return;
       }
 
+      if (data.franchiseBrandId) {
+        setMatchedBrandId(data.franchiseBrandId);
+      }
       setSuccess(true);
     } catch {
       setError("네트워크 오류가 발생했습니다.");
@@ -88,6 +92,7 @@ function VerifyBusinessContent() {
   // 역할별 성공 후 리다이렉트 URL
   const getSuccessRedirect = () => {
     if (requestedRole === "SELLER") return "/sell";
+    if (requestedRole === "FRANCHISE" && matchedBrandId) return `/franchise/${matchedBrandId}`;
     if (requestedRole === "FRANCHISE") return "/franchise";
     if (requestedRole === "PARTNER") return "/partners/register";
     return "/sell";
@@ -228,6 +233,17 @@ function VerifyBusinessContent() {
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
             국세청 사업자등록 진위확인 API를 통해 인증됩니다
           </p>
+
+          {requestedRole === "FRANCHISE" && (
+            <div className="p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg text-xs text-blue-700 dark:text-blue-300 space-y-1">
+              <p className="font-medium">프랜차이즈 본사 인증 안내</p>
+              <ul className="list-disc list-inside space-y-0.5">
+                <li>공정거래위원회 정보공개서에 등록된 브랜드만 가입 가능합니다</li>
+                <li>사업자번호로 브랜드가 자동 매칭됩니다</li>
+                <li>인증 완료 후 브랜드 페이지 편집 권한이 부여됩니다</li>
+              </ul>
+            </div>
+          )}
         </form>
       </div>
     </div>

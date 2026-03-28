@@ -17,6 +17,7 @@ function LoginContent() {
   const router = useRouter();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const errorParam = searchParams.get("error");
+  const errorMethod = searchParams.get("method");
   const verified = searchParams.get("verified") === "true";
   const reset = searchParams.get("reset") === "true";
 
@@ -129,7 +130,16 @@ function LoginContent() {
             인증 링크가 만료되었습니다. 다시 시도해주세요.
           </div>
         )}
-        {errorParam && !["InvalidToken", "TokenExpired", "RateLimit"].includes(errorParam) && (
+        {errorParam === "OAuthAccountNotLinked" && (
+          <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 rounded-lg text-sm text-orange-700 dark:text-orange-300 text-center">
+            <p className="font-medium mb-1">이미 다른 방법으로 가입된 이메일입니다</p>
+            <p className="text-xs text-orange-600 dark:text-orange-400">
+              해당 이메일은 <span className="font-semibold">{errorMethod || "다른 방법"}</span>으로 가입되어 있습니다.
+              기존 방법으로 로그인해주세요.
+            </p>
+          </div>
+        )}
+        {errorParam && !["InvalidToken", "TokenExpired", "RateLimit", "OAuthAccountNotLinked"].includes(errorParam) && (
           <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400 text-center">
             로그인에 실패했습니다. 다시 시도해주세요.
           </div>

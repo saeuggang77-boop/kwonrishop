@@ -12,7 +12,7 @@ export async function GET() {
   }
 
   try {
-    // 내가 받은 리뷰 (내 매물에 달린 리뷰)
+    // 내가 받은 리뷰 (내 매물에 달린 리뷰) - 블라인드 리뷰이므로 reviewer 정보 제거
     const receivedReviews = await prisma.review.findMany({
       where: {
         listing: {
@@ -20,13 +20,6 @@ export async function GET() {
         },
       },
       include: {
-        reviewer: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
         listing: {
           select: {
             id: true,

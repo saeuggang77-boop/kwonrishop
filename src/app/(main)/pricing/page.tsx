@@ -24,6 +24,15 @@ const TABS: { key: TabKey; label: string; role: string }[] = [
   { key: "EQUIPMENT", label: "집기장터", role: "SELLER" },
 ];
 
+type PeriodKey = "1m" | "3m" | "6m" | "12m";
+
+const PERIODS: { key: PeriodKey; label: string; discount: string | null }[] = [
+  { key: "1m", label: "1개월", discount: null },
+  { key: "3m", label: "3개월", discount: "10% 할인" },
+  { key: "6m", label: "6개월", discount: "15% 할인" },
+  { key: "12m", label: "12개월", discount: "20% 할인" },
+];
+
 function PricingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,6 +41,7 @@ function PricingContent() {
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("LISTING");
+  const [franchisePeriod, setFranchisePeriod] = useState<PeriodKey>("1m");
 
   // 사용자 역할에 따라 기본 탭 선택
   useEffect(() => {
@@ -54,8 +64,17 @@ function PricingContent() {
   }, []);
 
   const packageProducts = useMemo(
-    () => products.filter((p) => p.type === "PACKAGE" && p.categoryScope === activeTab),
-    [products, activeTab]
+    () => products.filter((p) => {
+      if (p.type !== "PACKAGE" || p.categoryScope !== activeTab) return false;
+      // For FRANCHISE tab, filter by selected period
+      if (activeTab === "FRANCHISE") {
+        const period = (p.features as Record<string, any>)?.period;
+        // Products without period field are legacy 1m products
+        return (period || "1m") === franchisePeriod;
+      }
+      return true;
+    }),
+    [products, activeTab, franchisePeriod]
   );
 
   const singleProducts = useMemo(
@@ -153,6 +172,41 @@ function PricingContent() {
           ))}
         </div>
       </div>
+
+      {/* 프랜차이즈 기간 선택 */}
+      {activeTab === "FRANCHISE" && (
+        <div className="mb-8">
+          <div className="flex justify-center">
+            <div className="inline-flex bg-gray-100 rounded-xl p-1 gap-1">
+              {PERIODS.map((period) => (
+                <button
+                  key={period.key}
+                  onClick={() => setFranchisePeriod(period.key)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
+                    franchisePeriod === period.key
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                  }`}
+                >
+                  {period.label}
+                  {period.discount && (
+                    <span className={`block text-xs mt-0.5 ${
+                      franchisePeriod === period.key ? "text-blue-100" : "text-red-500 font-semibold"
+                    }`}>
+                      {period.discount}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+          {franchisePeriod !== "1m" && (
+            <p className="text-center text-sm text-green-600 font-medium mt-3">
+              장기 구독 할인이 적용된 가격입니다
+            </p>
+          )}
+        </div>
+      )}
 
       {/* 패키지 상품 3열 그리드 */}
       {packageProducts.length > 0 && (
@@ -253,7 +307,15 @@ function PackageCard({
       )}
 
       <div className="text-center mb-6 pt-2">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          {/* Show tier name without period suffix */}
+          {features.badge || product.name}
+        </h3>
+        {features.discount && (
+          <div className="inline-block bg-red-50 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full mb-2">
+            {features.discount} 할인
+          </div>
+        )}
         <div className="flex items-baseline justify-center gap-1">
           <span className="text-4xl font-bold text-gray-900">
             {(product.price / 10000).toLocaleString()}
@@ -261,7 +323,14 @@ function PackageCard({
           <span className="text-xl text-gray-600">만원</span>
         </div>
         {product.duration && (
-          <p className="text-sm text-gray-500 mt-1">{product.duration}일 동안</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {product.duration >= 365 ? "12개월" : product.duration >= 180 ? "6개월" : product.duration >= 90 ? "3개월" : `${product.duration}일`} 동안
+          </p>
+        )}
+        {features.period && features.period !== "1m" && (
+          <p className="text-xs text-gray-400 mt-0.5">
+            월 {Math.round(product.price / (product.duration! / 30) / 10000).toLocaleString()}만원
+          </p>
         )}
       </div>
 

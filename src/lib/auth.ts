@@ -86,6 +86,33 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
+    async signIn({ user, account }) {
+      // 소셜 로그인 시 동일 이메일 계정 충돌 처리
+      if (account?.provider && account.provider !== "credentials") {
+        if (user.email) {
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email },
+            include: { accounts: { select: { provider: true } } },
+          });
+
+          if (existingUser) {
+            // 이미 해당 소셜 계정으로 연결된 경우 → 정상 로그인
+            const alreadyLinked = existingUser.accounts.some(
+              (a) => a.provider === account.provider
+            );
+            if (alreadyLinked) return true;
+
+            // 다른 방식으로 가입된 이메일 → 자동 연결 차단 (보안)
+            const existingProviders = existingUser.accounts.map((a) => a.provider);
+            const methodLabel = existingUser.password
+              ? "이메일/비밀번호"
+              : existingProviders.join(", ") || "다른 방법";
+            return `/login?error=OAuthAccountNotLinked&method=${encodeURIComponent(methodLabel)}`;
+          }
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         const dbUser = await prisma.user.findUnique({

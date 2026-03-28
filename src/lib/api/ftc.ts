@@ -145,7 +145,138 @@ export async function getFranchiseBrandDetail(
   }
 }
 
+/**
+ * 사업자등록번호로 프랜차이즈 브랜드 검색
+ * 프랜차이즈 본사 가입 시 자동 매칭에 사용
+ */
+export async function searchFranchiseByBusinessNumber(
+  businessNumber: string
+): Promise<FTCBrandDetail | null> {
+  // 사업자번호 정규화 (하이픈 제거)
+  const cleanNumber = businessNumber.replace(/-/g, "");
+
+  // Dev mode: return mock data if no API key
+  if (!FTC_API_KEY || FTC_API_KEY === "") {
+    console.warn("FTC_API_KEY not configured, returning mock data for business number search");
+    return getMockBrandByBusinessNumber(cleanNumber);
+  }
+
+  try {
+    const params = new URLSearchParams({
+      bizNo: cleanNumber,
+      apiKey: FTC_API_KEY,
+    });
+
+    const response = await fetch(`${FTC_API_BASE}/search?${params}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`FTC API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const items = data.items || [];
+
+    if (items.length === 0) {
+      return null;
+    }
+
+    // 첫 번째 매칭 결과의 상세정보 반환
+    const item = items[0];
+    return {
+      ftcId: item.id || item.franchiseId,
+      brandName: item.brandName || item.name,
+      companyName: item.companyName || item.company,
+      businessNumber: item.businessNumber || item.bizNo,
+      industry: item.industry || item.category,
+      franchiseFee: item.franchiseFee,
+      educationFee: item.educationFee,
+      depositFee: item.depositFee || item.deposit,
+      royalty: item.royalty,
+      totalStores: item.totalStores || item.storeCount,
+      avgRevenue: item.avgRevenue || item.averageRevenue,
+      registeredAt: item.registeredAt || item.regDate,
+      address: item.address,
+      representative: item.representative || item.ceo,
+      phone: item.phone || item.tel,
+      establishedAt: item.establishedAt,
+      franchiseStartedAt: item.franchiseStartedAt,
+      rawData: item,
+    };
+  } catch (error) {
+    console.error("Error searching FTC brand by business number:", error);
+    // Fallback to mock data on error
+    return getMockBrandByBusinessNumber(cleanNumber);
+  }
+}
+
 // Mock data for development/testing
+function getMockBrandByBusinessNumber(cleanNumber: string): FTCBrandDetail | null {
+  const allMockBrands: FTCBrandDetail[] = [
+    {
+      ftcId: "FTC001",
+      brandName: "맥도날드",
+      companyName: "한국맥도날드(유)",
+      businessNumber: "2118121692",
+      industry: "음식점",
+      franchiseFee: 4500,
+      educationFee: 500,
+      depositFee: 5000,
+      royalty: "4%",
+      totalStores: 450,
+      avgRevenue: 15000,
+      registeredAt: "2020-01-15",
+      address: "서울특별시 강남구 테헤란로 152",
+      representative: "앤토니 마르셀",
+      phone: "02-3447-1600",
+      establishedAt: "1988-03-01",
+      franchiseStartedAt: "1988-03-01",
+      rawData: { source: "mock" },
+    },
+    {
+      ftcId: "FTC002",
+      brandName: "스타벅스",
+      companyName: "스타벅스커피코리아(주)",
+      businessNumber: "2118676277",
+      industry: "카페",
+      franchiseFee: 0,
+      educationFee: 0,
+      depositFee: 0,
+      royalty: "직영",
+      totalStores: 1800,
+      avgRevenue: 25000,
+      registeredAt: "2019-03-01",
+      address: "서울특별시 중구 을지로 281",
+      representative: "송호섭",
+      phone: "1522-3232",
+      establishedAt: "1999-07-27",
+      franchiseStartedAt: "1999-07-27",
+      rawData: { source: "mock" },
+    },
+    {
+      ftcId: "FTC003",
+      brandName: "GS25",
+      companyName: "지에스리테일(주)",
+      businessNumber: "1168151834",
+      industry: "소매점",
+      franchiseFee: 300,
+      educationFee: 100,
+      depositFee: 1000,
+      royalty: "5%",
+      totalStores: 16000,
+      avgRevenue: 8000,
+      registeredAt: "2018-06-20",
+      rawData: { source: "mock" },
+    },
+  ];
+
+  return allMockBrands.find((b) => b.businessNumber === cleanNumber) || null;
+}
+
 function getMockSearchResults(
   brandName: string,
   page: number
