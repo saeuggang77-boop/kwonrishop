@@ -64,7 +64,6 @@ export default function CompareBar() {
                       alt=""
                       fill
                       className="object-cover"
-                      unoptimized
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300">

@@ -178,7 +178,7 @@ export default function PartnersPage() {
             >
               <div className="relative h-36 bg-gray-100 dark:bg-gray-700">
                 {partner.images.length > 0 ? (
-                  <Image src={partner.images[0].url} alt={partner.companyName} fill className="object-cover" unoptimized />
+                  <Image src={partner.images[0].url} alt={partner.companyName} fill className="object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-blue-100 dark:bg-blue-900">
                     <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
@@ -245,7 +245,6 @@ export default function PartnersPage() {
                       alt={partner.companyName}
                       fill
                       className="object-cover"
-                      unoptimized
                     />
                   </div>
                 ) : (

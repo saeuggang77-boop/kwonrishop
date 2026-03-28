@@ -120,7 +120,7 @@ export default function EquipmentListPage() {
           >
             <div className="relative h-36 bg-gray-100 dark:bg-gray-700">
               {eq.images.length > 0 ? (
-                <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" unoptimized />
+                <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600">
                   <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { SERVICE_TYPE_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
   ssr: false,
@@ -91,6 +92,7 @@ export default function PartnerDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
+      <Breadcrumb items={[{ label: "협력업체", href: "/partners" }, { label: partner.companyName }]} />
       {/* Image Gallery */}
       {partner.images.length > 0 && (
         <div className="mb-6">
@@ -115,7 +117,7 @@ export default function PartnerDetailPage() {
                       : "opacity-50 hover:opacity-100"
                   }`}
                 >
-                  <Image src={img.url} alt="" fill className="object-cover" unoptimized />
+                  <Image src={img.url} alt="" fill className="object-cover" />
                 </button>
               ))}
             </div>

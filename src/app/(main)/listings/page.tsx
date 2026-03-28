@@ -457,7 +457,7 @@ function ListingsContent() {
             >
               <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
                 {images?.[0] ? (
-                  <Image src={images[0].url} alt="" fill className="object-cover" unoptimized />
+                  <Image src={images[0].url} alt="" fill className="object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300">
                     <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">

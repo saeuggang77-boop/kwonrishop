@@ -8,6 +8,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import TierBadge from "@/components/shared/TierBadge";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
   loading: () => <div className="py-4 border-b border-gray-100"><div className="h-20 bg-gray-100 rounded animate-pulse" /></div>,
@@ -180,6 +181,10 @@ export default function ListingDetailPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
       {jsonLdData && <JsonLd data={jsonLdData} />}
+      <Breadcrumb items={[
+        { label: "매물검색", href: "/listings" },
+        { label: listing.category?.name || "매물" },
+      ]} />
       {/* 이미지 갤러리 */}
       <div className="relative aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none">
         {listing.images.length > 0 ? (

@@ -295,7 +295,6 @@ export default function HomeClient() {
                           alt={brand.brandName}
                           fill
                           className="object-cover"
-                          unoptimized
                         />
                       </div>
                     ) : (
@@ -347,7 +346,6 @@ export default function HomeClient() {
                           alt={partner.companyName}
                           fill
                           className="object-cover"
-                          unoptimized
                         />
                       </div>
                     ) : (

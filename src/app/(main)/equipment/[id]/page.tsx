@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS, TRADE_METHOD_LABELS } from "@/lib/constants";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
   loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
@@ -189,6 +190,7 @@ export default function EquipmentDetailPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
+      <Breadcrumb items={[{ label: "집기장터", href: "/equipment" }, { label: equipment.title }]} />
       {/* 이미지 갤러리 */}
       <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none">
         {equipment.images.length > 0 ? (

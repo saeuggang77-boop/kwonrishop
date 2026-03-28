@@ -507,7 +507,7 @@ export default function EquipmentRegisterPage() {
             <div className="grid grid-cols-3 gap-2 mt-3">
               {images.map((img, idx) => (
                 <div key={idx} className="relative h-24">
-                  <Image src={img.url} alt="" fill className="object-cover rounded-lg" unoptimized />
+                  <Image src={img.url} alt="" fill className="object-cover rounded-lg" />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}

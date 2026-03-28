@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 const IndustryRevenueSection = dynamic(
   () => import("@/components/franchise/IndustryRevenueSection"),
@@ -130,6 +131,7 @@ export default function FranchiseDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
+      <Breadcrumb items={[{ label: "프랜차이즈", href: "/franchise" }, { label: brand.brandName }]} />
       <JsonLd data={jsonLdData} />
       {/* Banner */}
       {brand.bannerImage && (
