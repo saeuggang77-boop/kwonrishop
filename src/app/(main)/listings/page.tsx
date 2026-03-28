@@ -575,10 +575,30 @@ function ListingsContent() {
       )}
 
       {/* 페이지네이션 */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-8">
-          {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1).map(
-            (p) => (
+      {totalPages > 1 && (() => {
+        const windowSize = 5;
+        let start = Math.max(1, page - Math.floor(windowSize / 2));
+        const end = Math.min(totalPages, start + windowSize - 1);
+        if (end - start + 1 < windowSize) start = Math.max(1, end - windowSize + 1);
+        const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+        return (
+          <div className="flex justify-center items-center gap-1.5 mt-8">
+            <button
+              onClick={() => setPage(1)}
+              disabled={page === 1}
+              className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              &laquo;
+            </button>
+            <button
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+              className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              &lsaquo;
+            </button>
+            {pages.map((p) => (
               <button
                 key={p}
                 onClick={() => setPage(p)}
@@ -590,10 +610,24 @@ function ListingsContent() {
               >
                 {p}
               </button>
-            ),
-          )}
-        </div>
-      )}
+            ))}
+            <button
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+              className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              &rsaquo;
+            </button>
+            <button
+              onClick={() => setPage(totalPages)}
+              disabled={page === totalPages}
+              className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              &raquo;
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }
