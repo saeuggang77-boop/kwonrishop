@@ -76,12 +76,27 @@ export async function GET(
   const productId = listing.adPurchases?.[0]?.product?.id || "";
   const featuredTier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
 
+  // 판매자 신뢰도 점수 계산 (리뷰 기반)
+  const reviewCount = listing.reviews.length;
+  let sellerTrust = { avgRating: 0, reviewCount: 0 };
+  if (reviewCount > 0) {
+    const totalRating = listing.reviews.reduce((sum, r) => {
+      return sum + (r.accuracyRating + r.communicationRating + r.conditionRating) / 3;
+    }, 0);
+    sellerTrust = {
+      avgRating: Number((totalRating / reviewCount).toFixed(1)),
+      reviewCount,
+    };
+  }
+
   // 연락처 비공개인 경우 전화번호 마스킹
   const result = {
     ...listing,
     viewCount: updated.viewCount,
     featuredTier,
+    sellerTrust,
     adPurchases: undefined,
+    reviews: undefined,
     user: {
       ...listing.user,
       phone: listing.contactPublic ? listing.user.phone : null,

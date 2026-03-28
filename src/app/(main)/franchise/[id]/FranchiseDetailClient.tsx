@@ -54,9 +54,19 @@ export default function FranchiseDetailClient() {
   useEffect(() => {
     fetch(`/api/franchise/${id}`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
-      .then((data) => { setBrand(data); setLoading(false); })
+      .then((data) => {
+        setBrand(data);
+        setLoading(false);
+        // 유료 서비스 필요 시 안내
+        if (data.tier === null) {
+          toast.info("유료 구독으로 더 많은 기능을 이용하세요");
+          setTimeout(() => {
+            router.push("/pricing");
+          }, 2000);
+        }
+      })
       .catch(() => setLoading(false));
-  }, [id]);
+  }, [id, router]);
 
   async function handleInquirySubmit(e: React.FormEvent) {
     e.preventDefault();

@@ -8,6 +8,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import TierBadge from "@/components/shared/TierBadge";
+import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { toast } from "@/lib/toast";
 
@@ -69,6 +70,7 @@ interface ListingDetail {
   user: { id: string; name: string | null; image: string | null; phone: string | null; createdAt: string };
   _count: { favorites: number; chatRooms: number };
   featuredTier?: string;
+  sellerTrust?: { avgRating: number; reviewCount: number };
 }
 
 export default function ListingDetailClient() {
@@ -314,8 +316,13 @@ export default function ListingDetailClient() {
               {listing.user.name?.[0] || "U"}
             </div>
           )}
-          <div>
-            <p className="font-medium text-gray-900">{listing.user.name || "판매자"}</p>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <Link href={`/users/${listing.user.id}`} className="font-medium text-gray-900 hover:text-blue-600">{listing.user.name || "판매자"}</Link>
+              {listing.sellerTrust && listing.sellerTrust.reviewCount > 0 && (
+                <SellerTrustBadge avgRating={listing.sellerTrust.avgRating} reviewCount={listing.sellerTrust.reviewCount} />
+              )}
+            </div>
             {listing.contactPublic && listing.user.phone && (
               <p className="text-sm text-blue-600">{listing.user.phone}</p>
             )}
@@ -354,7 +361,7 @@ export default function ListingDetailClient() {
         </Section>
       )}
 
-      <ReviewSection listingId={listing.id} />
+      <ReviewSection listingId={listing.id} sellerId={listing.user.id} />
       <CrossSellSection type="listing" id={listing.id} />
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-10 md:static md:border-0 md:p-0 md:mt-6">

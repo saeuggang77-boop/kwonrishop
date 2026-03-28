@@ -4,9 +4,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 
 export async function sendEmail(to: string, subject: string, html: string) {
   if (!resend) {
-    if (process.env.NODE_ENV !== "production") {
-      console.log("[Email] Skipped (no API key):", subject);
-    }
+    console.warn("[Email] RESEND_API_KEY not configured, skipping:", subject);
     return;
   }
 

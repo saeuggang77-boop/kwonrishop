@@ -75,7 +75,9 @@ export default function EquipmentListPage() {
     fetch("/api/equipment?featured=true")
       .then((r) => r.json())
       .then((data) => setFeaturedEquipments(data.equipment || []))
-      .catch(() => {});
+      .catch((error) => {
+        console.error("[Equipment] Failed to fetch featured equipment:", error);
+      });
   }, []);
 
   function handleSearch(e: React.FormEvent) {
