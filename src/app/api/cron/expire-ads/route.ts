@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { adExpiredEmail } from "@/lib/email-templates";
+import { notifyPaymentExpiring } from "@/lib/kakao-alimtalk";
 
 export async function GET(request: NextRequest) {
   try {
@@ -167,11 +168,72 @@ export async function GET(request: NextRequest) {
     console.log(`Downgraded ${partnerTierDowngradeCount} partner services to FREE tier`);
     console.log(`Downgraded ${franchiseTierDowngrade.count} franchise brands to FREE tier`);
 
+    // --- 만료 3일 전 사전 알림 ---
+    const threeDaysLater = new Date();
+    threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+
+    const expiringAds = await prisma.adPurchase.findMany({
+      where: {
+        status: "PAID",
+        expiresAt: {
+          gt: now,
+          lte: threeDaysLater,
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        userId: true,
+        expiresAt: true,
+        product: { select: { name: true } },
+        user: { select: { name: true, phone: true } },
+        listing: { select: { storeName: true, addressRoad: true } },
+        partnerService: { select: { companyName: true } },
+        equipment: { select: { title: true } },
+      },
+    });
+
+    // 중복 알림 방지: 이미 AD_EXPIRING 알림을 받은 구매건 제외
+    let expiringAlertCount = 0;
+    for (const ad of expiringAds) {
+      const alreadyNotified = await prisma.notification.findFirst({
+        where: {
+          userId: ad.userId,
+          type: "AD_EXPIRING",
+          link: { contains: ad.id },
+        },
+      });
+      if (alreadyNotified) continue;
+
+      const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
+      const daysLeft = Math.ceil((ad.expiresAt!.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+      await prisma.notification.create({
+        data: {
+          userId: ad.userId,
+          type: "AD_EXPIRING",
+          title: `광고 만료 ${daysLeft}일 전`,
+          message: `${ad.product.name} 상품이 ${daysLeft}일 후 만료됩니다. ${targetName}의 광고를 연장하세요.`,
+          link: `/mypage/ads?renew=${ad.id}`,
+        },
+      });
+
+      if (ad.user.phone) {
+        notifyPaymentExpiring(ad.user.phone, ad.product.name, daysLeft).catch(() => {});
+      }
+      expiringAlertCount++;
+    }
+
+    if (expiringAlertCount > 0) {
+      console.log(`Sent ${expiringAlertCount} pre-expiry alerts for ads`);
+    }
+
     return NextResponse.json({
       success: true,
       expiredCount: expiredAds.length,
       partnerTierDowngradeCount,
       franchiseTierDowngradeCount: franchiseTierDowngrade.count,
+      expiringAlertCount,
       timestamp: now.toISOString(),
     });
   } catch (error) {

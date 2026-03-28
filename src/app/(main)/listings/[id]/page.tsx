@@ -378,6 +378,7 @@ export default function ListingDetailPage() {
             latitude={listing.latitude}
             longitude={listing.longitude}
             categoryId={listing.category?.name}
+            listingId={listing.id}
           />
         </Section>
       )}

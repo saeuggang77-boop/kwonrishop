@@ -107,9 +107,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ listings: withTier, featured: true });
   }
 
+  // 지도 bounds 필터
+  const swLat = searchParams.get("swLat");
+  const swLng = searchParams.get("swLng");
+  const neLat = searchParams.get("neLat");
+  const neLng = searchParams.get("neLng");
+
   const where: Record<string, unknown> = {
     status: "ACTIVE",
   };
+
+  if (swLat && swLng && neLat && neLng) {
+    const sw = { lat: parseFloat(swLat), lng: parseFloat(swLng) };
+    const ne = { lat: parseFloat(neLat), lng: parseFloat(neLng) };
+    if (!isNaN(sw.lat) && !isNaN(sw.lng) && !isNaN(ne.lat) && !isNaN(ne.lng)) {
+      where.latitude = { not: null, gte: sw.lat, lte: ne.lat };
+      where.longitude = { not: null, gte: sw.lng, lte: ne.lng };
+    }
+  }
 
   if (categoryId) where.categoryId = categoryId;
   if (subCategoryId) where.subCategoryId = subCategoryId;

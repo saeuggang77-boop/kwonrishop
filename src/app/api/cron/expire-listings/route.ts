@@ -176,10 +176,71 @@ export async function GET(request: NextRequest) {
       console.log(`Expired ${expiredEquipments.length} equipment items`);
     }
 
+    // --- 매물 만료 3일 전 사전 알림 ---
+    const now = new Date();
+    const threeDaysLater = new Date();
+    threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+    // 30일 기준: 27일 전에 생성된 매물 = 3일 후 만료
+    const twentySevenDaysAgo = new Date();
+    twentySevenDaysAgo.setDate(twentySevenDaysAgo.getDate() - 27);
+
+    const expiringListings = await prisma.listing.findMany({
+      where: {
+        status: "ACTIVE",
+        OR: [
+          // expiresAt이 있는 경우: 3일 이내 만료
+          { expiresAt: { gt: now, lte: threeDaysLater } },
+          // expiresAt 없는 경우: 생성 후 27~30일 (만료 3일 전)
+          { expiresAt: null, createdAt: { lte: twentySevenDaysAgo, gt: thirtyDaysAgo } },
+        ],
+      },
+      select: {
+        id: true,
+        userId: true,
+        storeName: true,
+        addressRoad: true,
+        expiresAt: true,
+        createdAt: true,
+        user: { select: { phone: true } },
+      },
+    });
+
+    let listingExpiringAlertCount = 0;
+    for (const listing of expiringListings) {
+      const alreadyNotified = await prisma.notification.findFirst({
+        where: { userId: listing.userId, type: "LISTING_EXPIRING", link: `/listings/${listing.id}` },
+      });
+      if (alreadyNotified) continue;
+
+      const expiresDate = listing.expiresAt || new Date(listing.createdAt.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const daysLeft = Math.ceil((expiresDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const storeName = listing.storeName || listing.addressRoad || "매물";
+
+      await prisma.notification.create({
+        data: {
+          userId: listing.userId,
+          type: "LISTING_EXPIRING",
+          title: `매물 만료 ${daysLeft}일 전`,
+          message: `${storeName}이(가) ${daysLeft}일 후 만료됩니다. 연장하려면 클릭하세요.`,
+          link: `/listings/${listing.id}`,
+        },
+      });
+
+      if (listing.user.phone) {
+        notifyListingExpiring(listing.user.phone, storeName, daysLeft).catch(() => {});
+      }
+      listingExpiringAlertCount++;
+    }
+
+    if (listingExpiringAlertCount > 0) {
+      console.log(`Sent ${listingExpiringAlertCount} pre-expiry alerts for listings`);
+    }
+
     return NextResponse.json({
       success: true,
       expiredCount: expiredListings.length,
       expiredEquipmentCount: expiredEquipments.length,
+      listingExpiringAlertCount,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

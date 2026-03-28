@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
+import { useEffect, useState, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ListingCard from "@/components/listing/ListingCard";
 import ListingMapView from "@/components/map/ListingMapView";
@@ -77,6 +77,26 @@ function ListingsContent() {
   const [selectedThemes, setSelectedThemes] = useState<string[]>(searchParams.get("themes")?.split(",").filter(Boolean) || []);
 
   const debouncedKeyword = useDebounce(keyword, 300);
+
+  // 지도 모드에서 bounds 기반 필터용 파라미터
+  const mapFilterParams = useMemo(() => {
+    const p: Record<string, string> = {};
+    if (categoryId) p.categoryId = categoryId;
+    if (subCategoryId) p.subCategoryId = subCategoryId;
+    if (debouncedKeyword) p.keyword = debouncedKeyword;
+    if (sort) p.sort = sort;
+    if (region) p.region = region;
+    if (premiumMin) p.premiumMin = premiumMin;
+    if (premiumMax) p.premiumMax = premiumMax;
+    if (depositMin) p.depositMin = depositMin;
+    if (depositMax) p.depositMax = depositMax;
+    if (rentMin) p.rentMin = rentMin;
+    if (rentMax) p.rentMax = rentMax;
+    if (areaMin) p.areaMin = areaMin;
+    if (areaMax) p.areaMax = areaMax;
+    if (selectedThemes.length > 0) p.themes = selectedThemes.join(",");
+    return p;
+  }, [categoryId, subCategoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes]);
 
   const fetchListings = useCallback(async () => {
     setLoading(true);
@@ -543,17 +563,20 @@ function ListingsContent() {
             <p className="text-sm text-gray-500">로딩 중...</p>
           </div>
         ) : (
-          <ListingMapView listings={listings as Array<{
-            id: string;
-            latitude: number | null;
-            longitude: number | null;
-            storeName: string | null;
-            addressRoad: string | null;
-            premium: number;
-            deposit: number;
-            monthlyRent: number;
-            category: { name: string; icon: string } | null;
-          }>} />
+          <ListingMapView
+            listings={listings as Array<{
+              id: string;
+              latitude: number | null;
+              longitude: number | null;
+              storeName: string | null;
+              addressRoad: string | null;
+              premium: number;
+              deposit: number;
+              monthlyRent: number;
+              category: { name: string; icon: string } | null;
+            }>}
+            filterParams={mapFilterParams}
+          />
         )
       ) : loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

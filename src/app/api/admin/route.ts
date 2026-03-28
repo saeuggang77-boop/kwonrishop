@@ -58,6 +58,44 @@ export async function GET() {
       prisma.equipment.count(),
     ]);
 
+    // 시계열 데이터: 최근 30일
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const [dailyRevenue, dailySignups, dailyListings] = await Promise.all([
+      // 일별 매출 (결제 완료 기준)
+      prisma.$queryRaw<Array<{ date: string; total: bigint }>>`
+        SELECT DATE("createdAt") as date, COALESCE(SUM(amount), 0) as total
+        FROM "AdPurchase"
+        WHERE status = 'PAID' AND "createdAt" >= ${thirtyDaysAgo}
+        GROUP BY DATE("createdAt")
+        ORDER BY date ASC
+      `,
+      // 일별 가입자
+      prisma.$queryRaw<Array<{ date: string; total: bigint }>>`
+        SELECT DATE("createdAt") as date, COUNT(*) as total
+        FROM "User"
+        WHERE "createdAt" >= ${thirtyDaysAgo}
+        GROUP BY DATE("createdAt")
+        ORDER BY date ASC
+      `,
+      // 일별 매물 등록
+      prisma.$queryRaw<Array<{ date: string; total: bigint }>>`
+        SELECT DATE("createdAt") as date, COUNT(*) as total
+        FROM "Listing"
+        WHERE "createdAt" >= ${thirtyDaysAgo}
+        GROUP BY DATE("createdAt")
+        ORDER BY date ASC
+      `,
+    ]);
+
+    // BigInt → Number 변환 + 날짜 포맷
+    const formatTimeSeries = (raw: Array<{ date: string; total: bigint }>) =>
+      raw.map((r) => ({
+        date: new Date(r.date).toISOString().slice(0, 10),
+        total: Number(r.total),
+      }));
+
     return NextResponse.json({
       totalUsers,
       activeListings,
@@ -76,6 +114,11 @@ export async function GET() {
       equipment: {
         active: activeEquipment,
         total: totalEquipment,
+      },
+      timeSeries: {
+        revenue: formatTimeSeries(dailyRevenue),
+        signups: formatTimeSeries(dailySignups),
+        listings: formatTimeSeries(dailyListings),
       },
     });
   } catch (error) {

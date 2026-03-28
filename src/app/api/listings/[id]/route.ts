@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { notifyPriceChange } from "@/lib/kakao-alimtalk";
 
 export async function GET(
   _req: NextRequest,
@@ -113,10 +114,10 @@ export async function PUT(
 
   const { id } = await params;
 
-  // 매물 소유권 확인
+  // 매물 소유권 확인 + 가격 변동 감지용 기존값 조회
   const listing = await prisma.listing.findUnique({
     where: { id },
-    select: { userId: true, status: true },
+    select: { userId: true, status: true, deposit: true, monthlyRent: true, premium: true, storeName: true, addressRoad: true },
   });
 
   if (!listing) {
@@ -207,6 +208,48 @@ export async function PUT(
         images: { orderBy: { sortOrder: "asc" } },
       },
     });
+
+    // 가격 변동 감지 → 찜한 사용자에게 알림 (non-blocking)
+    const priceFields = [
+      { name: "보증금", old: listing.deposit, new: body.deposit ?? 0 },
+      { name: "월세", old: listing.monthlyRent, new: body.monthlyRent ?? 0 },
+      { name: "권리금", old: listing.premium, new: body.premium ?? 0 },
+    ];
+    const changes = priceFields.filter((f) => f.old !== f.new && (f.old > 0 || f.new > 0));
+
+    if (changes.length > 0) {
+      (async () => {
+        try {
+          const favoriteUsers = await prisma.favorite.findMany({
+            where: { listingId: id },
+            include: { user: { select: { id: true, phone: true } } },
+          });
+
+          if (favoriteUsers.length === 0) return;
+
+          const storeName = listing.storeName || listing.addressRoad || "매물";
+          const changeText = changes.map((c) => `${c.name}: ${c.old.toLocaleString()}→${c.new.toLocaleString()}만원`).join(", ");
+
+          await prisma.notification.createMany({
+            data: favoriteUsers.map((fav) => ({
+              userId: fav.user.id,
+              type: "PRICE_CHANGE",
+              title: `${storeName} 가격 변동`,
+              message: changeText,
+              link: `/listings/${id}`,
+            })),
+          });
+
+          for (const fav of favoriteUsers) {
+            if (fav.user.phone) {
+              notifyPriceChange(fav.user.phone, storeName, changes[0].old, changes[0].new).catch(() => {});
+            }
+          }
+        } catch (err) {
+          console.error("[PriceChange] 알림 발송 실패:", err);
+        }
+      })();
+    }
 
     return NextResponse.json(updatedListing);
   } catch (error) {
