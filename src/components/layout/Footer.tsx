@@ -9,14 +9,14 @@ export default function Footer() {
         {/* Top Section - Company Info */}
         <div className="mb-8 pb-8 border-b border-gray-300 dark:border-gray-600">
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">
-            주식회사 권리샵
+            씨이오
           </h3>
           <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-            <p>대표이사: [대표자명]</p>
-            <p>사업자등록번호: [000-00-00000]</p>
-            <p>통신판매업신고번호: 제0000-서울강남-00000호</p>
-            <p>주소: 서울특별시 강남구 [상세주소]</p>
-            <p>고객센터: 1234-5678 | 이메일: support@kwonrishop.com</p>
+            <p>대표: 박상만</p>
+            <p>사업자등록번호: 408-70-43230</p>
+            <p>통신판매업신고번호: 제2023-서울동작-1252호</p>
+            <p>주소: 서울특별시 동작구 장승배기로4길 9</p>
+            <p>고객센터: 1588-7928 | 이메일: samsungcu@naver.com</p>
             <p>운영시간: 평일 09:00 - 18:00 (주말 및 공휴일 휴무)</p>
           </div>
         </div>

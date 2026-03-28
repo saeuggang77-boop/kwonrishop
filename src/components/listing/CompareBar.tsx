@@ -75,7 +75,7 @@ export default function CompareBar() {
                   <button
                     onClick={() => removeFromCompare(listing.id)}
                     className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-bl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10"
-                    title="제거"
+                    aria-label={`${listing.storeName || listing.addressRoad || '매물'} 비교 목록에서 제거`}
                   >
                     ×
                   </button>
@@ -88,12 +88,14 @@ export default function CompareBar() {
             <button
               onClick={clearCompare}
               className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+              aria-label="비교 목록 전체 초기화"
             >
               초기화
             </button>
             <button
               onClick={() => router.push("/listings/compare")}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              aria-label={`선택한 ${compareIds.length}개 매물 비교하기`}
             >
               비교하기
             </button>

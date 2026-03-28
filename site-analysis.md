@@ -1,6 +1,6 @@
 # 권리샵 사이트 구조 분석
 
-> 최종 업데이트: 2026-03-28 (매물등록 위저드 7단계 개선: 약관동의 모달, 업종 UX, 자동계산, 유효성검증, 사진가이드, 외부연동 모달 / 집기장터 추가: 9종 카테고리, 사업자인증 판매, 1인10개 제한, 나눔 지원, 유료광고)
+> 최종 업데이트: 2026-03-28 (SEO generateMetadata 추가, Footer 실제 사업자정보, 통계페이지 전환퍼널, 민감로그 정리, 접근성 개선, 5대 미구현 기능 구현, SMS 전환)
 
 ---
 
@@ -86,6 +86,7 @@
 | 끌어올리기 | 3,000원 | 목록 최상단 1회 |
 | 강조배지 | 10,000원/30일 | 강조 배지 |
 | 지역TOP | 50,000원/7일 | 지역 검색 상단 배너 |
+| 상권분석 리포트 | 30,000원 | 1회 구매 시 영구 열람 |
 
 ---
 
@@ -151,7 +152,7 @@
 
 | 경로 | 페이지 | 설명 |
 |------|--------|------|
-| `/admin` | 대시보드 | 6개 통계카드 + 역할별 회원분포 |
+| `/admin` | 대시보드 | 6개 통계카드 + 역할별 회원분포 + 30일 시계열 차트 (매출/가입/매물) |
 | `/admin/listings` | 매물 관리 | 매물 상태 변경/삭제 |
 | `/admin/partners` | 협력업체 관리 | 협력업체 상태변경/삭제 |
 | `/admin/equipment` | 집기장터 관리 | 집기 목록/상태변경/삭제 |
@@ -248,7 +249,7 @@
 ### 관리자
 | 메서드 | 경로 | 설명 |
 |--------|------|------|
-| GET | `/api/admin` | 대시보드 통계 (6종 + 역할별 회원분포) |
+| GET | `/api/admin` | 대시보드 통계 (6종 + 역할별 회원분포 + 30일 시계열) |
 | GET | `/api/admin/listings` | 매물 관리 목록 |
 | PUT/DELETE | `/api/admin/listings/[id]` | 매물 상태변경/삭제 |
 | GET | `/api/admin/partners` | 협력업체 관리 목록 |
@@ -273,10 +274,10 @@
 | POST | `/api/reviews` | 리뷰 작성 |
 | POST | `/api/upload` | 파일 업로드 (S3 presigned) |
 | GET | `/api/users/[id]` | 사용자 공개 프로필 |
-| GET | `/api/cron/expire-listings` | 만료 매물 처리 (크론) |
-| GET | `/api/cron/expire-ads` | 광고 만료 + 티어 다운그레이드 (크론) |
+| GET | `/api/cron/expire-listings` | 만료 매물 처리 + 3일전 사전알림 (크론) |
+| GET | `/api/cron/expire-ads` | 광고 만료 + 티어 다운그레이드 + 3일전 사전알림 (크론) |
 | GET | `/api/mypage/reviews` | 내 리뷰 (받은/작성) |
-| GET | `/api/external/commercial-district` | 상권분석 외부API |
+| GET | `/api/external/commercial-district` | 상권분석 외부API (유료 3만원/건, AdPurchase 구매확인) |
 | GET | `/api/external/industry-revenue` | 업종 매출 외부API |
 
 ---
@@ -358,7 +359,7 @@
 
 ### 지도
 - `KakaoMap.tsx` — 카카오맵 컴포넌트
-- `ListingMapView.tsx` — 지도 기반 매물 표시
+- `ListingMapView.tsx` — 지도 기반 매물 표시 (드래그 시 bounds 기반 실시간 매물 로딩)
 
 ### 프랜차이즈
 - `IndustryRevenueSection.tsx` — 업종별 매출 정보
@@ -418,7 +419,7 @@
 | `lib/rate-limit.ts` | API Rate Limiting |
 | `lib/sanitize.ts` | 입력값 살균 |
 | `lib/utils.ts` | 공통 유틸 함수 |
-| `lib/kakao-alimtalk.ts` | 카카오 알림톡 발송 (dev: console, prod: API 연동 대기) |
+| `lib/kakao-alimtalk.ts` | SMS 알림 발송 (Solapi API, 6종 함수: 채팅/가격변동/만료/결제/만료임박/문의) |
 | `hooks/useDebounce.ts` | 디바운스 훅 |
 
 ---

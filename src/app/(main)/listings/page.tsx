@@ -281,13 +281,15 @@ function ListingsContent() {
         <button
           onClick={() => setShowFilters(!showFilters)}
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          aria-expanded={showFilters}
+          aria-label="상세 필터 옵션"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
           </svg>
           상세필터
           {activeFilterCount > 0 && (
-            <span className="px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs">
+            <span className="px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs" aria-label={`${activeFilterCount}개 필터 활성화됨`}>
               {activeFilterCount}
             </span>
           )}
@@ -434,12 +436,14 @@ function ListingsContent() {
             <button
               onClick={handleResetFilters}
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+              aria-label="모든 필터 초기화"
             >
               필터 초기화
             </button>
             <button
               onClick={() => { setPage(1); fetchListings(); }}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+              aria-label="선택한 필터 적용하여 검색"
             >
               필터 적용
             </button>
@@ -529,6 +533,8 @@ function ListingsContent() {
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
               }`}
+              aria-label="목록으로 보기"
+              aria-pressed={viewMode === "list"}
             >
               목록
             </button>
@@ -539,6 +545,8 @@ function ListingsContent() {
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
               }`}
+              aria-label="지도로 보기"
+              aria-pressed={viewMode === "map"}
             >
               지도
             </button>
@@ -614,6 +622,7 @@ function ListingsContent() {
               onClick={() => setPage(1)}
               disabled={page === 1}
               className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="첫 페이지"
             >
               &laquo;
             </button>
@@ -621,6 +630,7 @@ function ListingsContent() {
               onClick={() => setPage(page - 1)}
               disabled={page === 1}
               className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="이전 페이지"
             >
               &lsaquo;
             </button>
@@ -633,6 +643,8 @@ function ListingsContent() {
                     ? "bg-blue-600 text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
+                aria-label={`${p}페이지`}
+                aria-current={page === p ? "page" : undefined}
               >
                 {p}
               </button>
@@ -641,6 +653,7 @@ function ListingsContent() {
               onClick={() => setPage(page + 1)}
               disabled={page === totalPages}
               className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="다음 페이지"
             >
               &rsaquo;
             </button>
@@ -648,6 +661,7 @@ function ListingsContent() {
               onClick={() => setPage(totalPages)}
               disabled={page === totalPages}
               className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="마지막 페이지"
             >
               &raquo;
             </button>

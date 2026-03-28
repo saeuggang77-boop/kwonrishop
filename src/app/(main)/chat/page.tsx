@@ -219,6 +219,7 @@ function ChatContent() {
                 <button
                   onClick={() => setShowRoomList(true)}
                   className="md:hidden p-1 -ml-2 text-gray-600 hover:text-gray-900"
+                  aria-label="채팅방 목록으로 돌아가기"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -279,6 +280,7 @@ function ChatContent() {
                   <button
                     onClick={sendMessage}
                     className="px-4 md:px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 min-w-[60px]"
+                    aria-label="메시지 전송"
                   >
                     전송
                   </button>

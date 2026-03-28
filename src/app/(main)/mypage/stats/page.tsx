@@ -190,17 +190,27 @@ export default function StatsPage() {
         </div>
       </div>
 
-      {/* 최근 7일 조회수 차트 (간단한 CSS 바 차트) */}
+      {/* 전환 퍼널 */}
       <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
-        <h2 className="font-bold text-gray-900 mb-3">조회수 추이</h2>
-        <p className="text-sm text-gray-500 mb-4">
-          * 일별 조회수 추적 기능은 추후 업데이트 예정입니다.
-        </p>
-        <div className="h-32 flex items-end gap-2">
-          <div className="flex-1 bg-blue-100 rounded-t" style={{ height: "60%" }}>
-            <div className="text-center text-xs text-gray-600 mt-2">총 {data.listing.viewCount}</div>
-          </div>
+        <h2 className="font-bold text-gray-900 mb-4">전환 퍼널</h2>
+        <div className="space-y-3">
+          {[
+            { label: "조회", value: data.listing.viewCount, color: "bg-blue-500", pct: 100 },
+            { label: "관심 등록", value: data.listing.favoriteCount, color: "bg-amber-500", pct: data.listing.viewCount > 0 ? (data.listing.favoriteCount / data.listing.viewCount) * 100 : 0 },
+            { label: "채팅 문의", value: data.chatCount, color: "bg-green-500", pct: data.listing.viewCount > 0 ? (data.chatCount / data.listing.viewCount) * 100 : 0 },
+          ].map((item) => (
+            <div key={item.label}>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-600">{item.label}</span>
+                <span className="font-medium text-gray-900">{item.value.toLocaleString()} <span className="text-gray-400 text-xs">({item.pct.toFixed(1)}%)</span></span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-2.5">
+                <div className={`${item.color} h-2.5 rounded-full transition-all`} style={{ width: `${Math.max(item.pct, 1)}%` }} />
+              </div>
+            </div>
+          ))}
         </div>
+        <p className="text-xs text-gray-400 mt-4">매물 등록 후 {data.listing.daysSinceCreation}일 동안의 누적 데이터입니다.</p>
       </div>
 
       {/* 최근 관심 추가 이력 */}

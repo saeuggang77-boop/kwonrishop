@@ -37,10 +37,9 @@ async function sendSms(message: SmsMessage): Promise<boolean> {
 
   // Development mode: log only
   if (!apiKey || !apiSecret || !senderPhone) {
-    console.log("[SMS] DEV MODE - Would send:", {
-      to: message.to,
-      text: message.text,
-    });
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[SMS] DEV MODE - Would send to:", message.to.slice(0, 3) + "****");
+    }
     return true;
   }
 
@@ -74,7 +73,9 @@ async function sendSms(message: SmsMessage): Promise<boolean> {
       return false;
     }
 
-    console.log("[SMS] Sent to:", message.to);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[SMS] Sent to:", message.to.slice(0, 3) + "****");
+    }
     return true;
   } catch (error) {
     console.error("[SMS] Failed:", error);
