@@ -53,7 +53,7 @@ export default function FranchiseDetailClient() {
 
   useEffect(() => {
     fetch(`/api/franchise/${id}`)
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
       .then((data) => { setBrand(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);

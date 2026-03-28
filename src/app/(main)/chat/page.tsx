@@ -58,7 +58,8 @@ function ChatContent() {
         .then((r) => r.json())
         .then((data) => {
           if (data.chatRoomId) setActiveRoom(data.chatRoomId);
-        });
+        })
+        .catch(() => {});
     }
   }, [searchParams, session]);
 
@@ -67,7 +68,8 @@ function ChatContent() {
     if (!session) return;
     fetch("/api/chat")
       .then((r) => r.json())
-      .then((data) => { setRooms(data); setLoading(false); });
+      .then((data) => { setRooms(data); setLoading(false); })
+      .catch(() => { setLoading(false); });
   }, [session]);
 
   // 메시지 조회 및 실시간 구독

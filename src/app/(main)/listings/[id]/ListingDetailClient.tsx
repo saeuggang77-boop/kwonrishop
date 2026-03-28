@@ -91,7 +91,8 @@ export default function ListingDetailClient() {
         }
         setListing(data);
         setLoading(false);
-      });
+      })
+      .catch(() => { setLoading(false); });
   }, [params.id, router]);
 
   async function handleFavorite() {

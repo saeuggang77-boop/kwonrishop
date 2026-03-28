@@ -40,7 +40,7 @@ async function sendSms(message: SmsMessage): Promise<boolean> {
     if (process.env.NODE_ENV !== "production") {
       console.log("[SMS] DEV MODE - Would send to:", message.to.slice(0, 3) + "****");
     }
-    return true;
+    return false;
   }
 
   // Production mode: Solapi API
