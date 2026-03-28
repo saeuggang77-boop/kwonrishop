@@ -234,6 +234,108 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                 className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
               />
             </div>
+
+            {/* 권리금 산정 (선택) */}
+            {!data.premiumNone && data.premium > 0 && (
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-sm">
+                  권리금 산정 <span className="text-gray-400 dark:text-gray-500 font-normal">(선택)</span>
+                </h4>
+                <div className="space-y-3">
+                  {/* 영업권리금 */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">영업권리금 (만원)</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={data.premiumBusiness !== null ? formatNumber(data.premiumBusiness) : ""}
+                        onChange={(e) => handleNumberInput("premiumBusiness", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                      <input
+                        type="text"
+                        placeholder="예: 안정적인 매출, 단골고객 확보"
+                        value={data.premiumBusinessDesc}
+                        onChange={(e) => updateData({ premiumBusinessDesc: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 시설권리금 */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">시설권리금 (만원)</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={data.premiumFacility !== null ? formatNumber(data.premiumFacility) : ""}
+                        onChange={(e) => handleNumberInput("premiumFacility", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                      <input
+                        type="text"
+                        placeholder="예: 최신 인테리어, 고가 주방기기"
+                        value={data.premiumFacilityDesc}
+                        onChange={(e) => updateData({ premiumFacilityDesc: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 바닥권리금 */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">바닥권리금 (만원)</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={data.premiumLocation !== null ? formatNumber(data.premiumLocation) : ""}
+                        onChange={(e) => handleNumberInput("premiumLocation", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                      <input
+                        type="text"
+                        placeholder="예: 역세권, 주요 상권 입지"
+                        value={data.premiumLocationDesc}
+                        onChange={(e) => updateData({ premiumLocationDesc: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 합계 표시 */}
+                  {(data.premiumBusiness || data.premiumFacility || data.premiumLocation) && (
+                    <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
+                      <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
+                        <span>산정 합계 (참고용)</span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {formatNumber((data.premiumBusiness || 0) + (data.premiumFacility || 0) + (data.premiumLocation || 0))} 만원
+                        </span>
+                      </div>
+                      {Math.abs((data.premiumBusiness || 0) + (data.premiumFacility || 0) + (data.premiumLocation || 0) - data.premium) > 0 && (
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          * 총 권리금과 다를 수 있습니다 (참고용)
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

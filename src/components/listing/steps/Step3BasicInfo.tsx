@@ -2,7 +2,7 @@
 
 import { useListingFormStore } from "@/store/listingForm";
 
-const THEMES = ["무권리", "급매", "신규인테리어", "역세권", "대로변", "1층", "배달전문", "프랜차이즈"];
+const THEMES = ["무권리", "급매", "프랜차이즈", "사무실", "공실", "임대인매물", "신규인테리어", "역세권", "대로변", "1층", "배달전문"];
 
 interface Props {
   onNext: () => void;

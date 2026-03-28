@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCompareStore } from "@/store/compareStore";
 import TierBadge from "@/components/shared/TierBadge";
+import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 import { toast } from "@/lib/toast";
 
 interface ListingCardProps {
@@ -28,6 +29,7 @@ interface ListingCardProps {
     subCategory: { name: string } | null;
     images: { url: string }[];
     featuredTier?: string;
+    sellerTrust?: { avgRating: number; reviewCount: number };
   };
 }
 
@@ -123,17 +125,26 @@ export default function ListingCard({ listing }: ListingCardProps) {
 
       {/* 정보 */}
       <div className="p-3">
-        <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 mb-1">
-          {listing.category && (
-            <span>
-              {listing.category.icon} {listing.category.name}
-            </span>
-          )}
-          {listing.subCategory && (
-            <>
-              <span>·</span>
-              <span>{listing.subCategory.name}</span>
-            </>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+            {listing.category && (
+              <span>
+                {listing.category.icon} {listing.category.name}
+              </span>
+            )}
+            {listing.subCategory && (
+              <>
+                <span>·</span>
+                <span>{listing.subCategory.name}</span>
+              </>
+            )}
+          </div>
+          {listing.sellerTrust && listing.sellerTrust.reviewCount > 0 && (
+            <SellerTrustBadge
+              avgRating={listing.sellerTrust.avgRating}
+              reviewCount={listing.sellerTrust.reviewCount}
+              size="sm"
+            />
           )}
         </div>
 

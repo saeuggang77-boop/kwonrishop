@@ -14,6 +14,9 @@ const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
   loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
 });
 
+const ShareButton = dynamic(() => import("@/components/listing/ShareButton"), {
+  ssr: false,
+});
 
 const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
   ssr: false,
@@ -353,25 +356,11 @@ export default function EquipmentDetailPage() {
           >
             {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{equipment.favoriteCount}</span>
           </button>
-          <button
-            onClick={async () => {
-              const url = `${window.location.origin}/equipment/${id}`;
-              if (navigator.share) {
-                try { await navigator.share({ title: equipment.title, url }); } catch {}
-              } else {
-                try {
-                  await navigator.clipboard.writeText(url);
-                  toast.success("링크가 복사되었습니다.");
-                } catch { toast.error("링크 복사에 실패했습니다."); }
-              }
-            }}
-            className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"
-            aria-label="공유하기"
-          >
-            <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-            </svg>
-          </button>
+          <ShareButton
+            listingId={id}
+            title={equipment.title}
+            imageUrl={equipment.images.length > 0 ? equipment.images[0].url : undefined}
+          />
           <button
             onClick={() => setReportOpen(true)}
             className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"

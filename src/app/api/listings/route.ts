@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
       take: 10,
       select: {
         id: true,
+        userId: true,
         status: true,
         addressRoad: true,
         addressJibun: true,
@@ -92,12 +93,44 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    // 판매자별 리뷰 평균 계산
+    const featuredUserIds = [...new Set(featuredListings.map((l) => l.userId))];
+    const featuredReviewStats = await prisma.review.groupBy({
+      by: ['listingId'],
+      where: {
+        listing: { userId: { in: featuredUserIds } },
+      },
+      _avg: {
+        accuracyRating: true,
+        communicationRating: true,
+        conditionRating: true,
+      },
+      _count: true,
+    });
+
+    const featuredReviewMap = new Map(
+      featuredReviewStats.map((r) => {
+        const avgRating =
+          ((r._avg.accuracyRating || 0) +
+            (r._avg.communicationRating || 0) +
+            (r._avg.conditionRating || 0)) / 3;
+        return [r.listingId, { avgRating, reviewCount: r._count }];
+      })
+    );
+
     // Add featuredTier and sort by tier level
     const tierOrder = { vip: 0, premium: 1, basic: 2 };
     const withTier = featuredListings.map((l) => {
       const productId = l.adPurchases[0]?.product?.id || "";
       const tier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : "BASIC";
-      return { ...l, featuredTier: tier, adPurchases: undefined };
+      const sellerTrust = featuredReviewMap.get(l.id) || { avgRating: 0, reviewCount: 0 };
+      return {
+        ...l,
+        featuredTier: tier,
+        adPurchases: undefined,
+        userId: undefined,
+        sellerTrust,
+      };
     }).sort((a, b) => {
       const aOrder = tierOrder[a.featuredTier.toLowerCase() as keyof typeof tierOrder] ?? 99;
       const bOrder = tierOrder[b.featuredTier.toLowerCase() as keyof typeof tierOrder] ?? 99;
@@ -208,6 +241,7 @@ export async function GET(req: NextRequest) {
       take: limit,
       select: {
         id: true,
+        userId: true,
         status: true,
         addressRoad: true,
         addressJibun: true,
@@ -250,11 +284,44 @@ export async function GET(req: NextRequest) {
     prisma.listing.count({ where }),
   ]);
 
+  // 판매자별 리뷰 평균 계산 (모든 매물의 userId 수집)
+  const userIds = [...new Set(listings.map((l: any) => l.userId))];
+  const reviewStats = await prisma.review.groupBy({
+    by: ['listingId'],
+    where: {
+      listing: { userId: { in: userIds } },
+    },
+    _avg: {
+      accuracyRating: true,
+      communicationRating: true,
+      conditionRating: true,
+    },
+    _count: true,
+  });
+
+  // listingId → avgRating, reviewCount 매핑
+  const reviewMap = new Map(
+    reviewStats.map((r) => {
+      const avgRating =
+        ((r._avg.accuracyRating || 0) +
+          (r._avg.communicationRating || 0) +
+          (r._avg.conditionRating || 0)) / 3;
+      return [r.listingId, { avgRating, reviewCount: r._count }];
+    })
+  );
+
   const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2, FREE: 3 };
   const listingsWithTier = listings.map((l: any) => {
     const productId = l.adPurchases?.[0]?.product?.id || "";
     const tier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
-    return { ...l, featuredTier: tier, adPurchases: undefined };
+    const sellerTrust = reviewMap.get(l.id) || { avgRating: 0, reviewCount: 0 };
+    return {
+      ...l,
+      featuredTier: tier,
+      adPurchases: undefined,
+      userId: undefined, // 보안상 userId 제거
+      sellerTrust,
+    };
   }).sort((a: any, b: any) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3));
 
   return NextResponse.json({

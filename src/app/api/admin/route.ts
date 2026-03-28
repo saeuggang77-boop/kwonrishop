@@ -62,7 +62,7 @@ export async function GET() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const [dailyRevenue, dailySignups, dailyListings] = await Promise.all([
+    const [dailyRevenue, dailySignups, dailyListings, topCategories, topRegions] = await Promise.all([
       // 일별 매출 (결제 완료 기준)
       prisma.$queryRaw<Array<{ date: string; total: bigint }>>`
         SELECT DATE("createdAt") as date, COALESCE(SUM(amount), 0) as total
@@ -87,6 +87,25 @@ export async function GET() {
         GROUP BY DATE("createdAt")
         ORDER BY date ASC
       `,
+      // 인기 업종 TOP 5
+      prisma.listing.groupBy({
+        by: ['categoryId'],
+        where: { status: 'ACTIVE', categoryId: { not: null } },
+        _count: true,
+        orderBy: { _count: { categoryId: 'desc' } },
+        take: 5,
+      }),
+      // 인기 지역 TOP 5 (시/구 기준)
+      prisma.$queryRaw<Array<{ region: string; count: bigint }>>`
+        SELECT
+          SUBSTRING("addressRoad" FROM '^[^ ]+ [^ ]+') as region,
+          COUNT(*) as count
+        FROM "Listing"
+        WHERE status = 'ACTIVE' AND "addressRoad" IS NOT NULL AND "addressRoad" != ''
+        GROUP BY region
+        ORDER BY count DESC
+        LIMIT 5
+      `,
     ]);
 
     // BigInt → Number 변환 + 날짜 포맷
@@ -95,6 +114,24 @@ export async function GET() {
         date: new Date(r.date).toISOString().slice(0, 10),
         total: Number(r.total),
       }));
+
+    // 인기 업종 데이터 처리 (categoryId → name)
+    const categoryMap = await prisma.category.findMany({
+      where: { id: { in: topCategories.map((c) => c.categoryId!).filter(Boolean) } },
+      select: { id: true, name: true },
+    });
+    const categoryNameMap = Object.fromEntries(categoryMap.map((c) => [c.id, c.name]));
+
+    const popularCategories = topCategories.map((c) => ({
+      name: categoryNameMap[c.categoryId!] || "기타",
+      count: c._count,
+    }));
+
+    // 인기 지역 데이터 처리
+    const popularRegions = topRegions.map((r) => ({
+      name: r.region || "미분류",
+      count: Number(r.count),
+    }));
 
     return NextResponse.json({
       totalUsers,
@@ -120,6 +157,8 @@ export async function GET() {
         signups: formatTimeSeries(dailySignups),
         listings: formatTimeSeries(dailyListings),
       },
+      popularCategories,
+      popularRegions,
     });
   } catch (error) {
     console.error("Error fetching admin dashboard stats:", error);

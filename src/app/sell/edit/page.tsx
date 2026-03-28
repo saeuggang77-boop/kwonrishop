@@ -20,6 +20,12 @@ export default function ListingEditPage() {
     premium: "",
     premiumNone: false,
     premiumNegotiable: false,
+    premiumBusiness: "",
+    premiumBusinessDesc: "",
+    premiumFacility: "",
+    premiumFacilityDesc: "",
+    premiumLocation: "",
+    premiumLocationDesc: "",
     maintenanceFee: "",
     description: "",
     contactPublic: true,
@@ -54,6 +60,12 @@ export default function ListingEditPage() {
               premium: listing.premium?.toString() || "",
               premiumNone: listing.premiumNone || false,
               premiumNegotiable: listing.premiumNegotiable || false,
+              premiumBusiness: listing.premiumBusiness?.toString() || "",
+              premiumBusinessDesc: listing.premiumBusinessDesc || "",
+              premiumFacility: listing.premiumFacility?.toString() || "",
+              premiumFacilityDesc: listing.premiumFacilityDesc || "",
+              premiumLocation: listing.premiumLocation?.toString() || "",
+              premiumLocationDesc: listing.premiumLocationDesc || "",
               maintenanceFee: listing.maintenanceFee?.toString() || "",
               description: listing.description || "",
               contactPublic: listing.contactPublic ?? true,
@@ -82,6 +94,9 @@ export default function ListingEditPage() {
           deposit: parseInt(formData.deposit) || 0,
           monthlyRent: parseInt(formData.monthlyRent) || 0,
           premium: parseInt(formData.premium) || 0,
+          premiumBusiness: formData.premiumBusiness ? parseInt(formData.premiumBusiness) : null,
+          premiumFacility: formData.premiumFacility ? parseInt(formData.premiumFacility) : null,
+          premiumLocation: formData.premiumLocation ? parseInt(formData.premiumLocation) : null,
           maintenanceFee: formData.maintenanceFee ? parseInt(formData.maintenanceFee) : null,
         }),
       });
@@ -243,6 +258,80 @@ export default function ListingEditPage() {
               className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
             />
           </div>
+
+          {/* 권리금 산정 */}
+          {!formData.premiumNone && formData.premium && parseInt(formData.premium) > 0 && (
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="text-sm font-medium text-gray-900 mb-3">권리금 산정 (선택)</h3>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">영업권리금 (만원)</label>
+                    <input
+                      type="number"
+                      value={formData.premiumBusiness}
+                      onChange={(e) => setFormData({ ...formData, premiumBusiness: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
+                    <input
+                      type="text"
+                      placeholder="예: 안정적인 매출, 단골고객 확보"
+                      value={formData.premiumBusinessDesc}
+                      onChange={(e) => setFormData({ ...formData, premiumBusinessDesc: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">시설권리금 (만원)</label>
+                    <input
+                      type="number"
+                      value={formData.premiumFacility}
+                      onChange={(e) => setFormData({ ...formData, premiumFacility: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
+                    <input
+                      type="text"
+                      placeholder="예: 최신 인테리어, 고가 주방기기"
+                      value={formData.premiumFacilityDesc}
+                      onChange={(e) => setFormData({ ...formData, premiumFacilityDesc: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">바닥권리금 (만원)</label>
+                    <input
+                      type="number"
+                      value={formData.premiumLocation}
+                      onChange={(e) => setFormData({ ...formData, premiumLocation: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
+                    <input
+                      type="text"
+                      placeholder="예: 역세권, 주요 상권 입지"
+                      value={formData.premiumLocationDesc}
+                      onChange={(e) => setFormData({ ...formData, premiumLocationDesc: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

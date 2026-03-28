@@ -24,9 +24,6 @@ export default function Step7Confirm({ onPrev }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [dataConsent, setDataConsent] = useState(false);
-  const [activeModal, setActiveModal] = useState<ServiceKey | null>(null);
-  const [connectedServices, setConnectedServices] = useState<Set<ServiceKey>>(new Set());
   const [toast, setToast] = useState("");
 
   function formatPrice(value: number) {
@@ -36,12 +33,6 @@ export default function Step7Confirm({ onPrev }: Props) {
   function showToast(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(""), 3000);
-  }
-
-  function handleServiceConnect(key: ServiceKey) {
-    showToast("서비스 연동 기능은 곧 오픈 예정입니다");
-    setConnectedServices((prev) => new Set(prev).add(key));
-    setActiveModal(null);
   }
 
   async function handleSubmit() {
@@ -185,53 +176,33 @@ export default function Step7Confirm({ onPrev }: Props) {
           {SERVICES.map((svc) => (
             <div
               key={svc.key}
-              className={`flex items-center gap-4 p-4 border rounded-lg transition-colors ${
-                connectedServices.has(svc.key)
-                  ? "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20"
-                  : "border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50"
-              }`}
+              className="flex items-center gap-4 p-4 border rounded-lg border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 opacity-60"
             >
               <div className="text-3xl shrink-0">{svc.icon}</div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-gray-900 dark:text-white">{svc.title}</h4>
+                <h4 className="text-sm font-medium text-gray-900 dark:text-white">{svc.title} (준비 중)</h4>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{svc.description}</p>
               </div>
-              {connectedServices.has(svc.key) ? (
-                <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                  </svg>
-                  <span className="text-xs font-medium">연동</span>
-                </div>
-              ) : (
-                <button
-                  onClick={() => {
-                    if (!dataConsent) {
-                      showToast("매출 데이터 활용 동의를 먼저 체크해주세요");
-                      return;
-                    }
-                    setActiveModal(svc.key);
-                  }}
-                  className="px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  연동하기
-                </button>
-              )}
+              <button
+                onClick={() => showToast("해당 서비스는 준비 중입니다. 곧 오픈됩니다.")}
+                disabled
+                className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              >
+                준비 중
+              </button>
             </div>
           ))}
         </div>
 
-        <div className="mt-4 flex items-start space-x-2">
-          <input
-            type="checkbox"
-            id="data-consent"
-            checked={dataConsent}
-            onChange={(e) => setDataConsent(e.target.checked)}
-            className="mt-0.5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
-          />
-          <label htmlFor="data-consent" className="text-sm text-gray-600 dark:text-gray-400">
-            매출 데이터 제3자 제공 및 활용에 동의합니다
-          </label>
+        <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm text-blue-800 dark:text-blue-300">
+              외부 매출 자료 연동 기능은 현재 개발 중입니다. 빠른 시일 내에 오픈 예정입니다.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -263,146 +234,6 @@ export default function Step7Confirm({ onPrev }: Props) {
           {loading ? "등록 중..." : "저장"}
         </button>
       </div>
-
-      {/* 연동 모달 */}
-      {activeModal && (
-        <ServiceModal
-          serviceKey={activeModal}
-          onClose={() => setActiveModal(null)}
-          onConnect={() => handleServiceConnect(activeModal)}
-        />
-      )}
-    </div>
-  );
-}
-
-function ServiceModal({
-  serviceKey,
-  onClose,
-  onConnect,
-}: {
-  serviceKey: ServiceKey;
-  onClose: () => void;
-  onConnect: () => void;
-}) {
-  const [tab, setTab] = useState<"simple" | "cert">("simple");
-
-  const isHometax = serviceKey === "hometax";
-  const isCreditFinance = serviceKey === "creditfinance";
-
-  const titles: Record<ServiceKey, string> = {
-    hometax: "홈택스 연동",
-    creditfinance: "여신금융협회 연동",
-    baemin: "배달의민족 연동",
-    yogiyo: "요기요 연동",
-    coupangeats: "쿠팡이츠 연동",
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div
-        className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">{titles[serviceKey]}</h3>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="p-5">
-          {isHometax && (
-            <>
-              <div className="flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1 mb-5">
-                <button
-                  onClick={() => setTab("simple")}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
-                    tab === "simple"
-                      ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                      : "text-gray-500 dark:text-gray-400"
-                  }`}
-                >
-                  간편인증
-                </button>
-                <button
-                  onClick={() => setTab("cert")}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
-                    tab === "cert"
-                      ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                      : "text-gray-500 dark:text-gray-400"
-                  }`}
-                >
-                  공동인증서
-                </button>
-              </div>
-
-              {tab === "simple" ? (
-                <div className="space-y-3">
-                  <InputField label="사업자등록번호" placeholder="000-00-00000" />
-                  <InputField label="생년월일" placeholder="YYYYMMDD" />
-                  <InputField label="대표자명" placeholder="대표자 이름" />
-                  <InputField label="휴대폰 번호" placeholder="010-0000-0000" />
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">공동인증서를 USB에 삽입한 후<br />인증서 선택 버튼을 눌러주세요</p>
-                </div>
-              )}
-            </>
-          )}
-
-          {!isHometax && (
-            <div className="space-y-3">
-              <InputField label="아이디" placeholder={`${titles[serviceKey].replace(" 연동", "")} 아이디`} />
-              <InputField label="비밀번호" placeholder="비밀번호" type="password" />
-              {isCreditFinance && (
-                <button className="w-full text-center text-sm text-gray-500 dark:text-gray-400 hover:text-blue-500 py-2">
-                  연동 불가 매장인 경우 →
-                </button>
-              )}
-            </div>
-          )}
-
-          <button
-            onClick={onConnect}
-            className="w-full mt-5 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors text-sm"
-          >
-            연동하기
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function InputField({
-  label,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  placeholder: string;
-  type?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
-      />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { toast } from "@/lib/toast";
 interface ShareButtonProps {
   listingId: string;
   title: string;
+  imageUrl?: string;
 }
 
 declare global {
@@ -14,7 +15,7 @@ declare global {
   }
 }
 
-export default function ShareButton({ listingId, title }: ShareButtonProps) {
+export default function ShareButton({ listingId, title, imageUrl }: ShareButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -67,7 +68,7 @@ export default function ShareButton({ listingId, title }: ShareButtonProps) {
         content: {
           title: title,
           description: "권리샵에서 확인하세요",
-          imageUrl: `${window.location.origin}/og-image.png`,
+          imageUrl: imageUrl || `${window.location.origin}/og-image.png`,
           link: {
             mobileWebUrl: url,
             webUrl: url,

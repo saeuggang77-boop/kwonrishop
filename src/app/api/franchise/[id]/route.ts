@@ -126,3 +126,11 @@ export async function PUT(
     return NextResponse.json({ error: "브랜드 수정 중 오류가 발생했습니다." }, { status: 500 });
   }
 }
+
+// PATCH: PUT과 동일한 로직 (편집 페이지에서 사용)
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return PUT(request, { params });
+}

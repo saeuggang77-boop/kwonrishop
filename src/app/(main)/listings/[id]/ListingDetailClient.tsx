@@ -373,7 +373,11 @@ export default function ListingDetailClient() {
           >
             {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{listing.favoriteCount}</span>
           </button>
-          <ShareButton listingId={listing.id} title={listing.storeName || listing.addressRoad || "매물 상세"} />
+          <ShareButton
+            listingId={listing.id}
+            title={listing.storeName || listing.addressRoad || "매물 상세"}
+            imageUrl={listing.images.length > 0 ? listing.images[0].url : undefined}
+          />
           <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm md:text-base">
             채팅하기
           </Link>

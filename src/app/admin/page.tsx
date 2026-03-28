@@ -20,6 +20,8 @@ interface AdminStats {
     signups: TimeSeriesEntry[];
     listings: TimeSeriesEntry[];
   };
+  popularCategories?: { name: string; count: number }[];
+  popularRegions?: { name: string; count: number }[];
 }
 
 type ChartTab = "revenue" | "signups" | "listings";
@@ -139,6 +141,49 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           )}
+
+          {/* 인기 업종 & 지역 통계 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* 인기 업종 */}
+            {stats?.popularCategories && stats.popularCategories.length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 className="text-lg font-bold text-gray-900 mb-4">인기 업종 TOP 5</h2>
+                <div className="space-y-3">
+                  {stats.popularCategories.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-gray-900 font-medium">{item.name}</span>
+                      </div>
+                      <span className="text-sm text-gray-500">{item.count.toLocaleString()}건</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 인기 지역 */}
+            {stats?.popularRegions && stats.popularRegions.length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 className="text-lg font-bold text-gray-900 mb-4">인기 지역 TOP 5</h2>
+                <div className="space-y-3">
+                  {stats.popularRegions.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 text-xs font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-gray-900 font-medium">{item.name}</span>
+                      </div>
+                      <span className="text-sm text-gray-500">{item.count.toLocaleString()}건</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* 시계열 차트 */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 mt-6">
