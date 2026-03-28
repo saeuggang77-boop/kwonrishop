@@ -80,7 +80,7 @@ export default function MyPage() {
         </div>
         <div className="flex items-center gap-4">
           {data.user.image ? (
-            <Image src={data.user.image} alt="" width={56} height={56} className="rounded-full" />
+            <Image src={data.user.image} alt={`${data.user.name || '사용자'} 프로필 사진`} width={56} height={56} className="rounded-full" />
           ) : (
             <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold">
               {data.user.name?.[0] || "U"}

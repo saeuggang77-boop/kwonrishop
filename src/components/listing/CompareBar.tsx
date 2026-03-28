@@ -61,7 +61,7 @@ export default function CompareBar() {
                   {listing.images[0] ? (
                     <Image
                       src={listing.images[0].url}
-                      alt=""
+                      alt={`${listing.storeName || listing.addressRoad || '매물'} 대표 사진`}
                       fill
                       className="object-cover"
                     />

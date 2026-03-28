@@ -48,7 +48,25 @@ export async function GET() {
     orderBy: { updatedAt: "desc" },
   });
 
-  return NextResponse.json(chatRooms);
+  // 각 채팅방의 안읽은 메시지 수 계산
+  const roomsWithUnread = await Promise.all(
+    chatRooms.map(async (room) => {
+      const myParticipant = room.participants.find(p => p.userId === session.user.id);
+      const lastRead = myParticipant?.lastReadAt;
+
+      const unreadCount = await prisma.message.count({
+        where: {
+          chatRoomId: room.id,
+          senderId: { not: session.user.id },
+          ...(lastRead ? { createdAt: { gt: lastRead } } : {}),
+        },
+      });
+
+      return { ...room, unreadCount };
+    })
+  );
+
+  return NextResponse.json(roomsWithUnread);
 }
 
 // 채팅방 생성 (또는 기존 채팅방 반환)

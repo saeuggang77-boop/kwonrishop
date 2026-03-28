@@ -526,11 +526,12 @@ export default function EquipmentEditPage() {
             <div className="grid grid-cols-3 gap-2 mt-3">
               {images.map((img, idx) => (
                 <div key={idx} className="relative h-24">
-                  <Image src={img.url} alt="" fill className="object-cover rounded-lg" />
+                  <Image src={img.url} alt={`집기 사진 ${idx + 1}`} fill className="object-cover rounded-lg" />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}
                     className="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white rounded-full text-xs hover:bg-red-700 z-10"
+                    aria-label={`사진 ${idx + 1} 삭제`}
                   >
                     x
                   </button>

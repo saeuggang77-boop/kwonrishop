@@ -310,7 +310,7 @@ export default function ListingDetailClient() {
       <Section title="판매자">
         <div className="flex items-center gap-3">
           {listing.user.image ? (
-            <Image src={listing.user.image} alt="" width={40} height={40} className="rounded-full" />
+            <Image src={listing.user.image} alt={`${listing.user.name || '판매자'} 프로필 사진`} width={40} height={40} className="rounded-full" />
           ) : (
             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
               {listing.user.name?.[0] || "U"}

@@ -10,12 +10,62 @@ export default function ContactPage() {
     subject: "",
     message: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder: 실제로는 API 호출
-    toast.success("문의가 접수되었습니다. 빠른 시일 내에 답변 드리겠습니다.");
-    setFormData({ name: "", email: "", subject: "", message: "" });
+
+    // 클라이언트 검증
+    if (!formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
+      toast.error("모든 필드를 입력해주세요.");
+      return;
+    }
+
+    if (formData.name.length > 50) {
+      toast.error("이름은 50자 이내로 입력해주세요.");
+      return;
+    }
+
+    if (formData.subject.length > 200) {
+      toast.error("제목은 200자 이내로 입력해주세요.");
+      return;
+    }
+
+    if (formData.message.length > 5000) {
+      toast.error("내용은 5000자 이내로 입력해주세요.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("올바른 이메일 형식을 입력해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || "문의 접수에 실패했습니다.");
+        return;
+      }
+
+      toast.success("문의가 접수되었습니다. 빠른 시일 내에 답변 드리겠습니다.");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      console.error("Contact form error:", error);
+      toast.error("문의 접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -281,9 +331,10 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                disabled={isLoading}
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                문의 제출하기
+                {isLoading ? "제출 중..." : "문의 제출하기"}
               </button>
             </form>
 

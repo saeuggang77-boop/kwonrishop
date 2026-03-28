@@ -85,6 +85,7 @@ export default function CommunityWritePage() {
           placeholder="제목을 입력하세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          maxLength={200}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg outline-none focus:ring-2 focus:ring-blue-500"
         />
 
@@ -92,6 +93,7 @@ export default function CommunityWritePage() {
           placeholder="내용을 입력하세요"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          maxLength={5000}
           rows={15}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 resize-none"
         />

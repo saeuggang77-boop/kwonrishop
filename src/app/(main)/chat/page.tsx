@@ -24,6 +24,7 @@ interface ChatRoom {
     user: { id: string; name: string | null; image: string | null };
   }[];
   messages: { content: string; createdAt: string; senderId: string }[];
+  unreadCount?: number;
 }
 
 interface Message {
@@ -75,6 +76,11 @@ function ChatContent() {
   // 메시지 조회 및 실시간 구독
   useEffect(() => {
     if (!activeRoom) return;
+
+    // 읽음 처리
+    fetch(`/api/chat/${activeRoom}/read`, { method: "POST" }).catch(() => {});
+    // 해당 방의 unreadCount를 0으로 업데이트
+    setRooms(prev => prev.map(r => r.id === activeRoom ? { ...r, unreadCount: 0 } : r));
 
     // 초기 메시지 불러오기
     fetch(`/api/chat/${activeRoom}/messages`)
@@ -188,11 +194,18 @@ function ChatContent() {
                         <span className="text-sm font-medium text-gray-900 truncate">
                           {other?.name || "상대방"}
                         </span>
-                        {lastMsg && (
-                          <span className="text-[10px] text-gray-400 shrink-0">
-                            {new Date(lastMsg.createdAt).toLocaleDateString("ko-KR")}
-                          </span>
-                        )}
+                        <div className="flex items-center gap-1 shrink-0">
+                          {lastMsg && (
+                            <span className="text-[10px] text-gray-400">
+                              {new Date(lastMsg.createdAt).toLocaleDateString("ko-KR")}
+                            </span>
+                          )}
+                          {room.unreadCount !== undefined && room.unreadCount > 0 && (
+                            <span className="w-5 h-5 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                              {room.unreadCount > 99 ? "99+" : room.unreadCount}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <p className="text-xs text-gray-400 truncate mt-0.5">
                         {room.listing?.storeName || room.listing?.addressRoad || room.equipment?.title || "매물"}
