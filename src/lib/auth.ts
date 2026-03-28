@@ -113,10 +113,10 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, trigger }) {
+      if (user || trigger === "update") {
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
+          where: { id: (user?.id || token.id) as string },
           select: { id: true, role: true, phone: true, roleSelectedAt: true },
         });
         if (dbUser) {

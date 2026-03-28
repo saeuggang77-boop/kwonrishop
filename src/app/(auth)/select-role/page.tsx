@@ -58,7 +58,7 @@ const roles: RoleOption[] = [
 ];
 
 export default function SelectRolePage() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -96,7 +96,9 @@ export default function SelectRolePage() {
       }
 
       if (data.redirect) {
+        await update();
         router.push(data.redirect);
+        router.refresh();
       }
     } catch {
       setError("네트워크 오류가 발생했습니다.");
