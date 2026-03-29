@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 function VerifyBusinessContent() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedRole = searchParams.get("role") as "SELLER" | "FRANCHISE" | "PARTNER" | null;
@@ -81,6 +81,7 @@ function VerifyBusinessContent() {
       if (data.franchiseBrandId) {
         setMatchedBrandId(data.franchiseBrandId);
       }
+      await update();
       setSuccess(true);
     } catch {
       setError("네트워크 오류가 발생했습니다.");

@@ -68,8 +68,8 @@ export async function POST(
       }
     }
 
-    // 활성화된 끌어올리기 구매권 확인
-    const activeBumpPurchase = await prisma.adPurchase.findFirst({
+    // 1. 먼저 SINGLE 타입 끌어올리기 구매권 확인
+    let activeBumpPurchase = await prisma.adPurchase.findFirst({
       where: {
         userId: session.user.id,
         listingId: id,
@@ -83,11 +83,49 @@ export async function POST(
       },
       include: {
         product: {
-          select: { name: true },
+          select: { name: true, type: true, features: true },
         },
       },
     });
 
+    let isPackageBump = false;
+
+    // 2. SINGLE이 없으면 PACKAGE 타입 구매권 확인
+    if (!activeBumpPurchase) {
+      const packagePurchases = await prisma.adPurchase.findMany({
+        where: {
+          userId: session.user.id,
+          listingId: id,
+          status: "PAID",
+          expiresAt: {
+            gte: new Date(),
+          },
+          product: {
+            type: "PACKAGE",
+            categoryScope: "LISTING",
+          },
+        },
+        include: {
+          product: {
+            select: { name: true, type: true, features: true },
+          },
+        },
+      });
+
+      // bumpCount가 있고 아직 사용 가능한 구매권 찾기
+      for (const purchase of packagePurchases) {
+        const features = purchase.product.features as { bumpCount?: number };
+        const bumpCount = features.bumpCount || 0;
+
+        if (bumpCount > 0 && purchase.bumpUsedCount < bumpCount) {
+          activeBumpPurchase = purchase;
+          isPackageBump = true;
+          break;
+        }
+      }
+    }
+
+    // 3. 둘 다 없으면 에러
     if (!activeBumpPurchase) {
       return NextResponse.json(
         {
@@ -99,7 +137,7 @@ export async function POST(
       );
     }
 
-    // 끌어올리기 실행 (단건 구매는 1회 사용 후 만료 처리)
+    // 4. 끌어올리기 실행
     await prisma.$transaction(async (tx) => {
       // 매물 bumpedAt 업데이트
       await tx.listing.update({
@@ -107,14 +145,33 @@ export async function POST(
         data: { bumpedAt: new Date() },
       });
 
-      // 단건 구매권 사용처리 (EXPIRED로 변경하여 재사용 방지)
-      await tx.adPurchase.update({
-        where: { id: activeBumpPurchase.id },
-        data: {
-          status: "EXPIRED",
-          expiresAt: new Date(), // 즉시 만료
-        },
-      });
+      if (isPackageBump) {
+        // PACKAGE: bumpUsedCount 증가 (만료하지 않음)
+        const features = activeBumpPurchase.product.features as { bumpCount?: number };
+        const bumpCount = features.bumpCount || 0;
+        const newUsedCount = activeBumpPurchase.bumpUsedCount + 1;
+
+        await tx.adPurchase.update({
+          where: { id: activeBumpPurchase.id },
+          data: {
+            bumpUsedCount: newUsedCount,
+            // 모든 횟수를 사용한 경우에만 만료 처리
+            ...(newUsedCount >= bumpCount ? {
+              status: "EXPIRED",
+              expiresAt: new Date(),
+            } : {}),
+          },
+        });
+      } else {
+        // SINGLE: 1회 사용 후 즉시 만료
+        await tx.adPurchase.update({
+          where: { id: activeBumpPurchase.id },
+          data: {
+            status: "EXPIRED",
+            expiresAt: new Date(),
+          },
+        });
+      }
     });
 
     return NextResponse.json({

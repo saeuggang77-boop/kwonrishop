@@ -491,6 +491,7 @@ model AdPurchase {
   activatedAt        DateTime?
   expiresAt          DateTime?
   viewCountAtAdStart Int?
+  bumpUsedCount      Int           @default(0)
   createdAt          DateTime      @default(now())
 
   user             User              @relation(fields: [userId], references: [id])

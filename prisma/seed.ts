@@ -120,15 +120,14 @@ const adProducts = [
     sortOrder: 3,
     features: {
       badge: "VIP",
-      photos: 999,
+      photos: 30,
       topExposure: true,
       highlight: true,
       bumpCount: 10,
       analytics: true,
       mainRecommend: true,
-      video: 1,
       matching: true,
-      description: "최상위노출, 메인추천, 사진무제한, 영상1개, 매수자매칭",
+      description: "최상위노출, 메인추천, 사진30장, 매수자매칭",
     },
   },
   // ── 프랜차이즈 (FRANCHISE) ── 기간별 상품 (1/3/6/12개월)
@@ -484,39 +483,15 @@ const adProducts = [
       description: "목록 최상단 1회 끌어올리기",
     },
   },
-  {
-    id: "common-badge",
-    name: "강조배지",
-    type: "SINGLE" as const,
-    categoryScope: "COMMON" as const,
-    price: 10000,
-    duration: 30,
-    sortOrder: 20,
-    features: {
-      tag: "강조",
-      description: "강조 배지 30일",
-    },
-  },
-  {
-    id: "common-region-top",
-    name: "지역TOP",
-    type: "SINGLE" as const,
-    categoryScope: "COMMON" as const,
-    price: 50000,
-    duration: 7,
-    sortOrder: 21,
-    features: {
-      regionBanner: true,
-      description: "지역 검색 상단 배너 7일",
-    },
-  },
+  // 폐기: common-badge (강조배지) - 패키지 배지로 대체
+  // 폐기: common-region-top (지역TOP) - 불필요
   // ── 끌어올리기 구독 (SUBSCRIPTION) ──
   {
     id: "bump-subscription-lite",
     name: "끌어올리기 라이트",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 29000,
+    price: 30000,
     duration: 30,
     sortOrder: 22,
     features: {
@@ -531,7 +506,7 @@ const adProducts = [
     name: "끌어올리기 스탠다드",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 59000,
+    price: 60000,
     duration: 30,
     sortOrder: 23,
     features: {
@@ -547,7 +522,7 @@ const adProducts = [
     name: "끌어올리기 프리미엄",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 79000,
+    price: 80000,
     duration: 30,
     sortOrder: 24,
     features: {
@@ -562,7 +537,7 @@ const adProducts = [
     name: "끌어올리기 VIP",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 99000,
+    price: 100000,
     duration: 30,
     sortOrder: 25,
     features: {
