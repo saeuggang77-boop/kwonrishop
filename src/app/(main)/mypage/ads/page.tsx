@@ -61,9 +61,9 @@ export default function MyAdsPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3" />
-          <div className="h-32 bg-gray-200 rounded-xl" />
-          <div className="h-32 bg-gray-200 rounded-xl" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+          <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+          <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl" />
         </div>
       </div>
     );
@@ -72,17 +72,17 @@ export default function MyAdsPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/mypage" className="text-gray-400 hover:text-gray-600">
+        <Link href="/mypage" className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">광고 관리</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">광고 관리</h1>
       </div>
 
       {/* 새 광고 구매 */}
-      <div className="bg-blue-50 rounded-xl p-4 mb-6">
-        <p className="text-sm text-gray-700 mb-2">
+      <div className="bg-blue-50 dark:bg-blue-950 rounded-xl p-4 mb-6">
+        <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
           광고 상품으로 매물의 노출을 높이고 빠른 거래를 경험하세요
         </p>
         <Link
@@ -95,12 +95,12 @@ export default function MyAdsPage() {
 
       {/* 활성 광고 */}
       <section className="mb-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-3">
-          활성 광고 <span className="text-blue-600">{active.length}</span>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+          활성 광고 <span className="text-blue-600 dark:text-blue-400">{active.length}</span>
         </h2>
         {active.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-            <p className="text-sm text-gray-400">활성 광고가 없습니다</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-center">
+            <p className="text-sm text-gray-400 dark:text-gray-500">활성 광고가 없습니다</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -114,8 +114,8 @@ export default function MyAdsPage() {
       {/* 만료된 광고 */}
       {expired.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">
-            만료된 광고 <span className="text-gray-400">{expired.length}</span>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+            만료된 광고 <span className="text-gray-400 dark:text-gray-500">{expired.length}</span>
           </h2>
           <div className="space-y-3">
             {expired.map((ad) => (
@@ -144,34 +144,34 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
   if (ad.partnerService) renewParams.set("partnerServiceId", ad.partnerService.id);
 
   return (
-    <div className={`bg-white rounded-xl border p-4 ${isActive ? "border-blue-200" : "border-gray-200 opacity-70"}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl border p-4 ${isActive ? "border-blue-200 dark:border-blue-900" : "border-gray-200 dark:border-gray-700 opacity-70"}`}>
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className={`px-2 py-0.5 text-xs font-medium rounded ${
-              isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+              isActive ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400" : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
             }`}>
               {isActive ? "활성" : "만료"}
             </span>
-            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
+            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded">
               {scopeLabel}
             </span>
           </div>
-          <h3 className="font-bold text-gray-900">{ad.product.name}</h3>
-          <p className="text-sm text-gray-500">{targetName}</p>
+          <h3 className="font-bold text-gray-900 dark:text-white">{ad.product.name}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{targetName}</p>
         </div>
         <div className="text-right text-sm">
-          <p className="font-bold text-gray-900">{ad.amount.toLocaleString()}원</p>
-          <p className="text-xs text-gray-400">(VAT 별도)</p>
+          <p className="font-bold text-gray-900 dark:text-white">{ad.amount.toLocaleString()}원</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">(VAT 별도)</p>
           {isActive && daysLeft !== null && (
-            <p className={`text-xs ${daysLeft <= 3 ? "text-red-500 font-medium" : "text-gray-400"}`}>
+            <p className={`text-xs ${daysLeft <= 3 ? "text-red-500 font-medium" : "text-gray-400 dark:text-gray-500"}`}>
               {daysLeft === 0 ? "오늘 만료" : `${daysLeft}일 남음`}
             </p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 pt-2 border-t border-gray-100 dark:border-gray-700">
         <span>
           {ad.activatedAt
             ? `${new Date(ad.activatedAt).toLocaleDateString("ko-KR")} ~ ${ad.expiresAt ? new Date(ad.expiresAt).toLocaleDateString("ko-KR") : ""}`

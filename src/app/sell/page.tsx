@@ -20,7 +20,7 @@ const STEPS = [
   { number: 4, label: "추가정보", icon: "\uD83D\uDCB0" },
   { number: 5, label: "매물설명", icon: "\uD83D\uDCDD" },
   { number: 6, label: "사진", icon: "\uD83D\uDCF7" },
-  { number: 7, label: "연동", icon: "\uD83D\uDCCA" },
+  { number: 7, label: "확인", icon: "✅" },
 ];
 
 function FairTradeAgreementModal({ onAgree }: { onAgree: () => void }) {

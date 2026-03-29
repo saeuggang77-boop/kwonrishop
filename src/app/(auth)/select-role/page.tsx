@@ -154,7 +154,7 @@ export default function SelectRolePage() {
         </div>
 
         <p className="mt-6 text-xs text-gray-400 dark:text-gray-500 text-center">
-          나중에 마이페이지에서 변경할 수 있습니다
+          선택한 역할에 따라 이용 가능한 기능이 달라집니다
         </p>
       </div>
     </div>

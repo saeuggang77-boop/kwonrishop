@@ -346,7 +346,7 @@ export default function Step7Confirm({ onPrev }: Props) {
           disabled={loading}
           className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? "등록 중..." : "저장"}
+          {loading ? "등록 중..." : "매물 등록하기"}
         </button>
       </div>
     </div>
