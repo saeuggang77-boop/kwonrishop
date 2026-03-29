@@ -32,7 +32,7 @@ export async function POST(
     // 매물 조회 및 소유권 확인
     const listing = await prisma.listing.findUnique({
       where: { id },
-      select: { id: true, userId: true, status: true },
+      select: { id: true, userId: true, status: true, bumpedAt: true },
     });
 
     if (!listing) {
@@ -54,6 +54,18 @@ export async function POST(
         { error: "활성 상태의 매물만 끌어올릴 수 있습니다." },
         { status: 400 }
       );
+    }
+
+    // 끌어올리기 24시간 쿨다운 체크
+    if (listing.bumpedAt) {
+      const hoursSinceLastBump = (Date.now() - new Date(listing.bumpedAt).getTime()) / (1000 * 60 * 60);
+      if (hoursSinceLastBump < 24) {
+        const remainingHours = Math.ceil(24 - hoursSinceLastBump);
+        return NextResponse.json({
+          error: `끌어올리기는 24시간에 1회만 가능합니다. ${remainingHours}시간 후 다시 시도해주세요.`,
+          remainingHours,
+        }, { status: 429 });
+      }
     }
 
     // 활성화된 끌어올리기 구매권 확인
@@ -87,20 +99,28 @@ export async function POST(
       );
     }
 
-    // 끌어올리기 실행
-    const updatedListing = await prisma.listing.update({
-      where: { id },
-      data: { bumpedAt: new Date() },
-      select: {
-        id: true,
-        bumpedAt: true,
-      },
+    // 끌어올리기 실행 (단건 구매는 1회 사용 후 만료 처리)
+    await prisma.$transaction(async (tx) => {
+      // 매물 bumpedAt 업데이트
+      await tx.listing.update({
+        where: { id },
+        data: { bumpedAt: new Date() },
+      });
+
+      // 단건 구매권 사용처리 (EXPIRED로 변경하여 재사용 방지)
+      await tx.adPurchase.update({
+        where: { id: activeBumpPurchase.id },
+        data: {
+          status: "EXPIRED",
+          expiresAt: new Date(), // 즉시 만료
+        },
+      });
     });
 
     return NextResponse.json({
       success: true,
       message: "매물이 끌어올려졌습니다.",
-      bumpedAt: updatedListing.bumpedAt,
+      bumpedAt: new Date(),
     });
   } catch (error) {
     console.error("끌어올리기 오류:", error);

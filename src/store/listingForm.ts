@@ -158,22 +158,14 @@ export const useListingFormStore = create<ListingFormStore>()(
       storage: createJSONStorage(() =>
         typeof window !== "undefined" ? localStorage : noopStorage
       ),
-      partialize: (state) => ({
-        currentStep: state.currentStep,
-        data: {
-          ...state.data,
-          // File 객체는 persist 불가 - URL만 저장
-          images: state.data.images.map(({ url, type, sortOrder }) => ({
-            url,
-            type,
-            sortOrder,
-          })),
-          documents: state.data.documents.map(({ url, sortOrder }) => ({
-            url,
-            sortOrder,
-          })),
-        },
-      }),
+      partialize: (state) => {
+        // images와 documents는 persist에서 제외 (blob URL은 새로고침 시 무효화됨)
+        const { images, documents, ...restData } = state.data;
+        return {
+          currentStep: state.currentStep,
+          data: restData,
+        };
+      },
     },
   ),
 );

@@ -17,6 +17,12 @@ interface ReviewData {
   };
 }
 
+interface ReportModalData {
+  reviewId: string;
+  reason: string;
+  detail: string;
+}
+
 interface ReviewSectionProps {
   listingId: string;
   sellerId?: string;
@@ -77,6 +83,13 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
     conditionRating: 5,
     content: "",
   });
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportData, setReportData] = useState<ReportModalData>({
+    reviewId: "",
+    reason: "SPAM",
+    detail: "",
+  });
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   const fetchReviews = useCallback(async () => {
     try {
@@ -133,6 +146,49 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
       toast.error("오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  function handleReportClick(reviewId: string) {
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+    setReportData({ reviewId, reason: "SPAM", detail: "" });
+    setShowReportModal(true);
+  }
+
+  async function handleReportSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    setReportSubmitting(true);
+    try {
+      const res = await fetch("/api/reviews/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reviewId: reportData.reviewId,
+          reason: reportData.reason,
+          detail: reportData.detail,
+        }),
+      });
+
+      if (res.ok) {
+        toast.success("신고가 접수되었습니다.");
+        setShowReportModal(false);
+        setReportData({ reviewId: "", reason: "SPAM", detail: "" });
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "신고 접수에 실패했습니다.");
+      }
+    } catch {
+      toast.error("오류가 발생했습니다.");
+    } finally {
+      setReportSubmitting(false);
     }
   }
 
@@ -278,11 +334,22 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                     {new Date(review.createdAt).toLocaleDateString("ko-KR")}
                   </p>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <StarRating
                     rating={Math.round((review.accuracyRating + review.communicationRating + review.conditionRating) / 3)}
                     readonly
                   />
+                  {session && review.reviewer.id !== session.user.id && (
+                    <button
+                      onClick={() => handleReportClick(review.id)}
+                      className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 transition-colors"
+                      title="신고하기"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -306,6 +373,64 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">리뷰 신고</h3>
+            <form onSubmit={handleReportSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  신고 사유 <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={reportData.reason}
+                  onChange={(e) => setReportData({ ...reportData, reason: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  required
+                >
+                  <option value="SPAM">스팸/광고</option>
+                  <option value="ABUSE">욕설/비방</option>
+                  <option value="FALSE_INFO">허위 사실</option>
+                  <option value="OTHER">기타</option>
+                </select>
+              </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  상세 내용 (선택)
+                </label>
+                <textarea
+                  value={reportData.detail}
+                  onChange={(e) => setReportData({ ...reportData, detail: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="신고 사유를 자세히 적어주세요"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowReportModal(false);
+                    setReportData({ reviewId: "", reason: "SPAM", detail: "" });
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium"
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  disabled={reportSubmitting}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium disabled:opacity-50"
+                >
+                  {reportSubmitting ? "신고 중..." : "신고하기"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

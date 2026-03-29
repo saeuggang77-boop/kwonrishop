@@ -18,21 +18,35 @@ export async function middleware(req: NextRequest) {
 
     // 역할 기반 접근 제어
     const userRole = token.role as string | undefined;
+    const verified = token.verified as boolean | undefined;
 
     if (pathname.startsWith("/admin") && userRole !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
+    // SELLER/FRANCHISE/PARTNER는 사업자인증 필수
     if (pathname.startsWith("/sell") && userRole !== "SELLER" && userRole !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (pathname.startsWith("/sell") && userRole === "SELLER" && !verified) {
+      return NextResponse.redirect(new URL("/verify-business?role=SELLER", req.url));
     }
 
     if (pathname.startsWith("/partners/register") && userRole !== "PARTNER" && userRole !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
+    if (pathname.startsWith("/partners/register") && userRole === "PARTNER" && !verified) {
+      return NextResponse.redirect(new URL("/verify-business?role=PARTNER", req.url));
+    }
+
     if (pathname.startsWith("/equipment/register") && !["SELLER", "FRANCHISE", "PARTNER", "ADMIN"].includes(userRole || "")) {
       return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (pathname.startsWith("/equipment/register") && ["SELLER", "FRANCHISE", "PARTNER"].includes(userRole || "") && !verified) {
+      return NextResponse.redirect(new URL(`/verify-business?role=${userRole}`, req.url));
     }
   }
 

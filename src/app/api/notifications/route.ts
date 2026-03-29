@@ -22,6 +22,10 @@ export async function GET(request: Request) {
       where: { userId: session.user.id },
     });
 
+    const unreadCount = await prisma.notification.count({
+      where: { userId: session.user.id, read: false },
+    });
+
     const notifications = await prisma.notification.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
@@ -31,6 +35,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       notifications,
+      unreadCount,
       pagination: {
         page,
         limit,

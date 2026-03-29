@@ -196,26 +196,35 @@ export default function Header() {
                           알림이 없습니다
                         </p>
                       ) : (
-                        notifications.map((notif) => (
+                        <>
+                          {notifications.map((notif) => (
+                            <Link
+                              key={notif.id}
+                              href={notif.link || "#"}
+                              onClick={() => setNotifOpen(false)}
+                              className={`block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-50 dark:border-gray-700 ${
+                                !notif.read ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
+                              }`}
+                            >
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {notif.title}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {notif.message}
+                              </p>
+                              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                {timeAgo(notif.createdAt)}
+                              </p>
+                            </Link>
+                          ))}
                           <Link
-                            key={notif.id}
-                            href={notif.link || "#"}
+                            href="/notifications"
                             onClick={() => setNotifOpen(false)}
-                            className={`block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-50 dark:border-gray-700 ${
-                              !notif.read ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
-                            }`}
+                            className="block px-4 py-2 text-center text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-100 dark:border-gray-700"
                           >
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              {notif.title}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                              {notif.message}
-                            </p>
-                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                              {timeAgo(notif.createdAt)}
-                            </p>
+                            모든 알림 보기
                           </Link>
-                        ))
+                        </>
                       )}
                     </div>
                   </>

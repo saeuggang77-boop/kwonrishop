@@ -56,6 +56,10 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
   const hasInterior = data.images.some((img) => img.type === "INTERIOR");
   const photoRequirementMet = hasExterior && hasInterior;
 
+  // 새로고침으로 이미지 손실 여부 감지 (persist에서 images가 제외되므로 항상 빈 배열)
+  // 실제로는 사용자가 Step6까지 왔는데 images가 비어있으면 새로고침한 것으로 간주
+  const wasRefreshed = data.images.length === 0 && data.documents.length === 0;
+
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     const remaining = 15 - data.images.length;
@@ -102,6 +106,22 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
       <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">사진 / 연락처</h2>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">매물 사진을 등록하고 연락처 공개 여부를 설정해주세요</p>
+
+      {wasRefreshed && (
+        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-lg flex gap-3">
+          <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+          </svg>
+          <div>
+            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">새로고침으로 인해 이미지가 초기화되었습니다</p>
+            <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
+              이전에 업로드한 사진은 브라우저 새로고침으로 인해 삭제되었습니다. 다시 업로드해주세요.
+              <br />
+              <span className="font-medium">작성 중 페이지 이탈 시 경고 메시지가 표시되니 참고해주세요.</span>
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-6">
         {/* 사진 가이드 예시 */}

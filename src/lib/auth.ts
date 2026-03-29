@@ -117,13 +117,20 @@ export const authOptions: NextAuthOptions = {
       if (user || trigger === "update") {
         const dbUser = await prisma.user.findUnique({
           where: { id: (user?.id || token.id) as string },
-          select: { id: true, role: true, phone: true, roleSelectedAt: true },
+          select: {
+            id: true,
+            role: true,
+            phone: true,
+            roleSelectedAt: true,
+            businessVerification: { select: { verified: true } }
+          },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.phone = dbUser.phone;
           token.roleSelected = !!dbUser.roleSelectedAt;
+          token.verified = dbUser.businessVerification?.verified ?? false;
         }
       }
       return token;
@@ -134,6 +141,7 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as UserRole;
         session.user.phone = (token.phone as string) || null;
         session.user.roleSelected = (token.roleSelected as boolean) ?? false;
+        session.user.verified = (token.verified as boolean) ?? false;
       }
       return session;
     },

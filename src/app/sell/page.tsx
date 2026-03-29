@@ -105,6 +105,19 @@ export default function SellPage() {
     }
   }, [status, router]);
 
+  // 페이지 이탈 경고 (Step1 이후부터)
+  useEffect(() => {
+    if (currentStep < 1 || !data.agreedToTerms) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = ""; // Chrome requires returnValue to be set
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [currentStep, data.agreedToTerms]);
+
   if (status === "loading" || checkingVerification) {
     return (
       <div className="flex items-center justify-center py-20">

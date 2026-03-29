@@ -7,6 +7,7 @@ declare module "next-auth" {
       id: string;
       role: UserRole;
       roleSelected: boolean;
+      verified: boolean;
       phone: string | null;
       name?: string | null;
       email?: string | null;

@@ -77,8 +77,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: result.message }, { status: 400 });
     }
 
+    // 사용자의 pendingRole 확인
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { pendingRole: true },
+    });
+
     const requestedRole = body.requestedRole && ["SELLER", "FRANCHISE", "PARTNER"].includes(body.requestedRole)
       ? body.requestedRole
+      : user?.pendingRole && ["SELLER", "FRANCHISE", "PARTNER"].includes(user.pendingRole)
+      ? user.pendingRole
       : "SELLER";
 
     // FRANCHISE 역할 요청 시: 공정위 API로 브랜드 매칭 필수
@@ -159,7 +167,7 @@ export async function POST(req: NextRequest) {
       }),
       prisma.user.update({
         where: { id: session.user.id },
-        data: { role: requestedRole },
+        data: { role: requestedRole, pendingRole: null },
       }),
     ];
 

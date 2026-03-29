@@ -194,6 +194,25 @@ export async function PUT(
   try {
     const body = await req.json();
 
+    // 상태 전환 검증 (state machine)
+    const VALID_TRANSITIONS: Record<string, string[]> = {
+      ACTIVE: ["RESERVED", "SOLD"],
+      RESERVED: ["ACTIVE", "SOLD"],
+      SOLD: [],  // 거래완료는 되돌리기 불가
+      EXPIRED: ["ACTIVE"],  // 만료된 매물만 재활성화 가능
+      DELETED: [],  // 삭제된 매물은 복원 불가
+    };
+
+    if (body.status && body.status !== listing.status) {
+      const allowed = VALID_TRANSITIONS[listing.status] || [];
+      if (!allowed.includes(body.status)) {
+        return NextResponse.json(
+          { error: `${listing.status} 상태에서 ${body.status}(으)로 변경할 수 없습니다.` },
+          { status: 400 }
+        );
+      }
+    }
+
     // 이미지 업데이트 처리
     const updateData: Record<string, unknown> = {
       status: body.status || listing.status,
