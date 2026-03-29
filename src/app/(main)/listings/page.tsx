@@ -485,7 +485,7 @@ function ListingsContent() {
             <div
               key={listing.id}
               onClick={() => router.push(`/listings/${listing.id}`)}
-              className={`min-w-[280px] max-w-[280px] snap-start rounded-xl border-2 ${tierColors[tier] || tierColors.BASIC} overflow-hidden cursor-pointer hover:shadow-lg transition-shadow shrink-0`}
+              className={`min-w-[240px] w-[calc(25%-12px)] snap-start rounded-xl border-2 ${tierColors[tier] || tierColors.BASIC} overflow-hidden cursor-pointer hover:shadow-lg transition-shadow shrink-0`}
             >
               <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
                 {images?.[0] ? (

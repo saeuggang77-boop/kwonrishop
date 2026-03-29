@@ -92,7 +92,7 @@ export function RegisterPromoBanner({
       border: "border-blue-400",
       title: "상가 창업에 필요한 전문 서비스를 제공하시나요?",
       subtitle: "인테리어, 설비, 법무, 세무, 간판 등 사장님들이 찾는 서비스를 직접 연결합니다",
-      badges: ["업체프로필", "포트폴리오", "매물상세연동"],
+      badges: ["업체프로필", "매물상세연동"],
       badgeColor: "bg-blue-500",
       cta: "월 10만원부터 →",
       link: "/pricing?tab=partner",

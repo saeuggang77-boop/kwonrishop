@@ -181,7 +181,7 @@ const guideData: Record<UserType, { title: string; subtitle: string; steps: Step
       {
         id: 4,
         title: "서비스 정보 등록",
-        description: "서비스명, 상세 설명, 가격 정보, 포트폴리오 사진 등을 등록하세요. 매물 양도 시 필요한 서비스를 구체적으로 작성하세요.",
+        description: "서비스명, 상세 설명, 가격 정보, 시공 사진 등을 등록하세요. 매물 양도 시 필요한 서비스를 구체적으로 작성하세요.",
         icon: "📝",
       },
       {

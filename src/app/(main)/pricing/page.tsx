@@ -442,8 +442,6 @@ function buildFeatureList(
       list.push({ icon: "✅", text: "인증 배지" });
     if (features.topExposure)
       list.push({ icon: "⭐", text: "상위 노출" });
-    if (features.portfolio)
-      list.push({ icon: "📂", text: features.portfolio >= 999 ? "포트폴리오 무제한" : `포트폴리오 ${features.portfolio}건` });
     if (features.mainRecommend)
       list.push({ icon: "🏠", text: "추천업체 연동" });
   } else if (scope === "EQUIPMENT") {
