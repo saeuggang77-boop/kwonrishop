@@ -37,6 +37,10 @@ interface FranchiseBrand {
   industry: string;
   totalStores: number | null;
   logo: string | null;
+  tier: string;
+  description: string | null;
+  avgRevenue: number | null;
+  franchiseFee: number | null;
 }
 
 interface PartnerService {
@@ -46,6 +50,7 @@ interface PartnerService {
   serviceArea: string[];
   tier: string;
   images: { url: string }[];
+  description: string | null;
 }
 
 const SERVICE_TYPE_LABELS: Record<string, string> = {
@@ -77,8 +82,8 @@ export default function HomeClient() {
     try {
       const [latestRes, franchiseRes, partnerRes] = await Promise.all([
         fetch("/api/listings?limit=20&sort=latest"),
-        fetch("/api/franchise?limit=4"),
-        fetch("/api/partners?limit=4"),
+        fetch("/api/franchise?featured=true&limit=10"),
+        fetch("/api/partners?featured=true&limit=10"),
       ]);
 
       const [latestData, franchiseData, partnerData] = await Promise.all([
@@ -189,7 +194,7 @@ export default function HomeClient() {
           </div>
         </section>
 
-        {/* VIP 매물 */}
+        {/* VIP 매물 - 2열 가로형 카드 */}
         {!loading && latestListings.filter((l) => l.featuredTier === "VIP").length > 0 && (
           <section className="py-12 border-t border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between mb-6">
@@ -200,10 +205,75 @@ export default function HomeClient() {
                 더보기 →
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {latestListings.filter((l) => l.featuredTier === "VIP").map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {latestListings.filter((l) => l.featuredTier === "VIP").map((listing) => {
+                const addr = listing.addressRoad || listing.addressJibun || "주소 미입력";
+                const shortAddr = addr.split(" ").slice(0, 3).join(" ");
+                return (
+                  <Link
+                    key={listing.id}
+                    href={`/listings/${listing.id}`}
+                    className="block border-2 border-yellow-400 dark:border-yellow-500 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
+                  >
+                    <div className="md:flex">
+                      {/* 이미지 영역 */}
+                      <div className="relative md:w-2/5 aspect-[4/3] md:aspect-auto bg-gray-100 dark:bg-gray-700">
+                        {listing.images[0] ? (
+                          <Image
+                            src={listing.images[0].url}
+                            alt={`${listing.storeName || addr} 매물 사진`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 40vw"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full min-h-[200px] flex items-center justify-center text-gray-300 dark:text-gray-600">
+                            <svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          </div>
+                        )}
+                        {listing.themes.length > 0 && (
+                          <div className="absolute top-3 left-3 flex gap-1">
+                            {listing.themes.slice(0, 2).map((theme) => (
+                              <span key={theme} className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-md shadow-sm">{theme}</span>
+                            ))}
+                          </div>
+                        )}
+                        <span className="absolute top-3 right-3 px-2.5 py-1 bg-yellow-500 text-white text-xs font-bold rounded-md shadow-sm">VIP</span>
+                      </div>
+                      {/* 정보 영역 */}
+                      <div className="p-5 md:w-3/5 flex flex-col justify-center">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 mb-2">
+                          {listing.category && <span>{listing.category.icon} {listing.category.name}</span>}
+                          {listing.subCategory && <><span>·</span><span>{listing.subCategory.name}</span></>}
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">{shortAddr}</h3>
+                        <div className="grid grid-cols-3 gap-2 mb-3">
+                          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2.5 text-center">
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-0.5">보증금</p>
+                            <p className="font-bold text-gray-900 dark:text-gray-100">{listing.deposit.toLocaleString()}만</p>
+                          </div>
+                          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2.5 text-center">
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-0.5">월세</p>
+                            <p className="font-bold text-gray-900 dark:text-gray-100">{listing.monthlyRent.toLocaleString()}만</p>
+                          </div>
+                          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2.5 text-center">
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-0.5">권리금</p>
+                            <p className="font-bold text-blue-600 dark:text-blue-400">
+                              {listing.premiumNone ? "무권리" : `${listing.premium.toLocaleString()}만`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
+                          {listing.areaPyeong && <span>{listing.areaPyeong}평</span>}
+                          {listing.currentFloor && <><span>·</span><span>{listing.currentFloor}층</span></>}
+                          <span>·</span>
+                          <span>조회 {listing.viewCount}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
@@ -246,29 +316,10 @@ export default function HomeClient() {
           </section>
         )}
 
-        {/* 최신 매물 (항상 표시) */}
-        {!loading && latestListings.length > 0 && (
-          <section className="py-12 border-t border-gray-100 dark:border-gray-800">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                최신 매물
-              </h2>
-              <Link href="/listings" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-                전체보기 →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {latestListings.slice(0, 8).map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 추천 프랜차이즈 */}
+        {/* 프랜차이즈 */}
         <section className="py-12 border-t border-gray-100 dark:border-gray-800">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">추천 프랜차이즈</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">프랜차이즈</h2>
             <Link href="/franchise" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
               더보기 →
             </Link>
@@ -280,46 +331,127 @@ export default function HomeClient() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {franchiseBrands.map((brand) => (
-                <Link
-                  key={brand.id}
-                  href={`/franchise/${brand.id}`}
-                  className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    {brand.logo ? (
-                      <div className="relative w-12 h-12 rounded-full overflow-hidden">
-                        <Image
-                          src={brand.logo}
-                          alt={brand.brandName}
-                          fill
-                          className="object-cover"
-                        />
+            <>
+              {/* 골드 브랜드 - 2열 대형 카드 */}
+              {franchiseBrands.filter((b) => b.tier === "GOLD").length > 0 && (
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  {franchiseBrands.filter((b) => b.tier === "GOLD").map((brand) => (
+                    <Link
+                      key={brand.id}
+                      href={`/franchise/${brand.id}`}
+                      className="p-5 bg-white dark:bg-gray-800 border-2 border-yellow-400 dark:border-yellow-500 rounded-xl hover:shadow-md transition-shadow relative"
+                    >
+                      <div className="absolute top-4 right-4 px-2.5 py-0.5 bg-yellow-500 text-white text-xs font-bold rounded-md">
+                        GOLD
                       </div>
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold text-lg">
-                        {brand.brandName.charAt(0)}
+                      <div className="flex items-start gap-4 mb-3">
+                        {brand.logo ? (
+                          <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+                            <Image
+                              src={brand.logo}
+                              alt={brand.brandName}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-14 h-14 rounded-xl bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 flex items-center justify-center font-bold text-xl flex-shrink-0">
+                            {brand.brandName.charAt(0)}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">{brand.brandName}</h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{brand.industry}</p>
+                          {brand.totalStores && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400">매장 {brand.totalStores.toLocaleString()}개</p>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-gray-900 dark:text-gray-100 truncate">{brand.brandName}</h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{brand.industry}</p>
-                    </div>
-                  </div>
-                  {brand.totalStores && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">매장 {brand.totalStores.toLocaleString()}개</p>
-                  )}
-                </Link>
-              ))}
-            </div>
+                      {brand.description && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-1">
+                          {brand.description}
+                        </p>
+                      )}
+                      <div className="grid grid-cols-3 gap-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+                        {brand.franchiseFee && (
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">창업비용</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                              {(brand.franchiseFee / 10000).toLocaleString()}만원
+                            </p>
+                          </div>
+                        )}
+                        {brand.avgRevenue && (
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">평균매출</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                              {(brand.avgRevenue / 10000).toLocaleString()}만원
+                            </p>
+                          </div>
+                        )}
+                        {brand.totalStores && (
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">매장수</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                              {brand.totalStores.toLocaleString()}개
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {/* 실버/브론즈 브랜드 - 4열 소형 카드 */}
+              {franchiseBrands.filter((b) => b.tier === "SILVER" || b.tier === "BRONZE").length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {franchiseBrands.filter((b) => b.tier === "SILVER" || b.tier === "BRONZE").map((brand) => (
+                    <Link
+                      key={brand.id}
+                      href={`/franchise/${brand.id}`}
+                      className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-shadow relative"
+                    >
+                      <div className={`absolute top-3 right-3 px-2 py-0.5 text-white text-xs font-bold rounded ${
+                        brand.tier === "SILVER" ? "bg-gray-400" : "bg-amber-700"
+                      }`}>
+                        {brand.tier === "SILVER" ? "SILVER" : "BRONZE"}
+                      </div>
+                      <div className="flex items-center gap-3 mb-2">
+                        {brand.logo ? (
+                          <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                            <Image
+                              src={brand.logo}
+                              alt={brand.brandName}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold text-lg">
+                            {brand.brandName.charAt(0)}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-gray-900 dark:text-gray-100 truncate">{brand.brandName}</h3>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{brand.industry}</p>
+                        </div>
+                      </div>
+                      {brand.totalStores && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">매장 {brand.totalStores.toLocaleString()}개</p>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </section>
 
-        {/* 추천 협력업체 */}
+        {/* 협력업체 */}
         <section className="py-12 border-t border-gray-100 dark:border-gray-800">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">추천 협력업체</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">협력업체</h2>
             <Link href="/partners" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
               더보기 →
             </Link>
@@ -331,134 +463,107 @@ export default function HomeClient() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {partnerServices.map((partner) => (
-                <Link
-                  key={partner.id}
-                  href={`/partners/${partner.id}`}
-                  className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    {partner.images[0] ? (
-                      <div className="relative w-12 h-12 rounded-full overflow-hidden">
-                        <Image
-                          src={partner.images[0].url}
-                          alt={partner.companyName}
-                          fill
-                          className="object-cover"
-                        />
+            <>
+              {/* VIP 파트너 - 2열 대형 카드 */}
+              {partnerServices.filter((p) => p.tier === "VIP").length > 0 && (
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  {partnerServices.filter((p) => p.tier === "VIP").map((partner) => (
+                    <Link
+                      key={partner.id}
+                      href={`/partners/${partner.id}`}
+                      className="p-5 bg-white dark:bg-gray-800 border-2 border-yellow-400 dark:border-yellow-500 rounded-xl hover:shadow-md transition-shadow relative"
+                    >
+                      <div className="absolute top-4 right-4 px-2.5 py-0.5 bg-yellow-500 text-white text-xs font-bold rounded-md">
+                        VIP
                       </div>
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 flex items-center justify-center font-bold text-lg">
-                        {partner.companyName.charAt(0)}
+                      <div className="flex items-start gap-4 mb-3">
+                        {partner.images[0] ? (
+                          <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+                            <Image
+                              src={partner.images[0].url}
+                              alt={partner.companyName}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-14 h-14 rounded-xl bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 flex items-center justify-center font-bold text-xl flex-shrink-0">
+                            {partner.companyName.charAt(0)}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">{partner.companyName}</h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                            {SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}
+                          </p>
+                          {partner.serviceArea.length > 0 && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {partner.serviceArea.slice(0, 3).join(", ")}
+                              {partner.serviceArea.length > 3 && ` 외 ${partner.serviceArea.length - 3}곳`}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-gray-900 dark:text-gray-100 truncate">{partner.companyName}</h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}
-                      </p>
-                    </div>
-                  </div>
-                  {partner.serviceArea.length > 0 && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {partner.serviceArea.slice(0, 2).join(", ")}
-                      {partner.serviceArea.length > 2 && ` 외 ${partner.serviceArea.length - 2}곳`}
-                    </p>
-                  )}
-                </Link>
-              ))}
-            </div>
+                      {partner.description && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                          {partner.description}
+                        </p>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {/* 프리미엄/베이직 파트너 - 4열 소형 카드 */}
+              {partnerServices.filter((p) => p.tier === "PREMIUM" || p.tier === "BASIC").length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {partnerServices.filter((p) => p.tier === "PREMIUM" || p.tier === "BASIC").map((partner) => (
+                    <Link
+                      key={partner.id}
+                      href={`/partners/${partner.id}`}
+                      className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-shadow relative"
+                    >
+                      <div className={`absolute top-3 right-3 px-2 py-0.5 text-white text-xs font-bold rounded ${
+                        partner.tier === "PREMIUM" ? "bg-gray-500" : "bg-blue-500"
+                      }`}>
+                        {partner.tier === "PREMIUM" ? "PREMIUM" : "BASIC"}
+                      </div>
+                      <div className="flex items-center gap-3 mb-2">
+                        {partner.images[0] ? (
+                          <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                            <Image
+                              src={partner.images[0].url}
+                              alt={partner.companyName}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 flex items-center justify-center font-bold text-lg">
+                            {partner.companyName.charAt(0)}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-gray-900 dark:text-gray-100 truncate">{partner.companyName}</h3>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}
+                          </p>
+                        </div>
+                      </div>
+                      {partner.serviceArea.length > 0 && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {partner.serviceArea.slice(0, 2).join(", ")}
+                          {partner.serviceArea.length > 2 && ` 외 ${partner.serviceArea.length - 2}곳`}
+                        </p>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </section>
 
-        {/* 이용 안내 */}
-        <section className="py-12 border-t border-gray-100 dark:border-gray-800">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
-            이용 안내
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300 text-2xl">
-                🔍
-              </div>
-              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">1. 매물 검색</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                원하는 지역과 업종으로 매물을 검색하고<br />
-                상세 정보를 확인하세요
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center text-green-600 dark:text-green-300 text-2xl">
-                💬
-              </div>
-              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">2. 상세 확인 & 채팅</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                매물 상세 정보를 확인하고<br />
-                채팅으로 직접 문의하세요
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-300 text-2xl">
-                ✓
-              </div>
-              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">3. 직거래 완료</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                중개수수료 없이 매도자와 직접 거래하고<br />
-                안전하게 계약을 완료하세요
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA 배너 */}
-        <section className="py-12 border-t border-gray-100 dark:border-gray-800">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-12 text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">지금 바로 매물을 등록하세요</h2>
-            <p className="text-blue-100 dark:text-blue-200 mb-6">
-              중개수수료 없이 직접 거래하고, 빠르게 매물을 판매할 수 있습니다
-            </p>
-            <Link
-              href="/sell"
-              className="inline-block px-8 py-3 bg-white text-blue-600 rounded-xl font-medium hover:bg-gray-100 transition-colors focus-visible:ring-2 focus-visible:ring-white"
-            >
-              매물 등록하기
-            </Link>
-          </div>
-        </section>
-
-        {/* 서비스 특징 */}
-        <section className="py-12 border-t border-gray-100 dark:border-gray-800">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300 text-xl">
-                0
-              </div>
-              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">중개수수료 0원</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                매도자와 매수자가 직접 거래하여 불필요한 수수료를 절약합니다
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-3 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center text-green-600 dark:text-green-300 text-xl">
-                ✓
-              </div>
-              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">사업자 인증</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                국세청 API로 인증된 실제 사업자만 매물을 등록할 수 있습니다
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-300 text-xl">
-                ★
-              </div>
-              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">블라인드 리뷰</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                거래 완료 후 익명 리뷰로 신뢰할 수 있는 매물 정보를 확인하세요
-              </p>
-            </div>
-          </div>
-        </section>
       </div>
 
       {/* 홈 서비스 섹션 */}
