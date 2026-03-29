@@ -43,15 +43,18 @@ function PricingContent() {
   const [activeTab, setActiveTab] = useState<TabKey>("LISTING");
   const [franchisePeriod, setFranchisePeriod] = useState<PeriodKey>("1m");
 
-  // 사용자 역할에 따라 기본 탭 선택
+  // URL 파라미터 또는 사용자 역할에 따라 기본 탭 선택
   useEffect(() => {
-    if (session?.user?.role) {
+    const tabParam = searchParams.get("tab")?.toUpperCase() as TabKey | undefined;
+    if (tabParam && TABS.some((t) => t.key === tabParam)) {
+      setActiveTab(tabParam);
+    } else if (session?.user?.role) {
       const matchedTab = TABS.find((t) => t.role === session.user.role);
       if (matchedTab) {
         setActiveTab(matchedTab.key);
       }
     }
-  }, [session?.user?.role]);
+  }, [session?.user?.role, searchParams]);
 
   useEffect(() => {
     fetch("/api/ad-products")
