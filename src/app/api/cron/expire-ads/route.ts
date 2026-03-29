@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { adExpiredEmail } from "@/lib/email-templates";
 import { notifyPaymentExpiring } from "@/lib/kakao-alimtalk";
+import { sendPushToUser } from "@/lib/push";
 
 export async function GET(request: NextRequest) {
   try {
@@ -145,6 +146,18 @@ export async function GET(request: NextRequest) {
       data: notifications,
     });
 
+    // 웹 푸시: 광고 만료 알림 (non-blocking)
+    expiredAds.forEach((ad: any) => {
+      const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
+      const pushLink = ad.listingId ? `/mypage/listings` : ad.equipmentId ? `/equipment/${ad.equipmentId}` : `/mypage/partner`;
+      sendPushToUser(
+        ad.userId,
+        "광고 상품이 만료되었습니다",
+        `${ad.product.name} 상품이 만료되었습니다. ${targetName}의 광고 혜택이 종료됩니다.`,
+        pushLink
+      ).catch(() => {});
+    });
+
     // Send expiration emails (non-blocking)
     expiredAds.forEach((ad: any) => {
       if (ad.user.email) {
@@ -221,6 +234,15 @@ export async function GET(request: NextRequest) {
       if (ad.user.phone) {
         notifyPaymentExpiring(ad.user.phone, ad.product.name, daysLeft).catch(() => {});
       }
+
+      // 웹 푸시 (non-blocking)
+      sendPushToUser(
+        ad.userId,
+        `광고 만료 ${daysLeft}일 전`,
+        `${ad.product.name} 상품이 ${daysLeft}일 후 만료됩니다. ${targetName}의 광고를 연장하세요.`,
+        `/mypage/ads?renew=${ad.id}`
+      ).catch(() => {});
+
       expiringAlertCount++;
     }
 

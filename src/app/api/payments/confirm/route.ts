@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notifyPaymentSuccess } from "@/lib/kakao-alimtalk";
+import { sendPushToUser } from "@/lib/push";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { calculateNextBumpTime } from "@/lib/bump-utils";
@@ -273,6 +274,14 @@ export async function POST(request: NextRequest) {
         console.error("[Alimtalk] Failed to send payment notification:", error);
       }
     })();
+
+    // 웹 푸시: 결제 완료 알림 (non-blocking)
+    sendPushToUser(
+      session.user.id,
+      "결제가 완료되었습니다",
+      `${order.product.name} 상품을 구매하셨습니다.`,
+      "/mypage"
+    ).catch(() => {});
 
     return NextResponse.json({
       success: true,

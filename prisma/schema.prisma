@@ -39,6 +39,7 @@ model User {
   reviews              Review[]
   favorites            Favorite[]
   notifications        Notification[]
+  pushTokens           PushToken[]
   adPurchases          AdPurchase[]
   bumpSubscriptions    BumpSubscription[]
   reportsMade          Report[]  @relation("reporter")
@@ -672,6 +673,19 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, read, createdAt])
+}
+
+model PushToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  device    String   @default("web")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Report {

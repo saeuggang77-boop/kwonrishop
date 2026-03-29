@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "@/lib/toast";
+import { enablePushNotification, disablePushNotification } from "@/components/PushNotificationManager";
 
 interface SellerReportItem {
   id: string;
@@ -53,6 +54,8 @@ export default function MyPage() {
   } | null>(null);
   const [cancellingSubscription, setCancellingSubscription] = useState(false);
   const [sellerReports, setSellerReports] = useState<SellerReportItem[]>([]);
+  const [pushStatus, setPushStatus] = useState<"loading" | "granted" | "denied" | "default" | "unsupported">("loading");
+  const [pushToggling, setPushToggling] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -92,6 +95,45 @@ export default function MyPage() {
         .catch(() => {});
     }
   }, [status, router]);
+
+  // 푸시 알림 권한 상태 확인
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window) || !("serviceWorker" in navigator)) {
+      setPushStatus("unsupported");
+      return;
+    }
+    setPushStatus(Notification.permission as "granted" | "denied" | "default");
+  }, []);
+
+  const handlePushToggle = useCallback(async () => {
+    setPushToggling(true);
+    try {
+      if (pushStatus === "granted") {
+        const success = await disablePushNotification();
+        if (success) {
+          setPushStatus("default");
+          toast.success("푸시 알림이 비활성화되었습니다");
+        } else {
+          toast.error("푸시 알림 비활성화에 실패했습니다");
+        }
+      } else {
+        const result = await enablePushNotification();
+        if (result === "granted") {
+          setPushStatus("granted");
+          toast.success("푸시 알림이 활성화되었습니다");
+        } else if (result === "denied") {
+          setPushStatus("denied");
+          toast.error("브라우저 설정에서 알림이 차단되어 있습니다. 브라우저 알림 설정을 확인해주세요.");
+        } else {
+          toast.error("이 브라우저는 푸시 알림을 지원하지 않습니다");
+        }
+      }
+    } catch {
+      toast.error("푸시 알림 설정 변경에 실패했습니다");
+    } finally {
+      setPushToggling(false);
+    }
+  }, [pushStatus]);
 
   async function handleCancelSubscription() {
     if (!bumpSubscription) return;
@@ -501,6 +543,38 @@ export default function MyPage() {
               <p className="text-xs text-gray-400">매물 상세 페이지에서 시장분석 리포트를 구매할 수 있습니다 (15,000원/건)</p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* 알림 설정 */}
+      {pushStatus !== "loading" && pushStatus !== "unsupported" && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
+          <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3">알림 설정</h3>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">웹 푸시 알림</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                {pushStatus === "granted"
+                  ? "새 채팅, 가격 변동, 매물 만료 등을 알려드립니다"
+                  : pushStatus === "denied"
+                  ? "브라우저 설정에서 알림이 차단되어 있습니다"
+                  : "활성화하면 중요한 알림을 받을 수 있습니다"}
+              </p>
+            </div>
+            <button
+              onClick={handlePushToggle}
+              disabled={pushToggling || pushStatus === "denied"}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                pushStatus === "granted" ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-600"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  pushStatus === "granted" ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
         </div>
       )}
 

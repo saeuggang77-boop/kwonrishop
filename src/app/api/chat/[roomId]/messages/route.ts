@@ -9,6 +9,7 @@ import { pusher } from "@/lib/pusher";
 import { sendEmail } from "@/lib/email";
 import { newChatMessageEmail } from "@/lib/email-templates";
 import { notifyNewChat } from "@/lib/kakao-alimtalk";
+import { sendPushToUser } from "@/lib/push";
 
 // 메시지 조회
 export async function GET(
@@ -153,7 +154,7 @@ export async function POST(
           equipment: { select: { title: true } },
           participants: {
             where: { userId: { not: session.user.id } },
-            select: { user: { select: { email: true, name: true, phone: true } } },
+            select: { userId: true, user: { select: { email: true, name: true, phone: true } } },
           },
         },
       });
@@ -180,6 +181,14 @@ export async function POST(
             listingName
           ).catch(() => {});
         }
+
+        // 웹 푸시 (non-blocking)
+        sendPushToUser(
+          chatRoom.participants[0].userId,
+          `${session.user.name || "사용자"}님의 새 메시지`,
+          cleanContent.trim().slice(0, 100),
+          `/chat/${roomId}`
+        ).catch(() => {});
       }
     } catch (error) {
       console.error("[Notification] Failed to send chat notification:", error);

@@ -4,6 +4,7 @@ import SessionProvider from "@/components/providers/SessionProvider";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import SkipLink from "@/components/ui/SkipLink";
 import Toaster from "@/components/ui/Toaster";
+import PushNotificationManager from "@/components/PushNotificationManager";
 import "./globals.css";
 
 const geist = Geist({
@@ -82,6 +83,7 @@ export default function RootLayout({
         <SkipLink />
         <SessionProvider>
           <ThemeProvider>
+            <PushNotificationManager />
             <div id="main-content">{children}</div>
             <Toaster />
           </ThemeProvider>

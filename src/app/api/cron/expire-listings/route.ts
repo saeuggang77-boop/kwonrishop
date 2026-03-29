@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { listingExpiredEmail } from "@/lib/email-templates";
 import { notifyListingExpiring } from "@/lib/kakao-alimtalk";
+import { sendPushToUser } from "@/lib/push";
 
 export async function GET(request: NextRequest) {
   try {
@@ -98,6 +99,14 @@ export async function GET(request: NextRequest) {
         if (listing.user.phone) {
           notifyListingExpiring(listing.user.phone, storeName, 0).catch(() => {});
         }
+
+        // 웹 푸시 (non-blocking)
+        sendPushToUser(
+          listing.userId,
+          "매물이 만료되었습니다",
+          `${storeName}이(가) 만료되었습니다. 연장하려면 클릭하세요.`,
+          `/listings/${listing.id}`
+        ).catch(() => {});
       });
 
       console.log(`Expired ${expiredListings.length} listings`);
@@ -171,6 +180,14 @@ export async function GET(request: NextRequest) {
         if (equip.user.phone) {
           notifyListingExpiring(equip.user.phone, equipTitle, 0).catch(() => {});
         }
+
+        // 웹 푸시 (non-blocking)
+        sendPushToUser(
+          equip.userId,
+          "집기 매물이 만료되었습니다",
+          `${equipTitle}이(가) 만료되었습니다. 연장하려면 클릭하세요.`,
+          `/equipment/${equip.id}`
+        ).catch(() => {});
       });
 
       console.log(`Expired ${expiredEquipments.length} equipment items`);
@@ -229,6 +246,15 @@ export async function GET(request: NextRequest) {
       if (listing.user.phone) {
         notifyListingExpiring(listing.user.phone, storeName, daysLeft).catch(() => {});
       }
+
+      // 웹 푸시 (non-blocking)
+      sendPushToUser(
+        listing.userId,
+        `매물 만료 ${daysLeft}일 전`,
+        `${storeName}이(가) ${daysLeft}일 후 만료됩니다. 연장하려면 클릭하세요.`,
+        `/listings/${listing.id}`
+      ).catch(() => {});
+
       listingExpiringAlertCount++;
     }
 

@@ -6,6 +6,7 @@ import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { notifyPriceChange } from "@/lib/kakao-alimtalk";
+import { sendPushToUser } from "@/lib/push";
 
 export async function GET(
   _req: NextRequest,
@@ -327,6 +328,13 @@ export async function PUT(
             if (fav.user.phone) {
               notifyPriceChange(fav.user.phone, storeName, changeText).catch(() => {});
             }
+            // 웹 푸시 (non-blocking)
+            sendPushToUser(
+              fav.user.id,
+              `${storeName} 가격 변동`,
+              changeText,
+              `/listings/${id}`
+            ).catch(() => {});
           }
         } catch (err) {
           console.error("[PriceChange] 알림 발송 실패:", err);
