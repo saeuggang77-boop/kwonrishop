@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { SERVICE_TYPE_LABELS, REGION_OPTIONS } from "@/lib/constants";
 import PremiumCarousel from "@/components/shared/PremiumCarousel";
 import Image from "next/image";
+import { RegisterPromoBanner } from "@/components/promotion/PromotionCTA";
 
 interface Partner {
   id: string;
@@ -149,6 +150,11 @@ export default function PartnersPage() {
             ))}
           </select>
         </div>
+      </div>
+
+      {/* 협력업체 등록 유도 배너 */}
+      <div className="mb-6">
+        <RegisterPromoBanner type="partner" />
       </div>
 
       {/* 프리미엄 협력업체 캐러셀 */}

@@ -2,27 +2,23 @@
  * Input sanitization utilities to prevent XSS and validate inputs
  */
 
+import DOMPurify from "isomorphic-dompurify";
+
 /**
  * Strip HTML tags and prevent XSS
  * @param input - User input string
- * @returns Sanitized string without HTML
+ * @returns Sanitized string without HTML (plain text only)
  */
 export function sanitizeHtml(input: string): string {
   if (!input) return "";
 
-  // Remove HTML tags
-  let sanitized = input.replace(/<[^>]*>/g, "");
+  // Use DOMPurify to strip all HTML tags (plain text only)
+  const sanitized = DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: [], // No HTML tags allowed
+    KEEP_CONTENT: true, // Keep text content
+  });
 
-  // Encode dangerous characters
-  sanitized = sanitized
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;")
-    .replace(/\//g, "&#x2F;");
-
-  return sanitized;
+  return sanitized.trim();
 }
 
 /**

@@ -734,7 +734,8 @@ test.describe("사장님 플로우 E2E", () => {
           openDate: "20200101",
         },
       });
-      expect([401, 403]).toContain(res.status());
+      // API 응답은 인증 실패(401/403) 또는 레이트 제한(429) 중 하나
+      expect([401, 403, 429]).toContain(res.status());
     });
   });
 

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import PremiumCarousel from "@/components/shared/PremiumCarousel";
 import { toast } from "@/lib/toast";
+import { RegisterPromoBanner } from "@/components/promotion/PromotionCTA";
 
 interface FranchiseBrand {
   id: string;
@@ -141,6 +142,11 @@ export default function FranchisePage() {
             {ind.label}
           </button>
         ))}
+      </div>
+
+      {/* 프랜차이즈 등록 유도 배너 */}
+      <div className="mb-6">
+        <RegisterPromoBanner type="franchise" />
       </div>
 
       {/* 프리미엄 프랜차이즈 캐러셀 */}

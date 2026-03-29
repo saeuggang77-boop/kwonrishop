@@ -11,6 +11,7 @@ import TierBadge from "@/components/shared/TierBadge";
 import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { toast } from "@/lib/toast";
+import { ListingUpsellBanner } from "@/components/promotion/PromotionCTA";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
   loading: () => <div className="py-4 border-b border-gray-100 dark:border-gray-700"><div className="h-20 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" /></div>,
@@ -1089,6 +1090,13 @@ export default function ListingDetailClient() {
             <p className="text-sm text-gray-600 dark:text-gray-400">{listing.addressRoad}{listing.addressDetail && ` ${listing.addressDetail}`}</p>
           </div>
         </Section>
+      )}
+
+      {/* ===== 13-1. 매물 업셀 배너 (본인 매물일 때만, 유료 미구매) ===== */}
+      {isOwner && !listing.featuredTier && (
+        <div className="py-4">
+          <ListingUpsellBanner />
+        </div>
       )}
 
       {/* ===== 14. 상권분석 ===== */}

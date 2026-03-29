@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { toast } from "@/lib/toast";
 import { enablePushNotification, disablePushNotification } from "@/components/PushNotificationManager";
+import { DashboardPlanCard } from "@/components/promotion/PromotionCTA";
 
 interface SellerReportItem {
   id: string;
@@ -232,6 +233,13 @@ export default function MyPage() {
           </Link>
         )}
       </div>
+
+      {/* 플랜 업그레이드 카드 (SELLER만) */}
+      {data.user.role === "SELLER" && (
+        <div className="mb-4">
+          <DashboardPlanCard />
+        </div>
+      )}
 
       {/* 내 매물 */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">

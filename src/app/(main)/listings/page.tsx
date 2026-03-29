@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo, Suspense } from "react";
+import React, { useEffect, useState, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ListingCard from "@/components/listing/ListingCard";
 import ListingMapView from "@/components/map/ListingMapView";
 import PremiumCarousel from "@/components/shared/PremiumCarousel";
 import { useDebounce } from "@/hooks/useDebounce";
 import Image from "next/image";
+import { ListingInfeedPromo } from "@/components/promotion/PromotionCTA";
 
 interface Category {
   id: string;
@@ -599,11 +600,17 @@ function ListingsContent() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {listings.map((listing) => (
-            <ListingCard
-              key={listing.id}
-              listing={listing}
-            />
+          {listings.map((listing, index) => (
+            <React.Fragment key={listing.id}>
+              {index > 0 && index % 5 === 0 && (
+                <div className="col-span-2 md:col-span-3 lg:col-span-4">
+                  <ListingInfeedPromo />
+                </div>
+              )}
+              <ListingCard
+                listing={listing}
+              />
+            </React.Fragment>
           ))}
         </div>
       )}

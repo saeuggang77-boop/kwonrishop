@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   }
 
   const ip = getClientIp(request);
-  const rl = rateLimit(ip, 10, 60000);
+  const rl = rateLimit(ip, 5, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }

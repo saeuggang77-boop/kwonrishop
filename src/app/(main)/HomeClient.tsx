@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import NoticeBanner from "@/components/NoticeBanner";
 import ListingCard from "@/components/listing/ListingCard";
 import Image from "next/image";
+import { HomeServiceSection } from "@/components/promotion/PromotionCTA";
 
 interface Listing {
   id: string;
@@ -459,6 +460,9 @@ export default function HomeClient() {
           </div>
         </section>
       </div>
+
+      {/* 홈 서비스 섹션 */}
+      <HomeServiceSection />
     </>
   );
 }
