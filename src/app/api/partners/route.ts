@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
   const region = searchParams.get("region");
   const sort = searchParams.get("sort") || "latest";
   const featured = searchParams.get("featured") === "true";
+  const tier = searchParams.get("tier"); // VIP, PREMIUM, BASIC, FREE
 
   if (featured) {
     const featuredPartners = await prisma.partnerService.findMany({
@@ -24,7 +25,6 @@ export async function GET(req: NextRequest) {
         status: "ACTIVE",
         tier: { not: "FREE" },
       },
-      take: 10,
       orderBy: [
         { tier: "desc" },
         { viewCount: "desc" },
@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
     status: "ACTIVE",
   };
 
+  if (tier) where.tier = tier;
   if (serviceType) where.serviceType = serviceType;
 
   if (keyword) {

@@ -88,35 +88,35 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600 dark:text-gray-300" aria-label="주요 메뉴">
           <Link
             href="/listings"
-            className="hover:text-gray-900 dark:hover:text-gray-100"
+            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
             aria-current={pathname === "/listings" ? "page" : undefined}
           >
             매물검색
           </Link>
           <Link
             href="/franchise"
-            className="hover:text-gray-900 dark:hover:text-gray-100"
+            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
             aria-current={pathname === "/franchise" ? "page" : undefined}
           >
             프랜차이즈
           </Link>
           <Link
             href="/partners"
-            className="hover:text-gray-900 dark:hover:text-gray-100"
+            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
             aria-current={pathname === "/partners" ? "page" : undefined}
           >
             협력업체
           </Link>
           <Link
             href="/equipment"
-            className="hover:text-gray-900 dark:hover:text-gray-100"
+            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
             aria-current={pathname === "/equipment" ? "page" : undefined}
           >
             집기장터
           </Link>
           <Link
             href="/community"
-            className="hover:text-gray-900 dark:hover:text-gray-100"
+            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
             aria-current={pathname === "/community" ? "page" : undefined}
           >
             커뮤니티

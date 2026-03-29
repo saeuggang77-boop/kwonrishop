@@ -89,6 +89,7 @@ export default function PremiumCarousel({
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {children}
+        <div className="shrink-0 w-1" aria-hidden="true" />
       </div>
     </div>
   );
