@@ -95,7 +95,6 @@ export default function Step7Confirm({ onPrev }: Props) {
         return;
       }
 
-      reset();
       setRegisteredId(result.id);
       setShowSuccess(true);
     } catch (err) {
@@ -132,7 +131,7 @@ export default function Step7Confirm({ onPrev }: Props) {
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
           onClick={() => {
-            setShowSuccess(false);
+            reset();
             router.push(`/listings/${registeredId}`);
           }}
         >
@@ -195,13 +194,13 @@ export default function Step7Confirm({ onPrev }: Props) {
             {/* 버튼 */}
             <div className="flex flex-col gap-3">
               <button
-                onClick={() => router.push("/pricing")}
+                onClick={() => { reset(); router.push("/pricing"); }}
                 className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
               >
                 광고 상품 보기
               </button>
               <button
-                onClick={() => router.push(`/listings/${registeredId}`)}
+                onClick={() => { reset(); router.push(`/listings/${registeredId}`); }}
                 className="w-full px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 내 매물 보기
