@@ -88,6 +88,7 @@ interface ListingDetail {
   featuredTier?: string;
   sellerTrust?: { avgRating: number; reviewCount: number };
   priceHistory?: { id: string; field: string; oldValue: number; newValue: number; createdAt: string }[];
+  regionStats?: { avgViewCount: number; avgFavoriteCount: number; totalCount: number; region: string } | null;
 }
 
 interface AreaStats {
@@ -135,6 +136,8 @@ export default function ListingDetailClient() {
   const [imageTab, setImageTab] = useState<ImageTabKey>("ALL");
   const [areaStats, setAreaStats] = useState<AreaStats | null>(null);
   const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewed[]>([]);
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const [statusUpdating, setStatusUpdating] = useState(false);
 
   useEffect(() => {
     setError(false);
@@ -266,6 +269,76 @@ export default function ListingDetailClient() {
       toast.error("끌어올리기 요청 중 오류가 발생했습니다.");
     } finally {
       setBumping(false);
+    }
+  }
+
+  async function handleStatusChange(newStatus: string) {
+    if (!session || !listing) return;
+
+    const statusLabels: Record<string, string> = {
+      ACTIVE: "판매중",
+      RESERVED: "예약중",
+      SOLD: "거래완료",
+    };
+
+    const confirmed = confirm(`매물 상태를 "${statusLabels[newStatus]}"로 변경하시겠습니까?`);
+    if (!confirmed) return;
+
+    setStatusUpdating(true);
+    setShowStatusMenu(false);
+
+    try {
+      const res = await fetch(`/api/listings/${params.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        toast.success("매물 상태가 변경되었습니다.");
+        window.location.reload();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "상태 변경에 실패했습니다.");
+      }
+    } catch {
+      toast.error("상태 변경 요청 중 오류가 발생했습니다.");
+    } finally {
+      setStatusUpdating(false);
+    }
+  }
+
+  function getAvailableStatusTransitions(currentStatus: string): { value: string; label: string; color: string }[] {
+    switch (currentStatus) {
+      case "ACTIVE":
+        return [
+          { value: "RESERVED", label: "예약중", color: "text-orange-700" },
+          { value: "SOLD", label: "거래완료", color: "text-gray-700" },
+        ];
+      case "RESERVED":
+        return [
+          { value: "ACTIVE", label: "판매중", color: "text-green-700" },
+          { value: "SOLD", label: "거래완료", color: "text-gray-700" },
+        ];
+      case "SOLD":
+        return [
+          { value: "ACTIVE", label: "판매중", color: "text-green-700" },
+        ];
+      default:
+        return [];
+    }
+  }
+
+  function getStatusDisplay(status: string): { label: string; bgColor: string; textColor: string } {
+    switch (status) {
+      case "ACTIVE":
+        return { label: "판매중", bgColor: "bg-green-100", textColor: "text-green-700" };
+      case "RESERVED":
+        return { label: "예약중", bgColor: "bg-orange-100", textColor: "text-orange-700" };
+      case "SOLD":
+        return { label: "거래완료", bgColor: "bg-gray-200", textColor: "text-gray-500" };
+      default:
+        return { label: status, bgColor: "bg-gray-100", textColor: "text-gray-600" };
     }
   }
 
@@ -834,6 +907,35 @@ export default function ListingDetailClient() {
         </Section>
       )}
 
+      {/* ===== 11-1. 지역 경쟁 분석 (소유자 전용) ===== */}
+      {session?.user?.id === listing.user.id && listing.regionStats && (
+        <Section title="지역 경쟁 분석">
+          {listing.regionStats.totalCount >= 3 ? (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                같은 지역 <span className="font-medium text-gray-900">{listing.regionStats.region}</span>{" "}
+                <span className="font-medium text-gray-900">{listing.category?.name}</span> 매물{" "}
+                <span className="font-medium text-blue-600">{listing.regionStats.totalCount}건</span> 평균 대비
+              </p>
+              <RegionalPerformanceItem
+                label="조회수"
+                mine={listing.viewCount}
+                avg={listing.regionStats.avgViewCount}
+              />
+              <RegionalPerformanceItem
+                label="관심"
+                mine={listing._count.favorites}
+                avg={listing.regionStats.avgFavoriteCount}
+              />
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 text-center py-4">
+              비교 데이터 부족 (동일 지역·업종 매물 3건 미만)
+            </p>
+          )}
+        </Section>
+      )}
+
       {/* ===== 12. 판매자 정보 ===== */}
       <Section title="판매자">
         <div className="bg-gray-50 rounded-xl p-4">
@@ -885,22 +987,6 @@ export default function ListingDetailClient() {
         </Section>
       )}
 
-      {/* ===== 15. 광고 관리 (본인 매물) ===== */}
-      {session?.user?.id === listing.user.id && (
-        <Section title="광고 관리">
-          <div className="bg-blue-50 rounded-xl p-4">
-            <p className="text-sm text-gray-700 mb-3">광고 상품으로 매물의 노출을 높이고 빠른 거래를 경험하세요</p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <button onClick={handleBump} disabled={bumping} className="flex-1 py-2.5 px-4 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 active:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm">
-                {bumping ? "처리 중..." : "끌어올리기"}
-              </button>
-              <Link href={`/pricing?listingId=${listing.id}`} className="flex-1 py-2.5 px-4 bg-blue-600 text-white rounded-lg font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm">
-                광고 상품 보기
-              </Link>
-            </div>
-          </div>
-        </Section>
-      )}
 
       {/* ===== 16. 블라인드 리뷰 ===== */}
       <ReviewSection listingId={listing.id} sellerId={listing.user.id} />
@@ -940,40 +1026,98 @@ export default function ListingDetailClient() {
         </Section>
       )}
 
-      {/* ===== 19. 하단 고정바 (모바일: 가격요약 추가) ===== */}
+      {/* ===== 19. 하단 고정바 ===== */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 md:static md:border-0 md:p-0 md:mt-6">
-        {/* 모바일 가격 요약 (md 이상에서 숨김) */}
-        <div className="px-4 pt-2 pb-1 md:hidden">
-          <p className="text-xs text-gray-700 text-center">
-            <span className="font-medium">권리금 </span>
-            <span className="font-bold text-blue-600">
-              {listing.premiumNone ? "무권리" : `${fmt(listing.premium)}만`}
-            </span>
-            <span className="mx-1 text-gray-300">·</span>
-            <span className="font-medium">보증금 </span>
-            <span className="font-bold">{fmt(listing.deposit)}만</span>
-            <span className="mx-1 text-gray-300">·</span>
-            <span className="font-medium">월세 </span>
-            <span className="font-bold">{fmt(listing.monthlyRent)}만</span>
-          </p>
-        </div>
-        <div className="max-w-3xl mx-auto flex items-center gap-2 md:gap-3 px-4 py-2 md:px-0 md:py-0">
-          <button
-            onClick={handleFavorite}
-            aria-label={favorited ? "관심매물 해제" : "관심매물 등록"}
-            className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${favorited ? "border-red-300 text-red-500 bg-red-50" : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"}`}
-          >
-            {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{listing.favoriteCount}</span>
-          </button>
-          <ShareButton
-            listingId={listing.id}
-            title={listing.storeName || listing.addressRoad || "매물 상세"}
-            imageUrl={listing.images.length > 0 ? listing.images[0].url : undefined}
-          />
-          <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm md:text-base">
-            채팅하기
-          </Link>
-        </div>
+        {session?.user?.id === listing.user.id ? (
+          /* 소유자일 때: 매물 관리 바 */
+          <div className="max-w-3xl mx-auto flex items-center gap-2 px-4 py-3 relative">
+            {/* 상태 변경 드롭다운 */}
+            <div className="relative">
+              <button
+                onClick={() => setShowStatusMenu(!showStatusMenu)}
+                disabled={statusUpdating}
+                className={`px-3 py-3 ${getStatusDisplay(listing.status).bgColor} ${getStatusDisplay(listing.status).textColor} rounded-xl font-medium hover:opacity-80 transition-opacity text-sm md:text-base whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {statusUpdating ? "변경 중..." : getStatusDisplay(listing.status).label}
+              </button>
+
+              {showStatusMenu && getAvailableStatusTransitions(listing.status).length > 0 && (
+                <>
+                  <div
+                    className="fixed inset-0 z-20"
+                    onClick={() => setShowStatusMenu(false)}
+                  />
+                  <div className="absolute bottom-full mb-2 left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[120px] z-30">
+                    {getAvailableStatusTransitions(listing.status).map((status) => (
+                      <button
+                        key={status.value}
+                        onClick={() => handleStatusChange(status.value)}
+                        className={`w-full text-left px-4 py-2 text-sm font-medium ${status.color} hover:bg-gray-50 transition-colors`}
+                      >
+                        {status.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <Link
+              href="/sell/edit"
+              className={`flex-1 py-3 bg-gray-500 text-white rounded-xl font-medium text-center hover:bg-gray-600 active:bg-gray-700 transition-colors text-sm md:text-base ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+            >
+              수정
+            </Link>
+            <Link
+              href={`/pricing?listingId=${listing.id}`}
+              className={`flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm md:text-base ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+            >
+              광고 구매
+            </Link>
+            <button
+              onClick={handleBump}
+              disabled={bumping || listing.status === "SOLD"}
+              className="flex-1 py-3 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 active:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+            >
+              {bumping ? "처리 중..." : "끌올"}
+            </button>
+          </div>
+        ) : (
+          /* 일반 유저일 때: 채팅/관심 바 */
+          <>
+            <div className="px-4 pt-2 pb-1 md:hidden">
+              <p className="text-xs text-gray-700 text-center">
+                <span className="font-medium">권리금 </span>
+                <span className="font-bold text-blue-600">
+                  {listing.premiumNone ? "무권리" : `${fmt(listing.premium)}만`}
+                </span>
+                <span className="mx-1 text-gray-300">·</span>
+                <span className="font-medium">보증금 </span>
+                <span className="font-bold">{fmt(listing.deposit)}만</span>
+                <span className="mx-1 text-gray-300">·</span>
+                <span className="font-medium">월세 </span>
+                <span className="font-bold">{fmt(listing.monthlyRent)}만</span>
+              </p>
+            </div>
+            <div className="max-w-3xl mx-auto flex items-center gap-2 md:gap-3 px-4 py-2 md:px-0 md:py-0">
+              <button
+                onClick={handleFavorite}
+                aria-label={favorited ? "관심매물 해제" : "관심매물 등록"}
+                className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${favorited ? "border-red-300 text-red-500 bg-red-50" : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"}`}
+              >
+                {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{listing.favoriteCount}</span>
+              </button>
+              <ShareButton
+                listingId={listing.id}
+                title={listing.storeName || listing.addressRoad || "매물 상세"}
+                imageUrl={listing.images.length > 0 ? listing.images[0].url : undefined}
+              />
+              <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm md:text-base">
+                채팅하기
+              </Link>
+            </div>
+          </>
+        )}
       </div>
 
     </div>
@@ -1096,6 +1240,50 @@ function CompareGauge({ label, mine, avg, unit }: {
         </span>
         <span className="text-[10px] text-gray-400">
           평균 {avg.toLocaleString()}{unit}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function RegionalPerformanceItem({ label, mine, avg }: {
+  label: string;
+  mine: number;
+  avg: number;
+}) {
+  if (avg <= 0) return null;
+  const diffPct = avg > 0 ? ((mine - avg) / avg) * 100 : 0;
+  const isAboveAvg = diffPct > 0;
+  const maxVal = Math.max(mine, avg) * 1.2 || 1;
+  const myPos = Math.min((mine / maxVal) * 100, 100);
+  const avgPos = Math.min((avg / maxVal) * 100, 100);
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-1.5">
+        <span className="text-sm font-medium text-gray-700">{label}</span>
+        <span className={`text-xs font-medium ${isAboveAvg ? "text-green-600" : "text-red-600"}`}>
+          {diffPct > 0 ? "▲" : "▼"} {Math.abs(diffPct).toFixed(0)}%
+        </span>
+      </div>
+      <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
+        {/* Average marker */}
+        <div
+          className="absolute top-0 bottom-0 w-0.5 bg-gray-400 z-10"
+          style={{ left: `${avgPos}%` }}
+        />
+        {/* My bar */}
+        <div
+          className={`absolute top-1 bottom-1 left-0 rounded-full ${isAboveAvg ? "bg-green-400" : "bg-red-400"}`}
+          style={{ width: `${myPos}%` }}
+        />
+      </div>
+      <div className="flex justify-between mt-1">
+        <span className="text-[10px] text-gray-700">
+          내 매물 <span className="font-medium">{mine.toLocaleString()}회</span>
+        </span>
+        <span className="text-[10px] text-gray-400">
+          평균 {avg.toLocaleString()}회
         </span>
       </div>
     </div>

@@ -481,9 +481,10 @@ model AdPurchase {
   status           PaymentStatus @default(PENDING)
   amount           Int
   paymentKey       String?
-  activatedAt      DateTime?
-  expiresAt        DateTime?
-  createdAt        DateTime      @default(now())
+  activatedAt        DateTime?
+  expiresAt          DateTime?
+  viewCountAtAdStart Int?
+  createdAt          DateTime      @default(now())
 
   user           User            @relation(fields: [userId], references: [id])
   listing        Listing?        @relation(fields: [listingId], references: [id])

@@ -25,6 +25,8 @@ export default function Step7Confirm({ onPrev }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [registeredId, setRegisteredId] = useState("");
 
   function formatPrice(value: number) {
     return value === 0 ? "0" : value.toLocaleString();
@@ -87,7 +89,8 @@ export default function Step7Confirm({ onPrev }: Props) {
       }
 
       reset();
-      router.push(`/listings/${result.id}?registered=true`);
+      setRegisteredId(result.id);
+      setShowSuccess(true);
     } catch {
       setError("등록 중 오류가 발생했습니다.");
     } finally {
@@ -96,9 +99,94 @@ export default function Step7Confirm({ onPrev }: Props) {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">등록 확인</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">입력한 내용을 확인하고 등록해주세요</p>
+    <>
+      {/* 성공 모달 */}
+      {showSuccess && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
+          onClick={() => {
+            setShowSuccess(false);
+            router.push(`/listings/${registeredId}`);
+          }}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 체크 아이콘 */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* 제목 & 설명 */}
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
+              매물 등록 완료!
+            </h2>
+            <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+              매물이 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
+            </p>
+
+            {/* 구분선 */}
+            <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-6"></div>
+
+            {/* 광고 유도 섹션 */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-5 mb-6">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
+                더 많은 예비창업자에게 알리고 싶다면?
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                광고 상품을 이용하면 조회수가 평균 5배 증가합니다
+              </p>
+
+              {/* 혜택 리스트 */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  <span>검색 결과 상위 노출</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                  <span>프리미엄 배지 표시</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  <span>조회수 리포트 제공</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 버튼 */}
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => router.push("/pricing")}
+                className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              >
+                광고 상품 보기
+              </button>
+              <button
+                onClick={() => router.push(`/listings/${registeredId}`)}
+                className="w-full px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                내 매물 보기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">등록 확인</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">입력한 내용을 확인하고 등록해주세요</p>
 
       <div className="space-y-4">
         <Section title="위치정보">
@@ -235,6 +323,7 @@ export default function Step7Confirm({ onPrev }: Props) {
         </button>
       </div>
     </div>
+    </>
   );
 }
 

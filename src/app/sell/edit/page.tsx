@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
+import Image from "next/image";
+
+type ImageData = {
+  id?: string;
+  url: string;
+  type: "EXTERIOR" | "INTERIOR" | "KITCHEN" | "OTHER";
+  sortOrder: number;
+};
 
 export default function ListingEditPage() {
   const { data: session, status } = useSession();
@@ -11,8 +19,10 @@ export default function ListingEditPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [listingId, setListingId] = useState("");
+  const [images, setImages] = useState<ImageData[]>([]);
   const [formData, setFormData] = useState({
     storeName: "",
     deposit: "",
@@ -27,6 +37,11 @@ export default function ListingEditPage() {
     premiumLocation: "",
     premiumLocationDesc: "",
     maintenanceFee: "",
+    monthlyRevenue: "",
+    monthlyProfit: "",
+    currentFloor: "",
+    totalFloor: "",
+    areaPyeong: "",
     description: "",
     contactPublic: true,
   });
@@ -67,9 +82,23 @@ export default function ListingEditPage() {
               premiumLocation: listing.premiumLocation?.toString() || "",
               premiumLocationDesc: listing.premiumLocationDesc || "",
               maintenanceFee: listing.maintenanceFee?.toString() || "",
+              monthlyRevenue: listing.monthlyRevenue?.toString() || "",
+              monthlyProfit: listing.monthlyProfit?.toString() || "",
+              currentFloor: listing.currentFloor?.toString() || "",
+              totalFloor: listing.totalFloor?.toString() || "",
+              areaPyeong: listing.areaPyeong?.toString() || "",
               description: listing.description || "",
               contactPublic: listing.contactPublic ?? true,
             });
+            // Load existing images
+            if (listing.images && Array.isArray(listing.images)) {
+              setImages(listing.images.map((img: any) => ({
+                id: img.id,
+                url: img.url,
+                type: img.type || "OTHER",
+                sortOrder: img.sortOrder || 0,
+              })));
+            }
             setLoading(false);
           }
         })
@@ -80,12 +109,69 @@ export default function ListingEditPage() {
     }
   }, [status, router]);
 
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        if (file.size > 10 * 1024 * 1024) {
+          toast.error(`${file.name}은(는) 10MB를 초과합니다.`);
+          continue;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setImages((prev) => [
+            ...prev,
+            {
+              url: data.url,
+              type: "OTHER",
+              sortOrder: prev.length,
+            },
+          ]);
+        } else {
+          toast.error(`${file.name} 업로드 실패`);
+        }
+      }
+    } catch (err) {
+      toast.error("이미지 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setUploading(false);
+      // Reset input
+      e.target.value = "";
+    }
+  }
+
+  function handleImageDelete(index: number) {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleImageTypeChange(index: number, type: "EXTERIOR" | "INTERIOR" | "KITCHEN" | "OTHER") {
+    setImages((prev) =>
+      prev.map((img, i) => (i === index ? { ...img, type } : img))
+    );
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setMessage("");
 
     try {
+      // Calculate areaSqm from areaPyeong
+      const areaPyeong = formData.areaPyeong ? parseFloat(formData.areaPyeong) : null;
+      const areaSqm = areaPyeong ? areaPyeong * 3.3058 : null;
+
       const res = await fetch(`/api/listings/${listingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -98,13 +184,24 @@ export default function ListingEditPage() {
           premiumFacility: formData.premiumFacility ? parseInt(formData.premiumFacility) : null,
           premiumLocation: formData.premiumLocation ? parseInt(formData.premiumLocation) : null,
           maintenanceFee: formData.maintenanceFee ? parseInt(formData.maintenanceFee) : null,
+          monthlyRevenue: formData.monthlyRevenue ? parseInt(formData.monthlyRevenue) : null,
+          monthlyProfit: formData.monthlyProfit ? parseInt(formData.monthlyProfit) : null,
+          currentFloor: formData.currentFloor ? parseInt(formData.currentFloor) : null,
+          totalFloor: formData.totalFloor ? parseInt(formData.totalFloor) : null,
+          areaPyeong,
+          areaSqm,
+          images: images.map((img, idx) => ({
+            url: img.url,
+            type: img.type,
+            sortOrder: idx,
+          })),
         }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("매물이 수정되었습니다.");
+        toast.success("매물이 수정되었습니다.");
         setTimeout(() => {
           router.push(`/listings/${listingId}`);
         }, 1000);
@@ -259,6 +356,53 @@ export default function ListingEditPage() {
             />
           </div>
 
+          {/* 층수 / 면적 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                현재 층수
+              </label>
+              <input
+                type="number"
+                value={formData.currentFloor}
+                onChange={(e) => setFormData({ ...formData, currentFloor: e.target.value })}
+                placeholder="예: 1 (지하는 음수)"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                전체 층수
+              </label>
+              <input
+                type="number"
+                value={formData.totalFloor}
+                onChange={(e) => setFormData({ ...formData, totalFloor: e.target.value })}
+                placeholder="예: 5"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              면적 (평)
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              value={formData.areaPyeong}
+              onChange={(e) => setFormData({ ...formData, areaPyeong: e.target.value })}
+              placeholder="예: 20"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+            />
+            {formData.areaPyeong && (
+              <p className="text-xs text-gray-500 mt-1">
+                ≈ {(parseFloat(formData.areaPyeong) * 3.3058).toFixed(2)}m²
+              </p>
+            )}
+          </div>
+
           {/* 권리금 산정 */}
           {!formData.premiumNone && formData.premium && parseInt(formData.premium) > 0 && (
             <div className="border-t border-gray-200 pt-4">
@@ -333,6 +477,33 @@ export default function ListingEditPage() {
             </div>
           )}
 
+          {/* 매출/수익 정보 */}
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">매출/수익 정보 (선택)</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">월 매출 (만원)</label>
+                <input
+                  type="number"
+                  value={formData.monthlyRevenue}
+                  onChange={(e) => setFormData({ ...formData, monthlyRevenue: e.target.value })}
+                  placeholder="예: 500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">월 순이익 (만원)</label>
+                <input
+                  type="number"
+                  value={formData.monthlyProfit}
+                  onChange={(e) => setFormData({ ...formData, monthlyProfit: e.target.value })}
+                  placeholder="예: 200"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               매물 설명
@@ -343,6 +514,70 @@ export default function ListingEditPage() {
               rows={6}
               className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base resize-none"
             />
+          </div>
+
+          {/* 사진 관리 */}
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">사진 관리</h3>
+
+            {/* 기존 사진 목록 */}
+            {images.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
+                {images.map((img, idx) => (
+                  <div key={idx} className="relative group">
+                    <div className="aspect-square relative rounded-lg overflow-hidden border-2 border-gray-200">
+                      <Image
+                        src={img.url}
+                        alt={`매물 사진 ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleImageDelete(idx)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 shadow-lg"
+                    >
+                      ×
+                    </button>
+                    <select
+                      value={img.type}
+                      onChange={(e) => handleImageTypeChange(idx, e.target.value as any)}
+                      className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <option value="EXTERIOR">외부</option>
+                      <option value="INTERIOR">내부</option>
+                      <option value="KITCHEN">주방</option>
+                      <option value="OTHER">기타</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* 사진 추가 버튼 */}
+            <div>
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="text-sm font-medium text-gray-700">
+                  {uploading ? "업로드 중..." : "사진 추가"}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </label>
+              <p className="text-xs text-gray-500 mt-2">
+                JPG, PNG, GIF, WebP (각 10MB 이하)
+              </p>
+            </div>
           </div>
 
           <div>

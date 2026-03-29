@@ -96,6 +96,30 @@ export async function GET(
     };
   }
 
+  // 지역 평균 대비 성과 (같은 지역+업종, 소유자에게만 노출)
+  const regionPrefix = listing.addressJibun?.split(" ").slice(0, 2).join(" ");
+  let regionStats = null;
+  if (regionPrefix && listing.categoryId) {
+    const stats = await prisma.listing.aggregate({
+      where: {
+        categoryId: listing.categoryId,
+        addressJibun: { startsWith: regionPrefix },
+        status: "ACTIVE",
+        id: { not: listing.id },
+      },
+      _avg: { viewCount: true, favoriteCount: true },
+      _count: true,
+    });
+    if (stats._count > 0) {
+      regionStats = {
+        avgViewCount: Math.round(stats._avg.viewCount || 0),
+        avgFavoriteCount: Math.round(stats._avg.favoriteCount || 0),
+        totalCount: stats._count,
+        region: regionPrefix,
+      };
+    }
+  }
+
   // 연락처 비공개인 경우 전화번호 제거 (spread 오버라이드 방지를 위해 명시적 재구성)
   const safeUser = {
     id: listing.user.id,
@@ -111,6 +135,7 @@ export async function GET(
     viewCount: updated.viewCount,
     featuredTier,
     sellerTrust,
+    regionStats,
     adPurchases: undefined,
     reviews: undefined,
     user: safeUser,

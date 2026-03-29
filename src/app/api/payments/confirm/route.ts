@@ -119,6 +119,16 @@ export async function POST(request: NextRequest) {
       expiresAt.setDate(expiresAt.getDate() + order.product.duration);
     }
 
+    // Snapshot viewCount at ad start for LISTING ads
+    let viewCountAtAdStart: number | null = null;
+    if (order.product.categoryScope === "LISTING" && order.listingId) {
+      const listing = await prisma.listing.findUnique({
+        where: { id: order.listingId },
+        select: { viewCount: true },
+      });
+      viewCountAtAdStart = listing?.viewCount ?? 0;
+    }
+
     // Update order status
     const updatedOrder = await prisma.adPurchase.update({
       where: { id: order.id },
@@ -127,6 +137,7 @@ export async function POST(request: NextRequest) {
         paymentKey,
         activatedAt: now,
         expiresAt: order.product.duration ? expiresAt : null,
+        viewCountAtAdStart,
       },
       include: {
         product: true,

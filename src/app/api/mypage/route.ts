@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
 
-  const [user, verification, listing, favoriteCount, chatCount, partnerService, franchiseBrand, equipmentCount, equipmentFavoriteCount] =
+  const [user, verification, listing, favoriteCount, chatCount, partnerService, franchiseBrand, equipmentCount, equipmentFavoriteCount, activeListingAd] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: session.user.id },
@@ -63,7 +63,40 @@ export async function GET() {
       prisma.equipmentFavorite.count({
         where: { userId: session.user.id },
       }),
+      prisma.adPurchase.findFirst({
+        where: {
+          userId: session.user.id,
+          status: "PAID",
+          product: { categoryScope: "LISTING" },
+        },
+        orderBy: { expiresAt: "desc" },
+        select: {
+          id: true,
+          expiresAt: true,
+          activatedAt: true,
+          viewCountAtAdStart: true,
+          product: { select: { name: true } },
+        },
+      }),
     ]);
+
+  // Calculate unread chat messages
+  const participants = await prisma.chatParticipant.findMany({
+    where: { userId: session.user.id },
+    select: { chatRoomId: true, lastReadAt: true },
+  });
+
+  let unreadChatCount = 0;
+  for (const p of participants) {
+    const count = await prisma.message.count({
+      where: {
+        chatRoomId: p.chatRoomId,
+        senderId: { not: session.user.id },
+        ...(p.lastReadAt ? { createdAt: { gt: p.lastReadAt } } : {}),
+      },
+    });
+    unreadChatCount += count;
+  }
 
   return NextResponse.json({
     user,
@@ -71,9 +104,16 @@ export async function GET() {
     listing: listing?.status !== "DELETED" ? listing : null,
     favoriteCount,
     chatCount,
+    unreadChatCount,
     partnerService: partnerService?.status !== "DELETED" ? partnerService : null,
     franchiseBrand,
     equipmentCount,
     equipmentFavoriteCount,
+    activeListingAd: activeListingAd && activeListingAd.expiresAt ? {
+      name: activeListingAd.product.name,
+      expiresAt: activeListingAd.expiresAt.toISOString(),
+      daysLeft: Math.ceil((activeListingAd.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+      viewCountAtAdStart: activeListingAd.viewCountAtAdStart,
+    } : null,
   });
 }
