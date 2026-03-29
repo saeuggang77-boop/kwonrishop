@@ -35,6 +35,12 @@ const nextConfig: NextConfig = {
         hostname: "**.r2.cloudflarestorage.com",
         pathname: "/**",
       },
+      // Placeholder images (demo)
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        pathname: "/**",
+      },
       // Custom S3 endpoint (MinIO, R2 custom domain, etc.)
       ...(process.env.S3_PUBLIC_URL
         ? [

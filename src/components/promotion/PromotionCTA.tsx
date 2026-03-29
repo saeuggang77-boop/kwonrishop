@@ -2,55 +2,31 @@
 
 import Link from "next/link";
 
-// 1-A. 매물 목록 인피드 프로모션 카드
+// 1-A. 매물 목록 인피드 프로모션 카드 (컴팩트)
 export function ListingInfeedPromo() {
   return (
-    <div className="relative rounded-xl border-2 border-dashed border-blue-400 bg-gradient-to-br from-blue-50 to-blue-100 p-6 dark:from-blue-950 dark:to-blue-900">
-      {/* AD 배지 */}
-      <div className="absolute right-4 top-4 rounded bg-blue-500 px-2 py-0.5 text-xs font-semibold text-white">
-        AD
-      </div>
-
-      {/* 제목 */}
-      <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-        내 매물, 더 빨리 팔고 싶다면?
-      </h3>
-
-      {/* 설명 */}
-      <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">
-        프리미엄 등록 사장님의 평균 문의량이 일반 대비 3배 높습니다
-      </p>
-
-      {/* 비교 카드 */}
-      <div className="mb-4 grid grid-cols-2 gap-3">
-        {/* 일반 매물 */}
-        <div className="rounded-lg border-2 border-gray-300 bg-white p-3 dark:border-gray-600 dark:bg-gray-800">
-          <div className="mb-1 text-xs text-gray-600 dark:text-gray-400">
-            일반 매물
+    <div className="relative rounded-lg border border-dashed border-blue-300 bg-blue-50/60 px-4 py-3 dark:border-blue-700 dark:bg-blue-950/40">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
+              내 매물, 더 빨리 팔고 싶다면?
+            </h3>
+            <span className="shrink-0 rounded bg-blue-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+              AD
+            </span>
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            12<span className="text-sm font-normal">회/월</span>
-          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            프리미엄 사장님의 평균 문의량 <span className="font-semibold text-amber-600 dark:text-amber-400">3배 ↑</span>
+          </p>
         </div>
-
-        {/* 프리미엄 매물 */}
-        <div className="rounded-lg border-2 border-amber-400 bg-white p-3 dark:border-amber-500 dark:bg-gray-800">
-          <div className="mb-1 text-xs text-amber-600 dark:text-amber-400">
-            프리미엄 매물
-          </div>
-          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-            36<span className="text-sm font-normal">회/월</span>
-          </div>
-        </div>
+        <Link
+          href="/pricing?tab=listing"
+          className="shrink-0 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-500"
+        >
+          요금제 보기 →
+        </Link>
       </div>
-
-      {/* CTA 버튼 */}
-      <Link
-        href="/pricing?tab=listing"
-        className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-      >
-        요금제 보기 →
-      </Link>
     </div>
   );
 }
@@ -272,48 +248,48 @@ export function HomeServiceSection() {
   ];
 
   return (
-    <section className="bg-gradient-to-br from-navy-dark to-navy py-16">
-      <div className="mx-auto max-w-7xl px-6">
+    <section className="bg-gradient-to-br from-navy-dark to-navy py-10">
+      <div className="mx-auto max-w-5xl px-6">
         {/* 헤더 */}
-        <div className="mb-10 text-center">
-          <h2 className="mb-2 text-2xl font-extrabold text-white">
+        <div className="mb-6 text-center">
+          <h2 className="mb-1 text-xl font-extrabold text-white">
             권리샵과 함께 성장하세요
           </h2>
-          <p className="text-sm text-white/50">
+          <p className="text-xs text-white/50">
             역할에 맞는 최적의 서비스를 제공합니다
           </p>
         </div>
 
         {/* 서비스 그리드 */}
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           {services.map((service) => (
             <Link
               key={service.title}
               href={service.link}
-              className="group rounded-2xl bg-white/[0.07] border border-white/10 p-6 transition hover:bg-white/[0.12] hover:-translate-y-1"
+              className="group rounded-xl bg-white/[0.07] border border-white/10 p-4 transition hover:bg-white/[0.12] hover:-translate-y-0.5"
             >
-              {/* SVG 아이콘 */}
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-gold-light mb-4">
-                {service.icon}
+              <div className="flex items-center gap-3 mb-2">
+                {/* SVG 아이콘 */}
+                <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-gold-light shrink-0">
+                  {service.icon}
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white leading-tight">
+                    {service.title}
+                  </h3>
+                  <p className="text-xs font-semibold text-gold-light">
+                    {service.price}
+                  </p>
+                </div>
               </div>
 
-              {/* 제목 */}
-              <h3 className="text-lg font-bold text-white mb-1">
-                {service.title}
-              </h3>
-
-              {/* 가격 */}
-              <p className="text-sm font-semibold text-gold-light mb-2">
-                {service.price}
-              </p>
-
               {/* 설명 */}
-              <p className="text-xs text-white/50 leading-relaxed">
+              <p className="text-xs text-white/50 leading-relaxed mb-2">
                 {service.description}
               </p>
 
               {/* 화살표 */}
-              <div className="mt-3 text-sm font-semibold text-gold-light transition group-hover:translate-x-1">
+              <div className="text-xs font-semibold text-gold-light transition group-hover:translate-x-1">
                 자세히 보기 →
               </div>
             </Link>

@@ -609,7 +609,7 @@ function ListingsContent() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {listings.map((listing, index) => (
             <React.Fragment key={listing.id}>
-              {index > 0 && index % 5 === 0 && (
+              {index === 5 && (
                 <div className="col-span-2 md:col-span-3 lg:col-span-4">
                   <ListingInfeedPromo />
                 </div>

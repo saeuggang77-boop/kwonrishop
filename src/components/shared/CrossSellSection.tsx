@@ -82,52 +82,21 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
 
   return (
     <div className="space-y-8 mt-8">
-      {/* 매물 상세일 때: 3종 매물 추천을 먼저 표시 */}
-      {type === "listing" && (
-        <>
-          {/* 같은 업종 추천 */}
-          {data.sameIndustry && data.sameIndustry.length > 0 && (
-            <RecommendBlock
-              title="🏪 지역 내 같은 업종 추천 매물"
-              link={`/listings?category=${data.sameIndustry[0]?.category?.name || ""}`}
-              linkLabel="전체보기"
-            >
-              {data.sameIndustry.map((l) => (
-                <ListingCard key={l.id} listing={l} />
-              ))}
-            </RecommendBlock>
-          )}
-
-          {/* 최근 등록 매물 */}
-          {data.recentListings && data.recentListings.length > 0 && (
-            <RecommendBlock
-              title="🆕 최근 등록 매물"
-              link="/listings?sort=latest"
-              linkLabel="전체보기"
-            >
-              {data.recentListings.map((l) => (
-                <ListingCard key={l.id} listing={l} />
-              ))}
-            </RecommendBlock>
-          )}
-
-          {/* 인기 급상승 매물 */}
-          {data.trendingListings && data.trendingListings.length > 0 && (
-            <RecommendBlock
-              title="🔥 인기 급상승 매물"
-              link="/listings?sort=popular"
-              linkLabel="전체보기"
-            >
-              {data.trendingListings.map((l) => (
-                <ListingCard key={l.id} listing={l} />
-              ))}
-            </RecommendBlock>
-          )}
-        </>
+      {/* 매물 상세일 때: 같은 업종 추천만 표시 */}
+      {type === "listing" && data.sameIndustry && data.sameIndustry.length > 0 && (
+        <RecommendBlock
+          title="🏪 지역 내 같은 업종 추천 매물"
+          link={`/listings?category=${data.sameIndustry[0]?.category?.name || ""}`}
+          linkLabel="전체보기"
+        >
+          {data.sameIndustry.slice(0, 3).map((l) => (
+            <ListingCard key={l.id} listing={l} />
+          ))}
+        </RecommendBlock>
       )}
 
-      {/* 추천 프랜차이즈 (매물 상세에서) */}
-      {(data.franchises?.length ?? 0) > 0 && (
+      {/* 추천 프랜차이즈 (프랜차이즈/협력업체/집기 상세에서만) */}
+      {type !== "listing" && (data.franchises?.length ?? 0) > 0 && (
         <RecommendBlock
           title="추천 프랜차이즈"
           link="/franchise"
@@ -137,7 +106,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={f.id}
               href={`/franchise/${f.id}`}
-              className="block w-56 shrink-0 bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm shrink-0">
@@ -171,8 +140,8 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
         </RecommendBlock>
       )}
 
-      {/* 추천 협력업체 (매물 상세에서) */}
-      {(data.partners?.length ?? 0) > 0 && (
+      {/* 추천 협력업체 (프랜차이즈/협력업체/집기 상세에서만) */}
+      {type !== "listing" && (data.partners?.length ?? 0) > 0 && (
         <RecommendBlock
           title="추천 협력업체"
           link="/partners"
@@ -182,7 +151,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={p.id}
               href={`/partners/${p.id}`}
-              className="block w-56 shrink-0 bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="h-28 bg-gray-100 relative">
                 {p.images?.[0]?.url ? (
@@ -225,7 +194,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={l.id}
               href={`/listings/${l.id}`}
-              className="block w-56 shrink-0 bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="h-28 bg-gray-100 relative">
                 {l.images?.[0]?.url ? (
@@ -261,8 +230,8 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
         </RecommendBlock>
       )}
 
-      {/* 추천 집기 (매물/프랜차이즈/협력업체 상세에서) 또는 관련 매물/협력업체 (집기 상세에서) */}
-      {(data.equipments?.length ?? 0) > 0 && (
+      {/* 추천 집기 (프랜차이즈/협력업체/집기 상세에서만) */}
+      {type !== "listing" && (data.equipments?.length ?? 0) > 0 && (
         <RecommendBlock
           title="추천 집기"
           link="/equipment"
@@ -272,7 +241,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={eq.id}
               href={`/equipment/${eq.id}`}
-              className="block w-56 shrink-0 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="h-28 bg-gray-100 dark:bg-gray-700 relative">
                 {eq.images?.[0]?.url ? (
@@ -318,7 +287,7 @@ function ListingCard({ listing }: { listing: ListingRecommendation }) {
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="block w-56 shrink-0 bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+      className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
     >
       <div className="h-28 bg-gray-100 relative">
         {listing.images?.[0]?.url ? (
@@ -375,7 +344,7 @@ function RecommendBlock({
           {linkLabel} →
         </Link>
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 pr-4 scrollbar-hide md:grid md:grid-cols-3 md:overflow-visible md:pr-0">
         {children}
       </div>
     </div>

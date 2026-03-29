@@ -120,7 +120,6 @@ export default function KakaoMap({
       <div
         ref={mapRef}
         className={`rounded-xl ${className}`}
-        style={{ width: "100%", height: "100%" }}
       />
     </div>
   );

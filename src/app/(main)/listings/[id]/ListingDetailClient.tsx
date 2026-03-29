@@ -1130,12 +1130,12 @@ export default function ListingDetailClient() {
       {/* ===== 18. 최근 본 매물 ===== */}
       {recentlyViewed.length > 0 && (
         <Section title="최근 본 매물">
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
-            {recentlyViewed.map((item) => (
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1 pr-4 md:grid md:grid-cols-4 md:overflow-visible md:pr-0">
+            {recentlyViewed.slice(0, 4).map((item) => (
               <Link
                 key={item.id}
                 href={`/listings/${item.id}`}
-                className="shrink-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+                className="shrink-0 w-40 md:w-auto md:shrink bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
                   {item.imageUrl ? (

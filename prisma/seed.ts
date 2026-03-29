@@ -965,6 +965,882 @@ async function main() {
     console.log(`  ✓ 프랜차이즈: ${brand.brandName} (${brand.tier})`);
   }
 
+  // ==========================================
+  // 데모 데이터: 판매자 계정 (11명)
+  // ==========================================
+  const sellerNames = [
+    "김민수", "이영희", "박준호", "최수진", "정대현",
+    "한미영", "오세훈", "윤지은", "장현우", "송민아", "류태호",
+  ];
+  const demoSellers: { id: string; email: string }[] = [];
+  for (let i = 0; i < 11; i++) {
+    const seller = await prisma.user.upsert({
+      where: { email: `seller${i + 1}@demo.com` },
+      update: { name: sellerNames[i], role: "SELLER" },
+      create: { email: `seller${i + 1}@demo.com`, name: sellerNames[i], role: "SELLER" },
+    });
+    demoSellers.push({ id: seller.id, email: seller.email! });
+  }
+  console.log(`  ✓ 데모 판매자 ${demoSellers.length}명 생성`);
+
+  // ==========================================
+  // 데모 데이터: 협력업체 사용자 (4명)
+  // ==========================================
+  const partnerNames = ["강인테리어", "이간판", "김세무", "박청소"];
+  const demoPartnerUsers: { id: string; email: string }[] = [];
+  for (let i = 0; i < 4; i++) {
+    const pu = await prisma.user.upsert({
+      where: { email: `partner${i + 1}@demo.com` },
+      update: { name: partnerNames[i], role: "PARTNER" },
+      create: { email: `partner${i + 1}@demo.com`, name: partnerNames[i], role: "PARTNER" },
+    });
+    demoPartnerUsers.push({ id: pu.id, email: pu.email! });
+  }
+  console.log(`  ✓ 데모 협력업체 사용자 ${demoPartnerUsers.length}명 생성`);
+
+  // ==========================================
+  // 카테고리 조회 (매물 연결용)
+  // ==========================================
+  const catFood = await prisma.category.findFirst({ where: { name: "외식업" } });
+  const catService = await prisma.category.findFirst({ where: { name: "서비스업" } });
+  const catRetail = await prisma.category.findFirst({ where: { name: "도/소매업" } });
+  const catEdu = await prisma.category.findFirst({ where: { name: "교육/학원업" } });
+  const catSport = await prisma.category.findFirst({ where: { name: "예술/스포츠/시설업" } });
+
+  const subCoffee = await prisma.subCategory.findFirst({ where: { name: "커피", categoryId: catFood!.id } });
+  const subJapanese = await prisma.subCategory.findFirst({ where: { name: "일식/회", categoryId: catFood!.id } });
+  const subHairSalon = await prisma.subCategory.findFirst({ where: { name: "미용실", categoryId: catService!.id } });
+  const subConvenience = await prisma.subCategory.findFirst({ where: { name: "편의점", categoryId: catRetail!.id } });
+  const subChicken = await prisma.subCategory.findFirst({ where: { name: "육류", categoryId: catFood!.id } });
+  const subBunsik = await prisma.subCategory.findFirst({ where: { name: "분식", categoryId: catFood!.id } });
+  const subKaraoke = await prisma.subCategory.findFirst({ where: { name: "노래방", categoryId: catSport!.id } });
+  const subGym = await prisma.subCategory.findFirst({ where: { name: "헬스클럽", categoryId: catSport!.id } });
+  const subLaundry = await prisma.subCategory.findFirst({ where: { name: "세탁소", categoryId: catService!.id } });
+  const subAcademy = await prisma.subCategory.findFirst({ where: { name: "학원", categoryId: catEdu!.id } });
+  const subKorean = await prisma.subCategory.findFirst({ where: { name: "한식", categoryId: catFood!.id } });
+
+  // ==========================================
+  // 데모 데이터: 매물 11개
+  // ==========================================
+  const now = new Date();
+  const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  const listingsData = [
+    // VIP 1개
+    {
+      sellerId: demoSellers[0].id,
+      storeName: "강남역 프리미엄 카페",
+      description: "강남역 4번 출구 도보 1분 거리에 위치한 프리미엄 카페입니다. 2층 통유리 매장으로 유동인구가 매우 많으며 고정 단골 고객이 확보되어 있습니다. 인테리어를 최근 리모델링하여 상태가 매우 좋습니다. 배달 매출도 꾸준히 발생하고 있어 안정적인 수익을 기대할 수 있습니다.",
+      addressRoad: "서울특별시 강남구 강남대로 396",
+      addressJibun: "서울특별시 강남구 역삼동 819",
+      latitude: 37.4979,
+      longitude: 127.0276,
+      categoryId: catFood!.id,
+      subCategoryId: subCoffee!.id,
+      deposit: 5000,
+      monthlyRent: 300,
+      premium: 8000,
+      areaPyeong: 25,
+      areaSqm: 82.6,
+      currentFloor: 1,
+      totalFloor: 5,
+      brandType: "PRIVATE" as const,
+      viewCount: 3842,
+      favoriteCount: 127,
+      monthlyRevenue: 2500,
+      contactPublic: true,
+      themes: ["역세권", "1층", "대로변", "코너"],
+      tier: "listing-vip",
+      adAmount: 500000,
+    },
+    // 프리미엄 2개
+    {
+      sellerId: demoSellers[1].id,
+      storeName: "홍대 라멘 전문점",
+      description: "홍대입구역 도보 3분, 젊은 유동인구가 풍부한 라멘 전문점입니다. 일본 현지에서 직접 배운 레시피로 운영 중이며, SNS 평점 4.7점의 맛집으로 자리잡았습니다. 주방 설비가 완비되어 있어 바로 운영 가능합니다.",
+      addressRoad: "서울특별시 마포구 와우산로 94",
+      addressJibun: "서울특별시 마포구 서교동 364-15",
+      latitude: 37.5563,
+      longitude: 126.9236,
+      categoryId: catFood!.id,
+      subCategoryId: subJapanese!.id,
+      deposit: 3000,
+      monthlyRent: 250,
+      premium: 4500,
+      areaPyeong: 18,
+      areaSqm: 59.5,
+      currentFloor: 1,
+      totalFloor: 4,
+      brandType: "PRIVATE" as const,
+      viewCount: 1856,
+      favoriteCount: 73,
+      monthlyRevenue: 1800,
+      contactPublic: true,
+      themes: ["역세권", "1층", "맛집"],
+      tier: "listing-premium",
+      adAmount: 300000,
+    },
+    {
+      sellerId: demoSellers[2].id,
+      storeName: "마포 영어학원",
+      description: "마포구청역 인근 주거밀집지역의 영어학원입니다. 초등학생 위주로 120명의 재원생이 있으며, 강사 4명이 안정적으로 운영 중입니다. 학부모 입소문으로 대기자도 있는 상태입니다. 교육청 인가 완료되어 있습니다.",
+      addressRoad: "서울특별시 마포구 월드컵북로 21",
+      addressJibun: "서울특별시 마포구 성산동 200-5",
+      latitude: 37.5662,
+      longitude: 126.9117,
+      categoryId: catEdu!.id,
+      subCategoryId: subAcademy!.id,
+      deposit: 4000,
+      monthlyRent: 200,
+      premium: 6000,
+      areaPyeong: 35,
+      areaSqm: 115.7,
+      currentFloor: 3,
+      totalFloor: 6,
+      brandType: "PRIVATE" as const,
+      viewCount: 1423,
+      favoriteCount: 58,
+      monthlyRevenue: 2200,
+      contactPublic: true,
+      themes: ["학원가", "주거밀집", "엘리베이터"],
+      tier: "listing-premium",
+      adAmount: 300000,
+    },
+    // 베이직 3개
+    {
+      sellerId: demoSellers[3].id,
+      storeName: "신촌 헤어살롱",
+      description: "신촌역 근처 미용실로 대학가 상권에 위치해 있습니다. 시술 의자 5석, 샴푸대 3대 완비. 단골 고객층이 두텁고, 예약제로 운영하여 안정적인 매출을 유지하고 있습니다.",
+      addressRoad: "서울특별시 서대문구 연세로 11",
+      addressJibun: "서울특별시 서대문구 창천동 31-8",
+      latitude: 37.5573,
+      longitude: 126.9367,
+      categoryId: catService!.id,
+      subCategoryId: subHairSalon!.id,
+      deposit: 2000,
+      monthlyRent: 180,
+      premium: 2500,
+      areaPyeong: 15,
+      areaSqm: 49.6,
+      currentFloor: 2,
+      totalFloor: 5,
+      brandType: "PRIVATE" as const,
+      viewCount: 732,
+      favoriteCount: 31,
+      monthlyRevenue: 1200,
+      contactPublic: true,
+      themes: ["대학가", "역세권"],
+      tier: "listing-basic",
+      adAmount: 100000,
+    },
+    {
+      sellerId: demoSellers[4].id,
+      storeName: "서초 스페셜티 커피",
+      description: "서초역 5번 출구 인근 직장인 상권의 스페셜티 커피숍입니다. 자체 로스팅 설비를 갖추고 있으며, 테이크아웃과 배달 비율이 높아 운영이 효율적입니다. 아침 출근 시간대 매출이 특히 좋습니다.",
+      addressRoad: "서울특별시 서초구 서초대로 398",
+      addressJibun: "서울특별시 서초구 서초동 1305-7",
+      latitude: 37.4922,
+      longitude: 127.0140,
+      categoryId: catFood!.id,
+      subCategoryId: subCoffee!.id,
+      deposit: 2500,
+      monthlyRent: 220,
+      premium: 3000,
+      areaPyeong: 12,
+      areaSqm: 39.7,
+      currentFloor: 1,
+      totalFloor: 7,
+      brandType: "PRIVATE" as const,
+      viewCount: 651,
+      favoriteCount: 28,
+      monthlyRevenue: 1400,
+      contactPublic: true,
+      themes: ["역세권", "1층", "직장인 상권"],
+      tier: "listing-basic",
+      adAmount: 100000,
+    },
+    {
+      sellerId: demoSellers[5].id,
+      storeName: "강서 치킨호프",
+      description: "화곡역 인근 주택가 상권의 치킨호프점입니다. 배달 앱 3개를 동시에 운영 중이며, 홀과 배달 매출이 균형 있게 발생합니다. 주방 후드, 튀김기 등 설비가 모두 갖춰져 있습니다.",
+      addressRoad: "서울특별시 강서구 화곡로 264",
+      addressJibun: "서울특별시 강서구 화곡동 986-3",
+      latitude: 37.5412,
+      longitude: 126.8397,
+      categoryId: catFood!.id,
+      subCategoryId: subChicken!.id,
+      deposit: 1500,
+      monthlyRent: 150,
+      premium: 2000,
+      areaPyeong: 20,
+      areaSqm: 66.1,
+      currentFloor: 1,
+      totalFloor: 3,
+      brandType: "PRIVATE" as const,
+      viewCount: 589,
+      favoriteCount: 22,
+      monthlyRevenue: 1500,
+      contactPublic: true,
+      themes: ["1층", "배달", "주택가"],
+      tier: "listing-basic",
+      adAmount: 100000,
+    },
+    // 무료 5개
+    {
+      sellerId: demoSellers[6].id,
+      storeName: "종로 분식집",
+      description: "종로3가역 근처 분식집입니다. 떡볶이, 순대, 튀김 등 기본 분식 메뉴와 김밥, 라면 등을 판매합니다. 점심시간 직장인 손님이 많으며, 소자본으로 운영 가능합니다.",
+      addressRoad: "서울특별시 종로구 종로 150",
+      addressJibun: "서울특별시 종로구 관수동 107",
+      latitude: 37.5705,
+      longitude: 126.9920,
+      categoryId: catFood!.id,
+      subCategoryId: subBunsik!.id,
+      deposit: 1000,
+      monthlyRent: 120,
+      premium: 800,
+      areaPyeong: 10,
+      areaSqm: 33.1,
+      currentFloor: 1,
+      totalFloor: 4,
+      brandType: "PRIVATE" as const,
+      viewCount: 245,
+      favoriteCount: 8,
+      monthlyRevenue: 800,
+      contactPublic: false,
+      themes: ["역세권", "소자본"],
+      tier: null,
+      adAmount: 0,
+    },
+    {
+      sellerId: demoSellers[7].id,
+      storeName: "영등포 코인노래방",
+      description: "영등포역 로데오거리 내 코인노래방입니다. 무인 시스템으로 운영되어 인건비가 거의 들지 않습니다. 20개 룸이 있으며, 주말과 저녁 시간대 이용률이 높습니다.",
+      addressRoad: "서울특별시 영등포구 영등포로 275",
+      addressJibun: "서울특별시 영등포구 영등포동3가 1-1",
+      latitude: 37.5160,
+      longitude: 126.9074,
+      categoryId: catSport!.id,
+      subCategoryId: subKaraoke!.id,
+      deposit: 2000,
+      monthlyRent: 180,
+      premium: 1500,
+      areaPyeong: 30,
+      areaSqm: 99.2,
+      currentFloor: -1,
+      totalFloor: 5,
+      brandType: "PRIVATE" as const,
+      viewCount: 187,
+      favoriteCount: 5,
+      monthlyRevenue: 1000,
+      contactPublic: false,
+      themes: ["무인운영", "역세권"],
+      tier: null,
+      adAmount: 0,
+      isBasement: true,
+    },
+    {
+      sellerId: demoSellers[8].id,
+      storeName: "송파 CU편의점",
+      description: "잠실역 인근 아파트 단지 앞 편의점입니다. 고정 매출이 안정적이며, 본사 지원 시스템이 잘 갖추어져 있습니다. 24시간 운영이지만 야간 아르바이트를 고용하여 운영 중입니다.",
+      addressRoad: "서울특별시 송파구 올림픽로 300",
+      addressJibun: "서울특별시 송파구 신천동 7-18",
+      latitude: 37.5133,
+      longitude: 127.1001,
+      categoryId: catRetail!.id,
+      subCategoryId: subConvenience!.id,
+      deposit: 3000,
+      monthlyRent: 100,
+      premium: 2500,
+      areaPyeong: 22,
+      areaSqm: 72.7,
+      currentFloor: 1,
+      totalFloor: 1,
+      brandType: "FRANCHISE" as const,
+      viewCount: 312,
+      favoriteCount: 12,
+      monthlyRevenue: 3500,
+      contactPublic: false,
+      themes: ["아파트단지", "1층", "24시간"],
+      tier: null,
+      adAmount: 0,
+    },
+    {
+      sellerId: demoSellers[9].id,
+      storeName: "관악 피트니스센터",
+      description: "서울대입구역 인근 헬스장입니다. 회원 약 300명이 등록되어 있으며, 러닝머신 15대, 각종 웨이트 기구가 완비되어 있습니다. PT 트레이너 3명이 소속되어 추가 수익을 올리고 있습니다.",
+      addressRoad: "서울특별시 관악구 관악로 152",
+      addressJibun: "서울특별시 관악구 봉천동 856-2",
+      latitude: 37.4812,
+      longitude: 126.9527,
+      categoryId: catSport!.id,
+      subCategoryId: subGym!.id,
+      deposit: 5000,
+      monthlyRent: 350,
+      premium: 4000,
+      areaPyeong: 60,
+      areaSqm: 198.3,
+      currentFloor: 2,
+      totalFloor: 4,
+      brandType: "PRIVATE" as const,
+      viewCount: 156,
+      favoriteCount: 4,
+      monthlyRevenue: 2000,
+      contactPublic: false,
+      themes: ["대학가", "역세권", "대형"],
+      tier: null,
+      adAmount: 0,
+    },
+    {
+      sellerId: demoSellers[10].id,
+      storeName: "성동 크린토피아",
+      description: "왕십리역 인근 주거지역 세탁소입니다. 크린토피아 가맹점으로 본사 시스템을 활용하여 운영합니다. 세탁기 5대, 건조기 3대 보유. 아파트 밀집 지역이라 고정 수요가 있습니다.",
+      addressRoad: "서울특별시 성동구 왕십리로 50",
+      addressJibun: "서울특별시 성동구 행당동 292",
+      latitude: 37.5614,
+      longitude: 127.0368,
+      categoryId: catService!.id,
+      subCategoryId: subLaundry!.id,
+      deposit: 1000,
+      monthlyRent: 80,
+      premium: 500,
+      areaPyeong: 12,
+      areaSqm: 39.7,
+      currentFloor: 1,
+      totalFloor: 3,
+      brandType: "PRIVATE" as const,
+      viewCount: 98,
+      favoriteCount: 2,
+      monthlyRevenue: 500,
+      contactPublic: false,
+      themes: ["아파트단지", "1층", "소자본"],
+      tier: null,
+      adAmount: 0,
+    },
+  ];
+
+  for (let i = 0; i < listingsData.length; i++) {
+    const d = listingsData[i];
+    await prisma.listing.upsert({
+      where: { userId: d.sellerId },
+      update: {
+        status: "ACTIVE",
+        storeName: d.storeName,
+        description: d.description,
+        addressRoad: d.addressRoad,
+        addressJibun: d.addressJibun,
+        latitude: d.latitude,
+        longitude: d.longitude,
+        categoryId: d.categoryId,
+        subCategoryId: d.subCategoryId,
+        deposit: d.deposit,
+        monthlyRent: d.monthlyRent,
+        premium: d.premium,
+        areaPyeong: d.areaPyeong,
+        areaSqm: d.areaSqm,
+        currentFloor: d.currentFloor,
+        totalFloor: d.totalFloor,
+        brandType: d.brandType,
+        viewCount: d.viewCount,
+        favoriteCount: d.favoriteCount,
+        monthlyRevenue: d.monthlyRevenue,
+        contactPublic: d.contactPublic,
+        themes: d.themes,
+        isBasement: (d as any).isBasement ?? false,
+      },
+      create: {
+        userId: d.sellerId,
+        status: "ACTIVE",
+        storeName: d.storeName,
+        description: d.description,
+        addressRoad: d.addressRoad,
+        addressJibun: d.addressJibun,
+        latitude: d.latitude,
+        longitude: d.longitude,
+        categoryId: d.categoryId,
+        subCategoryId: d.subCategoryId,
+        deposit: d.deposit,
+        monthlyRent: d.monthlyRent,
+        premium: d.premium,
+        areaPyeong: d.areaPyeong,
+        areaSqm: d.areaSqm,
+        currentFloor: d.currentFloor,
+        totalFloor: d.totalFloor,
+        brandType: d.brandType,
+        viewCount: d.viewCount,
+        favoriteCount: d.favoriteCount,
+        monthlyRevenue: d.monthlyRevenue,
+        contactPublic: d.contactPublic,
+        themes: d.themes,
+        isBasement: (d as any).isBasement ?? false,
+      },
+    });
+  }
+  console.log(`  ✓ 데모 매물 ${listingsData.length}개 생성`);
+
+  // ==========================================
+  // 데모 데이터: 유료 매물 AdPurchase
+  // ==========================================
+  const paidListings = listingsData.filter((d) => d.tier !== null);
+  for (let i = 0; i < paidListings.length; i++) {
+    const d = paidListings[i];
+    const listing = await prisma.listing.findUnique({ where: { userId: d.sellerId } });
+    if (!listing) continue;
+    await prisma.adPurchase.upsert({
+      where: { id: `demo-purchase-listing-${i}` },
+      update: {
+        userId: d.sellerId,
+        listingId: listing.id,
+        productId: d.tier!,
+        status: "PAID",
+        amount: d.adAmount,
+        activatedAt: now,
+        expiresAt: in30Days,
+      },
+      create: {
+        id: `demo-purchase-listing-${i}`,
+        userId: d.sellerId,
+        listingId: listing.id,
+        productId: d.tier!,
+        status: "PAID",
+        amount: d.adAmount,
+        activatedAt: now,
+        expiresAt: in30Days,
+      },
+    });
+  }
+  console.log(`  ✓ 데모 매물 AdPurchase ${paidListings.length}개 생성`);
+
+  // ==========================================
+  // 데모 데이터: 협력업체 4개
+  // ==========================================
+  const partnersData = [
+    {
+      userId: demoPartnerUsers[0].id,
+      companyName: "디자인하우스",
+      serviceType: "INTERIOR" as const,
+      description: "상가 인테리어 전문 업체입니다. 카페, 음식점, 사무실 등 다양한 상업 공간 시공 경험이 풍부합니다. 디자인부터 시공까지 원스톱 서비스를 제공하며, 합리적인 가격에 높은 퀄리티를 보장합니다. 시공 후 1년 무상 A/S를 제공합니다.",
+      contactPhone: "02-1234-5678",
+      addressRoad: "서울특별시 강남구 논현로 508",
+      latitude: 37.5110,
+      longitude: 127.0242,
+      serviceArea: ["강남구", "서초구", "송파구", "강동구"],
+      tier: "VIP" as const,
+      viewCount: 1245,
+      productId: "partner-vip",
+      adAmount: 500000,
+    },
+    {
+      userId: demoPartnerUsers[1].id,
+      companyName: "빛나는간판",
+      serviceType: "SIGNAGE" as const,
+      description: "LED 간판, 채널 레터, 현수막 등 각종 간판 제작 전문 업체입니다. 디자인부터 제작, 설치까지 일괄 진행합니다. 20년 경력의 간판 전문가가 직접 시공하며, 야간 조명 연출에 특화되어 있습니다.",
+      contactPhone: "02-2345-6789",
+      addressRoad: "서울특별시 마포구 성산로 150",
+      latitude: 37.5657,
+      longitude: 126.9109,
+      serviceArea: ["마포구", "서대문구", "은평구", "종로구"],
+      tier: "PREMIUM" as const,
+      viewCount: 678,
+      productId: "partner-premium",
+      adAmount: 300000,
+    },
+    {
+      userId: demoPartnerUsers[2].id,
+      companyName: "김세무사무소",
+      serviceType: "ACCOUNTING" as const,
+      description: "상가 양수도 관련 세무 상담 전문입니다. 권리금 세금 처리, 사업자 변경, 부가세 신고 등 상가 거래에 필요한 모든 세무 서비스를 제공합니다. 초기 상담은 무료로 진행합니다.",
+      contactPhone: "02-3456-7890",
+      addressRoad: "서울특별시 영등포구 여의대방로 67길 9",
+      latitude: 37.5223,
+      longitude: 126.9184,
+      serviceArea: ["영등포구", "구로구", "금천구", "관악구"],
+      tier: "BASIC" as const,
+      viewCount: 342,
+      productId: "partner-basic",
+      adAmount: 100000,
+    },
+    {
+      userId: demoPartnerUsers[3].id,
+      companyName: "깨끗한청소",
+      serviceType: "CLEANING" as const,
+      description: "상가 입주 청소, 정기 청소 전문 업체입니다. 인수인계 전후 매장 대청소, 주방 후드 청소, 바닥 왁스 작업 등을 전문으로 합니다. 친환경 세제만 사용합니다.",
+      contactPhone: "02-4567-8901",
+      addressRoad: "서울특별시 중랑구 면목로 217",
+      latitude: 37.5889,
+      longitude: 127.0859,
+      serviceArea: ["중랑구", "성동구", "동대문구", "광진구"],
+      tier: "FREE" as const,
+      viewCount: 123,
+      productId: null,
+      adAmount: 0,
+    },
+  ];
+
+  for (const p of partnersData) {
+    await prisma.partnerService.upsert({
+      where: { userId: p.userId },
+      update: {
+        status: "ACTIVE",
+        companyName: p.companyName,
+        serviceType: p.serviceType,
+        description: p.description,
+        contactPhone: p.contactPhone,
+        addressRoad: p.addressRoad,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        serviceArea: p.serviceArea,
+        tier: p.tier,
+        tierExpiresAt: p.tier !== "FREE" ? in30Days : null,
+        viewCount: p.viewCount,
+      },
+      create: {
+        userId: p.userId,
+        status: "ACTIVE",
+        companyName: p.companyName,
+        serviceType: p.serviceType,
+        description: p.description,
+        contactPhone: p.contactPhone,
+        addressRoad: p.addressRoad,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        serviceArea: p.serviceArea,
+        tier: p.tier,
+        tierExpiresAt: p.tier !== "FREE" ? in30Days : null,
+        viewCount: p.viewCount,
+      },
+    });
+  }
+  console.log(`  ✓ 데모 협력업체 ${partnersData.length}개 생성`);
+
+  // 협력업체 유료 AdPurchase
+  const paidPartners = partnersData.filter((p) => p.productId !== null);
+  for (let i = 0; i < paidPartners.length; i++) {
+    const p = paidPartners[i];
+    const ps = await prisma.partnerService.findUnique({ where: { userId: p.userId } });
+    if (!ps) continue;
+    await prisma.adPurchase.upsert({
+      where: { id: `demo-purchase-partner-${i}` },
+      update: {
+        userId: p.userId,
+        partnerServiceId: ps.id,
+        productId: p.productId!,
+        status: "PAID",
+        amount: p.adAmount,
+        activatedAt: now,
+        expiresAt: in30Days,
+      },
+      create: {
+        id: `demo-purchase-partner-${i}`,
+        userId: p.userId,
+        partnerServiceId: ps.id,
+        productId: p.productId!,
+        status: "PAID",
+        amount: p.adAmount,
+        activatedAt: now,
+        expiresAt: in30Days,
+      },
+    });
+  }
+  console.log(`  ✓ 데모 협력업체 AdPurchase ${paidPartners.length}개 생성`);
+
+  // ==========================================
+  // 데모 데이터: 집기장터 5개
+  // ==========================================
+  const equipmentData = [
+    {
+      id: "demo-equipment-0",
+      userId: demoSellers[0].id,
+      title: "업소용 냉장고 (유니크 UDS-45RDR)",
+      description: "2년 사용한 업소용 45박스 냉장고입니다. 냉장/냉동 겸용이며 상태 양호합니다. 내부 선반 5단 포함. 직접 방문하셔서 확인 가능합니다. 카페 정리 중 판매합니다.",
+      category: "REFRIGERATION" as const,
+      condition: "GOOD" as const,
+      price: 1200000,
+      tradeMethod: "DIRECT" as const,
+      addressRoad: "서울특별시 강남구 강남대로 396",
+      latitude: 37.4979,
+      longitude: 127.0276,
+      quantity: 1,
+      viewCount: 234,
+    },
+    {
+      id: "demo-equipment-1",
+      userId: demoSellers[1].id,
+      title: "4인 테이블 + 의자 세트 (5세트)",
+      description: "원목 테이블 700x700 사이즈와 등받이 의자 4개 세트입니다. 총 5세트 일괄 판매합니다. 약간의 사용감이 있으나 전체적으로 깨끗한 상태입니다. 음식점 폐업으로 판매합니다.",
+      category: "TABLE_CHAIR" as const,
+      condition: "GOOD" as const,
+      price: 500000,
+      tradeMethod: "DIRECT" as const,
+      addressRoad: "서울특별시 마포구 와우산로 94",
+      latitude: 37.5563,
+      longitude: 126.9236,
+      quantity: 5,
+      viewCount: 187,
+    },
+    {
+      id: "demo-equipment-2",
+      userId: demoSellers[3].id,
+      title: "포스기 시스템 (키오스크 포함)",
+      description: "터치스크린 POS 시스템과 키오스크 세트입니다. 카드 단말기, 영수증 프린터, 주방 프린터 포함. 1년 사용했으며 최신 소프트웨어 업데이트 완료. 상태 매우 좋습니다.",
+      category: "POS_ELECTRONIC" as const,
+      condition: "EXCELLENT" as const,
+      price: 300000,
+      tradeMethod: "BOTH" as const,
+      addressRoad: "서울특별시 서대문구 연세로 11",
+      latitude: 37.5573,
+      longitude: 126.9367,
+      quantity: 1,
+      viewCount: 456,
+    },
+    {
+      id: "demo-equipment-3",
+      userId: demoSellers[5].id,
+      title: "업소용 가스레인지 (5구)",
+      description: "중화 5구 가스레인지입니다. 3년 사용했으며 화력은 좋은 편입니다. 약간의 기스가 있지만 작동에는 문제없습니다. 치킨집 업종 변경으로 판매합니다.",
+      category: "KITCHEN" as const,
+      condition: "FAIR" as const,
+      price: 800000,
+      tradeMethod: "DIRECT" as const,
+      addressRoad: "서울특별시 강서구 화곡로 264",
+      latitude: 37.5412,
+      longitude: 126.8397,
+      quantity: 1,
+      viewCount: 98,
+    },
+    {
+      id: "demo-equipment-4",
+      userId: demoSellers[4].id,
+      title: "에스프레소 머신 (라마르조코 리네아미니)",
+      description: "라마르조코 리네아미니 2그룹 에스프레소 머신입니다. 정기 점검을 빠짐없이 받았으며 상태가 매우 우수합니다. 그라인더(말코닉 EK43)도 함께 판매 가능합니다. 카페 이전으로 판매합니다.",
+      category: "KITCHEN" as const,
+      condition: "EXCELLENT" as const,
+      price: 2000000,
+      tradeMethod: "DIRECT" as const,
+      addressRoad: "서울특별시 서초구 서초대로 398",
+      latitude: 37.4922,
+      longitude: 127.0140,
+      quantity: 1,
+      viewCount: 521,
+    },
+  ];
+
+  for (const eq of equipmentData) {
+    await prisma.equipment.upsert({
+      where: { id: eq.id },
+      update: {
+        userId: eq.userId,
+        status: "ACTIVE",
+        title: eq.title,
+        description: eq.description,
+        category: eq.category,
+        condition: eq.condition,
+        price: eq.price,
+        tradeMethod: eq.tradeMethod,
+        addressRoad: eq.addressRoad,
+        latitude: eq.latitude,
+        longitude: eq.longitude,
+        quantity: eq.quantity,
+        viewCount: eq.viewCount,
+      },
+      create: {
+        id: eq.id,
+        userId: eq.userId,
+        status: "ACTIVE",
+        title: eq.title,
+        description: eq.description,
+        category: eq.category,
+        condition: eq.condition,
+        price: eq.price,
+        tradeMethod: eq.tradeMethod,
+        addressRoad: eq.addressRoad,
+        latitude: eq.latitude,
+        longitude: eq.longitude,
+        quantity: eq.quantity,
+        viewCount: eq.viewCount,
+      },
+    });
+  }
+  console.log(`  ✓ 데모 집기장터 ${equipmentData.length}개 생성`);
+
+  // ==========================================
+  // 데모 이미지 (매물, 협력업체, 집기)
+  // ==========================================
+  const imgTypes = ["EXTERIOR", "INTERIOR", "KITCHEN", "OTHER"] as const;
+
+  // 매물 이미지 (유료: 5장, 무료: 3장)
+  for (let i = 0; i < listingsData.length; i++) {
+    const listing = await prisma.listing.findUnique({ where: { userId: listingsData[i].sellerId } });
+    if (!listing) continue;
+    await prisma.listingImage.deleteMany({ where: { listingId: listing.id } });
+    const imgCount = listingsData[i].tier ? 5 : 3;
+    for (let j = 0; j < imgCount; j++) {
+      await prisma.listingImage.create({
+        data: {
+          listingId: listing.id,
+          url: `https://picsum.photos/seed/store-${i}-${j}/800/600`,
+          type: imgTypes[j % imgTypes.length],
+          sortOrder: j,
+        },
+      });
+    }
+  }
+  console.log("  ✓ 데모 매물 이미지 생성");
+
+  // 협력업체 이미지 (각 3장)
+  for (let i = 0; i < partnersData.length; i++) {
+    const ps = await prisma.partnerService.findUnique({ where: { userId: partnersData[i].userId } });
+    if (!ps) continue;
+    await prisma.partnerImage.deleteMany({ where: { partnerServiceId: ps.id } });
+    for (let j = 0; j < 3; j++) {
+      await prisma.partnerImage.create({
+        data: {
+          partnerServiceId: ps.id,
+          url: `https://picsum.photos/seed/partner-${i}-${j}/800/600`,
+          type: imgTypes[j % imgTypes.length],
+          sortOrder: j,
+        },
+      });
+    }
+  }
+  console.log("  ✓ 데모 협력업체 이미지 생성");
+
+  // 집기 이미지 (각 2장)
+  for (let i = 0; i < equipmentData.length; i++) {
+    const eq = await prisma.equipment.findUnique({ where: { id: equipmentData[i].id } });
+    if (!eq) continue;
+    await prisma.equipmentImage.deleteMany({ where: { equipmentId: eq.id } });
+    for (let j = 0; j < 2; j++) {
+      await prisma.equipmentImage.create({
+        data: {
+          equipmentId: eq.id,
+          url: `https://picsum.photos/seed/equip-${i}-${j}/800/600`,
+          sortOrder: j,
+        },
+      });
+    }
+  }
+  console.log("  ✓ 데모 집기 이미지 생성");
+
+  // ==========================================
+  // 데모 데이터: 커뮤니티 글 6개
+  // ==========================================
+  const postsData = [
+    {
+      id: "demo-post-0",
+      authorId: demoSellers[0].id,
+      title: "카페 창업 비용 얼마나 드나요?",
+      content: "안녕하세요, 카페 창업을 준비하고 있는 예비 창업자입니다. 서울 기준으로 15평 정도 매장에서 카페를 열려면 총 비용이 얼마나 들까요? 권리금, 보증금, 인테리어, 장비 등 항목별로 알고 싶습니다. 경험자분들의 조언 부탁드립니다.",
+      tag: "질문",
+      viewCount: 1523,
+      likeCount: 42,
+    },
+    {
+      id: "demo-post-1",
+      authorId: demoSellers[1].id,
+      title: "권리샵으로 가게 구했어요 후기",
+      content: "3개월 동안 발품 팔다가 권리샵에서 마포구 라멘집 매물을 발견했습니다. 직거래라 중개 수수료가 없어서 확실히 비용 절감이 됐어요. 판매자분이랑 직접 소통하면서 매장 상태도 꼼꼼히 확인할 수 있었습니다. 현재 오픈 준비 중이에요! 다들 좋은 매물 찾으시길 바랍니다.",
+      tag: "후기",
+      viewCount: 2341,
+      likeCount: 87,
+    },
+    {
+      id: "demo-post-2",
+      authorId: demoSellers[2].id,
+      title: "상가 임대차 계약 시 주의사항",
+      content: "상가 임대차 계약 전 반드시 확인해야 할 사항들을 정리했습니다. 첫째, 등기부등본을 확인하여 소유자와 근저당 설정 여부를 체크하세요. 둘째, 상가건물임대차보호법 적용 여부를 확인하세요. 셋째, 권리금 계약서는 반드시 별도로 작성하고, 인수인계 항목을 상세히 기재하세요. 넷째, 원상복구 의무 범위를 명확히 해두세요.",
+      tag: "정보",
+      viewCount: 3156,
+      likeCount: 156,
+    },
+    {
+      id: "demo-post-3",
+      authorId: demoSellers[4].id,
+      title: "편의점 vs 카페 어떤게 수익이 좋을까요?",
+      content: "직장을 그만두고 창업을 고민 중입니다. 편의점과 카페 중 어떤 업종이 수익성이 더 좋을까요? 편의점은 안정적이지만 마진이 낮다고 하고, 카페는 마진이 높지만 경쟁이 치열하다고 들었습니다. 두 업종 모두 경험해보신 분이 계시면 현실적인 조언 부탁드립니다.",
+      tag: "질문",
+      viewCount: 1876,
+      likeCount: 63,
+    },
+    {
+      id: "demo-post-4",
+      authorId: demoSellers[6].id,
+      title: "권리금 적정가 판단하는 방법",
+      content: "권리금의 적정가를 판단하는 방법을 공유합니다. 기본적으로 월 순수익의 10~15배가 일반적인 기준입니다. 하지만 업종, 위치, 시설 상태에 따라 달라질 수 있습니다. 국세청 홈택스에서 매출 자료를 확인하고, 주변 유사 매물의 권리금도 비교해보세요. 권리샵의 시장분석 리포트를 활용하면 객관적인 데이터를 얻을 수 있습니다.",
+      tag: "정보",
+      viewCount: 2789,
+      likeCount: 134,
+    },
+    {
+      id: "demo-post-5",
+      authorId: demoSellers[9].id,
+      title: "첫 장사 시작합니다!",
+      content: "10년 직장생활을 접고 드디어 관악구에 피트니스 센터를 오픈했습니다. 처음이라 서툰 것도 많지만, 회원분들이 잘 찾아주셔서 감사한 마음입니다. 같은 길을 걷는 자영업자분들 모두 힘내세요! 좋은 소식 또 공유하겠습니다.",
+      tag: "후기",
+      viewCount: 987,
+      likeCount: 201,
+    },
+  ];
+
+  for (const post of postsData) {
+    await prisma.post.upsert({
+      where: { id: post.id },
+      update: {
+        authorId: post.authorId,
+        title: post.title,
+        content: post.content,
+        tag: post.tag,
+        viewCount: post.viewCount,
+        likeCount: post.likeCount,
+      },
+      create: {
+        id: post.id,
+        authorId: post.authorId,
+        title: post.title,
+        content: post.content,
+        tag: post.tag,
+        viewCount: post.viewCount,
+        likeCount: post.likeCount,
+      },
+    });
+  }
+  console.log(`  ✓ 데모 커뮤니티 글 ${postsData.length}개 생성`);
+
+  // ==========================================
+  // 기존 테스트 매물 정리 (데모/관리자 외 ACTIVE 매물에 이미지 보정)
+  // ==========================================
+  const demoEmails = [
+    ...Array.from({ length: 11 }, (_, i) => `seller${i + 1}@demo.com`),
+    ...Array.from({ length: 4 }, (_, i) => `partner${i + 1}@demo.com`),
+    "admin@kwonrishop.com",
+  ];
+  const orphanListings = await prisma.listing.findMany({
+    where: {
+      status: "ACTIVE",
+      user: { email: { notIn: demoEmails } },
+    },
+    include: { images: true },
+  });
+  for (const ol of orphanListings) {
+    if (ol.images.length === 0 || ol.images.some((img) => img.url.startsWith("/images/"))) {
+      // 깨진 이미지 삭제 후 플레이스홀더 추가
+      await prisma.listingImage.deleteMany({ where: { listingId: ol.id } });
+      for (let j = 0; j < 3; j++) {
+        await prisma.listingImage.create({
+          data: {
+            listingId: ol.id,
+            url: `https://picsum.photos/seed/orphan-${ol.id.slice(-4)}-${j}/800/600`,
+            type: imgTypes[j % imgTypes.length],
+            sortOrder: j,
+          },
+        });
+      }
+    }
+  }
+  if (orphanListings.length > 0) {
+    console.log(`  ✓ 기존 매물 ${orphanListings.length}개 이미지 보정`);
+  }
+
   console.log("\n시드 데이터 삽입 완료!");
 }
 
