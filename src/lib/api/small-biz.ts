@@ -18,6 +18,16 @@ export interface CommercialDistrictData {
   mainCategories: string[]; // 주요 업종 top 5
   residentialPopulation: number; // 주거인구
   officePopulation: number; // 직장인구
+  sameCategoryCount: number; // 동종업종 수
+  competitionLevel: "낮음" | "보통" | "높음"; // 경쟁강도
+  closureRate: number; // 폐업률 (%)
+  nationalAvgClosureRate: number; // 전국 평균 폐업률 (%)
+  closureStability: "안정" | "보통" | "위험"; // 폐업 안정성
+  populationByTime: number[]; // 시간대별 유동인구 (6시~24시, 2시간 간격 = 10개)
+  peakTimes: string[]; // 피크타임 (예: ["12시", "18시"])
+  mainAgeGroup: string; // 주요 연령대 (예: "20~30대")
+  mainAgeGroupPercentage: number; // 비율 (예: 62)
+  quarterChange: number; // 전분기 대비 유동인구 변화율 (%)
 }
 
 /**
@@ -77,6 +87,8 @@ export async function getCommercialDistrictInfo(
 
     const mainCategories = categoryDistribution.slice(0, 5).map((c) => c.name);
 
+    // Note: Real API response doesn't have these fields yet, so we provide defaults
+    // In production, these should come from the actual API response
     return {
       totalStores,
       categoryDistribution,
@@ -85,6 +97,16 @@ export async function getCommercialDistrictInfo(
       mainCategories,
       residentialPopulation: data.body?.residentialPopulation || 0,
       officePopulation: data.body?.officePopulation || 0,
+      sameCategoryCount: data.body?.sameCategoryCount || 0,
+      competitionLevel: data.body?.competitionLevel || "보통",
+      closureRate: data.body?.closureRate || 0,
+      nationalAvgClosureRate: 12.0,
+      closureStability: data.body?.closureStability || "보통",
+      populationByTime: data.body?.populationByTime || [],
+      peakTimes: data.body?.peakTimes || [],
+      mainAgeGroup: data.body?.mainAgeGroup || "",
+      mainAgeGroupPercentage: data.body?.mainAgeGroupPercentage || 0,
+      quarterChange: data.body?.quarterChange || 0,
     };
   } catch (error) {
     console.error("Error fetching commercial district info:", error);
@@ -131,6 +153,16 @@ function getMockCommercialData(lat: number, lng: number): CommercialDistrictData
       mainCategories: ["외식업", "카페/디저트", "소매", "서비스", "기타"],
       residentialPopulation: 45000,
       officePopulation: 89000,
+      sameCategoryCount: 23,
+      competitionLevel: "보통",
+      closureRate: 8.2,
+      nationalAvgClosureRate: 12.0,
+      closureStability: "안정",
+      populationByTime: [2100, 3200, 5800, 9500, 6800, 5200, 8900, 7300, 4700, 1600],
+      peakTimes: ["12시", "18시"],
+      mainAgeGroup: "20~30대",
+      mainAgeGroupPercentage: 62,
+      quarterChange: 12,
     },
     hongdae: {
       totalStores: 623,
@@ -146,6 +178,16 @@ function getMockCommercialData(lat: number, lng: number): CommercialDistrictData
       mainCategories: ["외식업", "카페/디저트", "의류/잡화", "문화/여가", "기타"],
       residentialPopulation: 28000,
       officePopulation: 34000,
+      sameCategoryCount: 31,
+      competitionLevel: "높음",
+      closureRate: 10.5,
+      nationalAvgClosureRate: 12.0,
+      closureStability: "보통",
+      populationByTime: [1800, 2900, 5200, 8800, 6200, 4800, 9200, 8100, 5500, 2100],
+      peakTimes: ["12시", "18시"],
+      mainAgeGroup: "20~30대",
+      mainAgeGroupPercentage: 71,
+      quarterChange: 8,
     },
     jongno: {
       totalStores: 456,
@@ -161,6 +203,16 @@ function getMockCommercialData(lat: number, lng: number): CommercialDistrictData
       mainCategories: ["외식업", "소매", "서비스", "카페", "기타"],
       residentialPopulation: 52000,
       officePopulation: 67000,
+      sameCategoryCount: 12,
+      competitionLevel: "낮음",
+      closureRate: 6.5,
+      nationalAvgClosureRate: 12.0,
+      closureStability: "안정",
+      populationByTime: [2500, 3800, 5500, 7200, 5900, 4500, 6800, 5200, 3200, 1200],
+      peakTimes: ["12시", "17시"],
+      mainAgeGroup: "30~40대",
+      mainAgeGroupPercentage: 48,
+      quarterChange: -3,
     },
   };
 

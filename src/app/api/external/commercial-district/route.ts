@@ -52,9 +52,20 @@ export async function GET(request: NextRequest) {
       industryDistribution: rawData.categoryDistribution.map((c) => ({
         name: c.name,
         percentage: c.percentage,
+        count: c.count,
       })),
       residentPopulation: rawData.residentialPopulation,
       workingPopulation: rawData.officePopulation,
+      sameCategoryCount: rawData.sameCategoryCount,
+      competitionLevel: rawData.competitionLevel,
+      closureRate: rawData.closureRate,
+      nationalAvgClosureRate: rawData.nationalAvgClosureRate,
+      closureStability: rawData.closureStability,
+      populationByTime: rawData.populationByTime,
+      peakTimes: rawData.peakTimes,
+      mainAgeGroup: rawData.mainAgeGroup,
+      mainAgeGroupPercentage: rawData.mainAgeGroupPercentage,
+      quarterChange: rawData.quarterChange,
     };
 
     // 구매 여부 확인
@@ -87,6 +98,16 @@ export async function GET(request: NextRequest) {
       industryDistribution: fullData.industryDistribution.slice(0, 2),
       residentPopulation: 0,
       workingPopulation: 0,
+      sameCategoryCount: fullData.sameCategoryCount,
+      competitionLevel: fullData.competitionLevel,
+      closureRate: fullData.closureRate,
+      nationalAvgClosureRate: fullData.nationalAvgClosureRate,
+      closureStability: fullData.closureStability,
+      populationByTime: [],
+      peakTimes: [],
+      mainAgeGroup: "",
+      mainAgeGroupPercentage: 0,
+      quarterChange: 0,
     };
 
     return NextResponse.json({ preview: previewData }, { status: 402 });

@@ -28,6 +28,10 @@ const CommercialDistrictSection = dynamic(() => import("@/components/listing/Com
   loading: () => <div className="py-4 border-b border-gray-100"><div className="h-40 bg-gray-100 rounded-xl animate-pulse" /></div>,
 });
 
+const RentalTrendSection = dynamic(() => import("@/components/listing/RentalTrendSection"), {
+  loading: () => <div className="py-4 border-b border-gray-100"><div className="h-40 bg-gray-100 rounded-xl animate-pulse" /></div>,
+});
+
 const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
   ssr: false,
 });
@@ -40,6 +44,7 @@ interface ListingDetail {
   addressDetail: string | null;
   latitude: number | null;
   longitude: number | null;
+  regionCode?: string;
   deposit: number;
   monthlyRent: number;
   premium: number;
@@ -983,7 +988,21 @@ export default function ListingDetailClient() {
       {/* ===== 14. 상권분석 ===== */}
       {listing.latitude && listing.longitude && (
         <Section title="상권분석">
-          <CommercialDistrictSection latitude={listing.latitude} longitude={listing.longitude} categoryId={listing.category?.id} listingId={listing.id} />
+          <CommercialDistrictSection latitude={listing.latitude} longitude={listing.longitude} categoryId={listing.category?.id} categoryName={listing.category?.name} listingId={listing.id} />
+        </Section>
+      )}
+
+      {/* ===== 15. 지역 임대 시세 (한국부동산원 R-ONE) ===== */}
+      {listing.addressJibun && (
+        <Section title="">
+          <RentalTrendSection
+            regionCode={listing.regionCode || getRegionCodeFromAddress(listing.addressJibun)}
+            categoryName={listing.category?.name}
+            deposit={listing.deposit}
+            monthlyRent={listing.monthlyRent}
+            premium={listing.premium}
+            premiumNone={listing.premiumNone}
+          />
         </Section>
       )}
 
@@ -1288,4 +1307,24 @@ function RegionalPerformanceItem({ label, mine, avg }: {
       </div>
     </div>
   );
+}
+
+// 주소에서 법정동코드 추출 (간이 매핑)
+function getRegionCodeFromAddress(address: string): string {
+  const guMap: Record<string, string> = {
+    "강남구": "1168000000", "서초구": "1165000000", "송파구": "1171000000",
+    "마포구": "1144000000", "영등포구": "1156000000", "종로구": "1111000000",
+    "중구": "1114000000", "용산구": "1117000000", "성동구": "1120000000",
+    "광진구": "1121500000", "동대문구": "1123000000", "중랑구": "1126000000",
+    "성북구": "1129000000", "강북구": "1130500000", "도봉구": "1132000000",
+    "노원구": "1135000000", "서대문구": "1141000000", "양천구": "1147000000",
+    "강서구": "1150000000", "구로구": "1153000000", "금천구": "1154500000",
+    "동작구": "1159000000", "관악구": "1162000000", "강동구": "1174000000",
+    "은평구": "1138000000",
+  };
+
+  for (const [gu, code] of Object.entries(guMap)) {
+    if (address.includes(gu)) return code;
+  }
+  return "1168000000"; // 기본값 강남구
 }
