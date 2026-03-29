@@ -114,8 +114,8 @@ export function RegisterPromoBanner({
     partner: {
       bg: "from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900",
       border: "border-blue-400",
-      title: "인테리어·설비 전문업체라면 지금 등록하세요",
-      subtitle: "매물 양수인의 80%가 인테리어 업체를 찾습니다",
+      title: "상가 창업에 필요한 전문 서비스를 제공하시나요?",
+      subtitle: "인테리어, 설비, 법무, 세무, 간판 등 사장님들이 찾는 서비스를 직접 연결합니다",
       badges: ["업체프로필", "포트폴리오", "매물상세연동"],
       badgeColor: "bg-blue-500",
       cta: "월 10만원부터 →",
@@ -255,7 +255,7 @@ export function HomeServiceSection() {
       title: "협력업체",
       price: "월 10만원~",
       description:
-        "인테리어·설비 업체를 찾는 양수인에게 직접 연결됩니다. 포트폴리오, 추천업체 배지",
+        "창업에 필요한 모든 전문 서비스를 사장님에게 직접 연결합니다. 포트폴리오, 추천업체 배지",
       link: "/pricing?tab=partner",
       color: "hover:border-amber-400 dark:hover:border-amber-500",
     },
