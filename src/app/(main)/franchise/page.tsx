@@ -101,33 +101,34 @@ export default function FranchisePage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">프랜차이즈 브랜드</h1>
-        <p className="text-gray-600">검증된 프랜차이즈 브랜드를 만나보세요</p>
+    <div>
+      {/* 네이비 헤더 */}
+      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-16 pt-10 text-center">
+        <h1 className="text-2xl font-extrabold text-white mb-2">프랜차이즈 브랜드</h1>
+        <p className="text-sm text-white/60">검증된 프랜차이즈 브랜드를 만나보세요</p>
       </div>
 
-      {/* Search */}
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex gap-2">
+      {/* 플로팅 검색바 */}
+      <div className="mx-auto max-w-2xl px-4 -mt-6 relative z-10">
+        <form onSubmit={handleSearch} className="flex gap-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-1.5">
           <input
             type="text"
             placeholder="브랜드명, 업종 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white"
           />
           <button
             type="submit"
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shrink-0"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shrink-0"
           >
             검색
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
 
-      {/* Industry Filters */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Industry Filters */}
       <div className="flex gap-2 overflow-x-auto pb-3 mb-6">
         {industries.map((ind) => (
           <button
@@ -325,6 +326,7 @@ export default function FranchisePage() {
           })()}
         </div>
       )}
+      </div>
     </div>
   );
 }

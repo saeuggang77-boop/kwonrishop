@@ -69,8 +69,8 @@ function PricingContent() {
   const packageProducts = useMemo(
     () => products.filter((p) => {
       if (p.type !== "PACKAGE" || p.categoryScope !== activeTab) return false;
-      // For FRANCHISE tab, filter by selected period
-      if (activeTab === "FRANCHISE") {
+      // For FRANCHISE/PARTNER tab, filter by selected period
+      if (activeTab === "FRANCHISE" || activeTab === "PARTNER") {
         const period = (p.features as Record<string, any>)?.period;
         // Products without period field are legacy 1m products
         return (period || "1m") === franchisePeriod;
@@ -153,30 +153,30 @@ function PricingContent() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      {/* Hero Section */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+    <div>
+      {/* 네이비 헤더 */}
+      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-16 pt-12 text-center">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-3">
           비즈니스를 성장시키는 프리미엄 서비스
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 text-lg">
+        <p className="text-white/60 text-lg">
           목적에 맞는 요금제를 선택하고 더 많은 고객에게 다가가세요
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+        <p className="text-sm text-white/40 mt-2">
           ※ 모든 가격은 부가세(VAT 10%) 별도입니다
         </p>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex justify-center mb-10">
-        <div className="inline-flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+      {/* 플로팅 탭 */}
+      <div className="flex justify-center -mt-5 relative z-10 mb-8">
+        <div className="inline-flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-lg">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.key
-                  ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               }`}
             >
@@ -186,8 +186,9 @@ function PricingContent() {
         </div>
       </div>
 
-      {/* 프랜차이즈 기간 선택 */}
-      {activeTab === "FRANCHISE" && (
+      <div className="max-w-6xl mx-auto px-4 pb-12">
+        {/* 프랜차이즈 기간 선택 */}
+      {(activeTab === "FRANCHISE" || activeTab === "PARTNER") && (
         <div className="mb-8">
           <div className="flex justify-center">
             <div className="inline-flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 gap-1">
@@ -247,7 +248,10 @@ function PricingContent() {
               🔄 정기 끌어올리기 구독
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
-              매번 수동 끌올 대신, 자동으로 상단 노출을 유지하세요
+              패키지 없이도 매물 노출을 높이고 싶다면, 자동 끌어올리기를 이용해보세요
+            </p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+              매번 수동 끌올 대신 설정한 주기에 맞춰 자동으로 상단에 노출됩니다
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -279,6 +283,7 @@ function PricingContent() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
@@ -548,9 +553,9 @@ function SubscriptionCard({
         </h3>
         <div className="flex items-baseline justify-center gap-1 mb-1">
           <span className="text-2xl font-bold text-gray-900 dark:text-white">
-            월 {(product.price / 1000).toLocaleString()}
+            월 {(product.price / 10000).toLocaleString()}
           </span>
-          <span className="text-sm text-gray-600 dark:text-gray-300">천원</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">만원</span>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">30일 자동 갱신</p>
       </div>

@@ -229,79 +229,91 @@ export function DashboardPlanCard({ currentPlan }: { currentPlan?: string }) {
   );
 }
 
-// 1-E. 홈 하단 3종 서비스 소개
+// 1-E. 홈 하단 3종 서비스 소개 (네이비 배경 + SVG 아이콘)
 export function HomeServiceSection() {
   const services = [
     {
-      emoji: "🏪",
       title: "사장님",
       price: "월 10만원~",
       description:
         "내 매물을 더 빨리 팔고 싶다면. 상위노출, 하이라이트 배지, 끌어올리기로 매수자 유입 극대화",
       link: "/pricing?tab=listing",
-      color: "hover:border-blue-400 dark:hover:border-blue-500",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+      ),
     },
     {
-      emoji: "🏢",
       title: "프랜차이즈",
       price: "월 30만원~",
       description:
         "예비 창업자에게 브랜드를 알리세요. 브랜드 페이지, 가맹 문의, 메인 배너 노출",
       link: "/pricing?tab=franchise",
-      color: "hover:border-green-400 dark:hover:border-green-500",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+          <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      ),
     },
     {
-      emoji: "🔧",
       title: "협력업체",
       price: "월 10만원~",
       description:
-        "창업에 필요한 모든 전문 서비스를 사장님에게 직접 연결합니다. 포트폴리오, 추천업체 배지",
+        "창업에 필요한 모든 전문 서비스를 사장님에게 직접 연결합니다",
       link: "/pricing?tab=partner",
-      color: "hover:border-amber-400 dark:hover:border-amber-500",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+          <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+        </svg>
+      ),
     },
   ];
 
   return (
-    <section className="bg-gray-50 py-16 dark:bg-gray-900">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="bg-gradient-to-br from-navy-dark to-navy py-16">
+      <div className="mx-auto max-w-7xl px-6">
         {/* 헤더 */}
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="mb-10 text-center">
+          <h2 className="mb-2 text-2xl font-extrabold text-white">
             권리샵과 함께 성장하세요
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-white/50">
             역할에 맞는 최적의 서비스를 제공합니다
           </p>
         </div>
 
         {/* 서비스 그리드 */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {services.map((service) => (
             <Link
               key={service.title}
               href={service.link}
-              className={`group rounded-xl border-2 border-gray-200 bg-white p-6 transition dark:border-gray-700 dark:bg-gray-800 ${service.color} hover:shadow-lg`}
+              className="group rounded-2xl bg-white/[0.07] border border-white/10 p-6 transition hover:bg-white/[0.12] hover:-translate-y-1"
             >
-              {/* 이모지 */}
-              <div className="mb-4 text-5xl">{service.emoji}</div>
-
-              {/* 제목 + 가격 */}
-              <div className="mb-2 flex items-baseline justify-between">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {service.title}
-                </h3>
-                <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                  {service.price}
-                </span>
+              {/* SVG 아이콘 */}
+              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-gold-light mb-4">
+                {service.icon}
               </div>
 
+              {/* 제목 */}
+              <h3 className="text-lg font-bold text-white mb-1">
+                {service.title}
+              </h3>
+
+              {/* 가격 */}
+              <p className="text-sm font-semibold text-gold-light mb-2">
+                {service.price}
+              </p>
+
               {/* 설명 */}
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-xs text-white/50 leading-relaxed">
                 {service.description}
               </p>
 
               {/* 화살표 */}
-              <div className="mt-4 text-sm font-semibold text-gray-900 transition group-hover:translate-x-1 dark:text-white">
+              <div className="mt-3 text-sm font-semibold text-gold-light transition group-hover:translate-x-1">
                 자세히 보기 →
               </div>
             </Link>

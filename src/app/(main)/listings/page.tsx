@@ -199,16 +199,22 @@ function ListingsContent() {
   const commonThemes = ["무권리", "급매", "신규", "역세권", "코너", "1층"];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* 검색 */}
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex gap-2">
+    <div>
+      {/* 네이비 헤더 */}
+      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-16 pt-10 text-center">
+        <h1 className="text-2xl font-extrabold text-white mb-2">매물 검색</h1>
+        <p className="text-sm text-white/60">전국 상가 매물을 한눈에 비교하세요</p>
+      </div>
+
+      {/* 플로팅 검색바 */}
+      <div className="mx-auto max-w-2xl px-4 -mt-6 relative z-10">
+        <form onSubmit={handleSearch} className="flex gap-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-1.5">
           <input
             type="text"
             placeholder="지역, 업종, 상호명 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white"
           />
           <button
             type="submit"
@@ -216,10 +222,11 @@ function ListingsContent() {
           >
             검색
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
 
-      {/* 카테고리 필터 */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* 카테고리 필터 */}
       <div className="flex gap-2 overflow-x-auto pb-3 mb-4">
         <button
           onClick={() => handleCategoryClick("")}
@@ -675,6 +682,7 @@ function ListingsContent() {
           </div>
         );
       })()}
+      </div>
     </div>
   );
 }

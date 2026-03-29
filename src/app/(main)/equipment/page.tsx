@@ -101,13 +101,33 @@ export default function EquipmentListPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">집기장터</h1>
-        <p className="text-gray-600 dark:text-gray-400">사업자 인증된 사장님들의 중고 집기 직거래</p>
+    <div>
+      {/* 네이비 헤더 */}
+      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-16 pt-10 text-center">
+        <h1 className="text-2xl font-extrabold text-white mb-2">집기장터</h1>
+        <p className="text-sm text-white/60">사업자 인증된 사장님들의 중고 집기 직거래</p>
       </div>
 
+      {/* 플로팅 검색바 */}
+      <div className="mx-auto max-w-2xl px-4 -mt-6 relative z-10">
+        <form onSubmit={handleSearch} className="flex gap-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-1.5">
+          <input
+            type="text"
+            placeholder="집기명, 브랜드 검색"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white"
+          />
+          <button
+            type="submit"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shrink-0"
+          >
+            검색
+          </button>
+        </form>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
       {/* 프리미엄 집기 캐러셀 */}
       <PremiumCarousel
         title="프리미엄 집기"
@@ -149,25 +169,6 @@ export default function EquipmentListPage() {
           </div>
         ))}
       </PremiumCarousel>
-
-      {/* Search */}
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="집기명, 브랜드 검색"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          />
-          <button
-            type="submit"
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shrink-0"
-          >
-            검색
-          </button>
-        </div>
-      </form>
 
       {/* Filters */}
       <div className="mb-6 space-y-4">
@@ -350,6 +351,7 @@ export default function EquipmentListPage() {
           })()}
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -47,7 +47,7 @@ export default function PremiumCarousel({
   if (count === 0) return null;
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 rounded-2xl bg-bg-warm p-5 dark:bg-gray-800/50">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">

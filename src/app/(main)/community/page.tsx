@@ -43,20 +43,27 @@ function CommunityContent() {
   }, [activeTag, page]);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">커뮤니티</h1>
-        {session && (
-          <Link
-            href="/community/write"
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            글쓰기
-          </Link>
-        )}
+    <div>
+      {/* 네이비 헤더 */}
+      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-10 pt-10 text-center">
+        <h1 className="text-2xl font-extrabold text-white mb-2">커뮤니티</h1>
+        <p className="text-sm text-white/60">사장님들의 창업 이야기와 노하우를 공유하세요</p>
       </div>
 
-      {/* 태그 필터 */}
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        {/* 글쓰기 버튼 */}
+        {session && (
+          <div className="flex justify-end mb-4">
+            <Link
+              href="/community/write"
+              className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              글쓰기
+            </Link>
+          </div>
+        )}
+
+        {/* 태그 필터 */}
       <div className="flex gap-2 overflow-x-auto pb-3 mb-4">
         {TAGS.map((tag) => (
           <button
@@ -129,6 +136,7 @@ function CommunityContent() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
