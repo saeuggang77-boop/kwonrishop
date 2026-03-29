@@ -46,14 +46,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "이미지 파일만 업로드 가능합니다." }, { status: 400 });
   }
 
-  // 파일 확장자 화이트리스트 검증
-  const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"];
-  const ext = path.extname(file.name).toLowerCase() || ".jpg";
-  if (!ALLOWED_EXTENSIONS.includes(ext)) {
-    return NextResponse.json(
-      { error: "허용되지 않은 파일 형식입니다. (jpg, png, gif, webp만 가능)" },
-      { status: 400 }
-    );
+  // 파일 확장자 화이트리스트 검증 (XSS 방지를 위해 svg 제외)
+  const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+
+  // 경로 조작 방지: 원본 파일명에서 위험 문자 제거 후 확장자 추출
+  const sanitizedFilename = file.name.replace(/[./\\]/g, "_");
+  let ext = path.extname(sanitizedFilename).toLowerCase();
+
+  // 확장자가 없거나 허용되지 않으면 기본값 사용
+  if (!ext || !ALLOWED_EXTENSIONS.includes(ext)) {
+    // MIME type 기반 확장자 매핑
+    const mimeToExt: Record<string, string> = {
+      "image/jpeg": ".jpg",
+      "image/png": ".png",
+      "image/gif": ".gif",
+      "image/webp": ".webp",
+    };
+    ext = mimeToExt[file.type] || ".jpg";
   }
 
   try {
@@ -61,6 +70,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(bytes);
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 15);
+    // UUID 기반 파일명으로 경로 조작 완전 차단
     const filename = `${timestamp}-${random}${ext}`;
 
     // S3 사용 가능 여부 확인

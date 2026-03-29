@@ -39,32 +39,32 @@ export async function POST(
 
   if (existing) {
     // 이미 찜 → 해제
-    await prisma.$transaction([
-      prisma.favorite.delete({ where: { id: existing.id } }),
-      prisma.listing.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.favorite.delete({ where: { id: existing.id } });
+      await tx.listing.update({
         where: { id: listingId },
         data: { favoriteCount: { decrement: 1 } },
-      }),
-    ]);
+      });
 
-    // Ensure favoriteCount doesn't go below 0
-    await prisma.listing.updateMany({
-      where: { id: listingId, favoriteCount: { lt: 0 } },
-      data: { favoriteCount: 0 },
+      // Ensure favoriteCount doesn't go below 0
+      await tx.listing.updateMany({
+        where: { id: listingId, favoriteCount: { lt: 0 } },
+        data: { favoriteCount: 0 },
+      });
     });
 
     return NextResponse.json({ favorited: false });
   } else {
     // 찜 추가
-    await prisma.$transaction([
-      prisma.favorite.create({
+    await prisma.$transaction(async (tx) => {
+      await tx.favorite.create({
         data: { userId: session.user.id, listingId },
-      }),
-      prisma.listing.update({
+      });
+      await tx.listing.update({
         where: { id: listingId },
         data: { favoriteCount: { increment: 1 } },
-      }),
-    ]);
+      });
+    });
 
     // 매물 소유자에게 이메일 알림 (비차단)
     (async () => {

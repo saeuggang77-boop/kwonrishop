@@ -41,6 +41,9 @@ export default function Step7Confirm({ onPrev }: Props) {
     setLoading(true);
     setError("");
 
+    const uploadedImageUrls: string[] = [];
+    const uploadedDocUrls: string[] = [];
+
     try {
       const uploadedImages: { url: string; type: string; sortOrder: number }[] = [];
       for (const img of data.images) {
@@ -50,6 +53,7 @@ export default function Step7Confirm({ onPrev }: Props) {
           const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
           if (!uploadRes.ok) throw new Error("이미지 업로드 실패");
           const { url } = await uploadRes.json();
+          uploadedImageUrls.push(url); // 추적용
           uploadedImages.push({ url, type: img.type, sortOrder: img.sortOrder });
         } else if (img.url) {
           uploadedImages.push({ url: img.url, type: img.type, sortOrder: img.sortOrder });
@@ -65,6 +69,7 @@ export default function Step7Confirm({ onPrev }: Props) {
           const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
           if (!uploadRes.ok) throw new Error("증빙자료 업로드 실패");
           const { url } = await uploadRes.json();
+          uploadedDocUrls.push(url); // 추적용
           uploadedDocs.push({ url, sortOrder: doc.sortOrder });
         } else if (doc.url) {
           uploadedDocs.push({ url: doc.url, sortOrder: doc.sortOrder });
@@ -84,6 +89,8 @@ export default function Step7Confirm({ onPrev }: Props) {
       const result = await res.json();
 
       if (!res.ok) {
+        // 등록 실패 시 업로드된 이미지 정리
+        await cleanupOrphanImages([...uploadedImageUrls, ...uploadedDocUrls]);
         setError(result.error || "등록에 실패했습니다.");
         return;
       }
@@ -91,10 +98,30 @@ export default function Step7Confirm({ onPrev }: Props) {
       reset();
       setRegisteredId(result.id);
       setShowSuccess(true);
-    } catch {
+    } catch (err) {
+      // 예외 발생 시 업로드된 이미지 정리
+      await cleanupOrphanImages([...uploadedImageUrls, ...uploadedDocUrls]);
       setError("등록 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function cleanupOrphanImages(urls: string[]) {
+    if (urls.length === 0) return;
+
+    try {
+      // 업로드된 이미지 정리 API 호출 (non-blocking)
+      await fetch("/api/upload/cleanup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ urls }),
+      }).catch(() => {
+        // 정리 실패는 무시 (크론잡이 나중에 처리)
+        console.warn("이미지 정리 실패, 크론잡이 처리합니다.");
+      });
+    } catch {
+      // 무시
     }
   }
 

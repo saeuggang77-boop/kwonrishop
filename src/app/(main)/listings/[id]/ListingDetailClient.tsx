@@ -247,7 +247,9 @@ export default function ListingDetailClient() {
       localStorage.setItem(key, JSON.stringify(updated));
       // Show other listings (exclude current)
       setRecentlyViewed(filtered.slice(0, 10));
-    } catch {}
+    } catch (e) {
+      console.error("[ListingDetail] Failed to save recently viewed:", e);
+    }
   }, [listing?.id]);
 
   // Filtered images by tab

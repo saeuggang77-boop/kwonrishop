@@ -37,32 +37,32 @@ export async function POST(
 
   if (existing) {
     // 이미 찜 → 해제
-    await prisma.$transaction([
-      prisma.equipmentFavorite.delete({ where: { id: existing.id } }),
-      prisma.equipment.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.equipmentFavorite.delete({ where: { id: existing.id } });
+      await tx.equipment.update({
         where: { id: equipmentId },
         data: { favoriteCount: { decrement: 1 } },
-      }),
-    ]);
+      });
 
-    // Ensure favoriteCount doesn't go below 0
-    await prisma.equipment.updateMany({
-      where: { id: equipmentId, favoriteCount: { lt: 0 } },
-      data: { favoriteCount: 0 },
+      // Ensure favoriteCount doesn't go below 0
+      await tx.equipment.updateMany({
+        where: { id: equipmentId, favoriteCount: { lt: 0 } },
+        data: { favoriteCount: 0 },
+      });
     });
 
     return NextResponse.json({ favorited: false });
   } else {
     // 찜 추가
-    await prisma.$transaction([
-      prisma.equipmentFavorite.create({
+    await prisma.$transaction(async (tx) => {
+      await tx.equipmentFavorite.create({
         data: { userId: session.user.id, equipmentId },
-      }),
-      prisma.equipment.update({
+      });
+      await tx.equipment.update({
         where: { id: equipmentId },
         data: { favoriteCount: { increment: 1 } },
-      }),
-    ]);
+      });
+    });
 
     // 집기 소유자에게 알림 (비차단)
     (async () => {

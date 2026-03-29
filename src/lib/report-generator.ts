@@ -240,7 +240,8 @@ export async function generateSellerReport(
       const commercialData = await getCommercialDistrictInfo(listing.latitude, listing.longitude);
       closureRate = commercialData.closureRate || 12.0;
       floatingPopulation = commercialData.floatingPopulation || "중";
-    } catch {
+    } catch (e) {
+      console.error("[ReportGenerator] Failed to fetch commercial district info:", e);
       // fallback already set
     }
   }
