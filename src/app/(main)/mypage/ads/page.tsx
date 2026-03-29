@@ -162,6 +162,7 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
         </div>
         <div className="text-right text-sm">
           <p className="font-bold text-gray-900">{ad.amount.toLocaleString()}원</p>
+          <p className="text-xs text-gray-400">(VAT 별도)</p>
           {isActive && daysLeft !== null && (
             <p className={`text-xs ${daysLeft <= 3 ? "text-red-500 font-medium" : "text-gray-400"}`}>
               {daysLeft === 0 ? "오늘 만료" : `${daysLeft}일 남음`}

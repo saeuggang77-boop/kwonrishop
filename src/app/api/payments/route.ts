@@ -254,7 +254,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // AdPurchase 생성 (PENDING 상태)
+    // VAT 10% 적용 (10원 단위 반올림)
+    const supplyPrice = product.price;
+    const vatAmount = Math.round(supplyPrice * 0.1 / 10) * 10;
+    const totalAmount = supplyPrice + vatAmount;
+
+    // AdPurchase 생성 (PENDING 상태, 공급가액 저장)
     const adPurchase = await prisma.adPurchase.create({
       data: {
         userId: session.user.id,
@@ -263,14 +268,16 @@ export async function POST(req: NextRequest) {
         partnerServiceId: partnerServiceId || null,
         equipmentId: equipmentId || null,
         status: "PENDING",
-        amount: product.price,
+        amount: supplyPrice,
       },
     });
 
-    // Toss Payments에 전달할 결제 정보 반환
+    // Toss Payments에 전달할 결제 정보 반환 (VAT 포함 금액)
     return NextResponse.json({
       orderId: adPurchase.id,
-      amount: product.price,
+      amount: totalAmount,
+      supplyPrice,
+      vatAmount,
       orderName: product.name,
       productName: product.name,
       duration: product.duration,

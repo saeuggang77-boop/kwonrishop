@@ -120,6 +120,8 @@ function PricingContent() {
           orderName: data.orderName,
           customerName: session.user.name || "고객",
         });
+        if (data.supplyPrice) params.set("supplyPrice", data.supplyPrice.toString());
+        if (data.vatAmount) params.set("vatAmount", data.vatAmount.toString());
         router.push(`/payments/checkout?${params.toString()}`);
       } else {
         toast.error(data.error || "구매 중 오류가 발생했습니다.");
@@ -156,6 +158,9 @@ function PricingContent() {
         </h1>
         <p className="text-gray-600 text-lg">
           목적에 맞는 요금제를 선택하고 더 많은 고객에게 다가가세요
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          ※ 모든 가격은 부가세(VAT 10%) 별도입니다
         </p>
       </div>
 

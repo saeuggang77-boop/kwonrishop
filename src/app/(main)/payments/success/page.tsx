@@ -99,13 +99,36 @@ function SuccessContent() {
                   {orderInfo.productName}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">결제 금액</span>
-                <span className="font-bold text-blue-600">
-                  {orderInfo.amount.toLocaleString()}원
-                </span>
-              </div>
-              <div className="flex justify-between">
+              {orderInfo.supplyPrice && orderInfo.vatAmount ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">공급가액</span>
+                    <span className="text-gray-900">
+                      {orderInfo.supplyPrice.toLocaleString()}원
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">부가세(10%)</span>
+                    <span className="text-gray-900">
+                      {orderInfo.vatAmount.toLocaleString()}원
+                    </span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-gray-200">
+                    <span className="text-gray-900 font-bold">총 결제금액</span>
+                    <span className="font-bold text-blue-600">
+                      {orderInfo.amount.toLocaleString()}원
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">결제 금액</span>
+                  <span className="font-bold text-blue-600">
+                    {orderInfo.amount.toLocaleString()}원
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between pt-2 border-t border-gray-100">
                 <span className="text-gray-600">주문번호</span>
                 <span className="font-medium text-gray-900 text-xs">
                   {orderInfo.orderId}

@@ -11,6 +11,8 @@ function CheckoutContent() {
   const amount = searchParams.get("amount");
   const orderName = searchParams.get("orderName");
   const customerName = searchParams.get("customerName");
+  const supplyPrice = searchParams.get("supplyPrice");
+  const vatAmount = searchParams.get("vatAmount");
 
   if (!orderId || !amount || !orderName || !customerName) {
     return (
@@ -33,6 +35,8 @@ function CheckoutContent() {
         amount={parseInt(amount)}
         orderName={orderName}
         customerName={customerName}
+        supplyPrice={supplyPrice ? parseInt(supplyPrice) : undefined}
+        vatAmount={vatAmount ? parseInt(vatAmount) : undefined}
       />
     </div>
   );

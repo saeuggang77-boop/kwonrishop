@@ -70,7 +70,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (order.amount !== amount) {
+    // VAT 10% 적용 검증 (10원 단위 반올림)
+    const supplyPrice = order.amount;
+    const vatAmount = Math.round(supplyPrice * 0.1 / 10) * 10;
+    const expectedTotalAmount = supplyPrice + vatAmount;
+
+    if (amount !== expectedTotalAmount) {
+      console.error(`[Security] Payment amount mismatch: received=${amount}, expected=${expectedTotalAmount} (supply=${supplyPrice}, vat=${vatAmount})`);
       return NextResponse.json(
         { error: "결제 금액이 일치하지 않습니다" },
         { status: 400 }
@@ -272,7 +278,9 @@ export async function POST(request: NextRequest) {
       success: true,
       orderId: updatedOrder.id,
       productName: updatedOrder.product.name,
-      amount: updatedOrder.amount,
+      supplyPrice: updatedOrder.amount,
+      vatAmount,
+      amount: expectedTotalAmount,
       status: updatedOrder.status,
     });
   } catch (error) {
