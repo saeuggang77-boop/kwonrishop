@@ -4,10 +4,11 @@ import { sendEmail } from "@/lib/email";
 import { listingExpiredEmail } from "@/lib/email-templates";
 import { notifyListingExpiring } from "@/lib/kakao-alimtalk";
 import { sendPushToUser } from "@/lib/push";
+import { verifyBearerToken } from "@/lib/cron-auth";
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify cron secret
+    // Verify cron secret with timing-safe comparison
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
 
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Cron not configured" }, { status: 500 });
     }
 
-    if (authHeader !== `Bearer ${cronSecret}`) {
+    if (!verifyBearerToken(authHeader, cronSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendPushToUser } from "@/lib/push";
+import { verifyBearerToken } from "@/lib/cron-auth";
 
 /**
  * POST: 내부 호출용 푸시 발송 API
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
 
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || !verifyBearerToken(authHeader, cronSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

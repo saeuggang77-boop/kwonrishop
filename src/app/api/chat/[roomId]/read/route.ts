@@ -2,11 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { validateOrigin } from "@/lib/csrf";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });

@@ -220,13 +220,13 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/listings/new"
+              href="/sell"
               className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
             >
               매물 등록하기
             </a>
             <a
-              href="/search"
+              href="/listings"
               className="bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors border-2 border-white"
             >
               매물 검색하기

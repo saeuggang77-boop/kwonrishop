@@ -516,7 +516,7 @@ const adProducts = [
     name: "끌어올리기 라이트",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 20000,
+    price: 29000,
     duration: 30,
     sortOrder: 22,
     features: {
@@ -531,7 +531,7 @@ const adProducts = [
     name: "끌어올리기 스탠다드",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 50000,
+    price: 59000,
     duration: 30,
     sortOrder: 23,
     features: {
@@ -547,7 +547,7 @@ const adProducts = [
     name: "끌어올리기 프리미엄",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 70000,
+    price: 79000,
     duration: 30,
     sortOrder: 24,
     features: {
@@ -562,7 +562,7 @@ const adProducts = [
     name: "끌어올리기 VIP",
     type: "SUBSCRIPTION" as const,
     categoryScope: "COMMON" as const,
-    price: 100000,
+    price: 99000,
     duration: 30,
     sortOrder: 25,
     features: {

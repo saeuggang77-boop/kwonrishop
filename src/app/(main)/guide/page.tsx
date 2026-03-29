@@ -355,7 +355,7 @@ export default function GuidePage() {
           <p className="text-gray-600 dark:text-gray-400 mb-4">지금 바로 시작해보세요</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="/auth/signin"
+              href="/login"
               className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             >
               회원가입하기

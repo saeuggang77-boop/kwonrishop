@@ -125,6 +125,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const session = await getServerSession(authOptions);
+
     const reviews = await prisma.review.findMany({
       where: { listingId },
       include: {
@@ -148,8 +150,18 @@ export async function GET(req: NextRequest) {
       ) / reviews.length,
     } : null;
 
+    // 리뷰 익명화 처리
+    const anonymizedReviews = reviews.map((review, index) => ({
+      ...review,
+      isOwn: session?.user?.id === review.reviewerId,
+      reviewer: {
+        id: review.reviewerId, // 본인 리뷰 삭제를 위해 ID는 유지 (프론트에서 isOwn 사용)
+        name: `익명 ${index + 1}`,
+      },
+    }));
+
     return NextResponse.json({
-      reviews,
+      reviews: anonymizedReviews,
       averageRatings,
       totalReviews: reviews.length,
     });

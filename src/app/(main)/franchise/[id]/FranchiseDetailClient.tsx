@@ -70,7 +70,7 @@ export default function FranchiseDetailClient() {
 
   async function handleInquirySubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!session) { toast.info("로그인이 필요합니다"); router.push("/auth/login"); return; }
+    if (!session) { toast.info("로그인이 필요합니다"); router.push("/login"); return; }
     setSubmitting(true);
     const res = await fetch(`/api/franchise/${id}/inquiry`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, phone, message }) });
     if (res.ok) { toast.success("문의가 접수되었습니다"); setName(""); setPhone(""); setMessage(""); }

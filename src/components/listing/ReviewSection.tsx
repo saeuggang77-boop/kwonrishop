@@ -12,8 +12,10 @@ interface ReviewData {
   conditionRating: number;
   content: string | null;
   createdAt: string;
+  isOwn?: boolean;
   reviewer: {
     id: string;
+    name?: string;
   };
 }
 
@@ -195,7 +197,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
   // 본인 매물에는 리뷰 작성 불가
   const isOwnListing = session?.user?.id === sellerId;
   // 이미 리뷰를 작성했는지 확인
-  const hasWrittenReview = reviews.some((r) => r.reviewer.id === session?.user?.id);
+  const hasWrittenReview = reviews.some((r) => r.isOwn === true);
   const canWriteReview = session && !isOwnListing && !hasWrittenReview;
 
   const avgAccuracy = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.accuracyRating, 0) / reviews.length : 0;
@@ -329,7 +331,9 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">익명 리뷰어</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {review.reviewer.name || "익명 리뷰어"}
+                  </p>
                   <p className="text-xs text-gray-400 dark:text-gray-500">
                     {new Date(review.createdAt).toLocaleDateString("ko-KR")}
                   </p>
@@ -339,7 +343,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                     rating={Math.round((review.accuracyRating + review.communicationRating + review.conditionRating) / 3)}
                     readonly
                   />
-                  {session && review.reviewer.id !== session.user.id && (
+                  {session && !review.isOwn && (
                     <button
                       onClick={() => handleReportClick(review.id)}
                       className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 transition-colors"

@@ -29,6 +29,9 @@ export function validatePasswordStrength(password: string): {
   if (password.length < 8) {
     return { valid: false, message: "비밀번호는 8자 이상이어야 합니다." };
   }
+  if (password.length > 128) {
+    return { valid: false, message: "비밀번호는 128자 이하여야 합니다." };
+  }
   if (!/[a-z]/.test(password)) {
     return { valid: false, message: "소문자를 1개 이상 포함해야 합니다." };
   }
