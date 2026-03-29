@@ -149,6 +149,7 @@ export default function ListingDetailClient() {
     nextBumpAt: string;
   } | null>(null);
   const [sellerReportStatus, setSellerReportStatus] = useState<"loading" | "purchased" | "not_purchased">("loading");
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   useEffect(() => {
     setError(false);
@@ -303,7 +304,7 @@ export default function ListingDetailClient() {
 
       if (res.ok) {
         toast.success(data.message || "매물이 끌어올려졌습니다!");
-        window.location.reload();
+        router.refresh();
       } else {
         if (data.needsPurchase) {
           const goPricing = confirm(data.message + "\n\n가격 안내 페이지로 이동하시겠습니까?");
@@ -346,7 +347,7 @@ export default function ListingDetailClient() {
 
       if (res.ok) {
         toast.success("매물 상태가 변경되었습니다.");
-        window.location.reload();
+        router.refresh();
       } else {
         const data = await res.json();
         toast.error(data.error || "상태 변경에 실패했습니다.");
@@ -592,6 +593,16 @@ export default function ListingDetailClient() {
         ) : filteredImages.length === 0 && imageTab !== "ALL" ? (
           <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
             해당 카테고리의 사진이 없습니다
+          </div>
+        ) : isOwner ? (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-3 p-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center">사진을 등록하면 조회수가 높아집니다</p>
+            <Link
+              href="/sell/edit"
+              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+            >
+              사진 추가하기
+            </Link>
           </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 text-sm md:text-lg">
@@ -1063,7 +1074,7 @@ export default function ListingDetailClient() {
                 )}
               </div>
               {listing.contactPublic && listing.user.phone && (
-                <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">{listing.user.phone}</p>
+                <a href={`tel:${listing.user.phone}`} className="text-sm text-blue-600 dark:text-blue-400 mt-1 hover:underline">{listing.user.phone}</a>
               )}
             </div>
           </div>
@@ -1143,9 +1154,9 @@ export default function ListingDetailClient() {
       {/* ===== 19. 하단 고정바 ===== */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10 md:static md:border-0 md:p-0 md:mt-6">
         {isOwner ? (
-          /* 소유자일 때: 매물 관리 바 (모바일 2줄 그리드) */
+          /* 소유자일 때: 매물 관리 바 (모바일 - 상태/수정/끌올 + 더보기 드롭다운) */
           <div className="max-w-3xl mx-auto px-4 py-3 relative">
-            <div className="grid grid-cols-3 gap-2 md:flex md:items-center md:gap-2">
+            <div className="grid grid-cols-4 gap-2 md:flex md:items-center md:gap-2">
               {/* 상태 변경 드롭다운 */}
               <div className="relative">
                 <button
@@ -1183,27 +1194,7 @@ export default function ListingDetailClient() {
               >
                 수정
               </Link>
-              <Link
-                href={`/pricing?listingId=${listing.id}`}
-                className={`min-h-[44px] flex items-center justify-center py-2 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-xs md:text-base ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
-              >
-                광고 구매
-              </Link>
-              {sellerReportStatus === "purchased" ? (
-                <Link
-                  href={`/reports/seller/${listing.id}`}
-                  className="min-h-[44px] flex items-center justify-center py-2 bg-emerald-50 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 rounded-xl font-medium text-center hover:bg-emerald-100 dark:hover:bg-emerald-900 transition-colors text-xs"
-                >
-                  리포트 보기
-                </Link>
-              ) : sellerReportStatus === "not_purchased" ? (
-                <Link
-                  href={`/pricing?listingId=${listing.id}&scope=seller-report`}
-                  className={`min-h-[44px] flex items-center justify-center py-2 bg-purple-50 dark:bg-purple-950 border border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 rounded-xl font-medium text-center hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors text-xs ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
-                >
-                  시장분석
-                </Link>
-              ) : null}
+
               {bumpSubscription ? (
                 <div className="min-h-[44px] flex flex-col items-center justify-center py-2 bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-700 rounded-xl text-center">
                   <div className="text-[10px] md:text-xs font-bold text-green-700 dark:text-green-400">자동 끌올 중</div>
@@ -1223,6 +1214,83 @@ export default function ListingDetailClient() {
                   {bumping ? "처리중..." : "끌올"}
                 </button>
               )}
+
+              {/* 더보기 드롭다운 (모바일) */}
+              <div className="relative md:hidden">
+                <button
+                  onClick={() => setShowMoreMenu(!showMoreMenu)}
+                  className="w-full min-h-[44px] px-2 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-xs flex items-center justify-center"
+                >
+                  ⋯
+                </button>
+
+                {showMoreMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-20"
+                      onClick={() => setShowMoreMenu(false)}
+                    />
+                    <div className="absolute bottom-full mb-2 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1 min-w-[140px] z-30">
+                      <Link
+                        href={`/pricing?listingId=${listing.id}`}
+                        onClick={() => setShowMoreMenu(false)}
+                        className="block w-full text-left px-4 py-2.5 text-sm font-medium text-blue-700 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        광고 구매
+                      </Link>
+                      {sellerReportStatus === "purchased" ? (
+                        <Link
+                          href={`/reports/seller/${listing.id}`}
+                          onClick={() => setShowMoreMenu(false)}
+                          className="block w-full text-left px-4 py-2.5 text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          리포트 보기
+                        </Link>
+                      ) : sellerReportStatus === "not_purchased" ? (
+                        <Link
+                          href={`/pricing?listingId=${listing.id}&scope=seller-report`}
+                          onClick={() => setShowMoreMenu(false)}
+                          className="block w-full text-left px-4 py-2.5 text-sm font-medium text-purple-700 dark:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          시장분석
+                        </Link>
+                      ) : null}
+                      {!bumpSubscription && (
+                        <Link
+                          href={`/pricing?listingId=${listing.id}#subscription`}
+                          onClick={() => setShowMoreMenu(false)}
+                          className="block w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          정기 구독
+                        </Link>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* 데스크톱용 버튼들 */}
+              <Link
+                href={`/pricing?listingId=${listing.id}`}
+                className={`hidden md:flex min-h-[44px] items-center justify-center py-2 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-xs md:text-base ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+              >
+                광고 구매
+              </Link>
+              {sellerReportStatus === "purchased" ? (
+                <Link
+                  href={`/reports/seller/${listing.id}`}
+                  className="hidden md:flex min-h-[44px] items-center justify-center py-2 bg-emerald-50 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 rounded-xl font-medium text-center hover:bg-emerald-100 dark:hover:bg-emerald-900 transition-colors text-xs"
+                >
+                  리포트 보기
+                </Link>
+              ) : sellerReportStatus === "not_purchased" ? (
+                <Link
+                  href={`/pricing?listingId=${listing.id}&scope=seller-report`}
+                  className={`hidden md:flex min-h-[44px] items-center justify-center py-2 bg-purple-50 dark:bg-purple-950 border border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 rounded-xl font-medium text-center hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors text-xs ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+                >
+                  시장분석
+                </Link>
+              ) : null}
               {!bumpSubscription && (
                 <Link
                   href={`/pricing?listingId=${listing.id}#subscription`}

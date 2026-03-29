@@ -216,7 +216,15 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
           이전
         </button>
         <button
-          onClick={onNext}
+          onClick={() => {
+            // 면적과 층수가 비어있으면 넛지 토스트 표시
+            if (!data.areaPyeong || !data.currentFloor) {
+              import("@/lib/toast").then(({ toast }) => {
+                toast.info("정보를 입력하면 조회수가 높아집니다");
+              });
+            }
+            onNext();
+          }}
           className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
         >
           다음

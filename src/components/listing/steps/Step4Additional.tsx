@@ -61,6 +61,13 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+      {/* 선택사항 안내 배너 */}
+      <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+          매출/지출 정보는 선택사항입니다. 입력하면 매물 신뢰도가 높아집니다.
+        </p>
+      </div>
+
       <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">추가정보</h2>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">매출/지출 정보를 입력하면 매수자 신뢰도가 높아집니다</p>
 

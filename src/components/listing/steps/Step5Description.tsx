@@ -7,7 +7,8 @@ interface Props {
   onPrev: () => void;
 }
 
-const MIN_LENGTH = 10;
+const MIN_LENGTH = 30;
+const RECOMMENDED_LENGTH = 200;
 
 export default function Step5Description({ onNext, onPrev }: Props) {
   const { data, updateData } = useListingFormStore();
@@ -57,7 +58,12 @@ export default function Step5Description({ onNext, onPrev }: Props) {
             최소 {MIN_LENGTH}자 이상 입력해주세요
           </p>
         )}
-        {charCount > 0 && isValid && (
+        {charCount > 0 && isValid && charCount < RECOMMENDED_LENGTH && (
+          <p className="text-xs text-blue-500 font-medium">
+            {RECOMMENDED_LENGTH}자 이상 입력하면 조회수가 높아집니다
+          </p>
+        )}
+        {charCount >= RECOMMENDED_LENGTH && (
           <p className="text-xs text-green-500 font-medium">
             작성 완료
           </p>

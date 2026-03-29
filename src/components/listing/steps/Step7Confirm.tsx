@@ -20,7 +20,7 @@ const SERVICES: { key: ServiceKey; icon: string; title: string; description: str
 ];
 
 export default function Step7Confirm({ onPrev }: Props) {
-  const { data, reset } = useListingFormStore();
+  const { data, reset, setStep } = useListingFormStore();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -215,12 +215,12 @@ export default function Step7Confirm({ onPrev }: Props) {
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">입력한 내용을 확인하고 등록해주세요</p>
 
       <div className="space-y-4">
-        <Section title="위치정보">
+        <Section title="위치정보" onEdit={() => setStep(1)}>
           <Info label="주소" value={data.addressRoad || data.addressJibun} />
           {data.addressDetail && <Info label="상세주소" value={data.addressDetail} />}
         </Section>
 
-        <Section title="업종 / 금액">
+        <Section title="업종 / 금액" onEdit={() => setStep(2)}>
           <Info label="업종" value={`${data.categoryName} > ${data.subCategoryName}`} />
           <Info label="보증금" value={`${formatPrice(data.deposit)}만원`} />
           <Info label="월세" value={`${formatPrice(data.monthlyRent)}만원`} />
@@ -234,7 +234,7 @@ export default function Step7Confirm({ onPrev }: Props) {
           />
         </Section>
 
-        <Section title="기본정보">
+        <Section title="기본정보" onEdit={() => setStep(3)}>
           <Info label="운영형태" value={data.brandType === "FRANCHISE" ? "프랜차이즈" : "개인매장"} />
           {data.storeName && <Info label="상호명" value={data.storeName} />}
           {data.areaPyeong && <Info label="면적" value={`${data.areaPyeong}평 (${data.areaSqm}m²)`} />}
@@ -245,7 +245,7 @@ export default function Step7Confirm({ onPrev }: Props) {
         </Section>
 
         {data.monthlyRevenue !== null && (
-          <Section title="수익정보">
+          <Section title="수익정보" onEdit={() => setStep(4)}>
             <Info label="월매출" value={`${formatPrice(data.monthlyRevenue)}만원`} />
             {data.monthlyProfit !== null && (
               <Info label="월순이익" value={`${formatPrice(data.monthlyProfit)}만원`} />
@@ -254,12 +254,12 @@ export default function Step7Confirm({ onPrev }: Props) {
         )}
 
         {data.description && (
-          <Section title="매물설명">
+          <Section title="매물설명" onEdit={() => setStep(5)}>
             <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{data.description}</p>
           </Section>
         )}
 
-        <Section title="사진">
+        <Section title="사진" onEdit={() => setStep(6)}>
           {data.images.length > 0 ? (
             <div className="grid grid-cols-4 gap-2">
               {data.images.map((img, i) => (
@@ -276,7 +276,7 @@ export default function Step7Confirm({ onPrev }: Props) {
           )}
         </Section>
 
-        <Section title="연락처">
+        <Section title="연락처" onEdit={() => setStep(6)}>
           <Info label="연락처 공개" value={data.contactPublic ? "공개" : "채팅만"} />
         </Section>
       </div>
@@ -353,10 +353,20 @@ export default function Step7Confirm({ onPrev }: Props) {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, onEdit }: { title: string; children: React.ReactNode; onEdit?: () => void }) {
   return (
     <div className="border-b border-gray-100 dark:border-gray-700 pb-4">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h3>
+        {onEdit && (
+          <button
+            onClick={onEdit}
+            className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            수정
+          </button>
+        )}
+      </div>
       <div className="space-y-1">{children}</div>
     </div>
   );
