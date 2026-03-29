@@ -8,7 +8,7 @@ import { toast } from "@/lib/toast";
 interface AdProduct {
   id: string;
   name: string;
-  type: "PACKAGE" | "SINGLE";
+  type: "PACKAGE" | "SINGLE" | "SUBSCRIPTION";
   categoryScope: "LISTING" | "FRANCHISE" | "PARTNER" | "EQUIPMENT" | "COMMON";
   price: number;
   duration: number | null;
@@ -78,7 +78,12 @@ function PricingContent() {
   );
 
   const singleProducts = useMemo(
-    () => products.filter((p) => p.categoryScope === "COMMON"),
+    () => products.filter((p) => p.categoryScope === "COMMON" && p.type === "SINGLE"),
+    [products]
+  );
+
+  const subscriptionProducts = useMemo(
+    () => products.filter((p) => p.type === "SUBSCRIPTION").sort((a, b) => a.price - b.price),
     [products]
   );
 
@@ -220,6 +225,30 @@ function PricingContent() {
                 purchasing={purchasing === product.id}
                 tierIndex={idx}
                 totalTiers={packageProducts.length}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 정기 끌어올리기 구독 (LISTING 탭에만 표시) */}
+      {activeTab === "LISTING" && subscriptionProducts.length > 0 && (
+        <div className="mb-14">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+              🔄 정기 끌어올리기 구독
+            </h2>
+            <p className="text-gray-600">
+              매번 수동 끌올 대신, 자동으로 상단 노출을 유지하세요
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {subscriptionProducts.map((product) => (
+              <SubscriptionCard
+                key={product.id}
+                product={product}
+                onPurchase={handlePurchase}
+                purchasing={purchasing === product.id}
               />
             ))}
           </div>
@@ -460,6 +489,105 @@ function SingleCard({
         className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
       >
         {purchasing ? "처리 중..." : "구매하기"}
+      </button>
+    </div>
+  );
+}
+
+function SubscriptionCard({
+  product,
+  onPurchase,
+  purchasing,
+}: {
+  product: AdProduct;
+  onPurchase: (id: string) => void;
+  purchasing: boolean;
+}) {
+  const features = product.features as Record<string, any>;
+  const isPopular = features.popular === true;
+
+  // 빈도별 설명
+  const frequencyMap: Record<string, string> = {
+    TWICE_WEEKLY: "주 2회 (월·목)",
+    WEEKDAY_DAILY: "평일 매일",
+    DAILY: "매일 1회",
+    TWICE_DAILY: "매일 2회",
+  };
+
+  const timeDisplay = features.bumpTimes
+    ? features.bumpTimes.length === 1
+      ? `오전 ${features.bumpTimes[0].replace(":00", "시")}`
+      : `오전 ${features.bumpTimes[0].replace(":00", "시")} + 오후 ${features.bumpTimes[1].replace(":00", "시")}`
+    : "자동 끌올";
+
+  return (
+    <div
+      className={`relative rounded-xl p-5 border-2 bg-white hover:shadow-lg transition-all ${
+        isPopular
+          ? "border-blue-400 ring-2 ring-blue-400 shadow-md"
+          : "border-gray-200 hover:border-blue-300"
+      }`}
+    >
+      {isPopular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+          인기
+        </div>
+      )}
+
+      <div className="text-center mb-4 pt-1">
+        <h3 className="text-lg font-bold text-gray-900 mb-2">
+          {product.name.replace("끌어올리기 ", "")}
+        </h3>
+        <div className="flex items-baseline justify-center gap-1 mb-1">
+          <span className="text-2xl font-bold text-gray-900">
+            월 {(product.price / 1000).toLocaleString()}
+          </span>
+          <span className="text-sm text-gray-600">천원</span>
+        </div>
+        <p className="text-xs text-gray-500">30일 자동 갱신</p>
+      </div>
+
+      <div className="space-y-2 mb-4 min-h-[100px]">
+        <div className="flex items-center gap-2 text-sm text-gray-700">
+          <span className="text-blue-600">📅</span>
+          <span className="font-medium">{frequencyMap[features.frequency] || "자동 끌올"}</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-700">
+          <span className="text-orange-500">⏰</span>
+          <span>{timeDisplay} 자동 끌올</span>
+        </div>
+        {features.savingsPercent && (
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-green-600">💰</span>
+            <span className="text-green-600 font-medium">
+              단건 대비 {features.savingsPercent}% 절약
+            </span>
+          </div>
+        )}
+        {!features.savingsPercent && features.frequency === "TWICE_DAILY" && (
+          <div className="flex items-center gap-2 text-sm text-gray-700">
+            <span>🚀</span>
+            <span className="font-medium">최대 노출 효과</span>
+          </div>
+        )}
+        {features.frequency === "DAILY" && (
+          <div className="flex items-center gap-2 text-sm text-gray-700">
+            <span>📈</span>
+            <span>가장 꾸준한 노출</span>
+          </div>
+        )}
+      </div>
+
+      <button
+        onClick={() => onPurchase(product.id)}
+        disabled={purchasing}
+        className={`w-full py-2.5 rounded-lg font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+          isPopular
+            ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
+            : "bg-gray-800 hover:bg-gray-900 active:bg-black"
+        }`}
+      >
+        {purchasing ? "처리 중..." : "구독하기"}
       </button>
     </div>
   );

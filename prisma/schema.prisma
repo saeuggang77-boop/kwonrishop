@@ -40,7 +40,9 @@ model User {
   favorites            Favorite[]
   notifications        Notification[]
   adPurchases          AdPurchase[]
+  bumpSubscriptions    BumpSubscription[]
   reportsMade          Report[]  @relation("reporter")
+  sellerReports        SellerReport[]
 }
 
 enum UserRole {
@@ -214,12 +216,14 @@ model Listing {
   subCategory  SubCategory?         @relation(fields: [subCategoryId], references: [id])
   images       ListingImage[]
   documents    ListingDocument[]
-  favorites    Favorite[]
-  chatRooms    ChatRoom[]
-  adPurchases  AdPurchase[]
-  reviews      Review[]
-  externalData ListingExternalData?
+  favorites         Favorite[]
+  chatRooms         ChatRoom[]
+  adPurchases       AdPurchase[]
+  bumpSubscriptions BumpSubscription[]
+  reviews           Review[]
+  externalData      ListingExternalData?
   priceHistory PriceHistory[]
+  sellerReports     SellerReport[]
 
   @@index([categoryId, subCategoryId])
   @@index([status, bumpedAt])
@@ -461,6 +465,7 @@ model AdProduct {
 enum AdType {
   PACKAGE
   SINGLE
+  SUBSCRIPTION
 }
 
 enum AdCategoryScope {
@@ -486,11 +491,13 @@ model AdPurchase {
   viewCountAtAdStart Int?
   createdAt          DateTime      @default(now())
 
-  user           User            @relation(fields: [userId], references: [id])
-  listing        Listing?        @relation(fields: [listingId], references: [id])
-  partnerService PartnerService? @relation(fields: [partnerServiceId], references: [id])
-  equipment      Equipment?      @relation(fields: [equipmentId], references: [id])
-  product        AdProduct       @relation(fields: [productId], references: [id])
+  user             User              @relation(fields: [userId], references: [id])
+  listing          Listing?          @relation(fields: [listingId], references: [id])
+  partnerService   PartnerService?   @relation(fields: [partnerServiceId], references: [id])
+  equipment        Equipment?        @relation(fields: [equipmentId], references: [id])
+  product          AdProduct         @relation(fields: [productId], references: [id])
+  bumpSubscription BumpSubscription?
+  sellerReport     SellerReport?
 
   @@index([userId, status])
 }
@@ -500,6 +507,45 @@ enum PaymentStatus {
   PAID
   CANCELLED
   REFUNDED
+  EXPIRED
+}
+
+model BumpSubscription {
+  id          String                 @id @default(cuid())
+  userId      String
+  listingId   String?
+  equipmentId String?
+
+  frequency  BumpFrequency
+  bumpTimes  String[] // ["09:00", "18:00"] 형태
+  nextBumpAt DateTime
+
+  adPurchaseId String                  @unique
+  status       BumpSubscriptionStatus @default(ACTIVE)
+
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  cancelledAt DateTime?
+
+  user       User        @relation(fields: [userId], references: [id])
+  listing    Listing?    @relation(fields: [listingId], references: [id])
+  equipment  Equipment?  @relation(fields: [equipmentId], references: [id])
+  adPurchase AdPurchase  @relation(fields: [adPurchaseId], references: [id])
+
+  @@index([status, nextBumpAt])
+  @@index([userId])
+}
+
+enum BumpFrequency {
+  TWICE_WEEKLY  // 주 2회 (월, 목)
+  WEEKDAY_DAILY // 주 5회 (평일 매일)
+  DAILY         // 매일 1회
+  TWICE_DAILY   // 매일 2회
+}
+
+enum BumpSubscriptionStatus {
+  ACTIVE
+  CANCELLED
   EXPIRED
 }
 
@@ -745,9 +791,10 @@ model Equipment {
   // 관계
   user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   images        EquipmentImage[]
-  favorites     EquipmentFavorite[]
-  chatRooms     ChatRoom[]
-  adPurchases   AdPurchase[]
+  favorites         EquipmentFavorite[]
+  chatRooms         ChatRoom[]
+  adPurchases       AdPurchase[]
+  bumpSubscriptions BumpSubscription[]
 
   @@index([category])
   @@index([status, bumpedAt])
@@ -795,4 +842,27 @@ model PriceHistory {
   listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@index([listingId, createdAt])
+}
+
+// ==========================================
+// 매도자 시장분석 리포트
+// ==========================================
+
+model SellerReport {
+  id          String   @id @default(cuid())
+  userId      String
+  listingId   String
+
+  reportData  Json     // 분석 결과 전체 JSON
+
+  adPurchaseId String  @unique
+
+  createdAt   DateTime @default(now())
+
+  user        User       @relation(fields: [userId], references: [id])
+  listing     Listing    @relation(fields: [listingId], references: [id])
+  adPurchase  AdPurchase @relation(fields: [adPurchaseId], references: [id])
+
+  @@index([userId])
+  @@index([listingId])
 }

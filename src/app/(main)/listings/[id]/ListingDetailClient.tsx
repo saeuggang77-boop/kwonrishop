@@ -143,6 +143,12 @@ export default function ListingDetailClient() {
   const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewed[]>([]);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [bumpSubscription, setBumpSubscription] = useState<{
+    id: string;
+    frequency: string;
+    nextBumpAt: string;
+  } | null>(null);
+  const [sellerReportStatus, setSellerReportStatus] = useState<"loading" | "purchased" | "not_purchased">("loading");
 
   useEffect(() => {
     setError(false);
@@ -180,6 +186,42 @@ export default function ListingDetailClient() {
       .then((data) => { if (!data.error) setAreaStats(data); })
       .catch(() => {});
   }, [listingId, listingAddressRoad, listingCategoryId]);
+
+  // Fetch bump subscription status (for owner)
+  useEffect(() => {
+    if (!session?.user?.id || !listing || session.user.id !== listing.user.id) return;
+    fetch("/api/bump-subscriptions")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.subscriptions && data.subscriptions.length > 0) {
+          const activeSub = data.subscriptions.find(
+            (sub: any) => sub.listingId === listing.id && sub.status === "ACTIVE"
+          );
+          if (activeSub) {
+            setBumpSubscription({
+              id: activeSub.id,
+              frequency: activeSub.frequency,
+              nextBumpAt: activeSub.nextBumpAt,
+            });
+          }
+        }
+      })
+      .catch(() => {});
+  }, [session?.user?.id, listing]);
+
+  // Fetch seller report status (for owner)
+  useEffect(() => {
+    if (!session?.user?.id || !listing || session.user.id !== listing.user.id) {
+      setSellerReportStatus("not_purchased");
+      return;
+    }
+    fetch(`/api/reports/seller-analysis?listingId=${listing.id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setSellerReportStatus(data.hasReport ? "purchased" : "not_purchased");
+      })
+      .catch(() => setSellerReportStatus("not_purchased"));
+  }, [session?.user?.id, listing]);
 
   // Recently viewed: save current + load list
   useEffect(() => {
@@ -1093,13 +1135,48 @@ export default function ListingDetailClient() {
             >
               광고 구매
             </Link>
-            <button
-              onClick={handleBump}
-              disabled={bumping || listing.status === "SOLD"}
-              className="flex-1 py-3 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 active:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
-            >
-              {bumping ? "처리 중..." : "끌올"}
-            </button>
+            {sellerReportStatus === "purchased" ? (
+              <Link
+                href={`/reports/seller/${listing.id}`}
+                className="px-3 py-3 bg-emerald-50 border border-emerald-300 text-emerald-700 rounded-xl font-medium text-center hover:bg-emerald-100 transition-colors text-xs md:text-sm whitespace-nowrap"
+              >
+                리포트 보기
+              </Link>
+            ) : sellerReportStatus === "not_purchased" ? (
+              <Link
+                href={`/pricing?listingId=${listing.id}&scope=seller-report`}
+                className={`px-3 py-3 bg-purple-50 border border-purple-300 text-purple-700 rounded-xl font-medium text-center hover:bg-purple-100 transition-colors text-xs md:text-sm whitespace-nowrap ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+              >
+                시장분석
+              </Link>
+            ) : null}
+            {bumpSubscription ? (
+              <div className="flex-1 py-3 bg-green-50 border-2 border-green-400 rounded-xl text-center">
+                <div className="text-xs font-bold text-green-700 mb-0.5">🔄 자동 끌올 중</div>
+                <div className="text-xs text-green-600">
+                  {bumpSubscription.frequency === "TWICE_WEEKLY" && "주 2회 (월·목)"}
+                  {bumpSubscription.frequency === "WEEKDAY_DAILY" && "평일 매일"}
+                  {bumpSubscription.frequency === "DAILY" && "매일 1회"}
+                  {bumpSubscription.frequency === "TWICE_DAILY" && "매일 2회"}
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={handleBump}
+                disabled={bumping || listing.status === "SOLD"}
+                className="flex-1 py-3 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 active:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+              >
+                {bumping ? "처리 중..." : "끌올"}
+              </button>
+            )}
+            {!bumpSubscription && (
+              <Link
+                href={`/pricing?listingId=${listing.id}#subscription`}
+                className="hidden md:block px-2 py-1 text-xs text-blue-600 hover:text-blue-700 font-medium whitespace-nowrap self-center"
+              >
+                정기 구독
+              </Link>
+            )}
           </div>
         ) : (
           /* 일반 유저일 때: 채팅/관심 바 */

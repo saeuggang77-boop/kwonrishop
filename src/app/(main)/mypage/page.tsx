@@ -5,6 +5,14 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from "@/lib/toast";
+
+interface SellerReportItem {
+  id: string;
+  listingId: string;
+  listingName: string;
+  createdAt: string;
+}
 
 interface MyData {
   user: {
@@ -37,6 +45,14 @@ export default function MyPage() {
   const router = useRouter();
   const [data, setData] = useState<MyData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bumpSubscription, setBumpSubscription] = useState<{
+    id: string;
+    frequency: string;
+    nextBumpAt: string;
+    listingId: string | null;
+  } | null>(null);
+  const [cancellingSubscription, setCancellingSubscription] = useState(false);
+  const [sellerReports, setSellerReports] = useState<SellerReportItem[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -48,8 +64,60 @@ export default function MyPage() {
         .then((r) => r.json())
         .then((d) => { setData(d); setLoading(false); })
         .catch(() => setLoading(false));
+
+      // Fetch seller reports
+      fetch("/api/mypage/seller-reports")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.reports) setSellerReports(data.reports);
+        })
+        .catch(() => {});
+
+      // Fetch bump subscription
+      fetch("/api/bump-subscriptions")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.subscriptions && data.subscriptions.length > 0) {
+            const activeSub = data.subscriptions.find((sub: any) => sub.status === "ACTIVE");
+            if (activeSub) {
+              setBumpSubscription({
+                id: activeSub.id,
+                frequency: activeSub.frequency,
+                nextBumpAt: activeSub.nextBumpAt,
+                listingId: activeSub.listingId,
+              });
+            }
+          }
+        })
+        .catch(() => {});
     }
   }, [status, router]);
+
+  async function handleCancelSubscription() {
+    if (!bumpSubscription) return;
+
+    const confirmed = confirm("정기 끌어올리기 구독을 해지하시겠습니까?\n다음 결제일부터 자동 끌어올리기가 중단됩니다.");
+    if (!confirmed) return;
+
+    setCancellingSubscription(true);
+    try {
+      const res = await fetch(`/api/bump-subscriptions/${bumpSubscription.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("구독이 해지되었습니다");
+        setBumpSubscription(null);
+      } else {
+        toast.error(data.error || "구독 해지 중 오류가 발생했습니다");
+      }
+    } catch {
+      toast.error("구독 해지 중 오류가 발생했습니다");
+    } finally {
+      setCancellingSubscription(false);
+    }
+  }
 
   if (loading || !data) {
     return (
@@ -258,6 +326,65 @@ export default function MyPage() {
         )}
       </div>
 
+      {/* 끌어올리기 구독 (SELLER만, 매물이 있을 때) */}
+      {data.user.role === "SELLER" && data.listing && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-900">🔄 정기 끌어올리기</h3>
+          </div>
+          {bumpSubscription ? (
+            <div>
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">✅</span>
+                    <span className="font-bold text-green-700">구독 활성화</span>
+                  </div>
+                  <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded font-medium">
+                    {bumpSubscription.frequency === "TWICE_WEEKLY" && "주 2회"}
+                    {bumpSubscription.frequency === "WEEKDAY_DAILY" && "평일 매일"}
+                    {bumpSubscription.frequency === "DAILY" && "매일 1회"}
+                    {bumpSubscription.frequency === "TWICE_DAILY" && "매일 2회"}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>
+                    다음 끌올: <span className="font-medium text-gray-900">
+                      {new Date(bumpSubscription.nextBumpAt).toLocaleString("ko-KR", {
+                        month: "long",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-500">자동으로 매물이 최상단에 노출됩니다</p>
+                </div>
+              </div>
+              <button
+                onClick={handleCancelSubscription}
+                disabled={cancellingSubscription}
+                className="mt-3 w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {cancellingSubscription ? "처리 중..." : "구독 해지하기"}
+              </button>
+            </div>
+          ) : (
+            <div>
+              <p className="text-sm text-gray-600 mb-3">
+                정기 끌어올리기로 항상 상단 노출을 유지하세요!
+              </p>
+              <Link
+                href={`/pricing?listingId=${data.listing.id}#subscription`}
+                className="inline-block w-full px-4 py-2.5 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 text-center"
+              >
+                구독 상품 보기
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* 내 서비스 (PARTNER) */}
       {data.user.role === "PARTNER" && (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
@@ -343,6 +470,39 @@ export default function MyPage() {
           <p className="text-sm text-gray-400">등록된 집기가 없습니다</p>
         )}
       </div>
+
+      {/* 내 분석 리포트 (SELLER만) */}
+      {data.user.role === "SELLER" && data.listing && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-900">내 분석 리포트</h3>
+          </div>
+          {sellerReports.length > 0 ? (
+            <div className="space-y-2">
+              {sellerReports.map((report) => (
+                <Link
+                  key={report.id}
+                  href={`/reports/seller/${report.listingId}`}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{report.listingName || "매물 시장분석"}</p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(report.createdAt).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
+                    </p>
+                  </div>
+                  <span className="text-xs text-blue-600 font-medium">보기</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div>
+              <p className="text-sm text-gray-400 mb-3">아직 구매한 리포트가 없습니다</p>
+              <p className="text-xs text-gray-400">매물 상세 페이지에서 시장분석 리포트를 구매할 수 있습니다 (15,000원/건)</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 메뉴 */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800">

@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { notifyPaymentSuccess } from "@/lib/kakao-alimtalk";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { calculateNextBumpTime } from "@/lib/bump-utils";
+import { generateSellerReport } from "@/lib/report-generator";
 
 export async function POST(request: NextRequest) {
   if (!validateOrigin(request)) {
@@ -183,6 +185,57 @@ export async function POST(request: NextRequest) {
       }
     }
     // EQUIPMENT scope: no tier update needed (equipment doesn't have tiers)
+
+    // SUBSCRIPTION type: Create BumpSubscription
+    if (order.product.type === "SUBSCRIPTION") {
+      const frequency = features.frequency as any;
+      const bumpTimes = (features.bumpTimes || ["09:00"]) as string[];
+      const nextBumpAt = calculateNextBumpTime(frequency, bumpTimes);
+
+      await prisma.bumpSubscription.create({
+        data: {
+          userId: session.user.id,
+          listingId: order.listingId || undefined,
+          equipmentId: order.equipmentId || undefined,
+          frequency,
+          bumpTimes,
+          nextBumpAt,
+          adPurchaseId: order.id,
+          status: "ACTIVE",
+          expiresAt: order.product.duration ? expiresAt : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+      });
+    }
+
+    // 매도자 시장분석 리포트 자동 생성
+    if (features?.scope === "SELLER_REPORT" && order.listingId) {
+      const listingForReport = await prisma.listing.findUnique({
+        where: { id: order.listingId },
+        include: {
+          category: { select: { name: true } },
+          subCategory: { select: { name: true } },
+        },
+      });
+
+      if (listingForReport) {
+        // 비동기로 리포트 생성 (결제 확인 응답은 바로 반환)
+        (async () => {
+          try {
+            const reportData = await generateSellerReport(listingForReport);
+            await prisma.sellerReport.create({
+              data: {
+                userId: session.user.id,
+                listingId: order.listingId!,
+                adPurchaseId: order.id,
+                reportData: reportData as any,
+              },
+            });
+          } catch (err) {
+            console.error("[SellerReport] Failed to generate report:", err);
+          }
+        })();
+      }
+    }
 
     // Create notification
     await prisma.notification.create({
