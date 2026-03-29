@@ -1092,9 +1092,9 @@ export default function ListingDetailClient() {
       )}
 
       {/* ===== 14. 상권분석 ===== */}
-      {listing.latitude && listing.longitude && (
+      {session && listing.latitude && listing.longitude && (
         <Section title="상권분석">
-          <CommercialDistrictSection latitude={listing.latitude} longitude={listing.longitude} categoryId={listing.category?.id} categoryName={listing.category?.name} listingId={listing.id} />
+          <CommercialDistrictSection latitude={listing.latitude} longitude={listing.longitude} categoryId={listing.category?.id} categoryName={listing.category?.name} />
         </Section>
       )}
 

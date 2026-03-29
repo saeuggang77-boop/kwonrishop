@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type RoleOption = {
   value: "BUYER" | "SELLER" | "FRANCHISE" | "PARTNER";
@@ -57,9 +57,11 @@ const roles: RoleOption[] = [
   },
 ];
 
-export default function SelectRolePage() {
+function SelectRoleContent() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -97,7 +99,15 @@ export default function SelectRolePage() {
 
       if (data.redirect) {
         await update();
-        router.push(data.redirect);
+
+        // callbackUrl이 있고 안전한 경로면 verify-business에 전달
+        if (callbackUrl && callbackUrl.startsWith("/")) {
+          const redirectUrl = new URL(data.redirect, window.location.origin);
+          redirectUrl.searchParams.set("callbackUrl", callbackUrl);
+          router.push(redirectUrl.pathname + redirectUrl.search);
+        } else {
+          router.push(data.redirect);
+        }
         router.refresh();
       }
     } catch {
@@ -116,6 +126,14 @@ export default function SelectRolePage() {
           <p className="text-gray-500 dark:text-gray-400">
             어떤 목적으로 권리샵을 이용하시나요?
           </p>
+
+          {callbackUrl === "/sell" && (
+            <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <p className="text-sm text-amber-700 dark:text-amber-400 text-center">
+                매물을 등록하려면 <strong>사장님</strong> 역할을 선택해주세요
+              </p>
+            </div>
+          )}
         </div>
 
         {error && (
@@ -158,5 +176,17 @@ export default function SelectRolePage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SelectRolePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-pulse text-gray-400">로딩 중...</div>
+      </div>
+    }>
+      <SelectRoleContent />
+    </Suspense>
   );
 }

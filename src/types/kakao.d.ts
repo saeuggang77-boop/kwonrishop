@@ -9,6 +9,19 @@ interface KakaoMaps {
   event: {
     addListener: (target: any, type: string, handler: () => void) => void;
   };
+  services: {
+    Geocoder: new () => {
+      addressSearch: (
+        address: string,
+        callback: (result: Array<{ x: string; y: string }>, status: string) => void
+      ) => void;
+    };
+    Status: {
+      OK: string;
+      ZERO_RESULT: string;
+      ERROR: string;
+    };
+  };
 }
 
 declare global {

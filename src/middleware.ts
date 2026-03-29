@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
 
     // SELLER/FRANCHISE/PARTNER는 사업자인증 필수
     if (pathname.startsWith("/sell") && userRole !== "SELLER" && userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL("/select-role?callbackUrl=/sell", req.url));
     }
 
     if (pathname.startsWith("/sell") && userRole === "SELLER" && !verified) {

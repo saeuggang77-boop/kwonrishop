@@ -10,6 +10,7 @@ function VerifyBusinessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedRole = searchParams.get("role") as "SELLER" | "FRANCHISE" | "PARTNER" | null;
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const [form, setForm] = useState({
     businessNumber: "",
@@ -92,6 +93,12 @@ function VerifyBusinessContent() {
 
   // 역할별 성공 후 리다이렉트 URL
   const getSuccessRedirect = () => {
+    // callbackUrl이 있고 안전한 경로면 우선 사용
+    if (callbackUrl && callbackUrl.startsWith("/")) {
+      return callbackUrl;
+    }
+
+    // 기본 역할별 리다이렉트
     if (requestedRole === "SELLER") return "/sell";
     if (requestedRole === "FRANCHISE" && matchedBrandId) return `/franchise/${matchedBrandId}`;
     if (requestedRole === "FRANCHISE") return "/franchise";

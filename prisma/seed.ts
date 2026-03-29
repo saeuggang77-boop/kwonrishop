@@ -548,19 +548,6 @@ const adProducts = [
     },
   },
   {
-    id: "common-report",
-    name: "상권분석 리포트",
-    type: "SINGLE" as const,
-    categoryScope: "COMMON" as const,
-    price: 30000,
-    duration: null,
-    sortOrder: 26,
-    features: {
-      report: true,
-      description: "유동인구, 업종분포, 평균매출 등 상세 상권 데이터 (1회 구매 시 영구 열람)",
-    },
-  },
-  {
     id: "common-seller-report",
     name: "매도자 시장분석 리포트",
     type: "SINGLE" as const,

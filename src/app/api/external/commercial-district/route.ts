@@ -1,22 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { getCommercialDistrictInfo } from "@/lib/api/small-biz";
 
 /**
  * GET /api/external/commercial-district
- * Query params: lat (required), lng (required), categoryId (optional), listingId (optional)
+ * Query params: lat (required), lng (required), categoryId (optional)
  *
- * - 구매한 사용자: 전체 데이터 반환 (200)
- * - 미구매/비로그인: 미리보기 데이터 반환 (402)
+ * - 로그인한 사용자: 전체 데이터 반환 (200)
+ * - 비로그인: 401 Unauthorized
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const lat = searchParams.get("lat");
     const lng = searchParams.get("lng");
-    const listingId = searchParams.get("listingId");
 
     if (!lat || !lng) {
       return NextResponse.json(
@@ -32,6 +30,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: "Invalid lat or lng values" },
         { status: 400 }
+      );
+    }
+
+    // 로그인 여부 확인
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "로그인이 필요합니다" },
+        { status: 401 }
       );
     }
 
@@ -68,49 +75,11 @@ export async function GET(request: NextRequest) {
       quarterChange: rawData.quarterChange,
     };
 
-    // 구매 여부 확인
-    const session = await getServerSession(authOptions);
-
-    if (session?.user?.id && listingId) {
-      const purchase = await prisma.adPurchase.findFirst({
-        where: {
-          userId: session.user.id,
-          listingId,
-          status: "PAID",
-          product: { id: "common-report" },
-        },
-      });
-
-      if (purchase) {
-        return NextResponse.json(fullData, {
-          headers: {
-            "Cache-Control": "private, s-maxage=300, stale-while-revalidate=600",
-          },
-        });
-      }
-    }
-
-    // 미구매 → 미리보기 데이터 (일부 마스킹)
-    const previewData = {
-      totalStores: fullData.totalStores,
-      footTraffic: fullData.footTraffic,
-      avgMonthlyRevenue: 0,
-      industryDistribution: fullData.industryDistribution.slice(0, 2),
-      residentPopulation: 0,
-      workingPopulation: 0,
-      sameCategoryCount: fullData.sameCategoryCount,
-      competitionLevel: fullData.competitionLevel,
-      closureRate: fullData.closureRate,
-      nationalAvgClosureRate: fullData.nationalAvgClosureRate,
-      closureStability: fullData.closureStability,
-      populationByTime: [],
-      peakTimes: [],
-      mainAgeGroup: "",
-      mainAgeGroupPercentage: 0,
-      quarterChange: 0,
-    };
-
-    return NextResponse.json({ preview: previewData }, { status: 402 });
+    return NextResponse.json(fullData, {
+      headers: {
+        "Cache-Control": "private, s-maxage=300, stale-while-revalidate=600",
+      },
+    });
   } catch (error) {
     console.error("Error in commercial-district API:", error);
     return NextResponse.json(
