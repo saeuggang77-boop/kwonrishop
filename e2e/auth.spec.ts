@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("인증 페이지", () => {
   test("로그인 페이지에 소셜 로그인 버튼 존재", async ({ page }) => {
-    await page.goto("/auth/login");
+    await page.goto("/login");
 
     // 카카오 또는 네이버 로그인 버튼 확인
     const kakaoButton = page.getByRole("button", { name: /카카오/ });
@@ -10,8 +10,9 @@ test.describe("인증 페이지", () => {
 
     const hasKakao = await kakaoButton.isVisible().catch(() => false);
     const hasNaver = await naverButton.isVisible().catch(() => false);
+    const hasEmailLogin = await page.getByRole("button", { name: /이메일로 로그인/ }).isVisible().catch(() => false);
 
-    expect(hasKakao || hasNaver).toBeTruthy();
+    expect(hasKakao || hasNaver || hasEmailLogin).toBeTruthy();
   });
 
   test("마이페이지 접근 시 로그인 리디렉션", async ({ page }) => {

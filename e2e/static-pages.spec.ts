@@ -11,14 +11,14 @@ test.describe("정적 페이지", () => {
   test("개인정보처리방침 페이지 로드", async ({ page }) => {
     await page.goto("/privacy");
 
-    const heading = page.getByRole("heading", { name: /개인정보처리방침|개인정보 처리방침/ });
+    const heading = page.getByRole("heading", { name: "개인정보처리방침", exact: true });
     await expect(heading).toBeVisible();
   });
 
   test("소개 페이지 로드", async ({ page }) => {
     await page.goto("/about");
 
-    const heading = page.getByRole("heading", { name: /권리샵/ });
+    const heading = page.getByRole("heading", { name: /권리샵/ }).first();
     await expect(heading).toBeVisible();
   });
 
