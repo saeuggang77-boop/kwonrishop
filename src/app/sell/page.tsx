@@ -96,7 +96,7 @@ export default function SellPage() {
         .then((res) => res.json())
         .then((d) => {
           if (!d.verified) {
-            router.push("/verify-business");
+            router.push("/verify-business?role=SELLER");
           } else {
             setCheckingVerification(false);
           }

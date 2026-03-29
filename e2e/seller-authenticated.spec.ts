@@ -140,7 +140,7 @@ test.describe("인증된 사장님 전체 플로우", () => {
     await page.locator("textarea").fill(
       "테스트 매물입니다. 역세권 카페로 유동인구가 많고 인테리어 양호합니다. 단골 고객 다수."
     );
-    await expect(page.getByText("작성 완료")).toBeVisible();
+    await expect(page.getByText("조회수가 높아집니다")).toBeVisible();
     await page.getByRole("button", { name: "다음" }).click();
 
     // ── Step 6: 사진 / 연락처 ──
