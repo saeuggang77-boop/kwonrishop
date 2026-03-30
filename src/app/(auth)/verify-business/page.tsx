@@ -207,11 +207,14 @@ function VerifyBusinessContent() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               required
             />
+            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+              사업자등록증의 &ldquo;개업연월일&rdquo;을 입력하세요 (발급일과 다를 수 있습니다)
+            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              상호명 <span className="text-gray-400">(선택)</span>
+              상호명 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -221,6 +224,7 @@ function VerifyBusinessContent() {
                 setForm({ ...form, businessName: e.target.value })
               }
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              required
             />
           </div>
 

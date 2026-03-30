@@ -65,7 +65,7 @@ export async function validateBusiness(
             b_no: cleanNumber,
             start_dt: cleanDate,
             p_nm: representativeName,
-            b_nm: businessName || "",
+            b_nm: "",
           },
         ],
       }),
