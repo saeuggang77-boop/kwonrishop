@@ -88,15 +88,18 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
 
         {/* 매출 */}
         <div>
-          <h3 className="font-medium text-gray-900 dark:text-white mb-3">월 매출 (만원)</h3>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder="월 평균 매출 (최근 6개월)"
-            value={fmt(data.monthlyRevenue)}
-            onChange={(e) => numInput("monthlyRevenue", e.target.value)}
-            className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
-          />
+          <h3 className="font-medium text-gray-900 dark:text-white mb-3">월 매출</h3>
+          <div className="relative">
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="월 평균 매출 (최근 6개월)"
+              value={fmt(data.monthlyRevenue)}
+              onChange={(e) => numInput("monthlyRevenue", e.target.value)}
+              className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
+          </div>
         </div>
 
         {/* 운영 형태 */}
@@ -123,37 +126,46 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
             ))}
           </div>
           {data.operationType === "FAMILY" && (
-            <input
-              type="number"
-              placeholder="가족/동업자 수"
-              value={data.familyWorkers ?? ""}
-              onChange={(e) => numInput("familyWorkers", e.target.value)}
-              className="mt-2 w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
+            <div className="relative mt-2">
+              <input
+                type="number"
+                placeholder="가족/동업자 수"
+                value={data.familyWorkers ?? ""}
+                onChange={(e) => numInput("familyWorkers", e.target.value)}
+                className="w-full px-3 py-2.5 pr-8 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">명</span>
+            </div>
           )}
           {data.operationType === "EMPLOYEE" && (
             <div className="grid grid-cols-2 gap-3 mt-2">
-              <input
-                type="number"
-                placeholder="정직원 수"
-                value={data.employeesFull ?? ""}
-                onChange={(e) => numInput("employeesFull", e.target.value)}
-                className="px-3 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              />
-              <input
-                type="number"
-                placeholder="파트타임 수"
-                value={data.employeesPart ?? ""}
-                onChange={(e) => numInput("employeesPart", e.target.value)}
-                className="px-3 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  placeholder="정직원 수"
+                  value={data.employeesFull ?? ""}
+                  onChange={(e) => numInput("employeesFull", e.target.value)}
+                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">명</span>
+              </div>
+              <div className="relative">
+                <input
+                  type="number"
+                  placeholder="파트타임 수"
+                  value={data.employeesPart ?? ""}
+                  onChange={(e) => numInput("employeesPart", e.target.value)}
+                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">명</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* 지출 + 매출대비% */}
         <div>
-          <h3 className="font-medium text-gray-900 dark:text-white mb-3">월 지출 (만원)</h3>
+          <h3 className="font-medium text-gray-900 dark:text-white mb-3">월 지출</h3>
           <div className="grid grid-cols-2 gap-3">
             {expenseFields.map(({ field, label }) => {
               const val = (data as unknown as Record<string, number | null>)[field];
@@ -165,14 +177,17 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
                     <span>{label}</span>
                     {pct && <span className={`font-medium ${pctClass}`}>{pct}</span>}
                   </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="0"
-                    value={fmt(val)}
-                    onChange={(e) => numInput(field, e.target.value)}
-                    className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="0"
+                      value={fmt(val)}
+                      onChange={(e) => numInput(field, e.target.value)}
+                      className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
+                  </div>
                 </div>
               );
             })}
@@ -181,7 +196,7 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
 
         {/* 순이익 자동계산 */}
         <div>
-          <h3 className="font-medium text-gray-900 dark:text-white mb-3">월 순이익 (만원)</h3>
+          <h3 className="font-medium text-gray-900 dark:text-white mb-3">월 순이익</h3>
           {autoProfit !== null && (
             <div className="mb-2 px-4 py-2.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
               <div className="flex justify-between items-center">
@@ -200,14 +215,17 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
               <p className="text-xs text-blue-500 dark:text-blue-400 mt-1">매출 - 지출 합계 (아래에서 직접 수정도 가능)</p>
             </div>
           )}
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder={autoProfit !== null ? `자동계산: ${autoProfit.toLocaleString()}` : "월 평균 순이익"}
-            value={fmt(data.monthlyProfit)}
-            onChange={(e) => numInput("monthlyProfit", e.target.value)}
-            className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder={autoProfit !== null ? `자동계산: ${autoProfit.toLocaleString()}` : "월 평균 순이익"}
+              value={fmt(data.monthlyProfit)}
+              onChange={(e) => numInput("monthlyProfit", e.target.value)}
+              className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
+          </div>
           {data.monthlyProfit !== null && data.monthlyRevenue && data.monthlyRevenue > 0 && (
             <p className="text-xs text-gray-500 dark:text-gray-400 text-right mt-1">
               매출대비 {((data.monthlyProfit / data.monthlyRevenue) * 100).toFixed(1)}%

@@ -90,27 +90,33 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
           <div className="grid grid-cols-2 gap-3 mt-2">
             <div>
               <label className="block text-xs text-gray-500 mb-1">해당층</label>
-              <input
-                type="number"
-                placeholder="예: 1"
-                value={data.currentFloor ?? ""}
-                onChange={(e) =>
-                  updateData({ currentFloor: e.target.value ? parseInt(e.target.value) : null })
-                }
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  placeholder="예: 1"
+                  value={data.currentFloor ?? ""}
+                  onChange={(e) =>
+                    updateData({ currentFloor: e.target.value ? parseInt(e.target.value) : null })
+                  }
+                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">층</span>
+              </div>
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">전체층</label>
-              <input
-                type="number"
-                placeholder="예: 5"
-                value={data.totalFloor ?? ""}
-                onChange={(e) =>
-                  updateData({ totalFloor: e.target.value ? parseInt(e.target.value) : null })
-                }
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  placeholder="예: 5"
+                  value={data.totalFloor ?? ""}
+                  onChange={(e) =>
+                    updateData({ totalFloor: e.target.value ? parseInt(e.target.value) : null })
+                  }
+                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">층</span>
+              </div>
             </div>
           </div>
         </div>
@@ -121,14 +127,17 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-gray-500 mb-1">평수</label>
-              <input
-                type="number"
-                step="0.1"
-                placeholder="예: 15"
-                value={data.areaPyeong ?? ""}
-                onChange={(e) => handlePyeongChange(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.1"
+                  placeholder="예: 15"
+                  value={data.areaPyeong ?? ""}
+                  onChange={(e) => handlePyeongChange(e.target.value)}
+                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">평</span>
+              </div>
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">m² (자동계산)</label>
@@ -181,27 +190,33 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs text-gray-500 mb-1">전체 주차</label>
-                <input
-                  type="number"
-                  placeholder="대"
-                  value={data.parkingTotal ?? ""}
-                  onChange={(e) =>
-                    updateData({ parkingTotal: e.target.value ? parseInt(e.target.value) : null })
-                  }
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={data.parkingTotal ?? ""}
+                    onChange={(e) =>
+                      updateData({ parkingTotal: e.target.value ? parseInt(e.target.value) : null })
+                    }
+                    className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">대</span>
+                </div>
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">세대당 주차</label>
-                <input
-                  type="number"
-                  placeholder="대"
-                  value={data.parkingPerUnit ?? ""}
-                  onChange={(e) =>
-                    updateData({ parkingPerUnit: e.target.value ? parseInt(e.target.value) : null })
-                  }
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={data.parkingPerUnit ?? ""}
+                    onChange={(e) =>
+                      updateData({ parkingPerUnit: e.target.value ? parseInt(e.target.value) : null })
+                    }
+                    className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">대</span>
+                </div>
               </div>
             </div>
           )}

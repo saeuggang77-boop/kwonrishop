@@ -111,7 +111,7 @@ export default function KakaoMap({
   }
 
   return (
-    <div className="relative">
+    <div className={`relative ${className}`}>
       {loading && (
         <div className={`absolute inset-0 flex items-center justify-center bg-gray-100 rounded-xl ${className}`}>
           <p className="text-sm text-gray-500">지도 로딩 중...</p>
