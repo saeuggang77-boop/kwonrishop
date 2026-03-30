@@ -11,6 +11,7 @@ import TierBadge from "@/components/shared/TierBadge";
 import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { toast } from "@/lib/toast";
+import { formatPhone } from "@/lib/utils";
 import { ListingUpsellBanner } from "@/components/promotion/PromotionCTA";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
@@ -149,8 +150,6 @@ export default function ListingDetailClient() {
     frequency: string;
     nextBumpAt: string;
   } | null>(null);
-  const [sellerReportStatus, setSellerReportStatus] = useState<"loading" | "purchased" | "not_purchased">("loading");
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   useEffect(() => {
     setError(false);
@@ -211,19 +210,6 @@ export default function ListingDetailClient() {
       .catch(() => {});
   }, [session?.user?.id, listing]);
 
-  // Fetch seller report status (for owner)
-  useEffect(() => {
-    if (!session?.user?.id || !listing || session.user.id !== listing.user.id) {
-      setSellerReportStatus("not_purchased");
-      return;
-    }
-    fetch(`/api/reports/seller-analysis?listingId=${listing.id}`)
-      .then((r) => r.json())
-      .then((data) => {
-        setSellerReportStatus(data.hasReport ? "purchased" : "not_purchased");
-      })
-      .catch(() => setSellerReportStatus("not_purchased"));
-  }, [session?.user?.id, listing]);
 
   // Recently viewed: save current + load list
   useEffect(() => {
@@ -1075,7 +1061,7 @@ export default function ListingDetailClient() {
                 )}
               </div>
               {listing.contactPublic && listing.user.phone && (
-                <a href={`tel:${listing.user.phone}`} className="text-sm text-blue-600 dark:text-blue-400 mt-1 hover:underline">{listing.user.phone}</a>
+                <a href={`tel:${listing.user.phone}`} className="text-sm text-blue-600 dark:text-blue-400 mt-1 hover:underline">{formatPhone(listing.user.phone)}</a>
               )}
             </div>
           </div>
@@ -1160,11 +1146,11 @@ export default function ListingDetailClient() {
       )}
 
       {/* ===== 19. 하단 고정바 ===== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10 md:static md:border-0 md:p-0 md:mt-6">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10 md:static md:mt-6 md:rounded-xl md:border md:shadow-sm">
         {isOwner ? (
-          /* 소유자일 때: 매물 관리 바 (모바일 - 상태/수정/끌올 + 더보기 드롭다운) */
+          /* 소유자일 때: 매물 관리 바 */
           <div className="max-w-3xl mx-auto px-4 py-3 relative">
-            <div className="grid grid-cols-4 gap-2 md:flex md:items-center md:gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {/* 상태 변경 드롭다운 */}
               <div className="relative">
                 <button
@@ -1223,90 +1209,13 @@ export default function ListingDetailClient() {
                 </button>
               )}
 
-              {/* 더보기 드롭다운 (모바일) */}
-              <div className="relative md:hidden">
-                <button
-                  onClick={() => setShowMoreMenu(!showMoreMenu)}
-                  className="w-full min-h-[44px] px-2 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-xs flex items-center justify-center"
-                >
-                  ⋯
-                </button>
-
-                {showMoreMenu && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-20"
-                      onClick={() => setShowMoreMenu(false)}
-                    />
-                    <div className="absolute bottom-full mb-2 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1 min-w-[140px] z-30">
-                      <Link
-                        href={`/pricing?listingId=${listing.id}`}
-                        onClick={() => setShowMoreMenu(false)}
-                        className="block w-full text-left px-4 py-2.5 text-sm font-medium text-blue-700 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      >
-                        광고 구매
-                      </Link>
-                      {sellerReportStatus === "purchased" ? (
-                        <Link
-                          href={`/reports/seller/${listing.id}`}
-                          onClick={() => setShowMoreMenu(false)}
-                          className="block w-full text-left px-4 py-2.5 text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          리포트 보기
-                        </Link>
-                      ) : sellerReportStatus === "not_purchased" ? (
-                        <Link
-                          href={`/pricing?listingId=${listing.id}&scope=seller-report`}
-                          onClick={() => setShowMoreMenu(false)}
-                          className="block w-full text-left px-4 py-2.5 text-sm font-medium text-purple-700 dark:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          시장분석
-                        </Link>
-                      ) : null}
-                      {!bumpSubscription && (
-                        <Link
-                          href={`/pricing?listingId=${listing.id}#subscription`}
-                          onClick={() => setShowMoreMenu(false)}
-                          className="block w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          정기 구독
-                        </Link>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* 데스크톱용 버튼들 */}
+              {/* 광고 업그레이드 */}
               <Link
                 href={`/pricing?listingId=${listing.id}`}
-                className={`hidden md:flex min-h-[44px] items-center justify-center py-2 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-xs md:text-base ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+                className={`min-h-[44px] flex items-center justify-center py-2 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-xs md:text-sm ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
               >
-                광고 구매
+                광고 업그레이드
               </Link>
-              {sellerReportStatus === "purchased" ? (
-                <Link
-                  href={`/reports/seller/${listing.id}`}
-                  className="hidden md:flex min-h-[44px] items-center justify-center py-2 bg-emerald-50 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 rounded-xl font-medium text-center hover:bg-emerald-100 dark:hover:bg-emerald-900 transition-colors text-xs"
-                >
-                  리포트 보기
-                </Link>
-              ) : sellerReportStatus === "not_purchased" ? (
-                <Link
-                  href={`/pricing?listingId=${listing.id}&scope=seller-report`}
-                  className={`hidden md:flex min-h-[44px] items-center justify-center py-2 bg-purple-50 dark:bg-purple-950 border border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 rounded-xl font-medium text-center hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors text-xs ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
-                >
-                  시장분석
-                </Link>
-              ) : null}
-              {!bumpSubscription && (
-                <Link
-                  href={`/pricing?listingId=${listing.id}#subscription`}
-                  className="hidden md:flex min-h-[44px] items-center justify-center px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium whitespace-nowrap"
-                >
-                  정기 구독
-                </Link>
-              )}
             </div>
           </div>
         ) : (

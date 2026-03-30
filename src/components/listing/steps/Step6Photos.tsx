@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { useListingFormStore } from "@/store/listingForm";
+import { formatPhoneInput } from "@/lib/utils";
 
 const IMAGE_TYPES = [
   { value: "EXTERIOR", label: "외부" },
@@ -80,7 +81,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
       .then((d) => {
         const phone = d.user?.phone || "";
         if (phone && !data.contactPhone) {
-          updateData({ contactPhone: phone });
+          updateData({ contactPhone: formatPhoneInput(phone) });
         }
       })
       .catch(() => {})
@@ -401,7 +402,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                 <input
                   type="tel"
                   value={data.contactPhone}
-                  onChange={(e) => updateData({ contactPhone: e.target.value })}
+                  onChange={(e) => updateData({ contactPhone: formatPhoneInput(e.target.value) })}
                   placeholder="010-1234-5678"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />

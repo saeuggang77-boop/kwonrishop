@@ -36,7 +36,7 @@ export async function PATCH(req: NextRequest) {
       if (sanitizedPhone && !validatePhone(sanitizedPhone)) {
         return NextResponse.json({ error: "유효하지 않은 전화번호 형식입니다." }, { status: 400 });
       }
-      updateData.phone = sanitizedPhone;
+      updateData.phone = sanitizedPhone ? sanitizedPhone.replace(/\D/g, "") : "";
     }
     if (image !== undefined) {
       const url = (image || "").toLowerCase();

@@ -29,8 +29,12 @@ export default function TossPayment({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const widgetsRef = useRef<any>(null);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
+    if (mountedRef.current) return;
+    mountedRef.current = true;
+
     const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
 
     if (!clientKey) {
@@ -76,7 +80,8 @@ export default function TossPayment({
         setLoading(false);
       } catch (err) {
         console.error("Toss Payments loading error:", err);
-        setError("결제 위젯을 불러오는데 실패했습니다.");
+        const msg = err instanceof Error ? err.message : String(err);
+        setError(`결제 위젯을 불러오는데 실패했습니다. (${msg})`);
         setLoading(false);
       }
     }
@@ -106,88 +111,92 @@ export default function TossPayment({
     }
   }
 
-  if (loading) {
-    return (
-      <div className="w-full max-w-md mx-auto p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 bg-gray-200 rounded" />
-          <div className="h-12 bg-gray-200 rounded" />
-          <div className="h-12 bg-gray-200 rounded" />
-        </div>
-        <p className="text-center text-gray-500 mt-4 text-sm">
-          결제 정보를 불러오는 중...
-        </p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full max-w-md mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <p className="text-red-700 text-sm">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-4">
-        <h3 className="font-bold text-gray-900 mb-4">주문 정보</h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-600">상품명</span>
-            <span className="font-medium text-gray-900">{orderName}</span>
+      {error && (
+        <div className="p-6">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+            <p className="text-red-700 text-sm">{error}</p>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">주문번호</span>
-            <span className="font-medium text-gray-900 text-xs">{orderId}</span>
+        </div>
+      )}
+
+      <div className={error ? "hidden" : ""}>
+        {loading && (
+          <div className="p-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-12 bg-gray-200 rounded" />
+              <div className="h-12 bg-gray-200 rounded" />
+              <div className="h-12 bg-gray-200 rounded" />
+            </div>
+            <p className="text-center text-gray-500 mt-4 text-sm">
+              결제 정보를 불러오는 중...
+            </p>
           </div>
-          {supplyPrice && vatAmount ? (
-            <>
-              <div className="flex justify-between pt-2 border-t border-gray-100">
-                <span className="text-gray-600">공급가액</span>
-                <span className="text-gray-900">{supplyPrice.toLocaleString()}원</span>
+        )}
+
+        <div className={loading ? "invisible h-0 overflow-hidden" : ""}>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-4">
+            <h3 className="font-bold text-gray-900 mb-4">주문 정보</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">상품명</span>
+                <span className="font-medium text-gray-900">{orderName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">부가세(10%)</span>
-                <span className="text-gray-900">{vatAmount.toLocaleString()}원</span>
+                <span className="text-gray-600">주문번호</span>
+                <span className="font-medium text-gray-900 text-xs">{orderId}</span>
               </div>
-              <div className="flex justify-between pt-2 border-t border-gray-200">
-                <span className="text-gray-900 font-bold">총 결제금액</span>
-                <span className="font-bold text-blue-600 text-lg">
-                  {amount.toLocaleString()}원
-                </span>
-              </div>
-            </>
-          ) : (
-            <div className="flex justify-between pt-2 border-t border-gray-100">
-              <span className="text-gray-900 font-medium">결제 금액</span>
-              <span className="font-bold text-blue-600 text-lg">
-                {amount.toLocaleString()}원
-              </span>
+              {supplyPrice && vatAmount ? (
+                <>
+                  <div className="flex justify-between pt-2 border-t border-gray-100">
+                    <span className="text-gray-600">공급가액</span>
+                    <span className="text-gray-900">{supplyPrice.toLocaleString()}원</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">부가세(10%)</span>
+                    <span className="text-gray-900">{vatAmount.toLocaleString()}원</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-gray-200">
+                    <span className="text-gray-900 font-bold">총 결제금액</span>
+                    <span className="font-bold text-blue-600 text-lg">
+                      {amount.toLocaleString()}원
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex justify-between pt-2 border-t border-gray-100">
+                  <span className="text-gray-900 font-medium">결제 금액</span>
+                  <span className="font-bold text-blue-600 text-lg">
+                    {amount.toLocaleString()}원
+                  </span>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
+
+        {/* 결제 수단 선택 - 항상 DOM에 존재해야 SDK가 마운트 가능 */}
+        <div id="toss-payment-method" className={loading ? "invisible h-0 overflow-hidden" : "mb-4"} />
+
+        {/* 약관 동의 - 항상 DOM에 존재해야 SDK가 마운트 가능 */}
+        <div id="toss-agreement" className={loading ? "invisible h-0 overflow-hidden" : "mb-4"} />
+
+        {!loading && (
+          <>
+            <button
+              onClick={handlePayment}
+              className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 active:bg-blue-800 transition-colors"
+            >
+              결제하기
+            </button>
+
+            <p className="text-xs text-gray-500 text-center mt-4">
+              토스페이먼츠를 통한 안전한 결제입니다
+            </p>
+          </>
+        )}
       </div>
-
-      {/* 결제 수단 선택 */}
-      <div id="toss-payment-method" className="mb-4" />
-
-      {/* 약관 동의 */}
-      <div id="toss-agreement" className="mb-4" />
-
-      <button
-        onClick={handlePayment}
-        className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 active:bg-blue-800 transition-colors"
-      >
-        결제하기
-      </button>
-
-      <p className="text-xs text-gray-500 text-center mt-4">
-        토스페이먼츠를 통한 안전한 결제입니다
-      </p>
     </div>
   );
 }

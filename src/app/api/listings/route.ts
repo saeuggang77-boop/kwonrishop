@@ -397,7 +397,7 @@ export async function POST(req: NextRequest) {
     if (body.contactPhone) {
       await prisma.user.update({
         where: { id: session.user.id },
-        data: { phone: body.contactPhone },
+        data: { phone: body.contactPhone.replace(/\D/g, "") },
       });
     }
 
@@ -462,10 +462,9 @@ export async function POST(req: NextRequest) {
         },
         documents: {
           create: (body.documents || []).map(
-            (doc: { url: string; sortOrder?: number }) => ({
+            (doc: { url: string }) => ({
               url: doc.url,
               type: "REVENUE_PROOF",
-              sortOrder: doc.sortOrder || 0,
             }),
           ),
         },

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useListingFormStore } from "@/store/listingForm";
+import { formatPhone } from "@/lib/utils";
 
 interface Props {
   onPrev: () => void;
@@ -298,7 +299,7 @@ export default function Step7Confirm({ onPrev }: Props) {
         <Section title="연락처" onEdit={() => setStep(6)}>
           <Info label="연락처 공개" value={data.contactPublic ? "공개" : "채팅만"} />
           {data.contactPublic && data.contactPhone && (
-            <Info label="전화번호" value={data.contactPhone} />
+            <Info label="전화번호" value={formatPhone(data.contactPhone)} />
           )}
         </Section>
       </div>
