@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { sanitizeInput } from "@/lib/sanitize";
+import { sanitizeInput, validatePhone } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -31,8 +31,23 @@ export async function PATCH(req: NextRequest) {
     // 업데이트할 데이터 구성 (값이 있는 필드만 포함)
     const updateData: { name?: string; phone?: string; image?: string } = {};
     if (name !== undefined) updateData.name = sanitizeInput(name);
-    if (phone !== undefined) updateData.phone = sanitizeInput(phone);
-    if (image !== undefined) updateData.image = image;
+    if (phone !== undefined) {
+      const sanitizedPhone = sanitizeInput(phone);
+      if (sanitizedPhone && !validatePhone(sanitizedPhone)) {
+        return NextResponse.json({ error: "유효하지 않은 전화번호 형식입니다." }, { status: 400 });
+      }
+      updateData.phone = sanitizedPhone;
+    }
+    if (image !== undefined) {
+      const url = (image || "").toLowerCase();
+      if (url && !url.startsWith("/uploads/") && !url.startsWith("https://")) {
+        return NextResponse.json({ error: "허용되지 않은 이미지 URL입니다." }, { status: 400 });
+      }
+      if (url.startsWith("javascript:") || url.startsWith("data:")) {
+        return NextResponse.json({ error: "허용되지 않은 이미지 URL입니다." }, { status: 400 });
+      }
+      updateData.image = image;
+    }
 
     // 업데이트할 내용이 없는 경우
     if (Object.keys(updateData).length === 0) {
