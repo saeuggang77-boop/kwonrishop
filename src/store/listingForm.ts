@@ -73,6 +73,7 @@ export interface ListingFormData {
   images: { file?: File; url: string; type: string; sortOrder: number }[];
   documents: { file?: File; url: string; sortOrder: number }[];
   contactPublic: boolean;
+  contactPhone: string;
 }
 
 interface ListingFormStore {
@@ -141,6 +142,7 @@ const initialData: ListingFormData = {
   images: [],
   documents: [],
   contactPublic: false,
+  contactPhone: "",
 };
 
 export const useListingFormStore = create<ListingFormStore>()(

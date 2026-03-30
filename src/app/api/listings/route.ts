@@ -393,6 +393,14 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
 
   try {
+    // 연락처 공개 시 전화번호를 User에 저장
+    if (body.contactPhone) {
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: { phone: body.contactPhone },
+      });
+    }
+
     const listing = await prisma.listing.create({
       data: {
         userId: session.user.id,
