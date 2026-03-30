@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useListingFormStore } from "@/store/listingForm";
 import dynamic from "next/dynamic";
 
@@ -20,6 +20,8 @@ export default function Step1Location({ onNext }: Props) {
   const { data, updateData } = useListingFormStore();
   const [error, setError] = useState("");
   const [isGeocodingLoading, setIsGeocodingLoading] = useState(false);
+  const [showPostcode, setShowPostcode] = useState(false);
+  const postcodeRef = useRef<HTMLDivElement>(null);
 
   // Load Kakao Maps SDK with services library
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function Step1Location({ onNext }: Props) {
     if (existingScript) return;
 
     const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services&autoload=false`;
     script.async = true;
     script.onload = () => {
       window.kakao?.maps?.load(() => {
@@ -46,32 +48,61 @@ export default function Step1Location({ onNext }: Props) {
     document.head.appendChild(script);
   }, []);
 
+  // 다음 우편번호 SDK 사전 로딩
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
+    if (existingScript) return;
+
+    const script = document.createElement("script");
+    script.src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
   function handleAddressSearch() {
     if (typeof window === "undefined") return;
 
-    const daum = (window as unknown as { daum?: { Postcode: new (opts: { oncomplete: (data: Record<string, string>) => void }) => { open: () => void } } }).daum;
+    const daum = (window as unknown as { daum?: { Postcode: new (opts: Record<string, unknown>) => { embed: (el: HTMLElement) => void } } }).daum;
 
-    if (daum?.Postcode) {
-      openPostcode(daum);
+    if (!daum?.Postcode) {
+      setError("주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
 
-    // 다음 우편번호 SDK 동적 로딩
     setError("");
-    const script = document.createElement("script");
-    script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
-    script.onload = () => {
-      const d = (window as unknown as { daum?: { Postcode: new (opts: { oncomplete: (data: Record<string, string>) => void }) => { open: () => void } } }).daum;
-      if (d?.Postcode) {
-        openPostcode(d);
-      } else {
-        setError("주소 검색 서비스를 불러올 수 없습니다.");
-      }
-    };
-    script.onerror = () => {
-      setError("주소 검색 서비스를 불러올 수 없습니다.");
-    };
-    document.head.appendChild(script);
+    setShowPostcode(true);
+
+    // embed는 다음 렌더 사이클에서 ref가 준비된 후 실행
+    setTimeout(() => {
+      if (!postcodeRef.current) return;
+
+      new daum.Postcode({
+        oncomplete: (result: Record<string, string>) => {
+          const roadAddress = result.roadAddress;
+          updateData({
+            zipCode: result.zonecode,
+            addressJibun: result.jibunAddress || result.autoJibunAddress,
+            addressRoad: roadAddress,
+          });
+          setError("");
+          setShowPostcode(false);
+
+          // Geocode the address to get coordinates
+          if (roadAddress) {
+            geocodeAddress(roadAddress);
+          }
+        },
+        onclose: (state: string) => {
+          // FORCE_CLOSE: 사용자가 X버튼으로 닫음, COMPLETE_CLOSE: 주소 선택 완료
+          if (state === "FORCE_CLOSE") {
+            setShowPostcode(false);
+          }
+        },
+        width: "100%",
+        height: "100%",
+      }).embed(postcodeRef.current);
+    }, 100);
   }
 
   function geocodeAddress(address: string) {
@@ -108,25 +139,6 @@ export default function Step1Location({ onNext }: Props) {
     });
   }
 
-  function openPostcode(daum: { Postcode: new (opts: { oncomplete: (data: Record<string, string>) => void }) => { open: () => void } }) {
-    new daum.Postcode({
-      oncomplete: (result: Record<string, string>) => {
-        const roadAddress = result.roadAddress;
-        updateData({
-          zipCode: result.zonecode,
-          addressJibun: result.jibunAddress || result.autoJibunAddress,
-          addressRoad: roadAddress,
-        });
-        setError("");
-
-        // Geocode the address to get coordinates
-        if (roadAddress) {
-          geocodeAddress(roadAddress);
-        }
-      },
-    }).open();
-  }
-
   function handleSubmit() {
     if (!data.addressRoad && !data.addressJibun) {
       setError("주소를 검색해주세요.");
@@ -152,7 +164,25 @@ export default function Step1Location({ onNext }: Props) {
           >
             {data.addressRoad || "클릭하여 주소 검색"}
           </button>
-          {data.addressRoad && (
+
+          {/* 주소 검색 임베드 영역 */}
+          {showPostcode && (
+            <div className="mt-2 border border-blue-300 rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2 bg-blue-50 border-b border-blue-200">
+                <span className="text-sm font-medium text-blue-700">주소 검색</span>
+                <button
+                  type="button"
+                  onClick={() => setShowPostcode(false)}
+                  className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                >
+                  &times;
+                </button>
+              </div>
+              <div ref={postcodeRef} className="w-full h-[400px]" />
+            </div>
+          )}
+
+          {data.addressRoad && !showPostcode && (
             <div className="mt-2 text-sm text-gray-600 space-y-1">
               <p>도로명: {data.addressRoad}</p>
               {data.addressJibun && <p>지번: {data.addressJibun}</p>}
@@ -165,7 +195,7 @@ export default function Step1Location({ onNext }: Props) {
         </div>
 
         {/* Kakao Map Display */}
-        {data.latitude !== null && data.longitude !== null && (
+        {data.latitude !== null && data.longitude !== null && !showPostcode && (
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               지도

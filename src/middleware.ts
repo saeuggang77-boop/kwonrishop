@@ -71,18 +71,22 @@ export async function middleware(req: NextRequest) {
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Permissions-Policy", "camera=(), microphone=()");
   response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-  response.headers.set(
-    "Content-Security-Policy",
-    [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://t1.daumcdn.net https://cdn.vercel-insights.com https://dapi.kakao.com",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https: http:",
-      "font-src 'self' data:",
-      "connect-src 'self' https://api.tosspayments.com https://dapi.kakao.com https://*.pusher.com wss://*.pusher.com",
-      "frame-src 'self' https://api.tosspayments.com https://nid.naver.com https://kauth.kakao.com",
-    ].join("; ")
-  );
+  // CSP: 프로덕션에서만 적용 (localhost는 http라서 https-only CSP와 충돌)
+  const isProduction = req.nextUrl.hostname !== "localhost";
+  if (isProduction) {
+    response.headers.set(
+      "Content-Security-Policy",
+      [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daumcdn.net https://cdn.vercel-insights.com https://*.kakao.com",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: blob: https: http:",
+        "font-src 'self' data:",
+        "connect-src 'self' https://api.tosspayments.com https://*.kakao.com https://*.pusher.com wss://*.pusher.com",
+        "frame-src 'self' https://api.tosspayments.com https://nid.naver.com https://kauth.kakao.com https://*.daumcdn.net https://*.daum.net https://*.kakao.com",
+      ].join("; ")
+    );
+  }
 
   // 메인 페이지는 항상 최신 데이터를 보여줘야 하므로 브라우저 캐시 방지
   if (pathname === "/") {

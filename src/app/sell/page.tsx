@@ -56,6 +56,12 @@ function FairTradeAgreementModal({ onAgree }: { onAgree: () => void }) {
             매물 및 매출정보가 미흡시 관리자는 <strong>수정안내 또는 비공개, 삭제</strong> 등의 조치를 취할 수 있습니다.
           </p>
         </div>
+        <div className="flex gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
+          <div className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">4</div>
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            본 플랫폼은 <strong>사장님 직거래 전용</strong>입니다. 컨설팅업체·부동산 중개업소 등이 직거래를 가장하여 매물을 등록하는 행위는 「표시·광고의 공정화에 관한 법률」상 <strong className="text-red-500">기만적 광고</strong>에 해당하며, 적발 시 <strong className="text-red-500">즉시 삭제, 영구 이용정지 및 관계기관 신고</strong> 조치됩니다.
+          </p>
+        </div>
       </div>
 
       <label className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors mb-4">
