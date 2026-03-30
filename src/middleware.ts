@@ -1,7 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedPaths = ["/sell", "/mypage", "/verify-business", "/admin", "/partners/register", "/equipment/register"];
+const protectedPaths = ["/sell", "/mypage", "/verify-business", "/admin", "/partners/register", "/equipment/register", "/franchise/edit"];
 const roleExemptPaths = ["/select-role", "/api/", "/login", "/signup", "/forgot-password", "/reset-password", "/_next/", "/favicon"];
 
 export async function middleware(req: NextRequest) {
@@ -47,6 +47,10 @@ export async function middleware(req: NextRequest) {
 
     if (pathname.startsWith("/equipment/register") && ["SELLER", "FRANCHISE", "PARTNER"].includes(userRole || "") && !verified) {
       return NextResponse.redirect(new URL(`/verify-business?role=${userRole}`, req.url));
+    }
+
+    if (pathname.startsWith("/franchise/edit") && userRole !== "FRANCHISE" && userRole !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", req.url));
     }
   }
 
@@ -97,5 +101,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login", "/signup", "/forgot-password", "/admin/:path*", "/partners/register", "/equipment/register", "/select-role", "/"],
+  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login", "/signup", "/forgot-password", "/admin/:path*", "/partners/register", "/equipment/register", "/franchise/edit", "/select-role", "/"],
 };

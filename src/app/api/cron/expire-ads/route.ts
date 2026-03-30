@@ -92,70 +92,97 @@ export async function GET(request: NextRequest) {
     });
 
     // Downgrade partner service tiers
-    const partnerServiceIds = expiredAds
-      .filter((ad: any) => ad.partnerServiceId)
-      .map((ad: any) => ad.partnerServiceId);
+    // partnerServiceId가 있는 경우와 없는 경우 모두 처리
+    const partnerAds = expiredAds.filter((ad: any) => {
+      // PARTNER 광고: partnerServiceId가 있거나 userId로 PARTNER 서비스를 찾을 수 있는 경우
+      return ad.partnerServiceId || ad.user?.role === "PARTNER";
+    });
 
     let partnerTierDowngradeCount = 0;
-    if (partnerServiceIds.length > 0) {
-      // 다운그레이드 전 파트너 서비스 정보 조회 (알림용)
-      const partnerServices = await prisma.partnerService.findMany({
-        where: {
-          id: { in: partnerServiceIds },
-          tierExpiresAt: { lt: now },
-        },
-        select: {
-          id: true,
-          userId: true,
-          companyName: true,
-          tier: true,
-          user: { select: { phone: true, name: true } },
-        },
-      });
+    if (partnerAds.length > 0) {
+      // partnerServiceId 수집 (직접 있는 것 + userId로 찾아야 하는 것)
+      const directPartnerServiceIds = partnerAds
+        .filter((ad: any) => ad.partnerServiceId)
+        .map((ad: any) => ad.partnerServiceId);
 
-      const result = await prisma.partnerService.updateMany({
-        where: {
-          id: {
-            in: partnerServiceIds,
+      const userIdsNeedingLookup = partnerAds
+        .filter((ad: any) => !ad.partnerServiceId)
+        .map((ad: any) => ad.userId);
+
+      let indirectPartnerServiceIds: string[] = [];
+      if (userIdsNeedingLookup.length > 0) {
+        const indirectServices = await prisma.partnerService.findMany({
+          where: {
+            userId: { in: userIdsNeedingLookup },
+            status: "ACTIVE",
           },
-          tierExpiresAt: {
-            lt: now,
+          select: { id: true },
+        });
+        indirectPartnerServiceIds = indirectServices.map((s) => s.id);
+      }
+
+      const allPartnerServiceIds = [...directPartnerServiceIds, ...indirectPartnerServiceIds];
+
+      if (allPartnerServiceIds.length > 0) {
+        // 다운그레이드 전 파트너 서비스 정보 조회 (알림용)
+        const partnerServices = await prisma.partnerService.findMany({
+          where: {
+            id: { in: allPartnerServiceIds },
+            tierExpiresAt: { lt: now },
           },
-        },
-        data: {
-          tier: "FREE",
-          tierExpiresAt: null,
-        },
-      });
-      partnerTierDowngradeCount = result.count;
-
-      // 파트너 서비스 다운그레이드 알림 생성
-      if (partnerServices.length > 0) {
-        const partnerNotifications = partnerServices.map((ps) => ({
-          userId: ps.userId,
-          type: "PARTNER_TIER_DOWNGRADE",
-          title: "파트너 구독이 만료되었습니다",
-          message: `${ps.companyName}의 ${ps.tier} 등급 혜택이 종료되어 FREE 등급으로 전환되었습니다. 구독을 연장하시려면 결제 페이지를 확인해주세요.`,
-          link: `/mypage/partner`,
-        }));
-
-        await prisma.notification.createMany({
-          data: partnerNotifications,
+          select: {
+            id: true,
+            userId: true,
+            companyName: true,
+            tier: true,
+            user: { select: { phone: true, name: true } },
+          },
         });
 
-        // 웹 푸시 및 SMS 발송 (non-blocking)
-        partnerServices.forEach((ps) => {
-          sendPushToUser(
-            ps.userId,
-            "파트너 구독이 만료되었습니다",
-            `${ps.companyName}의 ${ps.tier} 등급 혜택이 종료되었습니다.`,
-            `/mypage/partner`
-          ).catch(() => {});
-
-          if (ps.user.phone) {
-            notifyPaymentExpiring(ps.user.phone, `${ps.tier} 파트너 구독`, 0).catch(() => {});
-          }
+        const result = await prisma.partnerService.updateMany({
+          where: {
+            id: {
+              in: allPartnerServiceIds,
+            },
+            tierExpiresAt: {
+              lt: now,
+            },
+          },
+          data: {
+            tier: "FREE",
+            tierExpiresAt: null,
+          },
         });
+        partnerTierDowngradeCount = result.count;
+
+        // 파트너 서비스 다운그레이드 알림 생성
+        if (partnerServices.length > 0) {
+          const partnerNotifications = partnerServices.map((ps) => ({
+            userId: ps.userId,
+            type: "PARTNER_TIER_DOWNGRADE",
+            title: "파트너 구독이 만료되었습니다",
+            message: `${ps.companyName}의 ${ps.tier} 등급 혜택이 종료되어 FREE 등급으로 전환되었습니다. 구독을 연장하시려면 결제 페이지를 확인해주세요.`,
+            link: `/mypage/partner`,
+          }));
+
+          await prisma.notification.createMany({
+            data: partnerNotifications,
+          });
+
+          // 웹 푸시 및 SMS 발송 (non-blocking)
+          partnerServices.forEach((ps) => {
+            sendPushToUser(
+              ps.userId,
+              "파트너 구독이 만료되었습니다",
+              `${ps.companyName}의 ${ps.tier} 등급 혜택이 종료되었습니다.`,
+              `/mypage/partner`
+            ).catch(() => {});
+
+            if (ps.user.phone) {
+              notifyPaymentExpiring(ps.user.phone, `${ps.tier} 파트너 구독`, 0).catch(() => {});
+            }
+          });
+        }
       }
     }
 

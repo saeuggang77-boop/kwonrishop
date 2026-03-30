@@ -18,6 +18,8 @@ export default function PartnerRegisterPage() {
   const router = useRouter();
   const [checkingVerification, setCheckingVerification] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [partnerId, setPartnerId] = useState<string | null>(null);
 
   // Form state
   const [companyName, setCompanyName] = useState("");
@@ -49,6 +51,11 @@ export default function PartnerRegisterPage() {
         return;
       }
 
+      // Check if edit mode
+      const params = new URLSearchParams(window.location.search);
+      const editMode = params.get("edit") === "true";
+      setIsEditMode(editMode);
+
       // 사업자인증 확인
       fetch("/api/auth/check-verification")
         .then((res) => res.json())
@@ -57,12 +64,48 @@ export default function PartnerRegisterPage() {
             toast.info("사업자인증이 필요합니다.");
             router.push("/verify-business");
           } else {
+            // If edit mode, fetch existing data
+            if (editMode) {
+              fetch("/api/mypage")
+                .then((res) => res.json())
+                .then((myData) => {
+                  if (myData.partnerService) {
+                    const ps = myData.partnerService;
+                    setPartnerId(ps.id);
+                    setCompanyName(ps.companyName || "");
+                    setServiceType(ps.serviceType || "");
+                    setDescription(ps.description || "");
+                    setServiceArea(ps.serviceArea || []);
+                    setContactPhone(ps.contactPhone || "");
+                    setContactEmail(ps.contactEmail || "");
+                    setWebsite(ps.website || "");
+                    setAddressRoad(ps.addressRoad || "");
+                    setAddressJibun(ps.addressJibun || "");
+                    setAddressDetail(ps.addressDetail || "");
+                    setLatitude(ps.latitude);
+                    setLongitude(ps.longitude);
+                    // Fetch images from partner detail
+                    fetch(`/api/partners/${ps.id}`)
+                      .then((r) => r.json())
+                      .then((detail) => {
+                        if (detail.images) {
+                          setImages(detail.images.map((img: any) => ({
+                            url: img.url,
+                            sortOrder: img.sortOrder || 0,
+                          })));
+                        }
+                      })
+                      .catch(() => {});
+                  }
+                })
+                .catch(() => {});
+            }
             setCheckingVerification(false);
           }
         })
         .catch(() => setCheckingVerification(false));
     }
-  }, [status, router]);
+  }, [status, router, session]);
 
   // Load Daum Postcode script
   useEffect(() => {
@@ -161,8 +204,11 @@ export default function PartnerRegisterPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("/api/partners", {
-        method: "POST",
+      const url = isEditMode && partnerId ? `/api/partners/${partnerId}` : "/api/partners";
+      const method = isEditMode && partnerId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           companyName,
@@ -184,14 +230,14 @@ export default function PartnerRegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("협력업체가 등록되었습니다!");
-        router.push(`/partners/${data.id}`);
+        toast.success(isEditMode ? "협력업체 정보가 수정되었습니다!" : "협력업체가 등록되었습니다!");
+        router.push(`/partners/${isEditMode ? partnerId : data.id}`);
       } else {
-        toast.error(data.error || "등록에 실패했습니다.");
+        toast.error(data.error || (isEditMode ? "수정에 실패했습니다." : "등록에 실패했습니다."));
       }
     } catch (error) {
       console.error("Submit error:", error);
-      toast.error("등록 중 오류가 발생했습니다.");
+      toast.error((isEditMode ? "수정" : "등록") + " 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
     }
@@ -210,7 +256,9 @@ export default function PartnerRegisterPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">협력업체 등록</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          {isEditMode ? "협력업체 수정" : "협력업체 등록"}
+        </h1>
         <p className="text-gray-600 dark:text-gray-400">사업자인증을 완료한 협력업체만 등록할 수 있습니다</p>
       </div>
 
@@ -391,7 +439,7 @@ export default function PartnerRegisterPage() {
           disabled={submitting}
           className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-          {submitting ? "등록 중..." : "등록하기"}
+          {submitting ? (isEditMode ? "수정 중..." : "등록 중...") : (isEditMode ? "수정하기" : "등록하기")}
         </button>
       </form>
     </div>

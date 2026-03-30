@@ -15,8 +15,8 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20")));
 
     const [payments, total] = await Promise.all([
       prisma.adPurchase.findMany({
@@ -171,6 +171,25 @@ export async function POST(req: NextRequest) {
           { error: "협력업체만 협력업체 상품을 구매할 수 있습니다." },
           { status: 403 }
         );
+      }
+      // partnerServiceId가 없으면 사용자의 활성 협력업체 서비스 자동 탐지
+      if (!partnerServiceId) {
+        const myService = await prisma.partnerService.findFirst({
+          where: {
+            userId: session.user.id,
+            status: "ACTIVE",
+          },
+          select: { id: true },
+        });
+
+        if (!myService) {
+          return NextResponse.json(
+            { error: "활성 협력업체 서비스가 없습니다. 먼저 서비스를 등록해주세요." },
+            { status: 400 }
+          );
+        }
+
+        partnerServiceId = myService.id;
       }
     } else if (scope === "EQUIPMENT") {
       if (userRole !== "SELLER" && userRole !== "FRANCHISE" && userRole !== "PARTNER" && userRole !== "ADMIN") {

@@ -183,7 +183,10 @@ export async function POST(request: NextRequest) {
       const newTier = tierMap[badge];
       if (newTier) {
         await prisma.partnerService.updateMany({
-          where: { userId: session.user.id },
+          where: {
+            userId: session.user.id,
+            status: "ACTIVE",
+          },
           data: {
             tier: newTier as any,
             tierExpiresAt: order.product.duration ? expiresAt : null,

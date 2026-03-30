@@ -45,6 +45,7 @@ model User {
   bumpSubscriptions    BumpSubscription[]
   reportsMade          Report[]  @relation("reporter")
   sellerReports        SellerReport[]
+  franchiseInquiries   FranchiseInquiry[] @relation("UserFranchiseInquiries")
 }
 
 enum UserRole {
@@ -361,12 +362,14 @@ enum FranchiseTier {
 model FranchiseInquiry {
   id        String   @id @default(cuid())
   brandId   String
+  userId    String?
   name      String
   phone     String
   message   String?  @db.Text
   createdAt DateTime @default(now())
 
   brand FranchiseBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  user  User?          @relation("UserFranchiseInquiries", fields: [userId], references: [id])
 }
 
 // ==========================================

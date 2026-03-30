@@ -36,6 +36,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 평점 정수 검증
+    if (
+      !Number.isInteger(accuracyRating) ||
+      !Number.isInteger(communicationRating) ||
+      !Number.isInteger(conditionRating)
+    ) {
+      return NextResponse.json(
+        { error: "평점은 정수여야 합니다." },
+        { status: 400 }
+      );
+    }
+
     // 평점 범위 검증 (1-5)
     if (
       accuracyRating < 1 || accuracyRating > 5 ||
@@ -44,6 +56,14 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "평점은 1-5 사이의 값이어야 합니다." },
+        { status: 400 }
+      );
+    }
+
+    // content 길이 제한 (최대 2000자)
+    if (content && content.length > 2000) {
+      return NextResponse.json(
+        { error: "리뷰 내용은 2000자를 초과할 수 없습니다." },
         { status: 400 }
       );
     }

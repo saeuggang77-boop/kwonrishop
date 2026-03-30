@@ -479,7 +479,7 @@ export default function MyPage() {
             <h3 className="font-bold text-gray-900 dark:text-gray-100">내 서비스</h3>
             {data.partnerService && (
               <Link
-                href="/partners/register"
+                href="/partners/register?edit=true"
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
                 서비스 수정

@@ -42,7 +42,7 @@ export default function FranchisePage() {
     const params = new URLSearchParams();
     params.set("page", String(page));
     if (industry) params.set("industry", industry);
-    if (keyword) params.set("keyword", keyword);
+    if (keyword) params.set("search", keyword);
 
     const res = await fetch(`/api/franchise?${params}`);
     const data = await res.json();

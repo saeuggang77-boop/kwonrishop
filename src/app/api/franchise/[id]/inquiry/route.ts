@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { sanitizeInput, validatePhone } from "@/lib/sanitize";
@@ -24,6 +26,12 @@ export async function POST(
       return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
     }
 
+    // 로그인 확인
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+    }
+
     const { id } = await params;
     const body = await request.json();
     const { name, phone, message } = body;
@@ -36,7 +44,7 @@ export async function POST(
     // Validate required fields
     if (!cleanName || !cleanPhone) {
       return NextResponse.json(
-        { error: "Name and phone are required" },
+        { error: "이름과 전화번호는 필수입니다." },
         { status: 400 }
       );
     }
@@ -65,6 +73,7 @@ export async function POST(
     const inquiry = await prisma.franchiseInquiry.create({
       data: {
         brandId: id,
+        userId: session.user.id,
         name: cleanName,
         phone: cleanPhone,
         message: cleanMessage,

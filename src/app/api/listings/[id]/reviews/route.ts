@@ -32,8 +32,16 @@ export async function GET(
       ) / reviews.length,
     } : null;
 
+    // 리뷰 익명화 처리 (reviewer.id 제거)
+    const anonymizedReviews = reviews.map((review, index) => ({
+      ...review,
+      reviewer: {
+        name: `익명 ${index + 1}`,
+      },
+    }));
+
     return NextResponse.json({
-      reviews,
+      reviews: anonymizedReviews,
       averageRatings,
       totalReviews: reviews.length,
     });

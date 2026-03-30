@@ -95,10 +95,50 @@ export async function PUT(
   try {
     const body = await req.json();
 
+    // Server-side validation (same as POST)
+    const companyName = sanitizeInput(body.companyName);
+    if (!companyName || companyName.trim() === "") {
+      return NextResponse.json({ error: "업체명은 필수입니다." }, { status: 400 });
+    }
+
+    // Validate serviceType is a valid enum
+    const validServiceTypes = ["INTERIOR", "SIGNAGE", "EQUIPMENT", "CLEANING", "ACCOUNTING", "LEGAL", "POS_SYSTEM", "DELIVERY", "MARKETING", "CONSULTING", "OTHER"];
+    if (!body.serviceType || !validServiceTypes.includes(body.serviceType)) {
+      return NextResponse.json({ error: "유효하지 않은 서비스 유형입니다." }, { status: 400 });
+    }
+
+    // Validate description minimum length
+    const description = body.description ? sanitizeHtml(body.description) : null;
+    if (!description || description.length < 10) {
+      return NextResponse.json({ error: "서비스 소개는 최소 10자 이상이어야 합니다." }, { status: 400 });
+    }
+
+    // Validate serviceArea not empty
+    if (!body.serviceArea || body.serviceArea.length === 0) {
+      return NextResponse.json({ error: "서비스 가능 지역을 선택해주세요." }, { status: 400 });
+    }
+
+    // Validate image URLs (whitelist /uploads/ and https://)
+    if (body.images && Array.isArray(body.images)) {
+      for (const img of body.images) {
+        if (!img.url || typeof img.url !== "string") {
+          return NextResponse.json({ error: "잘못된 이미지 URL입니다." }, { status: 400 });
+        }
+        const url = img.url.toLowerCase();
+        if (!url.startsWith("/uploads/") && !url.startsWith("https://")) {
+          return NextResponse.json({ error: "허용되지 않은 이미지 URL입니다. /uploads/ 또는 https:// 로 시작해야 합니다." }, { status: 400 });
+        }
+        // Block dangerous URLs
+        if (url.startsWith("javascript:") || url.startsWith("data:")) {
+          return NextResponse.json({ error: "허용되지 않은 이미지 URL입니다." }, { status: 400 });
+        }
+      }
+    }
+
     const updateData: Record<string, unknown> = {
-      companyName: sanitizeInput(body.companyName),
+      companyName,
       serviceType: body.serviceType,
-      description: body.description ? sanitizeHtml(body.description) : null,
+      description,
       contactPhone: body.contactPhone ? sanitizeInput(body.contactPhone) : null,
       contactEmail: body.contactEmail ? sanitizeInput(body.contactEmail) : null,
       website: body.website ? sanitizeInput(body.website) : null,

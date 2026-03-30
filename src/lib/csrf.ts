@@ -12,9 +12,18 @@ export function validateOrigin(request: Request): boolean {
   const origin = request.headers.get("origin");
   const host = request.headers.get("host");
 
-  // If no origin header (same-origin requests from older browsers), allow
+  // If no origin header, check Referer as fallback
   if (!origin) {
-    return true;
+    const referer = request.headers.get("referer");
+    if (!referer) {
+      return false;
+    }
+    try {
+      const refererUrl = new URL(referer);
+      return refererUrl.host === host;
+    } catch {
+      return false;
+    }
   }
 
   // If no host header, reject

@@ -15,9 +15,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ listings: [] });
     }
 
+    // 최대 5개로 제한
+    const limitedIds = ids.slice(0, 5);
+
     const listings = await prisma.listing.findMany({
       where: {
-        id: { in: ids },
+        id: { in: limitedIds },
         status: "ACTIVE",
       },
       select: {

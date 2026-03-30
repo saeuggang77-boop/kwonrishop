@@ -42,23 +42,49 @@ export default function PartnerDetailClient() {
 
   const [partner, setPartner] = useState<Partner | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    fetch(`/api/partners/${id}`)
-      .then((r) => r.json())
-      .then((data) => {
-        setPartner(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    loadPartner();
   }, [id]);
+
+  const loadPartner = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/partners/${id}`);
+      if (!res.ok) {
+        throw new Error("데이터를 불러오지 못했습니다");
+      }
+      const data = await res.json();
+      setPartner(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "데이터를 불러오지 못했습니다");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="bg-gray-100 dark:bg-gray-800 rounded-xl h-64 animate-pulse mb-6" />
         <div className="bg-gray-100 dark:bg-gray-800 rounded-xl h-96 animate-pulse" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-20 text-center">
+        <p className="text-gray-400 mb-4">{error}</p>
+        <button
+          onClick={loadPartner}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          재시도
+        </button>
       </div>
     );
   }

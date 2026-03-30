@@ -11,6 +11,14 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+
+    // 세션 확인 (ADMIN인지 체크)
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.id ? (await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    }))?.role === "ADMIN" : false;
+
     const brand = await prisma.franchiseBrand.findUnique({
       where: { id },
       include: {
@@ -34,6 +42,8 @@ export async function GET(
       ...brand,
       inquiryCount: brand._count.inquiries,
       _count: undefined,
+      // ftcRawData는 ADMIN만 볼 수 있음
+      ftcRawData: isAdmin ? brand.ftcRawData : undefined,
     };
 
     return NextResponse.json(transformedBrand, {

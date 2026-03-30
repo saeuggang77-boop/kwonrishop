@@ -45,28 +45,31 @@ export default function FranchiseDetailClient() {
 
   const [brand, setBrand] = useState<FranchiseBrand | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
+  const loadBrand = () => {
+    setLoading(true);
+    setError(false);
     fetch(`/api/franchise/${id}`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
       .then((data) => {
         setBrand(data);
         setLoading(false);
-        // 유료 서비스 필요 시 안내
-        if (data.tier === null) {
-          toast.info("유료 구독으로 더 많은 기능을 이용하세요");
-          setTimeout(() => {
-            router.push("/pricing");
-          }, 2000);
-        }
       })
-      .catch(() => setLoading(false));
-  }, [id, router]);
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    loadBrand();
+  }, [id]);
 
   async function handleInquirySubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,7 +82,12 @@ export default function FranchiseDetailClient() {
   }
 
   if (loading) return <div className="max-w-5xl mx-auto px-4 py-6"><div className="bg-gray-100 rounded-xl h-64 animate-pulse mb-6" /><div className="bg-gray-100 rounded-xl h-96 animate-pulse" /></div>;
-  if (!brand) return <div className="max-w-5xl mx-auto px-4 py-20 text-center"><p className="text-gray-400">브랜드를 찾을 수 없습니다</p></div>;
+  if (error || !brand) return (
+    <div className="max-w-5xl mx-auto px-4 py-20 text-center">
+      <p className="text-gray-400 mb-4">브랜드 정보를 불러올 수 없습니다</p>
+      <button onClick={loadBrand} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">다시 시도</button>
+    </div>
+  );
 
   const jsonLdData = { "@context": "https://schema.org", "@type": "Organization", "name": brand.brandName, "description": brand.description || `${brand.brandName} 프랜차이즈 정보`, "url": brand.website || undefined };
 
@@ -101,6 +109,13 @@ export default function FranchiseDetailClient() {
             <p className="text-gray-600">{brand.companyName}</p>
           </div>
         </div>
+        {!brand.tier && (
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800 mb-2">🎯 무료 등록 브랜드입니다</p>
+            <p className="text-xs text-blue-600">유료 플랜으로 업그레이드하여 더 많은 노출과 기능을 활용하세요</p>
+            <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-blue-700 font-medium hover:underline">업그레이드 안내 보기 →</button>
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

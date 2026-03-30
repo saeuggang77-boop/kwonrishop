@@ -108,6 +108,14 @@ export async function POST(
     return NextResponse.json({ error: "메시지를 입력해주세요." }, { status: 400 });
   }
 
+  // content 길이 제한 (최대 1000자)
+  if (cleanContent.length > 1000) {
+    return NextResponse.json(
+      { error: "메시지는 1000자를 초과할 수 없습니다." },
+      { status: 400 }
+    );
+  }
+
   const message = await prisma.message.create({
     data: {
       chatRoomId: roomId,

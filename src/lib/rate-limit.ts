@@ -64,15 +64,16 @@ export function rateLimit(
 export function getClientIp(request: Request): string {
   const headers = new Headers(request.headers);
 
+  // Check x-real-ip first (more reliable on Vercel)
+  const xRealIp = headers.get("x-real-ip");
+  if (xRealIp) {
+    return xRealIp;
+  }
+
   // Check common headers for real IP (behind proxy/CDN)
   const xForwardedFor = headers.get("x-forwarded-for");
   if (xForwardedFor) {
     return xForwardedFor.split(",")[0].trim();
-  }
-
-  const xRealIp = headers.get("x-real-ip");
-  if (xRealIp) {
-    return xRealIp;
   }
 
   // Fallback to a default identifier
