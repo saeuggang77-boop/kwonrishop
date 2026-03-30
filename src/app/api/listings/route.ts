@@ -376,7 +376,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "사업자인증이 필요합니다." }, { status: 403 });
   }
 
-  const existingListing = await prisma.listing.findUnique({
+  const existingListing = await prisma.listing.findFirst({
     where: { userId: session.user.id },
     select: { id: true, status: true },
   });

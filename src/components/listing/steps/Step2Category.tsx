@@ -18,14 +18,19 @@ interface Props {
 export default function Step2Category({ onNext, onPrev }: Props) {
   const { data, updateData } = useListingFormStore();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  function fetchCategories() {
+    setLoadingCategories(true);
+    setError("");
     fetch("/api/categories")
       .then((res) => res.json())
-      .then(setCategories)
-      .catch(() => setError("카테고리를 불러오지 못했습니다."));
-  }, []);
+      .then((data) => { setCategories(data); setLoadingCategories(false); })
+      .catch(() => { setError("카테고리를 불러오지 못했습니다."); setLoadingCategories(false); });
+  }
+
+  useEffect(() => { fetchCategories(); }, []);
 
   const selectedCategory = categories.find((c) => c.id === data.categoryId);
 
@@ -70,6 +75,18 @@ export default function Step2Category({ onNext, onPrev }: Props) {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               업종 대분류 <span className="text-red-500">*</span>
             </label>
+            {loadingCategories && categories.length === 0 ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-pulse text-gray-400">업종 불러오는 중...</div>
+              </div>
+            ) : error && categories.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-sm text-red-500 mb-3">{error}</p>
+                <button type="button" onClick={fetchCategories} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  다시 시도
+                </button>
+              </div>
+            ) : null}
             <div className="grid grid-cols-4 gap-2.5">
               {categories.map((cat) => (
                 <button

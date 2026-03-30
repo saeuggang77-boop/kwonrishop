@@ -63,7 +63,13 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     const remaining = 15 - data.images.length;
-    const filesToAdd = files.slice(0, remaining);
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    const validFiles = files.filter((f) => f.size <= MAX_SIZE);
+    if (validFiles.length < files.length) {
+      const skipped = files.length - validFiles.length;
+      alert(`${skipped}개 파일이 5MB를 초과하여 제외되었습니다.`);
+    }
+    const filesToAdd = validFiles.slice(0, remaining);
     const newImages = filesToAdd.map((file, i) => ({
       file,
       url: URL.createObjectURL(file),
@@ -75,6 +81,8 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
   }
 
   function removeImage(index: number) {
+    const img = data.images[index];
+    if (img?.url?.startsWith("blob:")) URL.revokeObjectURL(img.url);
     const updated = data.images.filter((_, i) => i !== index);
     updateData({ images: updated });
   }
@@ -98,6 +106,8 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
   }
 
   function removeDoc(index: number) {
+    const doc = data.documents[index];
+    if (doc?.url?.startsWith("blob:")) URL.revokeObjectURL(doc.url);
     const updated = data.documents.filter((_, i) => i !== index);
     updateData({ documents: updated });
   }

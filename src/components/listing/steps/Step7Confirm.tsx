@@ -27,6 +27,7 @@ export default function Step7Confirm({ onPrev }: Props) {
   const [toast, setToast] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [registeredId, setRegisteredId] = useState("");
+  const [uploadProgress, setUploadProgress] = useState("");
 
   function formatPrice(value: number) {
     return value === 0 ? "0" : value.toLocaleString();
@@ -45,15 +46,19 @@ export default function Step7Confirm({ onPrev }: Props) {
     const uploadedDocUrls: string[] = [];
 
     try {
+      const totalFiles = data.images.filter((i) => i.file).length + data.documents.filter((d) => d.file).length;
+      let uploaded = 0;
+
       const uploadedImages: { url: string; type: string; sortOrder: number }[] = [];
       for (const img of data.images) {
         if (img.file) {
+          setUploadProgress(`이미지 업로드 중... ${++uploaded}/${totalFiles}`);
           const formData = new FormData();
           formData.append("file", img.file);
           const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
           if (!uploadRes.ok) throw new Error("이미지 업로드 실패");
           const { url } = await uploadRes.json();
-          uploadedImageUrls.push(url); // 추적용
+          uploadedImageUrls.push(url);
           uploadedImages.push({ url, type: img.type, sortOrder: img.sortOrder });
         } else if (img.url) {
           uploadedImages.push({ url: img.url, type: img.type, sortOrder: img.sortOrder });
@@ -64,17 +69,23 @@ export default function Step7Confirm({ onPrev }: Props) {
       const uploadedDocs: { url: string; sortOrder: number }[] = [];
       for (const doc of data.documents) {
         if (doc.file) {
+          setUploadProgress(`증빙자료 업로드 중... ${++uploaded}/${totalFiles}`);
           const formData = new FormData();
           formData.append("file", doc.file);
           const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
           if (!uploadRes.ok) throw new Error("증빙자료 업로드 실패");
           const { url } = await uploadRes.json();
-          uploadedDocUrls.push(url); // 추적용
+          uploadedDocUrls.push(url);
           uploadedDocs.push({ url, sortOrder: doc.sortOrder });
         } else if (doc.url) {
           uploadedDocs.push({ url: doc.url, sortOrder: doc.sortOrder });
         }
       }
+
+      setUploadProgress("매물 등록 중...");
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
       const res = await fetch("/api/listings", {
         method: "POST",
@@ -84,7 +95,10 @@ export default function Step7Confirm({ onPrev }: Props) {
           images: uploadedImages,
           documents: uploadedDocs,
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const result = await res.json();
 
@@ -100,9 +114,14 @@ export default function Step7Confirm({ onPrev }: Props) {
     } catch (err) {
       // 예외 발생 시 업로드된 이미지 정리
       await cleanupOrphanImages([...uploadedImageUrls, ...uploadedDocUrls]);
-      setError("등록 중 오류가 발생했습니다.");
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("요청 시간이 초과되었습니다. 다시 시도해주세요.");
+      } else {
+        setError("등록 중 오류가 발생했습니다.");
+      }
     } finally {
       setLoading(false);
+      setUploadProgress("");
     }
   }
 
@@ -345,7 +364,7 @@ export default function Step7Confirm({ onPrev }: Props) {
           disabled={loading}
           className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? "등록 중..." : "매물 등록하기"}
+          {loading ? (uploadProgress || "등록 중...") : "매물 등록하기"}
         </button>
       </div>
     </div>

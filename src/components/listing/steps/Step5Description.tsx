@@ -16,8 +16,8 @@ export default function Step5Description({ onNext, onPrev }: Props) {
   const charCount = data.description.length;
   const isValid = charCount >= MIN_LENGTH;
 
-  // 연락처 패턴 감지 (전화번호, 카카오톡 ID 등)
-  const contactPattern = /(\d{2,4}[-.\s]?\d{3,4}[-.\s]?\d{4}|카카오|카톡|kakao|open\.kakao|오픈채팅|텔레그램|telegram)/i;
+  // 연락처 패턴 감지 (전화번호, 카카오톡 ID, 이메일, SNS 등)
+  const contactPattern = /(\d{2,4}[-.\s]?\d{3,4}[-.\s]?\d{4}|01[016789]\d{7,8}|카카오|카톡|kakao|open\.kakao|오픈채팅|텔레그램|telegram|라인|line(?![\w-])|whatsapp|왓츠앱|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|인스타|instagram|@\w{3,})/i;
   const hasContact = contactPattern.test(data.description);
 
   return (

@@ -13,7 +13,7 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
   function numInput(field: string, value: string) {
     const num = value === "" ? null : parseInt(value.replace(/,/g, ""), 10);
     if (value === "" || !isNaN(num!)) {
-      updateData({ [field]: num });
+      updateData({ [field]: num !== null ? Math.max(0, num) : null });
     }
   }
 

@@ -135,6 +135,7 @@ export default function Step1Location({ onNext }: Props) {
           latitude: null,
           longitude: null,
         });
+        setError("지도 좌표 변환에 실패했습니다. 주소는 저장되었으나 지도가 표시되지 않을 수 있습니다.");
       }
     });
   }

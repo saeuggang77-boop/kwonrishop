@@ -217,6 +217,13 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
         </button>
         <button
           onClick={() => {
+            // 층수 검증: 해당층이 전체층보다 클 수 없음
+            if (data.currentFloor && data.totalFloor && data.currentFloor > data.totalFloor) {
+              import("@/lib/toast").then(({ toast }) => {
+                toast.error("해당층이 전체층보다 클 수 없습니다.");
+              });
+              return;
+            }
             // 면적과 층수가 비어있으면 넛지 토스트 표시
             if (!data.areaPyeong || !data.currentFloor) {
               import("@/lib/toast").then(({ toast }) => {
