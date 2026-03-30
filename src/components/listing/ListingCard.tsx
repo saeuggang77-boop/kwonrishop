@@ -30,6 +30,7 @@ interface ListingCardProps {
     images: { url: string }[];
     featuredTier?: string;
     sellerTrust?: { avgRating: number; reviewCount: number };
+    _count?: { documents: number };
   };
 }
 
@@ -101,6 +102,16 @@ export default function ListingCard({ listing }: ListingCardProps) {
         {tier !== "FREE" && (
           <div className="absolute bottom-2 left-2">
             <TierBadge tier={tier} size="sm" />
+          </div>
+        )}
+
+        {/* 매출 인증 배지 */}
+        {(listing._count?.documents ?? 0) > 0 && (
+          <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 bg-emerald-600/90 text-white text-[10px] font-semibold rounded backdrop-blur-sm">
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            매출인증
           </div>
         )}
 

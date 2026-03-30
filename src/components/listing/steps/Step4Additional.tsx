@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useListingFormStore } from "@/store/listingForm";
 
 interface Props {
@@ -9,6 +10,31 @@ interface Props {
 
 export default function Step4Additional({ onNext, onPrev }: Props) {
   const { data, updateData } = useListingFormStore();
+
+  // 월세/관리비 수동 편집 추적
+  const [manualRentEdit, setManualRentEdit] = useState(
+    data.expenseRent !== null && data.expenseRent !== data.monthlyRent
+  );
+  const [manualMaintenanceEdit, setManualMaintenanceEdit] = useState(
+    data.expenseMaintenance !== null && data.expenseMaintenance !== data.maintenanceFee
+  );
+
+  // Step 2에서 입력한 월세를 자동 채움
+  useEffect(() => {
+    if (!manualRentEdit && data.monthlyRent > 0 && data.expenseRent === null) {
+      updateData({ expenseRent: data.monthlyRent });
+    }
+  }, [data.monthlyRent, manualRentEdit]);
+
+  // Step 2에서 입력한 관리비를 자동 채움
+  useEffect(() => {
+    if (!manualMaintenanceEdit && data.maintenanceFee && data.maintenanceFee > 0 && data.expenseMaintenance === null) {
+      updateData({ expenseMaintenance: data.maintenanceFee });
+    }
+  }, [data.maintenanceFee, manualMaintenanceEdit]);
+
+  const isAutoRent = !manualRentEdit && data.expenseRent !== null && data.expenseRent === data.monthlyRent;
+  const isAutoMaintenance = !manualMaintenanceEdit && data.expenseMaintenance !== null && data.expenseMaintenance === data.maintenanceFee;
 
   function numInput(field: string, value: string) {
     const num = value === "" ? null : parseInt(value.replace(/,/g, ""), 10);
@@ -171,10 +197,16 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
               const val = (data as unknown as Record<string, number | null>)[field];
               const pct = revenuePercent(val);
               const pctClass = percentColor(val);
+              const isAuto =
+                (field === "expenseRent" && isAutoRent) ||
+                (field === "expenseMaintenance" && isAutoMaintenance);
               return (
                 <div key={field}>
                   <label className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    <span>{label}</span>
+                    <span className="flex items-center gap-1">
+                      {label}
+                      {isAuto && <span className="text-blue-500 font-medium">자동</span>}
+                    </span>
                     {pct && <span className={`font-medium ${pctClass}`}>{pct}</span>}
                   </label>
                   <div className="relative">
@@ -183,8 +215,12 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
                       inputMode="numeric"
                       placeholder="0"
                       value={fmt(val)}
-                      onChange={(e) => numInput(field, e.target.value)}
-                      className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                      onChange={(e) => {
+                        if (field === "expenseRent") setManualRentEdit(true);
+                        if (field === "expenseMaintenance") setManualMaintenanceEdit(true);
+                        numInput(field, e.target.value);
+                      }}
+                      className={`w-full px-3 py-2.5 pr-12 border ${isAuto ? "border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/10" : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900"} text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right`}
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                   </div>

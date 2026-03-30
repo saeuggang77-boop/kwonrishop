@@ -166,6 +166,19 @@ export const useListingFormStore = create<ListingFormStore>()(
           data: restData,
         };
       },
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as typeof currentState;
+        return {
+          ...currentState,
+          ...persisted,
+          data: {
+            ...currentState.data,
+            ...persisted?.data,
+            images: [],
+            documents: [],
+          },
+        };
+      },
     },
   ),
 );

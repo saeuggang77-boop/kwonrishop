@@ -49,6 +49,7 @@ export async function GET(
               select: { url: true },
               take: 1,
             },
+            _count: { select: { documents: true } },
             reviews: {
               select: {
                 accuracyRating: true,

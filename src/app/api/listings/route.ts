@@ -90,6 +90,7 @@ export async function GET(req: NextRequest) {
           take: 1,
           orderBy: { createdAt: "desc" },
         },
+        _count: { select: { documents: true } },
       },
     });
 
@@ -279,6 +280,7 @@ export async function GET(req: NextRequest) {
           take: 1,
           orderBy: { createdAt: "desc" as const },
         },
+        _count: { select: { documents: true } },
       },
     }),
     prisma.listing.count({ where }),

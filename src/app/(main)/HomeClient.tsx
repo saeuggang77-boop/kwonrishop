@@ -376,6 +376,14 @@ export default function HomeClient() {
                         </div>
                       )}
                       <span className="absolute top-2.5 right-2.5 px-2.5 py-1 bg-gradient-to-r from-gold to-amber-700 text-white text-xs font-bold rounded-md">VIP</span>
+                      {((listing as any)._count?.documents ?? 0) > 0 && (
+                        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 bg-emerald-600/90 text-white text-[10px] font-semibold rounded backdrop-blur-sm">
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                          </svg>
+                          매출인증
+                        </div>
+                      )}
                     </div>
                     <div className="w-[62%] p-5 flex flex-col justify-center">
                       <div className="text-xs text-gray-400 mb-1.5">

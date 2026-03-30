@@ -35,6 +35,7 @@ export async function GET() {
           category: { select: { name: true, icon: true } },
           subCategory: { select: { name: true } },
           images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true } },
+          _count: { select: { documents: true } },
         },
       },
     },

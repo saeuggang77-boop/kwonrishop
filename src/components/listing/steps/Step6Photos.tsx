@@ -236,11 +236,18 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
         {/* 매출 증빙자료 */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">매출 증빙자료</label>
-            <span className="text-xs text-gray-400 dark:text-gray-500">(선택)</span>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+              매출 증빙자료
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold rounded">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                매출인증
+              </span>
+            </label>
           </div>
-          <p className="text-xs text-blue-600 dark:text-blue-400 mb-3 font-medium">
-            매출 증빙자료를 공개해 주세요! 더욱 빠른 거래가 가능합니다.
+          <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-3 font-medium">
+            매출 인증 매물은 문의가 3배 높습니다. 증빙자료를 올려보세요!
           </p>
 
           <input
