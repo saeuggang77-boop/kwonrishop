@@ -1,8 +1,7 @@
 /**
  * Input sanitization utilities to prevent XSS and validate inputs
+ * Pure JS implementation - no jsdom dependency (Vercel serverless compatible)
  */
-
-import DOMPurify from "isomorphic-dompurify";
 
 /**
  * Strip HTML tags and prevent XSS
@@ -12,11 +11,21 @@ import DOMPurify from "isomorphic-dompurify";
 export function sanitizeHtml(input: string): string {
   if (!input) return "";
 
-  // Use DOMPurify to strip all HTML tags (plain text only)
-  const sanitized = DOMPurify.sanitize(input, {
-    ALLOWED_TAGS: [], // No HTML tags allowed
-    KEEP_CONTENT: true, // Keep text content
-  });
+  // Decode HTML entities first, then strip all tags
+  let sanitized = input
+    // Remove all HTML tags (including self-closing)
+    .replace(/<[^>]*>/g, "")
+    // Decode common HTML entities
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#x27;/g, "'")
+    .replace(/&#x2F;/g, "/")
+    // Re-escape angle brackets from decoded entities to prevent XSS
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 
   return sanitized.trim();
 }
