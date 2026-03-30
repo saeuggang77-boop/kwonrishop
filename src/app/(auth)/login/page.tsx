@@ -5,13 +5,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 
-const VALUE_PROPS = [
-  { icon: "🔍", label: "예비창업자", desc: "검증된 매물로 똑똑한 창업" },
-  { icon: "🏪", label: "사장님", desc: "수수료 없는 직거래" },
-  { icon: "🏢", label: "프랜차이즈", desc: "예비 가맹점주에게 브랜드 홍보" },
-  { icon: "🔧", label: "협력업체", desc: "창업 전문 서비스 연결" },
-];
-
 function LoginContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -83,28 +76,18 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-blue-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">권리샵</h1>
-          <p className="mt-1 text-gray-500 dark:text-gray-400">상가직거래 플랫폼</p>
-        </div>
-
-        {/* Value Props */}
-        <div className="grid grid-cols-2 gap-2 mb-6">
-          {VALUE_PROPS.map((item) => (
-            <div
-              key={item.label}
-              className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5"
-            >
-              <span className="text-xl shrink-0">{item.icon}</span>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-gray-900 dark:text-white truncate">{item.label}</p>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{item.desc}</p>
-              </div>
-            </div>
-          ))}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-[52px] h-[52px] bg-gradient-to-br from-blue-600 to-blue-500 rounded-[14px] mb-3 shadow-lg shadow-blue-600/25">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </div>
+          <h1 className="text-[26px] font-black text-gray-900 dark:text-white tracking-tight">권리샵</h1>
+          <p className="mt-0.5 text-[13px] text-gray-400 dark:text-gray-500">상가직거래 플랫폼</p>
         </div>
 
         {/* Success Banners */}
@@ -146,14 +129,15 @@ function LoginContent() {
         )}
 
         {/* Main Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <h2 className="text-lg font-semibold text-center text-gray-900 dark:text-white mb-5">로그인 / 회원가입</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm shadow-black/[0.04] border border-gray-200/60 dark:border-gray-700 p-7">
+          <h2 className="text-xl font-extrabold text-gray-900 dark:text-white mb-1">로그인</h2>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mb-6">권리샵에 오신 것을 환영합니다</p>
 
           {/* Social Login */}
           <div className="space-y-2.5">
             <button
               onClick={() => signIn("kakao", { callbackUrl })}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-[#191919] bg-[#FEE500] hover:bg-[#FDD800] transition-colors"
+              className="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl font-semibold text-[15px] text-[#191919] bg-[#FEE500] hover:bg-[#FDD800] active:scale-[0.98] transition-all"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path
@@ -166,7 +150,7 @@ function LoginContent() {
 
             <button
               onClick={() => signIn("naver", { callbackUrl })}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-white bg-[#03C75A] hover:bg-[#02b351] transition-colors"
+              className="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl font-semibold text-[15px] text-white bg-[#03C75A] hover:bg-[#02b351] active:scale-[0.98] transition-all"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path
@@ -178,19 +162,19 @@ function LoginContent() {
             </button>
           </div>
 
-          <p className="text-center text-[11px] text-gray-400 dark:text-gray-500 mt-2.5">
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-2.5">
             소셜 로그인은 별도 가입 없이 바로 시작됩니다
           </p>
 
           {/* Divider */}
-          <div className="flex items-center gap-3 my-5">
+          <div className="flex items-center gap-4 my-6">
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
             <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">또는 이메일로 로그인</span>
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
           </div>
 
           {/* Email Login Form */}
-          <form onSubmit={handleEmailLogin} className="space-y-3">
+          <form onSubmit={handleEmailLogin} className="space-y-3.5">
             {error && (
               <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
                 <p>{error}</p>
@@ -210,27 +194,44 @@ function LoginContent() {
               </div>
             )}
 
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="이메일"
-              autoComplete="email"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="비밀번호"
-              autoComplete="current-password"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
-            />
+            <div>
+              <label htmlFor="email" className="block text-[13px] font-semibold text-gray-600 dark:text-gray-400 mb-1.5">
+                이메일
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="example@email.com"
+                autoComplete="email"
+                className="w-full px-4 py-3 border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+              />
+            </div>
 
-            <div className="flex justify-end">
+            <div>
+              <label htmlFor="password" className="block text-[13px] font-semibold text-gray-600 dark:text-gray-400 mb-1.5">
+                비밀번호
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                autoComplete="current-password"
+                className="w-full px-4 py-3 border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 accent-blue-600 rounded" />
+                로그인 유지
+              </label>
               <Link
                 href="/forgot-password"
-                className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                className="text-[13px] text-blue-600 dark:text-blue-400 font-medium hover:underline"
               >
                 비밀번호 찾기
               </Link>
@@ -239,26 +240,26 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-[15px] hover:from-blue-700 hover:to-blue-600 active:scale-[0.98] transition-all disabled:from-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:to-gray-600 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
             >
-              {loading ? "로그인 중..." : "이메일로 로그인"}
+              {loading ? "로그인 중..." : "로그인"}
             </button>
           </form>
 
           {/* Signup Link */}
-          <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-5 text-center text-sm text-gray-400 dark:text-gray-500">
             아직 계정이 없으신가요?{" "}
-            <Link href="/signup" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
-              이메일로 회원가입
+            <Link href="/signup" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+              회원가입
             </Link>
           </p>
         </div>
 
         {/* Footer Links */}
-        <p className="mt-5 text-xs text-gray-400 dark:text-gray-500 text-center leading-relaxed">
+        <p className="mt-6 text-[11px] text-gray-300 dark:text-gray-600 text-center leading-relaxed">
           로그인 시{" "}
-          <Link href="/terms" className="underline hover:text-gray-600 dark:hover:text-gray-300">이용약관</Link> 및{" "}
-          <Link href="/privacy" className="underline hover:text-gray-600 dark:hover:text-gray-300">개인정보처리방침</Link>에
+          <Link href="/terms" className="underline hover:text-gray-500 dark:hover:text-gray-400">이용약관</Link> 및{" "}
+          <Link href="/privacy" className="underline hover:text-gray-500 dark:hover:text-gray-400">개인정보처리방침</Link>에
           동의합니다.
         </p>
       </div>
