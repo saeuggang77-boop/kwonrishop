@@ -53,6 +53,20 @@ interface PartnerService {
   description: string | null;
 }
 
+interface Equipment {
+  id: string;
+  title: string;
+  price: number;
+  negotiable: boolean;
+  category: string;
+  condition: string;
+  tier: string;
+  images: { url: string }[];
+  viewCount: number;
+  favoriteCount: number;
+  createdAt: string;
+}
+
 const SERVICE_TYPE_LABELS: Record<string, string> = {
   INTERIOR: "인테리어",
   ACCOUNTING: "세무/회계",
@@ -151,27 +165,31 @@ export default function HomeClient() {
   const [latestListings, setLatestListings] = useState<Listing[]>([]);
   const [franchiseBrands, setFranchiseBrands] = useState<FranchiseBrand[]>([]);
   const [partnerServices, setPartnerServices] = useState<PartnerService[]>([]);
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [latestRes, franchiseRes, partnerRes] = await Promise.all([
+      const [latestRes, franchiseRes, partnerRes, equipmentRes] = await Promise.all([
         fetch("/api/listings?limit=20&sort=latest"),
         fetch("/api/franchise?featured=true&limit=10"),
         fetch("/api/partners?featured=true&limit=10"),
+        fetch("/api/equipment?featured=true&limit=8"),
       ]);
 
-      const [latestData, franchiseData, partnerData] = await Promise.all([
+      const [latestData, franchiseData, partnerData, equipmentData] = await Promise.all([
         latestRes.json(),
         franchiseRes.json(),
         partnerRes.json(),
+        equipmentRes.json(),
       ]);
 
       setLatestListings(latestData.listings || []);
       setFranchiseBrands(franchiseData.brands || []);
       setPartnerServices(partnerData.partners || []);
+      setEquipment(equipmentData.equipment || []);
     } catch (error) {
       console.error("Failed to fetch homepage data:", error);
     } finally {
@@ -198,6 +216,8 @@ export default function HomeClient() {
   const otherBrands = franchiseBrands.filter((b) => b.tier === "SILVER" || b.tier === "BRONZE");
   const vipPartners = partnerServices.filter((p) => p.tier === "VIP");
   const otherPartners = partnerServices.filter((p) => p.tier === "PREMIUM" || p.tier === "BASIC");
+  const vipEquipment = equipment.filter((e) => e.tier === "VIP");
+  const premiumEquipment = equipment.filter((e) => e.tier === "PREMIUM");
 
   return (
     <>
@@ -640,7 +660,96 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ===== 8. 사업자 CTA (네이비) ===== */}
+      {/* ===== 8. 장비/인테리어 섹션 ===== */}
+      {!loading && (vipEquipment.length > 0 || premiumEquipment.length > 0) && (
+        <section className="py-14 bg-bg-cool">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-extrabold text-gray-900">중고장비 마켓</h2>
+                <p className="text-sm text-gray-400 mt-1">창업 비용 절감, 검증된 장비를 합리적인 가격에</p>
+              </div>
+              <Link href="/equipment" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+                더보기 →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* VIP 장비 (span 2) */}
+              {vipEquipment.slice(0, 1).map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/equipment/${item.id}`}
+                  className="md:col-span-2 p-5 bg-white rounded-2xl border-2 border-gold relative hover:shadow-lg hover:-translate-y-1 transition-all shadow-sm"
+                >
+                  <span className="absolute top-3.5 right-3.5 px-2 py-0.5 bg-gradient-to-r from-gold to-amber-700 text-white text-[10px] font-bold rounded-md">VIP</span>
+                  <div className="flex items-start gap-3 mb-2">
+                    {item.images[0] ? (
+                      <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                        <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center font-extrabold text-2xl flex-shrink-0">
+                        🛠️
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <h3 className="text-[15px] font-bold text-gray-900 mb-1 line-clamp-2">{item.title}</h3>
+                      <div className="flex items-baseline gap-1 mb-1">
+                        <span className="text-lg font-bold text-blue-600">
+                          {item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}
+                        </span>
+                        {item.negotiable && item.price > 0 && (
+                          <span className="text-xs text-gray-400">협의가능</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                        <span>{item.condition === "NEW" ? "신품" : item.condition === "USED_LIKE_NEW" ? "거의새것" : "중고"}</span>
+                        <span>·</span>
+                        <span>조회 {item.viewCount}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+              {/* PREMIUM 장비 (각 1칸) */}
+              {premiumEquipment.slice(0, vipEquipment.length > 0 ? 2 : 4).map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/equipment/${item.id}`}
+                  className="p-4 bg-white rounded-2xl border border-gray-200 relative hover:shadow-lg hover:-translate-y-1 transition-all shadow-sm"
+                >
+                  <span className="absolute top-3 right-3 px-2 py-0.5 bg-gray-500 text-white text-[10px] font-bold rounded-md">PREMIUM</span>
+                  <div className="mb-3">
+                    {item.images[0] ? (
+                      <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-2">
+                        <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-full aspect-square rounded-xl bg-gray-100 flex items-center justify-center text-4xl mb-2">
+                        🛠️
+                      </div>
+                    )}
+                    <h3 className="text-sm font-bold text-gray-900 line-clamp-2 mb-1">{item.title}</h3>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-base font-bold text-blue-600">
+                        {item.price === 0 ? "무료" : `${item.price.toLocaleString()}`}
+                      </span>
+                      {item.price > 0 && <span className="text-xs text-gray-400">원</span>}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-400 pt-2 border-t border-gray-100">
+                    <span>{item.condition === "NEW" ? "신품" : "중고"}</span>
+                    <span>·</span>
+                    <span>조회 {item.viewCount}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ===== 9. 사업자 CTA (네이비) ===== */}
       <HomeServiceSection />
     </>
   );

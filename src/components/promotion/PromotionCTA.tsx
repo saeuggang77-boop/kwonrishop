@@ -70,11 +70,11 @@ export function ListingUpsellBanner({
   );
 }
 
-// 1-C. 프랜차이즈/협력업체 등록 유도
+// 1-C. 프랜차이즈/협력업체/장비 등록 유도
 export function RegisterPromoBanner({
   type,
 }: {
-  type: "franchise" | "partner";
+  type: "franchise" | "partner" | "equipment";
 }) {
   const config = {
     franchise: {
@@ -96,6 +96,16 @@ export function RegisterPromoBanner({
       badgeColor: "bg-blue-500",
       cta: "월 10만원부터 →",
       link: "/pricing?tab=partner",
+    },
+    equipment: {
+      bg: "from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900",
+      border: "border-purple-400",
+      title: "내 집기를 더 빠르게 판매하세요",
+      subtitle: "프리미엄 등록 시 상위 노출 + VIP 배지로 판매 확률 3배 증가",
+      badges: ["상단노출", "VIP배지", "우선검색"],
+      badgeColor: "bg-purple-500",
+      cta: "광고 등록하기 →",
+      link: "/equipment/register",
     },
   };
 

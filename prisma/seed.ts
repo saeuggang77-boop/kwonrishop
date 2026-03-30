@@ -84,12 +84,12 @@ const adProducts = [
     sortOrder: 1,
     features: {
       badge: "베이직",
-      photos: 10,
       topExposure: false,
       highlight: false,
       bumpCount: 2,
       verified: true,
-      description: "사진10장, 인증배지, 끌어올리기 2회",
+      mainBasic: true,
+      description: "메인 베이직 매물 노출, 끌어올리기 2회, 인증배지",
     },
   },
   {
@@ -102,12 +102,10 @@ const adProducts = [
     sortOrder: 2,
     features: {
       badge: "프리미엄",
-      photos: 20,
       topExposure: true,
-      highlight: true,
       bumpCount: 5,
-      analytics: true,
-      description: "상위노출, 사진20장, 통계, 끌어올리기 5회",
+      mainPremium: true,
+      description: "메인 프리미엄 매물 노출, 상위 정렬, 끌어올리기 5회, 인증배지",
     },
   },
   {
@@ -120,15 +118,10 @@ const adProducts = [
     sortOrder: 3,
     features: {
       badge: "VIP",
-      photos: 999,
-      video: 1,
       topExposure: true,
-      highlight: true,
       bumpCount: 10,
-      analytics: true,
-      mainRecommend: true,
-      matching: true,
-      description: "최상위노출, 메인추천, 사진무제한, 영상1개, 매수자매칭",
+      mainVip: true,
+      description: "메인 VIP 대형 노출, 최상위 정렬, 끌어올리기 10회, 인증배지",
     },
   },
   // ── 프랜차이즈 (FRANCHISE) ── 기간별 상품 (1/3/6/12개월)
@@ -143,10 +136,9 @@ const adProducts = [
     sortOrder: 4,
     features: {
       badge: "브론즈",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       period: "1m",
-      description: "로고+소개 편집",
+      description: "프랜차이즈 목록 등록, 브론즈 배지",
     },
   },
   {
@@ -159,11 +151,10 @@ const adProducts = [
     sortOrder: 5,
     features: {
       badge: "브론즈",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       period: "3m",
       discount: "10%",
-      description: "로고+소개 편집 (3개월, 10% 할인)",
+      description: "프랜차이즈 목록 등록, 브론즈 배지 (3개월, 10% 할인)",
     },
   },
   {
@@ -176,11 +167,10 @@ const adProducts = [
     sortOrder: 6,
     features: {
       badge: "브론즈",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       period: "6m",
       discount: "15%",
-      description: "로고+소개 편집 (6개월, 15% 할인)",
+      description: "프랜차이즈 목록 등록, 브론즈 배지 (6개월, 15% 할인)",
     },
   },
   {
@@ -193,11 +183,10 @@ const adProducts = [
     sortOrder: 7,
     features: {
       badge: "브론즈",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       period: "12m",
       discount: "20%",
-      description: "로고+소개 편집 (12개월, 20% 할인)",
+      description: "프랜차이즈 목록 등록, 브론즈 배지 (12개월, 20% 할인)",
     },
   },
   // 실버 1개월 (기존 ID 유지 - 하위호환)
@@ -211,13 +200,10 @@ const adProducts = [
     sortOrder: 8,
     features: {
       badge: "실버",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
       period: "1m",
-      description: "상위노출, 추천연동, 문의접수",
+      description: "상위 노출, 실버 배지",
     },
   },
   {
@@ -230,14 +216,11 @@ const adProducts = [
     sortOrder: 9,
     features: {
       badge: "실버",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
       period: "3m",
       discount: "10%",
-      description: "상위노출, 추천연동, 문의접수 (3개월, 10% 할인)",
+      description: "상위 노출, 실버 배지 (3개월, 10% 할인)",
     },
   },
   {
@@ -250,14 +233,11 @@ const adProducts = [
     sortOrder: 10,
     features: {
       badge: "실버",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
       period: "6m",
       discount: "15%",
-      description: "상위노출, 추천연동, 문의접수 (6개월, 15% 할인)",
+      description: "상위 노출, 실버 배지 (6개월, 15% 할인)",
     },
   },
   {
@@ -270,14 +250,11 @@ const adProducts = [
     sortOrder: 11,
     features: {
       badge: "실버",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
       period: "12m",
       discount: "20%",
-      description: "상위노출, 추천연동, 문의접수 (12개월, 20% 할인)",
+      description: "상위 노출, 실버 배지 (12개월, 20% 할인)",
     },
   },
   // 골드 1개월 (기존 ID 유지 - 하위호환)
@@ -291,16 +268,11 @@ const adProducts = [
     sortOrder: 12,
     features: {
       badge: "골드",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
-      mainBanner: true,
-      autoMatching: true,
-      monthlyReport: true,
+      mainFeatured: true,
       period: "1m",
-      description: "메인배너, 자동매칭, 월간리포트",
+      description: "최상위 노출, 메인 대형 카드 노출, 골드 배지",
     },
   },
   {
@@ -313,17 +285,12 @@ const adProducts = [
     sortOrder: 13,
     features: {
       badge: "골드",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
-      mainBanner: true,
-      autoMatching: true,
-      monthlyReport: true,
+      mainFeatured: true,
       period: "3m",
       discount: "10%",
-      description: "메인배너, 자동매칭, 월간리포트 (3개월, 10% 할인)",
+      description: "최상위 노출, 메인 대형 카드 노출, 골드 배지 (3개월, 10% 할인)",
     },
   },
   {
@@ -336,17 +303,12 @@ const adProducts = [
     sortOrder: 14,
     features: {
       badge: "골드",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
-      mainBanner: true,
-      autoMatching: true,
-      monthlyReport: true,
+      mainFeatured: true,
       period: "6m",
       discount: "15%",
-      description: "메인배너, 자동매칭, 월간리포트 (6개월, 15% 할인)",
+      description: "최상위 노출, 메인 대형 카드 노출, 골드 배지 (6개월, 15% 할인)",
     },
   },
   {
@@ -359,17 +321,12 @@ const adProducts = [
     sortOrder: 15,
     features: {
       badge: "골드",
-      logoEdit: true,
-      introEdit: true,
+      listingRegister: true,
       topExposure: true,
-      recommend: true,
-      inquirySystem: true,
-      mainBanner: true,
-      autoMatching: true,
-      monthlyReport: true,
+      mainFeatured: true,
       period: "12m",
       discount: "20%",
-      description: "메인배너, 자동매칭, 월간리포트 (12개월, 20% 할인)",
+      description: "최상위 노출, 메인 대형 카드 노출, 골드 배지 (12개월, 20% 할인)",
     },
   },
   // ── 협력업체 (PARTNER) ── 기간별 상품 (1/3/6/12개월)
@@ -384,10 +341,9 @@ const adProducts = [
     sortOrder: 16,
     features: {
       badge: "베이직",
-      photos: 10,
-      verified: true,
+      layoutType: "row",
       period: "1m",
-      description: "사진10장, 배지",
+      description: "줄광고형 등록, 베이직 배지",
     },
   },
   {
@@ -400,11 +356,10 @@ const adProducts = [
     sortOrder: 17,
     features: {
       badge: "베이직",
-      photos: 10,
-      verified: true,
+      layoutType: "row",
       period: "3m",
       discount: "10%",
-      description: "사진10장, 배지 (3개월, 10% 할인)",
+      description: "줄광고형 등록, 베이직 배지 (3개월, 10% 할인)",
     },
   },
   {
@@ -417,11 +372,10 @@ const adProducts = [
     sortOrder: 18,
     features: {
       badge: "베이직",
-      photos: 10,
-      verified: true,
+      layoutType: "row",
       period: "6m",
       discount: "15%",
-      description: "사진10장, 배지 (6개월, 15% 할인)",
+      description: "줄광고형 등록, 베이직 배지 (6개월, 15% 할인)",
     },
   },
   {
@@ -434,11 +388,10 @@ const adProducts = [
     sortOrder: 19,
     features: {
       badge: "베이직",
-      photos: 10,
-      verified: true,
+      layoutType: "row",
       period: "12m",
       discount: "20%",
-      description: "사진10장, 배지 (12개월, 20% 할인)",
+      description: "줄광고형 등록, 베이직 배지 (12개월, 20% 할인)",
     },
   },
   // 프리미엄 1개월 (기존 ID 유지 - 하위호환)
@@ -452,10 +405,11 @@ const adProducts = [
     sortOrder: 20,
     features: {
       badge: "프리미엄",
-      photos: 20,
+      layoutType: "horizontal-3col",
       topExposure: true,
+      mainExposure: true,
       period: "1m",
-      description: "상위노출, 사진20장",
+      description: "상위 노출, 가로형 카드(3열), 메인 노출",
     },
   },
   {
@@ -468,11 +422,12 @@ const adProducts = [
     sortOrder: 21,
     features: {
       badge: "프리미엄",
-      photos: 20,
+      layoutType: "horizontal-3col",
       topExposure: true,
+      mainExposure: true,
       period: "3m",
       discount: "10%",
-      description: "상위노출, 사진20장 (3개월, 10% 할인)",
+      description: "상위 노출, 가로형 카드(3열), 메인 노출 (3개월, 10% 할인)",
     },
   },
   {
@@ -485,11 +440,12 @@ const adProducts = [
     sortOrder: 22,
     features: {
       badge: "프리미엄",
-      photos: 20,
+      layoutType: "horizontal-3col",
       topExposure: true,
+      mainExposure: true,
       period: "6m",
       discount: "15%",
-      description: "상위노출, 사진20장 (6개월, 15% 할인)",
+      description: "상위 노출, 가로형 카드(3열), 메인 노출 (6개월, 15% 할인)",
     },
   },
   {
@@ -502,11 +458,12 @@ const adProducts = [
     sortOrder: 23,
     features: {
       badge: "프리미엄",
-      photos: 20,
+      layoutType: "horizontal-3col",
       topExposure: true,
+      mainExposure: true,
       period: "12m",
       discount: "20%",
-      description: "상위노출, 사진20장 (12개월, 20% 할인)",
+      description: "상위 노출, 가로형 카드(3열), 메인 노출 (12개월, 20% 할인)",
     },
   },
   // VIP 1개월 (기존 ID 유지 - 하위호환)
@@ -520,11 +477,11 @@ const adProducts = [
     sortOrder: 24,
     features: {
       badge: "VIP",
-      photos: 999,
+      layoutType: "large-2col",
       topExposure: true,
       mainRecommend: true,
       period: "1m",
-      description: "최상위노출, 추천업체 연동",
+      description: "최상위 노출, VIP 대형 카드(2열), 메인 VIP 노출",
     },
   },
   {
@@ -537,12 +494,12 @@ const adProducts = [
     sortOrder: 25,
     features: {
       badge: "VIP",
-      photos: 999,
+      layoutType: "large-2col",
       topExposure: true,
       mainRecommend: true,
       period: "3m",
       discount: "10%",
-      description: "최상위노출, 추천업체 연동 (3개월, 10% 할인)",
+      description: "최상위 노출, VIP 대형 카드(2열), 메인 VIP 노출 (3개월, 10% 할인)",
     },
   },
   {
@@ -555,12 +512,12 @@ const adProducts = [
     sortOrder: 26,
     features: {
       badge: "VIP",
-      photos: 999,
+      layoutType: "large-2col",
       topExposure: true,
       mainRecommend: true,
       period: "6m",
       discount: "15%",
-      description: "최상위노출, 추천업체 연동 (6개월, 15% 할인)",
+      description: "최상위 노출, VIP 대형 카드(2열), 메인 VIP 노출 (6개월, 15% 할인)",
     },
   },
   {
@@ -573,12 +530,12 @@ const adProducts = [
     sortOrder: 27,
     features: {
       badge: "VIP",
-      photos: 999,
+      layoutType: "large-2col",
       topExposure: true,
       mainRecommend: true,
       period: "12m",
       discount: "20%",
-      description: "최상위노출, 추천업체 연동 (12개월, 20% 할인)",
+      description: "최상위 노출, VIP 대형 카드(2열), 메인 VIP 노출 (12개월, 20% 할인)",
     },
   },
   // ── 집기장터 (EQUIPMENT) ──
@@ -592,9 +549,9 @@ const adProducts = [
     sortOrder: 28,
     features: {
       badge: "베이직",
-      photos: 10,
+      layoutType: "row",
       topExposure: false,
-      description: "사진10장, 인증배지, 30일 노출",
+      description: "줄광고형 등록, 베이직 배지, 30일 노출",
     },
   },
   {
@@ -607,10 +564,10 @@ const adProducts = [
     sortOrder: 29,
     features: {
       badge: "프리미엄",
-      photos: 20,
+      layoutType: "horizontal-3col",
       topExposure: true,
-      highlight: true,
-      description: "상위노출, 사진20장, 프리미엄배지",
+      mainExposure: true,
+      description: "상위 노출, 가로형 카드(3열), 메인 노출, 30일",
     },
   },
   {
@@ -623,11 +580,10 @@ const adProducts = [
     sortOrder: 30,
     features: {
       badge: "VIP",
-      photos: 999,
+      layoutType: "large-2col",
       topExposure: true,
-      highlight: true,
       mainRecommend: true,
-      description: "최상위노출, 메인추천, 사진무제한, VIP배지",
+      description: "최상위 노출, VIP 대형 카드(2열), 메인 VIP 노출, 30일",
     },
   },
   // ── 공통 단건 (COMMON) ──
@@ -1743,6 +1699,9 @@ async function main() {
       longitude: 127.0276,
       quantity: 1,
       viewCount: 234,
+      tier: "VIP" as const,
+      productId: "equipment-vip",
+      adAmount: 50000,
     },
     {
       id: "demo-equipment-1",
@@ -1758,6 +1717,9 @@ async function main() {
       longitude: 126.9236,
       quantity: 5,
       viewCount: 187,
+      tier: "PREMIUM" as const,
+      productId: "equipment-premium",
+      adAmount: 30000,
     },
     {
       id: "demo-equipment-2",
@@ -1773,6 +1735,9 @@ async function main() {
       longitude: 126.9367,
       quantity: 1,
       viewCount: 456,
+      tier: "PREMIUM" as const,
+      productId: "equipment-premium",
+      adAmount: 30000,
     },
     {
       id: "demo-equipment-3",
@@ -1788,6 +1753,9 @@ async function main() {
       longitude: 126.8397,
       quantity: 1,
       viewCount: 98,
+      tier: "BASIC" as const,
+      productId: "equipment-basic",
+      adAmount: 10000,
     },
     {
       id: "demo-equipment-4",
@@ -1803,6 +1771,9 @@ async function main() {
       longitude: 127.0140,
       quantity: 1,
       viewCount: 521,
+      tier: "FREE" as const,
+      productId: null,
+      adAmount: 0,
     },
   ];
 
@@ -1823,6 +1794,8 @@ async function main() {
         longitude: eq.longitude,
         quantity: eq.quantity,
         viewCount: eq.viewCount,
+        tier: eq.tier,
+        tierExpiresAt: eq.tier !== "FREE" ? in30Days : null,
       },
       create: {
         id: eq.id,
@@ -1839,10 +1812,41 @@ async function main() {
         longitude: eq.longitude,
         quantity: eq.quantity,
         viewCount: eq.viewCount,
+        tier: eq.tier,
+        tierExpiresAt: eq.tier !== "FREE" ? in30Days : null,
       },
     });
   }
   console.log(`  ✓ 데모 집기장터 ${equipmentData.length}개 생성`);
+
+  // 집기 유료 AdPurchase
+  const paidEquipment = equipmentData.filter((e) => e.productId !== null);
+  for (let i = 0; i < paidEquipment.length; i++) {
+    const e = paidEquipment[i];
+    await prisma.adPurchase.upsert({
+      where: { id: `demo-purchase-equipment-${i}` },
+      update: {
+        userId: e.userId,
+        equipmentId: e.id,
+        productId: e.productId!,
+        status: "PAID",
+        amount: e.adAmount,
+        activatedAt: now,
+        expiresAt: in30Days,
+      },
+      create: {
+        id: `demo-purchase-equipment-${i}`,
+        userId: e.userId,
+        equipmentId: e.id,
+        productId: e.productId!,
+        status: "PAID",
+        amount: e.adAmount,
+        activatedAt: now,
+        expiresAt: in30Days,
+      },
+    });
+  }
+  console.log(`  ✓ 데모 집기 AdPurchase ${paidEquipment.length}개 생성`);
 
   // ==========================================
   // 데모 이미지 (매물, 협력업체, 집기)

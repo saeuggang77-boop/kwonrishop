@@ -1,11 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 
-// 테스트 전용 시드 API - 개발 환경에서만 동작
-export async function POST() {
+// 테스트 전용 시드 API - 개발 환경에서만 동작, CRON_SECRET 인증 필요
+export async function POST(request: NextRequest) {
   if (process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "Not available" }, { status: 403 });
+    return NextResponse.json({ error: "Not available in production" }, { status: 403 });
+  }
+
+  // CRON_SECRET 인증 (E2E 테스트 호환)
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (cronSecret && cronSecret !== "test") {
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   }
 
   const TEST_EMAIL = "test-seller@kwonrishop.com";

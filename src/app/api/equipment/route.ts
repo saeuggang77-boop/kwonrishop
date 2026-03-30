@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
       take: 10,
       select: {
         id: true,
@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
         condition: true,
         tradeMethod: true,
         addressRoad: true,
+        tier: true,
         viewCount: true,
         favoriteCount: true,
         createdAt: true,
@@ -98,8 +99,9 @@ export async function GET(req: NextRequest) {
   } else if (sort === "price_desc") {
     orderBy = { price: "desc" };
   } else {
-    // latest: bumpedAt DESC NULLS LAST, then createdAt DESC
+    // latest: tier DESC (paid first), then bumpedAt DESC NULLS LAST, then createdAt DESC
     orderBy = [
+      { tier: "desc" },
       { bumpedAt: { sort: "desc", nulls: "last" } },
       { createdAt: "desc" },
     ];
@@ -120,6 +122,7 @@ export async function GET(req: NextRequest) {
         condition: true,
         tradeMethod: true,
         addressRoad: true,
+        tier: true,
         viewCount: true,
         favoriteCount: true,
         createdAt: true,

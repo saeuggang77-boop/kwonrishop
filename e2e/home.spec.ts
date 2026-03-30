@@ -28,8 +28,8 @@ test.describe("홈페이지", () => {
     const heading = page.getByRole("heading", { name: /업종별 매물 찾기/ });
     await expect(heading).toBeVisible();
 
-    // 카테고리 항목들이 있는지 확인
-    const categories = page.getByText("외식업");
+    // 카테고리 항목들이 있는지 확인 (여러 개 존재하므로 first() 사용)
+    const categories = page.getByText("외식업").first();
     await expect(categories).toBeVisible();
   });
 

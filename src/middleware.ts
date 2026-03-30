@@ -82,11 +82,11 @@ export async function middleware(req: NextRequest) {
       "Content-Security-Policy",
       [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daumcdn.net https://cdn.vercel-insights.com https://*.kakao.com https://js.tosspayments.com",
-        "style-src 'self' 'unsafe-inline'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daumcdn.net https://cdn.vercel-insights.com https://*.kakao.com https://js.tosspayments.com https://www.googletagmanager.com",
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
         "img-src 'self' data: blob: https: http:",
-        "font-src 'self' data:",
-        "connect-src 'self' https://api.tosspayments.com https://*.kakao.com https://*.pusher.com wss://*.pusher.com",
+        "font-src 'self' data: https://cdn.jsdelivr.net",
+        "connect-src 'self' https://api.tosspayments.com https://*.kakao.com https://*.pusher.com wss://*.pusher.com https://*.googleapis.com https://vitals.vercel-insights.com",
         "frame-src 'self' https://api.tosspayments.com https://js.tosspayments.com https://nid.naver.com https://kauth.kakao.com https://*.daumcdn.net https://*.daum.net https://*.kakao.com",
       ].join("; ")
     );

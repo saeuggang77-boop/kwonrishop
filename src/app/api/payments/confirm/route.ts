@@ -193,8 +193,26 @@ export async function POST(request: NextRequest) {
           },
         });
       }
+    } else if (categoryScope === "EQUIPMENT" && order.equipmentId) {
+      // Determine tier from product name
+      const productName = order.product.name;
+      let newTier: string;
+      if (productName.includes("VIP")) {
+        newTier = "VIP";
+      } else if (productName.includes("프리미엄")) {
+        newTier = "PREMIUM";
+      } else {
+        newTier = "BASIC";
+      }
+
+      await prisma.equipment.update({
+        where: { id: order.equipmentId },
+        data: {
+          tier: newTier as any,
+          tierExpiresAt: order.product.duration ? expiresAt : null,
+        },
+      });
     }
-    // EQUIPMENT scope: no tier update needed (equipment doesn't have tiers)
 
     // SUBSCRIPTION type: Create BumpSubscription
     if (order.product.type === "SUBSCRIPTION") {

@@ -798,6 +798,10 @@ model Equipment {
   purchaseYear  Int?
   quantity      Int              @default(1)
 
+  // 등급 (협력업체와 동일 구조)
+  tier          PartnerTier       @default(FREE)
+  tierExpiresAt DateTime?
+
   // 카운터
   viewCount     Int              @default(0)
   favoriteCount Int              @default(0)

@@ -75,6 +75,7 @@ export async function GET(request: NextRequest) {
         expiredCount: 0,
         tierDowngradeCount: 0,
         franchiseTierDowngradeCount: 0,
+        equipmentTierDowngradeCount: 0,
         timestamp: now.toISOString(),
       });
     }
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest) {
             type: "PARTNER_TIER_DOWNGRADE",
             title: "파트너 구독이 만료되었습니다",
             message: `${ps.companyName}의 ${ps.tier} 등급 혜택이 종료되어 FREE 등급으로 전환되었습니다. 구독을 연장하시려면 결제 페이지를 확인해주세요.`,
-            link: `/mypage/partner`,
+            link: `/mypage`,
           }));
 
           await prisma.notification.createMany({
@@ -175,7 +176,7 @@ export async function GET(request: NextRequest) {
               ps.userId,
               "파트너 구독이 만료되었습니다",
               `${ps.companyName}의 ${ps.tier} 등급 혜택이 종료되었습니다.`,
-              `/mypage/partner`
+              `/mypage`
             ).catch(() => {});
 
             if (ps.user.phone) {
@@ -202,6 +203,22 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // Downgrade equipment tiers
+    const equipmentTierDowngrade = await prisma.equipment.updateMany({
+      where: {
+        tierExpiresAt: {
+          lt: now,
+        },
+        tier: {
+          not: "FREE",
+        },
+      },
+      data: {
+        tier: "FREE",
+        tierExpiresAt: null,
+      },
+    });
+
     // Create notifications for each expired ad
     const notifications = expiredAds.map((ad: any) => {
       const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
@@ -210,7 +227,7 @@ export async function GET(request: NextRequest) {
         type: "AD_EXPIRED",
         title: "광고 상품이 만료되었습니다",
         message: `${ad.product.name} 상품이 만료되었습니다. ${targetName}의 광고 혜택이 종료됩니다.`,
-        link: ad.listingId ? `/mypage/listings` : ad.equipmentId ? `/equipment/${ad.equipmentId}` : `/mypage/partner`,
+        link: ad.listingId ? `/mypage` : ad.equipmentId ? `/equipment/${ad.equipmentId}` : `/mypage`,
       };
     });
 
@@ -221,7 +238,7 @@ export async function GET(request: NextRequest) {
     // 웹 푸시: 광고 만료 알림 (non-blocking)
     expiredAds.forEach((ad: any) => {
       const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
-      const pushLink = ad.listingId ? `/mypage/listings` : ad.equipmentId ? `/equipment/${ad.equipmentId}` : `/mypage/partner`;
+      const pushLink = ad.listingId ? `/mypage` : ad.equipmentId ? `/equipment/${ad.equipmentId}` : `/mypage`;
       sendPushToUser(
         ad.userId,
         "광고 상품이 만료되었습니다",
@@ -252,6 +269,7 @@ export async function GET(request: NextRequest) {
     console.log(`Expired ${expiredAds.length} ad purchases`);
     console.log(`Downgraded ${partnerTierDowngradeCount} partner services to FREE tier`);
     console.log(`Downgraded ${franchiseTierDowngrade.count} franchise brands to FREE tier`);
+    console.log(`Downgraded ${equipmentTierDowngrade.count} equipment to FREE tier`);
 
     // --- 만료 3일 전 사전 알림 ---
     const threeDaysLater = new Date();
@@ -327,6 +345,7 @@ export async function GET(request: NextRequest) {
       expiredCount: expiredAds.length,
       partnerTierDowngradeCount,
       franchiseTierDowngradeCount: franchiseTierDowngrade.count,
+      equipmentTierDowngradeCount: equipmentTierDowngrade.count,
       expiringAlertCount,
       timestamp: now.toISOString(),
     });

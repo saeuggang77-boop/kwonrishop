@@ -65,7 +65,7 @@ export function listingExpiredEmail(name: string, storeName: string): { subject:
           </div>
 
           <div style="margin: 32px 0;">
-            <a href="https://kwonrishop.com/mypage/listings" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+            <a href="https://kwonrishop.com/mypage" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 16px;">
               내 매물 관리
             </a>
           </div>
@@ -143,7 +143,7 @@ export function listingFavoritedEmail(name: string, storeName: string): { subjec
           </div>
 
           <div style="margin: 32px 0;">
-            <a href="https://kwonrishop.com/mypage/listings" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+            <a href="https://kwonrishop.com/mypage" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 16px;">
               내 매물 관리
             </a>
           </div>

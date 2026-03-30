@@ -195,8 +195,6 @@ async function fetchRONEPage(
  * 캐시 초기화 (R-ONE API에서 데이터 로드)
  */
 async function initializeCache(): Promise<void> {
-  console.log("Initializing R-ONE API cache...");
-
   const rentalData = new Map<string, { rental: number; quarter: string; quarterCode: string }>();
   const vacancyData = new Map<string, number>();
   let nationalVacancy = 11.2; // fallback
@@ -210,7 +208,7 @@ async function initializeCache(): Promise<void> {
   const totalCount = firstPage.SttsApiTblData[0].head[0].list_total_count;
   const totalPages = Math.ceil(totalCount / 200);
 
-  console.log(`Total ${totalCount} rows, ${totalPages} pages. Fetching last 3 pages for latest data...`);
+  // Total rows/pages info for debugging if needed
 
   // 2. 마지막 3페이지만 가져오기 (최신 분기 데이터는 끝에 있음)
   const pagesToFetch = Math.max(1, totalPages - 2); // 마지막 3페이지
@@ -247,7 +245,7 @@ async function initializeCache(): Promise<void> {
   const latestQuarter = quarters[0];
   const prevQuarter = quarters[1];
 
-  console.log(`Latest quarter: ${latestQuarter}, Previous: ${prevQuarter}`);
+  // latestQuarter / prevQuarter determined
 
   // 최신 분기 데이터 저장
   const latestData = rentalByQuarter.get(latestQuarter);
@@ -318,7 +316,7 @@ async function initializeCache(): Promise<void> {
     timestamp: Date.now(),
   };
 
-  console.log(`Cache initialized with ${regions.size} regions, national vacancy: ${nationalVacancy}%`);
+  // Cache initialized: regions.size regions loaded
 }
 
 /**

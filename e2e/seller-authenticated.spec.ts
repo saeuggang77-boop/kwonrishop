@@ -20,9 +20,9 @@ const PIXEL_PNG = Buffer.from(
 async function login(page: Page) {
   await page.goto("/login");
   await page.waitForLoadState("domcontentloaded");
-  await page.locator('[placeholder="이메일"]').fill(TEST_EMAIL);
-  await page.locator('[placeholder="비밀번호"]').fill(TEST_PASSWORD);
-  await page.getByRole("button", { name: "이메일로 로그인" }).click();
+  await page.locator('[placeholder="example@email.com"]').fill(TEST_EMAIL);
+  await page.locator('[placeholder="비밀번호를 입력하세요"]').fill(TEST_PASSWORD);
+  await page.getByRole("button", { name: "로그인" }).click();
   await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 15000 });
 }
 

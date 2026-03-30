@@ -400,63 +400,132 @@ function buildFeatureList(
   const list: { icon: string; text: string }[] = [];
 
   if (scope === "LISTING") {
-    if (features.photos)
-      list.push({ icon: "📸", text: features.photos >= 999 ? "사진 무제한" : `사진 ${features.photos}장` });
-    if (features.video)
-      list.push({ icon: "🎬", text: `동영상 ${features.video}개` });
+    // Layout type mapping
+    if (features.layoutType) {
+      if (features.layoutType === "row") {
+        list.push({ icon: "📋", text: "줄광고형 등록" });
+      } else if (features.layoutType === "horizontal-3col") {
+        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+      } else if (features.layoutType === "large-2col") {
+        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+      }
+    }
+
+    // Main page exposure
+    if (features.mainVip)
+      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 섹션 노출" });
+    if (features.mainPremium)
+      list.push({ icon: "💎", text: "메인 페이지 프리미엄 매물 섹션 노출" });
+    if (features.mainBasic)
+      list.push({ icon: "🏠", text: "메인 페이지 베이직 매물 섹션 노출" });
+    if (features.mainFeatured)
+      list.push({ icon: "⭐", text: "메인 페이지 대형 카드 노출" });
+    if (features.mainExposure)
+      list.push({ icon: "🏠", text: "메인 페이지 노출" });
+
+    // Listing features
+    if (features.listingRegister)
+      list.push({ icon: "📝", text: "목록 등록" });
     if (features.topExposure)
-      list.push({ icon: "⭐", text: "상위 노출" });
-    if (features.highlight)
-      list.push({ icon: "✨", text: "하이라이트 강조" });
-    if (features.mainRecommend)
-      list.push({ icon: "🏠", text: "메인 추천매물 노출" });
+      list.push({ icon: "⬆️", text: "목록 상위 노출" });
     if (features.bumpCount)
       list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회` });
-    if (features.analytics)
-      list.push({ icon: "📊", text: "조회수/관심수 통계" });
-    if (features.matching)
-      list.push({ icon: "🤝", text: "매수자 매칭 알림" });
-    if (features.verified)
-      list.push({ icon: "✅", text: "인증 배지" });
+
+    // Badge
+    if (features.badge)
+      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
+
   } else if (scope === "FRANCHISE") {
-    if (features.logoEdit)
-      list.push({ icon: "🎨", text: "로고 편집" });
-    if (features.introEdit)
-      list.push({ icon: "📝", text: "본사 소개 편집" });
-    if (features.topExposure)
-      list.push({ icon: "⭐", text: "프랜차이즈 목록 상위노출" });
-    if (features.recommend)
-      list.push({ icon: "💡", text: "추천 프랜차이즈 연동" });
-    if (features.inquirySystem)
-      list.push({ icon: "📩", text: "문의접수 시스템" });
-    if (features.mainBanner)
-      list.push({ icon: "🖼️", text: "메인 배너 노출" });
-    if (features.autoMatching)
-      list.push({ icon: "🤝", text: "매물 자동매칭" });
-    if (features.monthlyReport)
-      list.push({ icon: "📊", text: "월간 리포트 (노출/문의/클릭)" });
-  } else if (scope === "PARTNER") {
-    if (features.photos)
-      list.push({ icon: "📸", text: features.photos >= 999 ? "사진 무제한" : `사진 ${features.photos}장` });
-    if (features.verified)
-      list.push({ icon: "✅", text: "인증 배지" });
-    if (features.topExposure)
-      list.push({ icon: "⭐", text: "상위 노출" });
+    // Layout type mapping
+    if (features.layoutType) {
+      if (features.layoutType === "row") {
+        list.push({ icon: "📋", text: "줄광고형 등록" });
+      } else if (features.layoutType === "horizontal-3col") {
+        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+      } else if (features.layoutType === "large-2col") {
+        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+      }
+    }
+
+    // Main page exposure
+    if (features.mainVip)
+      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 노출" });
     if (features.mainRecommend)
-      list.push({ icon: "🏠", text: "추천업체 연동" });
-  } else if (scope === "EQUIPMENT") {
-    if (features.photos)
-      list.push({ icon: "📸", text: features.photos >= 999 ? "사진 무제한" : `사진 ${features.photos}장` });
+      list.push({ icon: "⭐", text: "메인 페이지 VIP 대형 노출" });
+    if (features.mainExposure)
+      list.push({ icon: "🏠", text: "메인 페이지 노출" });
+
+    // Listing features
+    if (features.listingRegister)
+      list.push({ icon: "📝", text: "목록 등록" });
     if (features.topExposure)
-      list.push({ icon: "⭐", text: "상위 노출" });
-    if (features.highlight)
-      list.push({ icon: "✨", text: "하이라이트 강조" });
+      list.push({ icon: "⬆️", text: "목록 상위 노출" });
+
+    // Badge
+    if (features.badge)
+      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
+
+  } else if (scope === "PARTNER") {
+    // Layout type mapping
+    if (features.layoutType) {
+      if (features.layoutType === "row") {
+        list.push({ icon: "📋", text: "줄광고형 등록" });
+      } else if (features.layoutType === "horizontal-3col") {
+        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+      } else if (features.layoutType === "large-2col") {
+        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+      }
+    }
+
+    // Main page exposure
+    if (features.mainVip)
+      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 노출" });
+    if (features.mainRecommend)
+      list.push({ icon: "⭐", text: "메인 페이지 VIP 대형 노출" });
+    if (features.mainExposure)
+      list.push({ icon: "🏠", text: "메인 페이지 노출" });
+
+    // Listing features
+    if (features.listingRegister)
+      list.push({ icon: "📝", text: "목록 등록" });
+    if (features.topExposure)
+      list.push({ icon: "⬆️", text: "목록 상위 노출" });
+
+    // Badge
+    if (features.badge)
+      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
+
+  } else if (scope === "EQUIPMENT") {
+    // Layout type mapping
+    if (features.layoutType) {
+      if (features.layoutType === "row") {
+        list.push({ icon: "📋", text: "줄광고형 등록" });
+      } else if (features.layoutType === "horizontal-3col") {
+        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+      } else if (features.layoutType === "large-2col") {
+        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+      }
+    }
+
+    // Main page exposure
+    if (features.mainVip)
+      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 노출" });
+    if (features.mainPremium)
+      list.push({ icon: "💎", text: "메인 페이지 프리미엄 섹션 노출" });
+    if (features.mainExposure)
+      list.push({ icon: "🏠", text: "메인 페이지 노출" });
+
+    // Listing features
+    if (features.listingRegister)
+      list.push({ icon: "📝", text: "목록 등록" });
+    if (features.topExposure)
+      list.push({ icon: "⬆️", text: "목록 상위 노출" });
     if (features.bumpCount)
       list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회` });
-    if (features.verified)
-      list.push({ icon: "✅", text: "인증 배지" });
-    if (features.analytics)
-      list.push({ icon: "📊", text: "조회수/관심수 통계" });
+
+    // Badge
+    if (features.badge)
+      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
   }
 
   return list;
