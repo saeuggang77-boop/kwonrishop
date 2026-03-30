@@ -21,7 +21,7 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
     return value !== null ? value.toLocaleString() : "";
   }
 
-  // 투자금 자동합산 (보증금 + 권리금)
+  // 총 매매금액 자동합산 (보증금 + 권리금)
   const investmentTotal = data.deposit + (data.premiumNone ? 0 : data.premium);
 
   // 매출대비 % 계산
@@ -72,9 +72,9 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">매출/지출 정보를 입력하면 매수자 신뢰도가 높아집니다</p>
 
       <div className="space-y-6">
-        {/* 투자금 자동합산 */}
+        {/* 총 매매금액 자동합산 */}
         <div>
-          <h3 className="font-medium text-gray-900 dark:text-white mb-3">투자금 (만원)</h3>
+          <h3 className="font-medium text-gray-900 dark:text-white mb-3">총 매매금액</h3>
           <div className="px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600 dark:text-gray-400">보증금 + 권리금</span>

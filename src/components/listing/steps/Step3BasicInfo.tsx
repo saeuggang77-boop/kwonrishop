@@ -62,11 +62,11 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
         {/* 상호명 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            상호명 <span className="text-gray-400">(선택)</span>
+            상호명
           </label>
           <input
             type="text"
-            placeholder="상호명을 입력하세요"
+            placeholder="미입력 시 주소가 대신 표시됩니다"
             value={data.storeName}
             onChange={(e) => updateData({ storeName: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
