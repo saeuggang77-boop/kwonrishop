@@ -68,6 +68,7 @@ interface ListingDetail {
   areaSqm: number | null;
   themes: string[];
   parkingTotal: number | null;
+  parkingPerUnit: number | null;
   parkingNone: boolean;
   monthlyRevenue: number | null;
   monthlyProfit: number | null;
@@ -164,6 +165,7 @@ export default function ListingDetailClient() {
           return;
         }
         setListing(data);
+        if (data.favorited !== undefined) setFavorited(data.favorited);
         setLoading(false);
       })
       .catch(() => {
@@ -804,7 +806,7 @@ export default function ListingDetailClient() {
           {listing.currentFloor && (
             <InfoItem label="층수" value={`${listing.isBasement ? "지하 " : ""}${listing.currentFloor}층 / ${listing.totalFloor}층`} />
           )}
-          <InfoItem label="주차" value={listing.parkingNone ? "불가" : listing.parkingTotal ? `${listing.parkingTotal}대` : "-"} />
+          <InfoItem label="주차" value={listing.parkingNone ? "불가" : listing.parkingTotal ? `총 ${listing.parkingTotal}대${listing.parkingPerUnit ? ` / 세대당 ${listing.parkingPerUnit}대` : ""}` : "-"} />
           <InfoItem label="운영형태" value={listing.brandType === "FRANCHISE" ? "프랜차이즈" : "개인"} />
         </InfoGrid>
       </Section>

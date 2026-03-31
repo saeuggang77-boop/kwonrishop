@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
             status: "PAID",
             expiresAt: { gt: new Date() },
           },
-          include: { product: { select: { id: true, price: true } } },
+          include: { product: { select: { id: true, name: true, price: true, features: true } } },
           take: 1,
           orderBy: { createdAt: "desc" },
         },
@@ -120,10 +120,21 @@ export async function GET(req: NextRequest) {
     );
 
     // Add featuredTier and sort by tier level
-    const tierOrder = { vip: 0, premium: 1, basic: 2 };
+    const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2 };
     const withTier = featuredListings.map((l) => {
-      const productId = l.adPurchases[0]?.product?.id || "";
-      const tier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : "BASIC";
+      const purchase = l.adPurchases[0];
+      const productFeatures = purchase?.product?.features as Record<string, any> | undefined;
+      const productName = purchase?.product?.name || "";
+      const badge = productFeatures?.badge as string | undefined;
+      let tier = "BASIC";
+      if (badge) {
+        const badgeMap: Record<string, string> = { "VIP": "VIP", "프리미엄": "PREMIUM", "베이직": "BASIC" };
+        tier = badgeMap[badge] || "BASIC";
+      } else if (productName) {
+        if (productName.includes("VIP")) tier = "VIP";
+        else if (productName.includes("프리미엄")) tier = "PREMIUM";
+        else tier = "BASIC";
+      }
       const sellerTrust = featuredReviewMap.get(l.id) || { avgRating: 0, reviewCount: 0 };
       return {
         ...l,
@@ -133,8 +144,8 @@ export async function GET(req: NextRequest) {
         sellerTrust,
       };
     }).sort((a, b) => {
-      const aOrder = tierOrder[a.featuredTier.toLowerCase() as keyof typeof tierOrder] ?? 99;
-      const bOrder = tierOrder[b.featuredTier.toLowerCase() as keyof typeof tierOrder] ?? 99;
+      const aOrder = tierOrder[a.featuredTier] ?? 99;
+      const bOrder = tierOrder[b.featuredTier] ?? 99;
       return aOrder - bOrder;
     });
 
@@ -276,7 +287,7 @@ export async function GET(req: NextRequest) {
             status: "PAID",
             expiresAt: { gt: new Date() },
           },
-          include: { product: { select: { id: true } } },
+          include: { product: { select: { id: true, name: true, features: true } } },
           take: 1,
           orderBy: { createdAt: "desc" as const },
         },
@@ -314,8 +325,23 @@ export async function GET(req: NextRequest) {
 
   const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2, FREE: 3 };
   const listingsWithTier = listings.map((l: any) => {
-    const productId = l.adPurchases?.[0]?.product?.id || "";
-    const tier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
+    const purchase = l.adPurchases?.[0];
+    const productFeatures = purchase?.product?.features as Record<string, any> | undefined;
+    const productName = purchase?.product?.name || "";
+    const badge = productFeatures?.badge as string | undefined;
+    let tier = "FREE";
+    if (purchase) {
+      if (badge) {
+        const badgeMap: Record<string, string> = { "VIP": "VIP", "프리미엄": "PREMIUM", "베이직": "BASIC" };
+        tier = badgeMap[badge] || "BASIC";
+      } else if (productName) {
+        if (productName.includes("VIP")) tier = "VIP";
+        else if (productName.includes("프리미엄")) tier = "PREMIUM";
+        else tier = "BASIC";
+      } else {
+        tier = "BASIC";
+      }
+    }
     const sellerTrust = reviewMap.get(l.id) || { avgRating: 0, reviewCount: 0 };
     return {
       ...l,

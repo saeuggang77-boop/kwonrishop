@@ -89,6 +89,18 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 페이지 이탈 경고 (사진/문서가 있을 때)
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (data.images.length > 0 || data.documents.length > 0) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [data.images.length, data.documents.length]);
+
   function handleSlotClick(type: string) {
     setPendingType(type);
     fileInputRef.current?.click();

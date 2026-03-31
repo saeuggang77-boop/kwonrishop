@@ -19,6 +19,7 @@ export async function GET(
       category: { select: { id: true, name: true, icon: true } },
       subCategory: { select: { id: true, name: true } },
       images: { orderBy: { sortOrder: "asc" } },
+      documents: { orderBy: { createdAt: "asc" } },
       user: {
         select: {
           id: true,
@@ -49,7 +50,7 @@ export async function GET(
           status: "PAID",
           expiresAt: { gt: new Date() },
         },
-        include: { product: { select: { id: true, name: true, price: true } } },
+        include: { product: { select: { id: true, name: true, price: true, features: true } } },
         take: 1,
         orderBy: { createdAt: "desc" as const },
       },
@@ -64,9 +65,11 @@ export async function GET(
     return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
   }
 
+  // 세션 조회 (비활성 매물 접근 제어 + favorited 조회 용)
+  const session = await getServerSession(authOptions);
+
   // 비활성 매물은 소유자만 조회 가능
   if (listing.status !== "ACTIVE" && listing.status !== "RESERVED" && listing.status !== "SOLD") {
-    const session = await getServerSession(authOptions);
     if (!session?.user?.id || session.user.id !== listing.userId) {
       return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
     }
@@ -79,9 +82,26 @@ export async function GET(
     select: { viewCount: true },
   });
 
-  // featuredTier 계산 (product.name 기반: "VIP", "프리미엄", "베이직" 등)
-  const productName = listing.adPurchases?.[0]?.product?.name || "";
-  const featuredTier = productName.includes("VIP") ? "VIP" : productName.includes("프리미엄") ? "PREMIUM" : productName ? "BASIC" : "FREE";
+  // favorited 여부 조회
+  let favorited = false;
+  if (session?.user?.id) {
+    const fav = await prisma.favorite.findUnique({
+      where: { userId_listingId: { userId: session.user.id, listingId: id } },
+    });
+    favorited = !!fav;
+  }
+
+  // featuredTier 계산 (features.badge 기반, 없으면 productId/productName 폴백)
+  const adProduct = listing.adPurchases?.[0]?.product;
+  const productFeatures = adProduct?.features as Record<string, any> | null;
+  const badge = productFeatures?.badge as string | undefined;
+  let featuredTier = "FREE";
+  if (badge) {
+    featuredTier = badge.toUpperCase().includes("VIP") ? "VIP" : badge.toUpperCase().includes("PREMIUM") || badge.includes("프리미엄") ? "PREMIUM" : "BASIC";
+  } else if (adProduct) {
+    const productId = adProduct.id || "";
+    featuredTier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
+  }
 
   // 판매자 신뢰도 점수 계산 (리뷰 기반)
   const reviewCount = listing.reviews.length;
@@ -134,6 +154,7 @@ export async function GET(
     ...listing,
     viewCount: updated.viewCount,
     featuredTier,
+    favorited,
     sellerTrust,
     regionStats,
     adPurchases: undefined,
@@ -167,10 +188,10 @@ export async function PUT(
 
   const { id } = await params;
 
-  // 매물 소유권 확인 + 가격 변동 감지용 기존값 조회
+  // 매물 소유권 확인 + 방어적 업데이트를 위한 기존 전체 데이터 로드
   const listing = await prisma.listing.findUnique({
     where: { id },
-    select: { userId: true, status: true, deposit: true, monthlyRent: true, premium: true, storeName: true, addressRoad: true },
+    include: { images: true, documents: true },
   });
 
   if (!listing) {
@@ -212,55 +233,62 @@ export async function PUT(
       }
     }
 
-    // 이미지 업데이트 처리
+    // 방어적 업데이트: body에 키가 명시적으로 존재하는 필드만 업데이트, 없으면 기존 DB 값 유지
     const updateData: Record<string, unknown> = {
       status: body.status || listing.status,
-      zipCode: body.zipCode ?? null,
-      addressJibun: body.addressJibun ?? null,
-      addressRoad: body.addressRoad ?? null,
-      addressDetail: body.addressDetail ? sanitizeInput(body.addressDetail) : null,
-      latitude: body.latitude ?? null,
-      longitude: body.longitude ?? null,
-      categoryId: body.categoryId ?? null,
-      subCategoryId: body.subCategoryId ?? null,
-      deposit: body.deposit ?? 0,
-      monthlyRent: body.monthlyRent ?? 0,
-      premium: body.premium ?? 0,
-      premiumNone: body.premiumNone ?? false,
-      premiumNegotiable: body.premiumNegotiable ?? false,
-      premiumBusiness: body.premiumBusiness ?? null,
-      premiumBusinessDesc: body.premiumBusinessDesc ?? null,
-      premiumFacility: body.premiumFacility ?? null,
-      premiumFacilityDesc: body.premiumFacilityDesc ?? null,
-      premiumLocation: body.premiumLocation ?? null,
-      premiumLocationDesc: body.premiumLocationDesc ?? null,
-      maintenanceFee: body.maintenanceFee ?? null,
-      brandType: body.brandType || "PRIVATE",
-      storeName: body.storeName ? sanitizeInput(body.storeName) : null,
-      currentFloor: body.currentFloor ?? null,
-      totalFloor: body.totalFloor ?? null,
-      isBasement: body.isBasement ?? false,
-      areaPyeong: body.areaPyeong ?? null,
-      areaSqm: body.areaSqm ?? null,
-      themes: body.themes || [],
-      parkingTotal: body.parkingTotal ?? null,
-      parkingPerUnit: body.parkingPerUnit ?? null,
-      parkingNone: body.parkingNone ?? false,
-      monthlyRevenue: body.monthlyRevenue ?? null,
-      expenseMaterial: body.expenseMaterial ?? null,
-      expenseLabor: body.expenseLabor ?? null,
-      operationType: body.operationType || "SOLO",
-      familyWorkers: body.familyWorkers ?? null,
-      employeesFull: body.employeesFull ?? null,
-      employeesPart: body.employeesPart ?? null,
-      expenseRent: body.expenseRent ?? null,
-      expenseMaintenance: body.expenseMaintenance ?? null,
-      expenseUtility: body.expenseUtility ?? null,
-      expenseOther: body.expenseOther ?? null,
-      monthlyProfit: body.monthlyProfit ?? null,
-      profitDescription: body.profitDescription ? sanitizeInput(body.profitDescription) : null,
-      description: body.description ? sanitizeHtml(body.description) : null,
-      contactPublic: body.contactPublic ?? false,
+      // 주소 관련
+      zipCode: "zipCode" in body ? (body.zipCode ?? null) : listing.zipCode,
+      addressJibun: "addressJibun" in body ? (body.addressJibun ?? null) : listing.addressJibun,
+      addressRoad: "addressRoad" in body ? (body.addressRoad ?? null) : listing.addressRoad,
+      addressDetail: "addressDetail" in body ? (body.addressDetail ? sanitizeInput(body.addressDetail) : null) : listing.addressDetail,
+      latitude: "latitude" in body ? (body.latitude ?? null) : listing.latitude,
+      longitude: "longitude" in body ? (body.longitude ?? null) : listing.longitude,
+      // 카테고리
+      categoryId: "categoryId" in body ? (body.categoryId ?? null) : listing.categoryId,
+      subCategoryId: "subCategoryId" in body ? (body.subCategoryId ?? null) : listing.subCategoryId,
+      // 가격
+      deposit: "deposit" in body ? (body.deposit ?? 0) : listing.deposit,
+      monthlyRent: "monthlyRent" in body ? (body.monthlyRent ?? 0) : listing.monthlyRent,
+      premium: "premium" in body ? (body.premium ?? 0) : listing.premium,
+      premiumNone: "premiumNone" in body ? (body.premiumNone ?? false) : listing.premiumNone,
+      premiumNegotiable: "premiumNegotiable" in body ? (body.premiumNegotiable ?? false) : listing.premiumNegotiable,
+      premiumBusiness: "premiumBusiness" in body ? (body.premiumBusiness ?? null) : listing.premiumBusiness,
+      premiumBusinessDesc: "premiumBusinessDesc" in body ? (body.premiumBusinessDesc ?? null) : listing.premiumBusinessDesc,
+      premiumFacility: "premiumFacility" in body ? (body.premiumFacility ?? null) : listing.premiumFacility,
+      premiumFacilityDesc: "premiumFacilityDesc" in body ? (body.premiumFacilityDesc ?? null) : listing.premiumFacilityDesc,
+      premiumLocation: "premiumLocation" in body ? (body.premiumLocation ?? null) : listing.premiumLocation,
+      premiumLocationDesc: "premiumLocationDesc" in body ? (body.premiumLocationDesc ?? null) : listing.premiumLocationDesc,
+      maintenanceFee: "maintenanceFee" in body ? (body.maintenanceFee ?? null) : listing.maintenanceFee,
+      // 상가 정보
+      brandType: "brandType" in body ? (body.brandType || "PRIVATE") : listing.brandType,
+      storeName: "storeName" in body ? (body.storeName ? sanitizeInput(body.storeName) : null) : listing.storeName,
+      currentFloor: "currentFloor" in body ? (body.currentFloor ?? null) : listing.currentFloor,
+      totalFloor: "totalFloor" in body ? (body.totalFloor ?? null) : listing.totalFloor,
+      isBasement: "isBasement" in body ? (body.isBasement ?? false) : listing.isBasement,
+      areaPyeong: "areaPyeong" in body ? (body.areaPyeong ?? null) : listing.areaPyeong,
+      areaSqm: "areaSqm" in body ? (body.areaSqm ?? null) : listing.areaSqm,
+      themes: "themes" in body ? (body.themes || []) : listing.themes,
+      // 주차
+      parkingTotal: "parkingTotal" in body ? (body.parkingTotal ?? null) : listing.parkingTotal,
+      parkingPerUnit: "parkingPerUnit" in body ? (body.parkingPerUnit ?? null) : listing.parkingPerUnit,
+      parkingNone: "parkingNone" in body ? (body.parkingNone ?? false) : listing.parkingNone,
+      // 매출/비용
+      monthlyRevenue: "monthlyRevenue" in body ? (body.monthlyRevenue ?? null) : listing.monthlyRevenue,
+      expenseMaterial: "expenseMaterial" in body ? (body.expenseMaterial ?? null) : listing.expenseMaterial,
+      expenseLabor: "expenseLabor" in body ? (body.expenseLabor ?? null) : listing.expenseLabor,
+      operationType: "operationType" in body ? (body.operationType || "SOLO") : listing.operationType,
+      familyWorkers: "familyWorkers" in body ? (body.familyWorkers ?? null) : listing.familyWorkers,
+      employeesFull: "employeesFull" in body ? (body.employeesFull ?? null) : listing.employeesFull,
+      employeesPart: "employeesPart" in body ? (body.employeesPart ?? null) : listing.employeesPart,
+      expenseRent: "expenseRent" in body ? (body.expenseRent ?? null) : listing.expenseRent,
+      expenseMaintenance: "expenseMaintenance" in body ? (body.expenseMaintenance ?? null) : listing.expenseMaintenance,
+      expenseUtility: "expenseUtility" in body ? (body.expenseUtility ?? null) : listing.expenseUtility,
+      expenseOther: "expenseOther" in body ? (body.expenseOther ?? null) : listing.expenseOther,
+      monthlyProfit: "monthlyProfit" in body ? (body.monthlyProfit ?? null) : listing.monthlyProfit,
+      profitDescription: "profitDescription" in body ? (body.profitDescription ? sanitizeInput(body.profitDescription) : null) : listing.profitDescription,
+      // 기타
+      description: "description" in body ? (body.description ? sanitizeHtml(body.description) : null) : listing.description,
+      contactPublic: "contactPublic" in body ? (body.contactPublic ?? false) : listing.contactPublic,
     };
 
     // 이미지가 제공된 경우 기존 이미지 삭제 후 새로 생성
@@ -277,6 +305,19 @@ export async function PUT(
       };
     }
 
+    // 문서가 제공된 경우 기존 문서 삭제 후 새로 생성
+    if (body.documents && Array.isArray(body.documents)) {
+      updateData.documents = {
+        deleteMany: {},
+        create: body.documents.map(
+          (doc: { url: string; type?: string }) => ({
+            url: doc.url,
+            type: doc.type || "REVENUE_PROOF",
+          })
+        ),
+      };
+    }
+
     const updatedListing = await prisma.listing.update({
       where: { id },
       data: updateData,
@@ -284,14 +325,15 @@ export async function PUT(
         category: { select: { id: true, name: true, icon: true } },
         subCategory: { select: { id: true, name: true } },
         images: { orderBy: { sortOrder: "asc" } },
+        documents: { orderBy: { createdAt: "asc" } },
       },
     });
 
     // 가격 변동 감지 → 찜한 사용자에게 알림 (non-blocking)
     const priceFields = [
-      { name: "보증금", old: listing.deposit, new: body.deposit ?? 0 },
-      { name: "월세", old: listing.monthlyRent, new: body.monthlyRent ?? 0 },
-      { name: "권리금", old: listing.premium, new: body.premium ?? 0 },
+      { name: "보증금", old: listing.deposit, new: "deposit" in body ? (body.deposit ?? 0) : listing.deposit },
+      { name: "월세", old: listing.monthlyRent, new: "monthlyRent" in body ? (body.monthlyRent ?? 0) : listing.monthlyRent },
+      { name: "권리금", old: listing.premium, new: "premium" in body ? (body.premium ?? 0) : listing.premium },
     ];
     const changes = priceFields.filter((f) => f.old !== f.new && (f.old > 0 || f.new > 0));
 

@@ -49,11 +49,7 @@ export async function GET(
     },
   });
 
-  // 읽음 처리
-  await prisma.chatParticipant.update({
-    where: { id: participant.id },
-    data: { lastReadAt: new Date() },
-  });
+  // 읽음 처리 제거 - /read 엔드포인트에서만 명시적으로 수행
 
   return NextResponse.json({
     messages: messages.reverse(),

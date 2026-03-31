@@ -84,6 +84,8 @@ function VerifyBusinessContent() {
         setMatchedBrandId(data.franchiseBrandId);
       }
       await update();
+      // JWT 쿠키 갱신 대기
+      await new Promise(resolve => setTimeout(resolve, 500));
       setSuccess(true);
     } catch {
       setError("네트워크 오류가 발생했습니다.");

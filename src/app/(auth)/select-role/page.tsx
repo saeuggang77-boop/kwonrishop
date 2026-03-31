@@ -143,6 +143,8 @@ function SelectRoleContent() {
 
       if (data.redirect) {
         await update();
+        // JWT 쿠키 갱신 대기
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         if (callbackUrl && callbackUrl.startsWith("/")) {
           const redirectUrl = new URL(data.redirect, window.location.origin);

@@ -35,7 +35,7 @@ export async function GET() {
     });
 
     const active = purchases.filter(
-      (p) => p.status === "PAID" && p.expiresAt && p.expiresAt > now
+      (p) => p.status === "PAID" && (!p.expiresAt || p.expiresAt > now)
     );
     const expired = purchases.filter(
       (p) => p.status === "EXPIRED" || (p.status === "PAID" && p.expiresAt && p.expiresAt <= now)

@@ -158,51 +158,65 @@ export async function POST(request: NextRequest) {
     const features = order.product.features as Record<string, any>;
     const badge = features?.badge as string | undefined;
 
-    if (categoryScope === "FRANCHISE" && badge) {
+    if (categoryScope === "FRANCHISE") {
       const tierMap: Record<string, string> = {
         "브론즈": "BRONZE",
         "실버": "SILVER",
         "골드": "GOLD",
       };
-      const newTier = tierMap[badge];
-      if (newTier) {
-        await prisma.franchiseBrand.updateMany({
-          where: { managerId: session.user.id },
-          data: {
-            tier: newTier as any,
-            tierExpiresAt: order.product.duration ? expiresAt : null,
-          },
-        });
+      let newTier = badge ? tierMap[badge] : undefined;
+      // badge 없으면 product.name 폴백
+      if (!newTier) {
+        const pn = order.product.name;
+        if (pn.includes("골드")) newTier = "GOLD";
+        else if (pn.includes("실버")) newTier = "SILVER";
+        else newTier = "BRONZE";
       }
-    } else if (categoryScope === "PARTNER" && badge) {
+      await prisma.franchiseBrand.updateMany({
+        where: { managerId: session.user.id },
+        data: {
+          tier: newTier as any,
+          tierExpiresAt: order.product.duration ? expiresAt : null,
+        },
+      });
+    } else if (categoryScope === "PARTNER") {
       const tierMap: Record<string, string> = {
         "베이직": "BASIC",
         "프리미엄": "PREMIUM",
         "VIP": "VIP",
       };
-      const newTier = tierMap[badge];
-      if (newTier) {
-        await prisma.partnerService.updateMany({
-          where: {
-            userId: session.user.id,
-            status: "ACTIVE",
-          },
-          data: {
-            tier: newTier as any,
-            tierExpiresAt: order.product.duration ? expiresAt : null,
-          },
-        });
+      let newTier = badge ? tierMap[badge] : undefined;
+      // badge 없으면 product.name 폴백
+      if (!newTier) {
+        const pn = order.product.name;
+        if (pn.includes("VIP")) newTier = "VIP";
+        else if (pn.includes("프리미엄")) newTier = "PREMIUM";
+        else newTier = "BASIC";
       }
+      await prisma.partnerService.updateMany({
+        where: {
+          userId: session.user.id,
+          status: "ACTIVE",
+        },
+        data: {
+          tier: newTier as any,
+          tierExpiresAt: order.product.duration ? expiresAt : null,
+        },
+      });
     } else if (categoryScope === "EQUIPMENT" && order.equipmentId) {
-      // Determine tier from product name
-      const productName = order.product.name;
-      let newTier: string;
-      if (productName.includes("VIP")) {
-        newTier = "VIP";
-      } else if (productName.includes("프리미엄")) {
-        newTier = "PREMIUM";
-      } else {
-        newTier = "BASIC";
+      const eqBadge = features?.badge as string | undefined;
+      const eqTierMap: Record<string, string> = {
+        "베이직": "BASIC",
+        "프리미엄": "PREMIUM",
+        "VIP": "VIP",
+      };
+      let newTier = eqBadge ? eqTierMap[eqBadge] : undefined;
+      // badge 없으면 product.name 폴백
+      if (!newTier) {
+        const productName = order.product.name;
+        if (productName.includes("VIP")) newTier = "VIP";
+        else if (productName.includes("프리미엄")) newTier = "PREMIUM";
+        else newTier = "BASIC";
       }
 
       await prisma.equipment.update({
@@ -288,7 +302,7 @@ export async function POST(request: NextRequest) {
           notifyPaymentSuccess(
             user.phone,
             order.product.name,
-            order.amount
+            expectedTotalAmount
           ).catch(() => {});
         }
       } catch (error) {

@@ -42,6 +42,14 @@ interface MyData {
   } | null;
 }
 
+function tierLabel(tier: string | null | undefined): string {
+  const map: Record<string, string> = {
+    FREE: "무료", BASIC: "베이직", PREMIUM: "프리미엄", VIP: "VIP",
+    BRONZE: "브론즈", SILVER: "실버", GOLD: "골드",
+  };
+  return map[tier || ""] || tier || "무료";
+}
+
 function RecentlyViewedSection() {
   const [recentListings, setRecentListings] = useState<Array<{id: string; storeName: string; deposit: number; monthlyRent: number; image?: string}>>([]);
 
@@ -570,7 +578,7 @@ export default function MyPage() {
               <p className="font-medium text-gray-900 dark:text-gray-100">{data.partnerService.companyName}</p>
               <div className="flex gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500">
                 <span>유형: {data.partnerService.serviceType}</span>
-                <span>등급: {data.partnerService.tier}</span>
+                <span>등급: {tierLabel(data.partnerService.tier)}</span>
                 <span>조회 {data.partnerService.viewCount}</span>
               </div>
             </Link>
@@ -614,7 +622,7 @@ export default function MyPage() {
           >
             <p className="font-medium text-gray-900 dark:text-gray-100">{data.franchiseBrand.brandName}</p>
             <div className="flex gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500">
-              <span>등급: {data.franchiseBrand.tier}</span>
+              <span>등급: {tierLabel(data.franchiseBrand.tier)}</span>
             </div>
           </Link>
         </div>

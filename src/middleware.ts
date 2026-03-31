@@ -62,7 +62,12 @@ export async function middleware(req: NextRequest) {
   // 로그인했지만 역할 미선택 시 select-role로 리다이렉트
   if (token && !roleExemptPaths.some((p) => pathname.startsWith(p))) {
     const roleSelected = token.roleSelected as boolean | undefined;
-    if (!roleSelected) {
+    const hasValidRole = !!token.role;
+
+    // /verify-business는 role이 null일 수 있으므로 예외 처리
+    const isVerifyBusinessPath = pathname.startsWith("/verify-business");
+
+    if (!roleSelected || (!hasValidRole && !isVerifyBusinessPath)) {
       return NextResponse.redirect(new URL("/select-role", req.url));
     }
   }

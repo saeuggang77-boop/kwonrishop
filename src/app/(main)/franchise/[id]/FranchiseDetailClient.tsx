@@ -31,7 +31,7 @@ interface FranchiseBrand {
   website: string | null;
   benefits: string | null;
   bannerImage: string | null;
-  tier: "GOLD" | "SILVER" | "BRONZE" | null;
+  tier: "GOLD" | "SILVER" | "BRONZE" | "FREE" | null;
   ftcId: string | null;
   ftcRegisteredAt: string | null;
   ftcRawData: unknown;
@@ -109,9 +109,9 @@ export default function FranchiseDetailClient() {
             <p className="text-gray-600">{brand.companyName}</p>
           </div>
         </div>
-        {!brand.tier && (
+        {(!brand.tier || brand.tier === "FREE") && (
           <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800 mb-2">🎯 무료 등록 브랜드입니다</p>
+            <p className="text-sm text-blue-800 mb-2">무료 등록 브랜드입니다</p>
             <p className="text-xs text-blue-600">유료 플랜으로 업그레이드하여 더 많은 노출과 기능을 활용하세요</p>
             <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-blue-700 font-medium hover:underline">업그레이드 안내 보기 →</button>
           </div>
