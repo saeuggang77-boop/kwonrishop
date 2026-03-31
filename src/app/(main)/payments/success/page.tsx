@@ -38,6 +38,9 @@ function SuccessContent() {
 
         if (res.ok) {
           setOrderInfo(data);
+        } else if (res.status === 409) {
+          // 이미 처리된 주문 (새로고침 등) → 성공으로 처리
+          setOrderInfo({ alreadyProcessed: true });
         } else {
           setError(data.error || "결제 승인에 실패했습니다.");
         }
@@ -68,14 +71,25 @@ function SuccessContent() {
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
           <div className="text-4xl mb-4">❌</div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">결제 실패</h1>
-          <p className="text-gray-700 mb-6">{error}</p>
-          <Link
-            href="/pricing"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-          >
-            다시 시도
-          </Link>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">결제 승인 실패</h1>
+          <p className="text-gray-700 mb-4">{error}</p>
+          <p className="text-xs text-gray-500 mb-6">
+            결제가 이미 완료되었다면 마이페이지에서 확인해주세요.
+          </p>
+          <div className="flex gap-3">
+            <Link
+              href="/mypage"
+              className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+            >
+              마이페이지 확인
+            </Link>
+            <Link
+              href="/pricing"
+              className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
+            >
+              다시 시도
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -85,12 +99,14 @@ function SuccessContent() {
     <div className="max-w-md mx-auto px-4 py-12">
       <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
         <div className="text-5xl mb-4">✅</div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">결제 완료!</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">결제가 완료되었습니다</h1>
         <p className="text-gray-600 mb-6">
-          주문이 정상적으로 처리되었습니다
+          {orderInfo?.alreadyProcessed
+            ? "이미 정상적으로 처리된 결제입니다"
+            : "주문이 정상적으로 처리되었습니다"}
         </p>
 
-        {orderInfo && (
+        {orderInfo && !orderInfo.alreadyProcessed && (
           <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">

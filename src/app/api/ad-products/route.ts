@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const scope = searchParams.get("scope");
 
     const where: any = { active: true };
-    if (scope && ["LISTING", "FRANCHISE", "PARTNER", "COMMON"].includes(scope)) {
+    if (scope && ["LISTING", "FRANCHISE", "PARTNER", "EQUIPMENT", "COMMON"].includes(scope)) {
       where.categoryScope = scope;
     }
 

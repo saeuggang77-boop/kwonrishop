@@ -292,7 +292,7 @@ export default function MyPage() {
       {/* 플랜 업그레이드 카드 (SELLER만) */}
       {data.user.role === "SELLER" && (
         <div className="mb-4">
-          <DashboardPlanCard />
+          <DashboardPlanCard currentPlan={data.activeListingAd?.name} />
         </div>
       )}
 

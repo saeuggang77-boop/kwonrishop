@@ -152,10 +152,12 @@ export function RegisterPromoBanner({
 export function DashboardPlanCard({ currentPlan }: { currentPlan?: string }) {
   const plan = currentPlan || "무료";
 
-  // 이미 프리미엄 이상이면 렌더링 안함
+  // 이미 유료 플랜이면 렌더링 안함
   if (
     plan.toLowerCase().includes("premium") ||
-    plan.toLowerCase().includes("프리미엄")
+    plan.toLowerCase().includes("프리미엄") ||
+    plan.toLowerCase().includes("vip") ||
+    plan.toLowerCase().includes("베이직")
   ) {
     return null;
   }
