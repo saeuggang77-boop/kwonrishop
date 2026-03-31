@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type RoleOption = {
@@ -186,7 +186,15 @@ function SelectRoleContent() {
 
         {error && (
           <div className="mb-5 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400 text-center">
-            {error}
+            <p>{error}</p>
+            {error.includes("계정을 찾을 수 없습니다") && (
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="mt-3 inline-flex items-center gap-1.5 bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                로그아웃 후 다시 로그인
+              </button>
+            )}
           </div>
         )}
 
