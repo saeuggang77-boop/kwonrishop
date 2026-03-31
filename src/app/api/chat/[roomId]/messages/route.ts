@@ -6,9 +6,6 @@ import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { pusher } from "@/lib/pusher";
-import { sendEmail } from "@/lib/email";
-import { newChatMessageEmail } from "@/lib/email-templates";
-import { notifyNewChat } from "@/lib/kakao-alimtalk";
 import { sendPushToUser } from "@/lib/push";
 
 // 메시지 조회
@@ -152,45 +149,20 @@ export async function POST(
     }
   }
 
-  // 이메일 & 알림톡: 상대방에게 전송 (비차단, fire and forget)
+  // 웹 푸시: 상대방에게 전송 (비차단, fire and forget)
   (async () => {
     try {
       const chatRoom = await prisma.chatRoom.findUnique({
         where: { id: roomId },
         select: {
-          listing: { select: { storeName: true, addressRoad: true } },
-          equipment: { select: { title: true } },
           participants: {
             where: { userId: { not: session.user.id } },
-            select: { userId: true, user: { select: { email: true, name: true, phone: true } } },
+            select: { userId: true },
           },
         },
       });
 
       if (chatRoom && chatRoom.participants.length > 0) {
-        const otherUser = chatRoom.participants[0].user;
-        const listingName = chatRoom.listing?.storeName || chatRoom.listing?.addressRoad || chatRoom.equipment?.title || "매물";
-
-        // 이메일 알림
-        if (otherUser.email) {
-          const { subject, html } = newChatMessageEmail(
-            otherUser.name || "회원",
-            session.user.name || "사용자",
-            listingName
-          );
-          await sendEmail(otherUser.email, subject, html);
-        }
-
-        // 알림톡 (non-blocking)
-        if (otherUser.phone) {
-          notifyNewChat(
-            otherUser.phone,
-            session.user.name || "사용자",
-            listingName
-          ).catch(() => {});
-        }
-
-        // 웹 푸시 (non-blocking)
         sendPushToUser(
           chatRoom.participants[0].userId,
           `${session.user.name || "사용자"}님의 새 메시지`,
