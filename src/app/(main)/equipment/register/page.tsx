@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import { toast } from "@/lib/toast";
+import PushPromptCard from "@/components/PushPromptCard";
 
 declare global {
   interface Window {
@@ -51,6 +52,8 @@ export default function EquipmentRegisterPage() {
   const [longitude, setLongitude] = useState<number | null>(null);
   const [images, setImages] = useState<{ url: string; sortOrder: number }[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [registeredId, setRegisteredId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -213,8 +216,8 @@ export default function EquipmentRegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("집기가 등록되었습니다!");
-        router.push(`/equipment/${data.id}`);
+        setRegisteredId(data.id);
+        setShowSuccess(true);
       } else {
         toast.error(data.error || "등록에 실패했습니다.");
       }
@@ -240,6 +243,43 @@ export default function EquipmentRegisterPage() {
   const yearOptions = Array.from({ length: 30 }, (_, i) => currentYear - i);
 
   return (
+    <>
+      {/* 성공 모달 */}
+      {showSuccess && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
+          onClick={() => router.push(`/equipment/${registeredId}`)}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
+              집기 등록 완료!
+            </h2>
+            <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+              집기가 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
+            </p>
+            <div className="mb-6">
+              <PushPromptCard accentColor="green" showGrantedText />
+            </div>
+            <button
+              onClick={() => router.push(`/equipment/${registeredId}`)}
+              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            >
+              내 집기 보기
+            </button>
+          </div>
+        </div>
+      )}
+
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">집기 등록</h1>
@@ -533,5 +573,6 @@ export default function EquipmentRegisterPage() {
         </button>
       </form>
     </div>
+    </>
   );
 }

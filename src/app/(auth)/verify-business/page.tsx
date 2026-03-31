@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import PushPromptCard from "@/components/PushPromptCard";
 
 function VerifyBusinessContent() {
   const { data: session, status, update } = useSession();
@@ -128,6 +129,11 @@ function VerifyBusinessContent() {
             {requestedRole === "SELLER" && "이제 매물을 등록할 수 있습니다."}
             {!requestedRole && "이제 매물을 등록할 수 있습니다."}
           </p>
+          {/* 푸시 알림 + PWA 설치 유도 */}
+          <div className="mb-4">
+            <PushPromptCard accentColor="green" showGrantedText />
+          </div>
+
           <div className="space-y-2">
             <Link
               href={successRedirect}

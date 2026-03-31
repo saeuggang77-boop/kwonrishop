@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { SERVICE_TYPE_LABELS, REGION_OPTIONS } from "@/lib/constants";
 import Image from "next/image";
 import { toast } from "@/lib/toast";
+import PushPromptCard from "@/components/PushPromptCard";
 
 declare global {
   interface Window {
@@ -36,6 +37,8 @@ export default function PartnerRegisterPage() {
   const [longitude, setLongitude] = useState<number | null>(null);
   const [images, setImages] = useState<{ url: string; sortOrder: number }[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [registeredId, setRegisteredId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -230,8 +233,13 @@ export default function PartnerRegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success(isEditMode ? "협력업체 정보가 수정되었습니다!" : "협력업체가 등록되었습니다!");
-        router.push(`/partners/${isEditMode ? partnerId : data.id}`);
+        if (isEditMode) {
+          toast.success("협력업체 정보가 수정되었습니다!");
+          router.push(`/partners/${partnerId}`);
+        } else {
+          setRegisteredId(data.id);
+          setShowSuccess(true);
+        }
       } else {
         toast.error(data.error || (isEditMode ? "수정에 실패했습니다." : "등록에 실패했습니다."));
       }
@@ -254,6 +262,43 @@ export default function PartnerRegisterPage() {
   if (!session) return null;
 
   return (
+    <>
+      {/* 성공 모달 */}
+      {showSuccess && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
+          onClick={() => router.push(`/partners/${registeredId}`)}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
+              협력업체 등록 완료!
+            </h2>
+            <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+              서비스가 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
+            </p>
+            <div className="mb-6">
+              <PushPromptCard accentColor="purple" showGrantedText />
+            </div>
+            <button
+              onClick={() => router.push(`/partners/${registeredId}`)}
+              className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+            >
+              내 서비스 보기
+            </button>
+          </div>
+        </div>
+      )}
+
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -443,5 +488,6 @@ export default function PartnerRegisterPage() {
         </button>
       </form>
     </div>
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useListingFormStore } from "@/store/listingForm";
 import { formatPhone } from "@/lib/utils";
+import PushPromptCard from "@/components/PushPromptCard";
 
 interface Props {
   onPrev: () => void;
@@ -209,6 +210,11 @@ export default function Step7Confirm({ onPrev }: Props) {
                   <span>조회수 리포트 제공</span>
                 </div>
               </div>
+            </div>
+
+            {/* 푸시 알림 + PWA 설치 유도 */}
+            <div className="mb-6">
+              <PushPromptCard accentColor="blue" showGrantedText />
             </div>
 
             {/* 버튼 */}

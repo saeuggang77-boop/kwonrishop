@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { getPusherClient } from "@/lib/pusher-client";
 import type { Channel } from "pusher-js";
+import PushPromptCard from "@/components/PushPromptCard";
 
 interface ChatRoom {
   id: string;
@@ -246,6 +247,11 @@ function ChatContent() {
                     {activeRoomData?.listing?.storeName || activeRoomData?.listing?.addressRoad || activeRoomData?.equipment?.title || "매물"}
                   </p>
                 </div>
+              </div>
+
+              {/* 푸시 알림 + PWA 설치 유도 */}
+              <div className="px-4 pt-3">
+                <PushPromptCard accentColor="blue" />
               </div>
 
               {/* 메시지 */}
