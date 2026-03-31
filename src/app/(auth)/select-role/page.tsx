@@ -248,7 +248,7 @@ function SelectRoleContent() {
         <div className="mt-5 flex flex-col items-center gap-1.5">
           <div className="inline-flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400">
             <RefreshIcon />
-            역할은 마이페이지에서 언제든 변경할 수 있습니다
+            역할 변경이 필요하면 마이페이지 &gt; 사업자인증에서 진행할 수 있습니다
           </div>
           <p className="text-[11px] text-gray-300 dark:text-gray-600">
             선택한 역할에 따라 이용 가능한 기능이 달라집니다

@@ -42,6 +42,46 @@ interface MyData {
   } | null;
 }
 
+function RecentlyViewedSection() {
+  const [recentListings, setRecentListings] = useState<Array<{id: string; storeName: string; deposit: number; monthlyRent: number; image?: string}>>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("recentlyViewedListings");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setRecentListings(Array.isArray(parsed) ? parsed.slice(0, 6) : []);
+      }
+    } catch {}
+  }, []);
+
+  if (recentListings.length === 0) return null;
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-bold text-gray-900 dark:text-gray-100">최근 본 매물</h3>
+        <Link href="/listings" className="text-sm text-gray-400 hover:text-blue-600">전체보기</Link>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
+        {recentListings.map((item) => (
+          <Link key={item.id} href={`/listings/${item.id}`} className="flex-shrink-0 w-32">
+            <div className="w-32 h-24 bg-gray-100 dark:bg-gray-800 rounded-lg mb-1.5 overflow-hidden">
+              {item.image && (
+                <Image src={item.image} alt={item.storeName || "매물"} width={128} height={96} className="w-full h-full object-cover" />
+              )}
+            </div>
+            <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">{item.storeName || "매물"}</p>
+            <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
+              보 {(item.deposit / 10000).toLocaleString()} / 월 {item.monthlyRent}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function MyPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -166,8 +206,8 @@ export default function MyPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-20 bg-gray-200 rounded-xl" />
-          <div className="h-32 bg-gray-200 rounded-xl" />
+          <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+          <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl" />
         </div>
       </div>
     );
@@ -183,12 +223,12 @@ export default function MyPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">마이페이지</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">마이페이지</h1>
 
       {/* 프로필 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-gray-900">프로필</h3>
+          <h3 className="font-bold text-gray-900 dark:text-gray-100">프로필</h3>
           <Link
             href="/mypage/edit"
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -200,39 +240,54 @@ export default function MyPage() {
           {data.user.image ? (
             <Image src={data.user.image} alt={`${data.user.name || '사용자'} 프로필 사진`} width={56} height={56} className="rounded-full" />
           ) : (
-            <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold">
+            <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 text-xl font-bold">
               {data.user.name?.[0] || "U"}
             </div>
           )}
           <div>
-            <h2 className="text-lg font-bold text-gray-900">{data.user.name || "사용자"}</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{data.user.name || "사용자"}</h2>
             <p className="text-sm text-gray-500">{data.user.email}</p>
-            <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded font-medium">
-              {roleLabel}
-            </span>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="inline-block px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded font-medium">
+                {roleLabel}
+              </span>
+              {data.user.role === "BUYER" && (
+                <Link href="/verify-business" className="text-xs text-gray-400 hover:text-blue-600 underline underline-offset-2">
+                  역할 전환
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* 사업자인증 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
-        <h3 className="font-bold text-gray-900 mb-3">사업자인증</h3>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
+        <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3">사업자인증</h3>
         {data.verification?.verified ? (
-          <div className="flex items-center gap-2 text-sm text-green-600">
+          <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             인증 완료 {data.verification.businessName && `(${data.verification.businessName})`}
           </div>
         ) : (
-          <Link
-            href="/verify-business"
-            className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
-          >
-            사업자 인증하기
-          </Link>
+          <>
+            <Link
+              href="/verify-business"
+              className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
+            >
+              사업자 인증하기
+            </Link>
+            {data.user.role === "BUYER" && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">사업자 인증 완료 시 사장님/프랜차이즈/협력업체로 전환됩니다</p>
+            )}
+          </>
         )}
       </div>
+
+      {/* 최근 본 매물 (BUYER만) */}
+      {data.user.role === "BUYER" && <RecentlyViewedSection />}
 
       {/* 플랜 업그레이드 카드 (SELLER만) */}
       {data.user.role === "SELLER" && (
@@ -293,24 +348,48 @@ export default function MyPage() {
                 <div className="text-xs text-gray-500 dark:text-gray-400">채팅</div>
               </div>
             </div>
-            <Link
-              href={`/listings/${data.listing.id}`}
-              className="block p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <p className="font-medium text-gray-900 dark:text-gray-100">{data.listing.storeName || "매물"}</p>
-                {/* 매물 상태 배지 */}
-                {data.listing.status === "ACTIVE" && (
-                  <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded font-medium">
-                    판매중
-                  </span>
-                )}
-                {data.listing.status === "RESERVED" && (
-                  <span className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs rounded font-medium">
-                    예약중
-                  </span>
-                )}
-                {data.listing.status === "SOLD" && (
+                <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600">
+                  {data.listing.storeName || "매물"}
+                </Link>
+                {/* 매물 상태 배지 - quick toggle */}
+                {data.listing.status !== "SOLD" ? (
+                  <select
+                    value={data.listing.status}
+                    onChange={async (e) => {
+                      const newStatus = e.target.value;
+                      try {
+                        const res = await fetch(`/api/listings/${data.listing!.id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ status: newStatus }),
+                        });
+                        if (res.ok) {
+                          setData(prev => prev ? {
+                            ...prev,
+                            listing: prev.listing ? { ...prev.listing, status: newStatus } : null
+                          } : null);
+                          toast.success(`매물 상태가 변경되었습니다`);
+                        } else {
+                          const err = await res.json();
+                          toast.error(err.error || "상태 변경 실패");
+                        }
+                      } catch {
+                        toast.error("상태 변경 중 오류가 발생했습니다");
+                      }
+                    }}
+                    className={`appearance-none cursor-pointer px-2.5 py-0.5 text-xs rounded font-medium border-0 pr-6 focus:ring-2 ${
+                      data.listing.status === "ACTIVE"
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 focus:ring-green-300"
+                        : "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 focus:ring-orange-300"
+                    }`}
+                  >
+                    <option value="ACTIVE">판매중</option>
+                    <option value="RESERVED">예약중</option>
+                    <option value="SOLD">거래완료</option>
+                  </select>
+                ) : (
                   <span className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded font-medium">
                     거래완료
                   </span>
@@ -337,27 +416,6 @@ export default function MyPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    조회 {data.listing.viewCount}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    관심 {data.listing.favoriteCount}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    채팅 {data.chatCount}건
-                  </span>
-                </div>
                 {data.activeListingAd && data.activeListingAd.viewCountAtAdStart !== null && data.activeListingAd.daysLeft > 0 && (
                   <div className="text-xs">
                     {(() => {
@@ -375,7 +433,7 @@ export default function MyPage() {
                   </div>
                 )}
               </div>
-            </Link>
+            </div>
             <div className="mt-3">
               {!data.activeListingAd || data.activeListingAd.daysLeft <= 0 ? (
                 <Link
@@ -415,28 +473,28 @@ export default function MyPage() {
 
       {/* 끌어올리기 구독 (SELLER만, 매물이 있을 때) */}
       {data.user.role === "SELLER" && data.listing && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-gray-900">🔄 정기 끌어올리기</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100">🔄 정기 끌어올리기</h3>
           </div>
           {bumpSubscription ? (
             <div>
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">✅</span>
-                    <span className="font-bold text-green-700">구독 활성화</span>
+                    <span className="font-bold text-green-700 dark:text-green-400">구독 활성화</span>
                   </div>
-                  <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded font-medium">
+                  <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded font-medium">
                     {bumpSubscription.frequency === "TWICE_WEEKLY" && "주 2회"}
                     {bumpSubscription.frequency === "WEEKDAY_DAILY" && "평일 매일"}
                     {bumpSubscription.frequency === "DAILY" && "매일 1회"}
                     {bumpSubscription.frequency === "TWICE_DAILY" && "매일 2회"}
                   </span>
                 </div>
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   <p>
-                    다음 끌올: <span className="font-medium text-gray-900">
+                    다음 끌올: <span className="font-medium text-gray-900 dark:text-gray-100">
                       {new Date(bumpSubscription.nextBumpAt).toLocaleString("ko-KR", {
                         month: "long",
                         day: "numeric",
@@ -445,13 +503,13 @@ export default function MyPage() {
                       })}
                     </span>
                   </p>
-                  <p className="text-xs text-gray-500">자동으로 매물이 최상단에 노출됩니다</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">자동으로 매물이 최상단에 노출됩니다</p>
                 </div>
               </div>
               <button
                 onClick={handleCancelSubscription}
                 disabled={cancellingSubscription}
-                className="mt-3 w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-3 w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {cancellingSubscription ? "처리 중..." : "구독 해지하기"}
               </button>
@@ -536,9 +594,9 @@ export default function MyPage() {
       )}
 
       {/* 내 집기 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-gray-900">내 집기</h3>
+          <h3 className="font-bold text-gray-900 dark:text-gray-100">내 집기</h3>
           <Link
             href="/equipment/register"
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -549,20 +607,21 @@ export default function MyPage() {
         {data.equipmentCount > 0 ? (
           <Link
             href="/equipment?mine=true"
-            className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="block p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            <p className="font-medium text-gray-900">등록 집기 {data.equipmentCount}건</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">등록 집기 {data.equipmentCount}건</p>
+            <span className="text-sm text-gray-400 dark:text-gray-500">관리하기 &rsaquo;</span>
           </Link>
         ) : (
-          <p className="text-sm text-gray-400">등록된 집기가 없습니다</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">등록된 집기가 없습니다</p>
         )}
       </div>
 
       {/* 내 분석 리포트 (SELLER만) */}
       {data.user.role === "SELLER" && data.listing && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-gray-900">내 분석 리포트</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100">내 분석 리포트</h3>
           </div>
           {sellerReports.length > 0 ? (
             <div className="space-y-2">
@@ -570,11 +629,11 @@ export default function MyPage() {
                 <Link
                   key={report.id}
                   href={`/reports/seller/${report.listingId}`}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{report.listingName || "매물 시장분석"}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{report.listingName || "매물 시장분석"}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                       {new Date(report.createdAt).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
                     </p>
                   </div>
@@ -584,8 +643,8 @@ export default function MyPage() {
             </div>
           ) : (
             <div>
-              <p className="text-sm text-gray-400 mb-3">아직 구매한 리포트가 없습니다</p>
-              <p className="text-xs text-gray-400">매물 상세 페이지에서 시장분석 리포트를 구매할 수 있습니다 (15,000원/건)</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mb-3">아직 구매한 리포트가 없습니다</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">매물 상세 페이지에서 시장분석 리포트를 구매할 수 있습니다 (15,000원/건)</p>
             </div>
           )}
         </div>
