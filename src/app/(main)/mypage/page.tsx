@@ -301,12 +301,21 @@ export default function MyPage() {
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900 dark:text-gray-100">내 매물</h3>
           {data.listing && (
-            <Link
-              href="/sell/edit"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              매물 수정
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href={`/listings/${data.listing.id}`}
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+              >
+                매물 보기
+              </Link>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
+              <Link
+                href="/sell/edit"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                매물 수정
+              </Link>
+            </div>
           )}
         </div>
         {data.listing ? (
@@ -536,12 +545,21 @@ export default function MyPage() {
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900 dark:text-gray-100">내 서비스</h3>
             {data.partnerService && (
-              <Link
-                href="/partners/register?edit=true"
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-              >
-                서비스 수정
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link
+                  href={`/partners/${data.partnerService.id}`}
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+                >
+                  서비스 보기
+                </Link>
+                <span className="text-gray-300 dark:text-gray-600">|</span>
+                <Link
+                  href="/partners/register?edit=true"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  서비스 수정
+                </Link>
+              </div>
             )}
           </div>
           {data.partnerService ? (
@@ -574,12 +592,21 @@ export default function MyPage() {
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900 dark:text-gray-100">내 브랜드</h3>
-            <Link
-              href="/franchise/edit"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              브랜드 수정
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href={`/franchise/${data.franchiseBrand.id}`}
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+              >
+                브랜드 보기
+              </Link>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
+              <Link
+                href="/franchise/edit"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                브랜드 수정
+              </Link>
+            </div>
           </div>
           <Link
             href={`/franchise/${data.franchiseBrand.id}`}
@@ -597,12 +624,25 @@ export default function MyPage() {
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900 dark:text-gray-100">내 집기</h3>
-          <Link
-            href="/equipment/register"
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
-            집기 등록
-          </Link>
+          <div className="flex items-center gap-3">
+            {data.equipmentCount > 0 && (
+              <>
+                <Link
+                  href="/equipment?mine=true"
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+                >
+                  집기 보기
+                </Link>
+                <span className="text-gray-300 dark:text-gray-600">|</span>
+              </>
+            )}
+            <Link
+              href="/equipment/register"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              집기 등록
+            </Link>
+          </div>
         </div>
         {data.equipmentCount > 0 ? (
           <Link

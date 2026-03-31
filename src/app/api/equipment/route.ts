@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   const maxPrice = searchParams.get("maxPrice");
   const keyword = searchParams.get("keyword");
   const featured = searchParams.get("featured") === "true";
+  const mine = searchParams.get("mine") === "true";
   const sort = searchParams.get("sort") || "latest";
 
   // Featured equipment - return early
@@ -62,6 +63,15 @@ export async function GET(req: NextRequest) {
   const where: Record<string, unknown> = {
     status: "ACTIVE",
   };
+
+  // 내 집기 필터: 로그인 사용자의 집기만 조회
+  if (mine) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+    }
+    where.userId = session.user.id;
+  }
 
   if (category) where.category = category;
   if (condition) where.condition = condition;

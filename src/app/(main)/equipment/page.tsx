@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import { RegisterPromoBanner } from "@/components/promotion/PromotionCTA";
@@ -26,8 +26,14 @@ interface Equipment {
 // 티어별 최대 표시 개수
 const TIER_LIMITS = { VIP: 4, PREMIUM: 6, BASIC: 8 } as const;
 
-export default function EquipmentListPage() {
+function EquipmentListContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isMine = searchParams.get("mine") === "true";
+
+  // 내 집기 모드
+  const [myEquipments, setMyEquipments] = useState<Equipment[]>([]);
+  const [myLoading, setMyLoading] = useState(true);
 
   // 티어별 분리 (브라우즈 모드)
   const [vipEquipments, setVipEquipments] = useState<Equipment[]>([]);
@@ -88,11 +94,25 @@ export default function EquipmentListPage() {
     setSearchTotalPages(data.pagination?.totalPages || 1);
   }, [searchPage, category, keyword]);
 
-  // 초기 로드
+  // 내 집기 모드 로드
   useEffect(() => {
+    if (!isMine) return;
+    setMyLoading(true);
+    fetch("/api/equipment?mine=true&limit=100")
+      .then((r) => r.json())
+      .then((data) => {
+        setMyEquipments(data.equipment || []);
+        setMyLoading(false);
+      })
+      .catch(() => setMyLoading(false));
+  }, [isMine]);
+
+  // 초기 로드 (일반 모드)
+  useEffect(() => {
+    if (isMine) return;
     setLoading(true);
     Promise.all([fetchFeatured(), fetchFree()]).then(() => setLoading(false));
-  }, [fetchFeatured, fetchFree]);
+  }, [fetchFeatured, fetchFree, isMine]);
 
   // 검색 모드 변경 시
   useEffect(() => {
@@ -126,6 +146,64 @@ export default function EquipmentListPage() {
     setKeyword("");
     setCategory("");
     setIsSearchMode(false);
+  }
+
+  // 내 집기 모드 렌더링
+  if (isMine) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">내 집기</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">내가 등록한 집기 목록</p>
+          </div>
+          <button
+            onClick={() => router.push("/equipment/register")}
+            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
+          >
+            집기 등록
+          </button>
+        </div>
+        {myLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl aspect-[3/4] animate-pulse" />
+            ))}
+          </div>
+        ) : myEquipments.length === 0 ? (
+          <div className="text-center py-20 text-gray-400 dark:text-gray-500">
+            <p>등록한 집기가 없습니다</p>
+            <p className="text-sm mt-1">집기를 등록하고 판매해보세요</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {myEquipments.map((eq) => (
+              <div
+                key={eq.id}
+                onClick={() => router.push(`/equipment/${eq.id}`)}
+                className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+              >
+                <div className="aspect-square bg-gray-100 dark:bg-gray-800">
+                  {eq.images[0] && (
+                    <Image src={eq.images[0].url} alt={eq.title} width={300} height={300} className="w-full h-full object-cover" />
+                  )}
+                </div>
+                <div className="p-3">
+                  <p className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">{eq.title}</p>
+                  <p className="text-blue-600 dark:text-blue-400 font-bold text-sm mt-1">
+                    {eq.price.toLocaleString()}원
+                  </p>
+                  <div className="flex gap-2 mt-1 text-xs text-gray-400 dark:text-gray-500">
+                    <span>조회 {eq.viewCount}</span>
+                    <span>관심 {eq.favoriteCount}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -598,5 +676,24 @@ function Pagination({
         &raquo;
       </button>
     </div>
+  );
+}
+
+export default function EquipmentListPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-5xl mx-auto px-4 py-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32" />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl aspect-[3/4] animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </div>
+    }>
+      <EquipmentListContent />
+    </Suspense>
   );
 }
