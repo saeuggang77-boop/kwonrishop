@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendEmail } from "@/lib/email";
-import { listingExpiredEmail } from "@/lib/email-templates";
 import { notifyListingExpiring } from "@/lib/kakao-alimtalk";
 import { sendPushToUser } from "@/lib/push";
 import { verifyBearerToken } from "@/lib/cron-auth";
@@ -43,8 +41,6 @@ export async function GET(request: NextRequest) {
         addressRoad: true,
         user: {
           select: {
-            email: true,
-            name: true,
             phone: true,
           },
         },
@@ -77,26 +73,11 @@ export async function GET(request: NextRequest) {
         data: notifications,
       });
 
-      // 매물 소유자에게 만료 이메일 & 알림톡 전송 (비차단)
+      // 매물 소유자에게 만료 SMS & 푸시 전송 (비차단)
       expiredListings.forEach((listing: any) => {
         const storeName = listing.storeName || listing.addressRoad || "매물";
 
-        // 이메일 알림
-        if (listing.user.email) {
-          (async () => {
-            try {
-              const { subject, html } = listingExpiredEmail(
-                listing.user.name || "회원",
-                storeName
-              );
-              await sendEmail(listing.user.email, subject, html);
-            } catch (error) {
-              console.error("[Email] Failed to send expiration email:", error);
-            }
-          })();
-        }
-
-        // 알림톡 (non-blocking) - 만료 알림은 0일 남음으로 처리
+        // SMS (non-blocking)
         if (listing.user.phone) {
           notifyListingExpiring(listing.user.phone, storeName, 0).catch(() => {});
         }
@@ -128,8 +109,6 @@ export async function GET(request: NextRequest) {
         title: true,
         user: {
           select: {
-            email: true,
-            name: true,
             phone: true,
           },
         },
@@ -160,24 +139,11 @@ export async function GET(request: NextRequest) {
         data: equipmentNotifications,
       });
 
-      // 집기 소유자에게 만료 이메일 전송 (비차단)
+      // 집기 소유자에게 만료 SMS & 푸시 전송 (비차단)
       expiredEquipments.forEach((equip: any) => {
         const equipTitle = equip.title || "집기 매물";
 
-        if (equip.user.email) {
-          (async () => {
-            try {
-              const { subject, html } = listingExpiredEmail(
-                equip.user.name || "회원",
-                equipTitle
-              );
-              await sendEmail(equip.user.email, subject, html);
-            } catch (error) {
-              console.error("[Email] Failed to send equipment expiration email:", error);
-            }
-          })();
-        }
-
+        // SMS (non-blocking)
         if (equip.user.phone) {
           notifyListingExpiring(equip.user.phone, equipTitle, 0).catch(() => {});
         }

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { sanitizeInput, validatePhone } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(
   request: Request,
@@ -79,6 +80,39 @@ export async function POST(
         message: cleanMessage,
       },
     });
+
+    // 프랜차이즈 본사에게 문의 알림 (비차단)
+    (async () => {
+      try {
+        const brandWithManager = await prisma.franchiseBrand.findUnique({
+          where: { id },
+          select: { brandName: true, managerId: true },
+        });
+
+        if (brandWithManager?.managerId) {
+          // DB 알림
+          await prisma.notification.create({
+            data: {
+              userId: brandWithManager.managerId,
+              type: "FRANCHISE_INQUIRY",
+              title: "새 가맹 문의",
+              message: `${brandWithManager.brandName}에 새 가맹 문의가 도착했습니다.`,
+              link: `/franchise/${id}`,
+            },
+          });
+
+          // 웹 푸시
+          sendPushToUser(
+            brandWithManager.managerId,
+            "새 가맹 문의",
+            `${brandWithManager.brandName}에 새 가맹 문의가 도착했습니다.`,
+            `/franchise/${id}`
+          ).catch(() => {});
+        }
+      } catch (err) {
+        console.error("[Notification] Failed to send inquiry notification:", err);
+      }
+    })();
 
     return NextResponse.json(inquiry, { status: 201 });
   } catch (error) {

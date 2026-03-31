@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendEmail } from "@/lib/email";
-import { adExpiredEmail } from "@/lib/email-templates";
 import { notifyPaymentExpiring } from "@/lib/kakao-alimtalk";
 import { sendPushToUser } from "@/lib/push";
 import { verifyBearerToken } from "@/lib/cron-auth";
@@ -46,7 +44,6 @@ export async function GET(request: NextRequest) {
         },
         user: {
           select: {
-            email: true,
             name: true,
           },
         },
@@ -245,25 +242,6 @@ export async function GET(request: NextRequest) {
         `${ad.product.name} 상품이 만료되었습니다. ${targetName}의 광고 혜택이 종료됩니다.`,
         pushLink
       ).catch(() => {});
-    });
-
-    // Send expiration emails (non-blocking)
-    expiredAds.forEach((ad: any) => {
-      if (ad.user.email) {
-        (async () => {
-          try {
-            const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
-            const { subject, html } = adExpiredEmail(
-              ad.user.name || "회원",
-              ad.product.name,
-              targetName
-            );
-            await sendEmail(ad.user.email, subject, html);
-          } catch (error) {
-            console.error("[Email] Failed to send ad expiration email:", error);
-          }
-        })();
-      }
     });
 
     console.log(`Expired ${expiredAds.length} ad purchases`);

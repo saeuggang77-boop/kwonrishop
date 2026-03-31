@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
-import { notifyPriceChange } from "@/lib/kakao-alimtalk";
 import { sendPushToUser } from "@/lib/push";
 
 export async function GET(
@@ -344,9 +343,6 @@ export async function PUT(
           });
 
           for (const fav of favoriteUsers) {
-            if (fav.user.phone) {
-              notifyPriceChange(fav.user.phone, storeName, changeText).catch(() => {});
-            }
             // 웹 푸시 (non-blocking)
             sendPushToUser(
               fav.user.id,

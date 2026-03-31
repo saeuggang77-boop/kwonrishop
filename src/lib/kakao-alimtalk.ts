@@ -1,8 +1,7 @@
 /**
  * SMS 문자 알림 발송 유틸리티 (Solapi)
  *
- * Solapi API 연동 시 실제 발송으로 전환
- * 현재: 콘솔 로그만 출력 (개발 모드)
+ * 결제/만기 관련 알림만 SMS로 발송
  *
  * 필요 환경변수:
  * - SOLAPI_API_KEY
@@ -83,45 +82,7 @@ async function sendSms(message: SmsMessage): Promise<boolean> {
   }
 }
 
-// ── 기존 함수 시그니처 유지 (호출부 변경 없음) ──
-
-/**
- * 새 채팅 메시지 알림
- */
-export async function notifyNewChat(
-  recipientPhone: string,
-  senderName: string,
-  listingName: string
-): Promise<boolean> {
-  return sendSms({
-    to: recipientPhone,
-    text: `[권리샵] ${senderName}님이 "${listingName}" 매물에 메시지를 보냈습니다. 확인하세요.`,
-  });
-}
-
-/**
- * 관심매물 가격 변동 알림
- * changeText 오버로드: 여러 항목의 변동사항을 한 번에 전달할 때 사용
- */
-export async function notifyPriceChange(
-  recipientPhone: string,
-  listingName: string,
-  oldPriceOrChangeText: number | string,
-  newPrice?: number
-): Promise<boolean> {
-  let body: string;
-  if (typeof oldPriceOrChangeText === "string") {
-    // changeText 형태: "보증금: 1,000→900만원, 월세: 100→80만원"
-    body = `[권리샵] 관심매물 "${listingName}" 가격이 변동되었습니다. ${oldPriceOrChangeText}`;
-  } else {
-    const change = (newPrice ?? 0) > oldPriceOrChangeText ? "인상" : "인하";
-    body = `[권리샵] 관심매물 "${listingName}" 가격이 ${change}되었습니다. ${oldPriceOrChangeText.toLocaleString()}만→${(newPrice ?? 0).toLocaleString()}만원`;
-  }
-  return sendSms({
-    to: recipientPhone,
-    text: body,
-  });
-}
+// ── 결제/만기 관련 SMS 알림만 유지 ──
 
 /**
  * 매물 노출 기간 만료 임박 알림
@@ -164,29 +125,3 @@ export async function notifyPaymentExpiring(
     text: `[권리샵] ${productName} 상품이 ${daysLeft}일 후 만료됩니다. 연장하려면 사이트를 방문하세요.`,
   });
 }
-
-/**
- * 새 문의 도착 알림 (프랜차이즈 본사용)
- */
-export async function notifyNewInquiry(
-  recipientPhone: string,
-  inquiryType: string,
-  brandName: string
-): Promise<boolean> {
-  return sendSms({
-    to: recipientPhone,
-    text: `[권리샵] ${brandName}에 새 ${inquiryType} 문의가 도착했습니다. 확인하세요.`,
-  });
-}
-
-// 하위 호환용 export (기존 코드에서 참조하는 경우)
-export const ALIMTALK_TEMPLATES = {
-  NEW_CHAT: "SMS_CHAT",
-  PRICE_CHANGE: "SMS_PRICE",
-  LISTING_EXPIRING: "SMS_EXPIRE",
-  PAYMENT_SUCCESS: "SMS_PAY",
-  PAYMENT_EXPIRING: "SMS_PAY_EXPIRE",
-  NEW_INQUIRY: "SMS_INQUIRY",
-} as const;
-
-export { sendSms as sendAlimtalk };

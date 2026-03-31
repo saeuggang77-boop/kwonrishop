@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { sendEmail } from "@/lib/email";
-import { listingFavoritedEmail } from "@/lib/email-templates";
+import { sendPushToUser } from "@/lib/push";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -66,7 +65,7 @@ export async function POST(
       });
     });
 
-    // 매물 소유자에게 이메일 알림 (비차단)
+    // 매물 소유자에게 알림 (비차단)
     (async () => {
       try {
         const listing = await prisma.listing.findUnique({
@@ -74,22 +73,34 @@ export async function POST(
           select: {
             storeName: true,
             addressRoad: true,
-            user: {
-              select: { email: true, name: true },
-            },
+            userId: true,
           },
         });
 
-        if (listing && listing.user.email) {
+        if (listing && listing.userId !== session.user.id) {
           const storeName = listing.storeName || listing.addressRoad || "매물";
-          const { subject, html } = listingFavoritedEmail(
-            listing.user.name || "회원",
-            storeName
-          );
-          await sendEmail(listing.user.email, subject, html);
+
+          // DB 알림
+          await prisma.notification.create({
+            data: {
+              userId: listing.userId,
+              type: "LISTING_FAVORITED",
+              title: "매물 관심 등록",
+              message: `"${storeName}" 매물에 관심을 표시한 사용자가 있습니다.`,
+              link: `/listings/${listingId}`,
+            },
+          });
+
+          // 웹 푸시
+          sendPushToUser(
+            listing.userId,
+            "매물 관심 등록",
+            `"${storeName}" 매물에 관심을 표시한 사용자가 있습니다.`,
+            `/listings/${listingId}`
+          ).catch(() => {});
         }
       } catch (error) {
-        console.error("[Email] Failed to send favorite notification:", error);
+        console.error("[Notification] Failed to send favorite notification:", error);
       }
     })();
 

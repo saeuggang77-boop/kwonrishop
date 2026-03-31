@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendPushToUser } from "@/lib/push";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -82,6 +83,14 @@ export async function POST(
               link: `/equipment/${equipmentId}`,
             },
           });
+
+          // 웹 푸시
+          sendPushToUser(
+            equipment.userId,
+            "집기 관심 등록",
+            `"${equipment.title}" 집기에 관심을 표시한 사용자가 있습니다.`,
+            `/equipment/${equipmentId}`
+          ).catch(() => {});
         }
       } catch (error) {
         console.error("[Notification] Failed to create favorite notification:", error);
