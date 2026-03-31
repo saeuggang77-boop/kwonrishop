@@ -251,7 +251,7 @@ function ChatContent() {
 
               {/* 푸시 알림 + PWA 설치 유도 */}
               <div className="px-4 pt-3">
-                <PushPromptCard accentColor="blue" />
+                <PushPromptCard accentColor="blue" customTitle="새 메시지를 놓치지 마세요" customDescription="알림을 켜면 상대방 답변을 바로 확인할 수 있어요" />
               </div>
 
               {/* 메시지 */}

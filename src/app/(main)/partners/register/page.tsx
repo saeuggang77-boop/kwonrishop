@@ -287,7 +287,7 @@ export default function PartnerRegisterPage() {
               서비스가 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
             </p>
             <div className="mb-6">
-              <PushPromptCard accentColor="purple" showGrantedText />
+              <PushPromptCard accentColor="purple" showGrantedText customTitle="고객 문의를 놓치지 마세요" customDescription="실시간 알림으로 문의에 바로 응답하세요" />
             </div>
             <button
               onClick={() => router.push(`/partners/${registeredId}`)}

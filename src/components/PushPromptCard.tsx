@@ -14,6 +14,10 @@ interface PushPromptCardProps {
   accentColor?: "blue" | "purple" | "green" | "amber";
   /** granted+설치 완료 시 "이미 활성화" 텍스트 표시 */
   showGrantedText?: boolean;
+  /** 터치포인트별 맞춤 타이틀 (미지정 시 기본값) */
+  customTitle?: string;
+  /** 터치포인트별 맞춤 설명 (미지정 시 기본값) */
+  customDescription?: string;
 }
 
 function getDismissState(): DismissState | null {
@@ -44,6 +48,8 @@ function shouldShowByDismiss(): boolean {
 export default function PushPromptCard({
   accentColor = "blue",
   showGrantedText = false,
+  customTitle,
+  customDescription,
 }: PushPromptCardProps) {
   const [pushPermission, setPushPermission] = useState<string>("default");
   const [visible, setVisible] = useState(false);
@@ -114,13 +120,13 @@ export default function PushPromptCard({
   let buttonText: string;
 
   if (pwaNeeded && pushNeeded) {
-    title = "권리샵을 홈 화면에 추가하세요";
-    desc = "앱처럼 빠르게 접속하고, 새 문의·채팅 알림도 바로 받아보세요";
-    buttonText = "추가하기";
+    title = customTitle || "권리샵을 홈 화면에 추가하세요";
+    desc = customDescription || "앱처럼 빠르게 접속하고, 새 문의·채팅 알림도 바로 받아보세요";
+    buttonText = "알림 받기";
   } else if (pushNeeded) {
-    title = "알림을 켜면 소식을 바로 받을 수 있어요";
-    desc = "새 문의, 채팅 답장, 관심 매물 변동을 놓치지 마세요";
-    buttonText = "알림 켜기";
+    title = customTitle || "알림을 켜면 소식을 바로 받을 수 있어요";
+    desc = customDescription || "새 문의, 채팅 답장, 관심 매물 변동을 놓치지 마세요";
+    buttonText = "알림 받기";
   } else {
     title = "권리샵을 홈 화면에 추가하세요";
     desc = "앱처럼 빠르게 접속할 수 있어요";

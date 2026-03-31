@@ -131,7 +131,7 @@ function VerifyBusinessContent() {
           </p>
           {/* 푸시 알림 + PWA 설치 유도 */}
           <div className="mb-4">
-            <PushPromptCard accentColor="green" showGrantedText />
+            <PushPromptCard accentColor="green" showGrantedText customTitle="고객 알림 받을 준비 되셨나요?" customDescription="문의·채팅이 오면 바로 알려드려요" />
           </div>
 
           <div className="space-y-2">

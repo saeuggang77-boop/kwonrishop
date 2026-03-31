@@ -214,7 +214,7 @@ export default function Step7Confirm({ onPrev }: Props) {
 
             {/* 푸시 알림 + PWA 설치 유도 */}
             <div className="mb-6">
-              <PushPromptCard accentColor="blue" showGrantedText />
+              <PushPromptCard accentColor="blue" showGrantedText customTitle="구매자 연락을 놓치지 마세요" customDescription="관심 표시·채팅 문의를 실시간으로 받아볼 수 있어요" />
             </div>
 
             {/* 버튼 */}

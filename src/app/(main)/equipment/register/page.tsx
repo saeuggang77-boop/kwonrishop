@@ -268,7 +268,7 @@ export default function EquipmentRegisterPage() {
               집기가 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
             </p>
             <div className="mb-6">
-              <PushPromptCard accentColor="green" showGrantedText />
+              <PushPromptCard accentColor="green" showGrantedText customTitle="구매자 관심을 놓치지 마세요" customDescription="관심 표시·문의를 바로 확인할 수 있어요" />
             </div>
             <button
               onClick={() => router.push(`/equipment/${registeredId}`)}
@@ -366,8 +366,8 @@ export default function EquipmentRegisterPage() {
               <input
                 type="number"
                 min={0}
-                value={isFree ? 0 : price}
-                onChange={(e) => setPrice(Number(e.target.value))}
+                value={isFree ? "0" : (price === 0 ? "" : price)}
+                onChange={(e) => setPrice(parseInt(e.target.value) || 0)}
                 disabled={isFree}
                 className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-400"
                 placeholder="가격을 입력하세요"

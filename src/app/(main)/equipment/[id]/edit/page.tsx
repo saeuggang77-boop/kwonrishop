@@ -344,8 +344,8 @@ export default function EquipmentEditPage() {
               <input
                 type="number"
                 min={0}
-                value={isFree ? 0 : price}
-                onChange={(e) => setPrice(Number(e.target.value))}
+                value={isFree ? "0" : (price === 0 ? "" : price)}
+                onChange={(e) => setPrice(parseInt(e.target.value) || 0)}
                 disabled={isFree}
                 className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-400"
                 placeholder="가격을 입력하세요"
