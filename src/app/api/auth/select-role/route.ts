@@ -29,23 +29,38 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "올바른 역할을 선택해주세요." }, { status: 400 });
   }
 
-  // BUYER는 바로 설정, 나머지는 pendingRole에 저장 (사업자인증 필요)
-  if (role === "BUYER") {
+  try {
+    // BUYER는 바로 설정, 나머지는 pendingRole에 저장 (사업자인증 필요)
+    if (role === "BUYER") {
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: { role: "BUYER", roleSelectedAt: new Date(), pendingRole: null },
+      });
+      return NextResponse.json({ success: true, redirect: "/" });
+    }
+
+    // SELLER, FRANCHISE, PARTNER는 pendingRole에 저장하고 사업자인증으로 이동
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { role: "BUYER", roleSelectedAt: new Date(), pendingRole: null },
+      data: { pendingRole: role, roleSelectedAt: new Date() },
     });
-    return NextResponse.json({ success: true, redirect: "/" });
+
+    return NextResponse.json({
+      success: true,
+      redirect: `/verify-business?role=${role}`
+    });
+  } catch (error: unknown) {
+    const prismaError = error as { code?: string };
+    if (prismaError.code === "P2025") {
+      return NextResponse.json(
+        { error: "계정을 찾을 수 없습니다. 로그아웃 후 다시 로그인해주세요." },
+        { status: 404 }
+      );
+    }
+    console.error("역할 선택 오류:", error);
+    return NextResponse.json(
+      { error: "역할 선택 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
-
-  // SELLER, FRANCHISE, PARTNER는 pendingRole에 저장하고 사업자인증으로 이동
-  await prisma.user.update({
-    where: { id: session.user.id },
-    data: { pendingRole: role, roleSelectedAt: new Date() },
-  });
-
-  return NextResponse.json({
-    success: true,
-    redirect: `/verify-business?role=${role}`
-  });
 }
