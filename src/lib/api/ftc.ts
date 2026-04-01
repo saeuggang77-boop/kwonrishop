@@ -1,24 +1,31 @@
 /**
- * 공정거래위원회 정보공개서 API 클라이언트
- * API 문서: https://openapi.ftc.go.kr
+ * 공정거래위원회 가맹사업거래 통계 API 클라이언트
+ * API 문서: https://www.data.go.kr/data/15100585/openapi.do
+ * Base URL: https://apis.data.go.kr/1130000/FftcBrandFrcsStatsService
  */
 
-const FTC_API_BASE = "https://openapi.ftc.go.kr/api/v1/franchise";
+const FTC_API_BASE = "https://apis.data.go.kr/1130000/FftcBrandFrcsStatsService/getBrandFrcsStats";
 const FTC_API_KEY = process.env.FTC_API_KEY || "";
 
 export interface FTCBrandSearchResult {
-  ftcId: string;
-  brandName: string;
-  companyName: string;
-  businessNumber: string;
-  industry: string;
-  franchiseFee?: number;
-  educationFee?: number;
-  depositFee?: number;
-  royalty?: string;
-  totalStores?: number;
-  avgRevenue?: number;
-  registeredAt?: string;
+  ftcId: string;          // "corpNm_brandNm" 조합으로 생성
+  brandName: string;      // brandNm
+  companyName: string;    // corpNm
+  businessNumber: string; // 이 API에 없음 → 빈 문자열
+  industry: string;       // "indutyLclasNm > indutyMlsfcNm" 형태
+  totalStores?: number;   // frcsCnt
+  avgRevenue?: number;    // avrgSlsAmt (천원)
+  franchiseFee?: number;  // 이 API에 없음
+  educationFee?: number;  // 이 API에 없음
+  depositFee?: number;    // 이 API에 없음
+  royalty?: string;       // 이 API에 없음
+  registeredAt?: string;  // 이 API에 없음
+  // 추가 데이터
+  newStores?: number;     // newFrcsRgsCnt
+  contractEnd?: number;   // ctrtEndCnt
+  contractCancel?: number; // ctrtCncltnCnt
+  revenuePerArea?: number; // arUnitAvrgSlsAmt
+  year?: string;          // yr
 }
 
 export interface FTCBrandDetail extends FTCBrandSearchResult {
@@ -30,355 +37,126 @@ export interface FTCBrandDetail extends FTCBrandSearchResult {
   rawData?: any;
 }
 
+interface FTCAPIResponse {
+  resultCode: string;
+  resultMsg: string;
+  numOfRows: string;
+  pageNo: string;
+  totalCount: number;
+  items: Array<{
+    yr: string;
+    indutyLclasNm: string;       // 업종 대분류
+    indutyMlsfcNm: string;       // 업종 소분류
+    corpNm: string;              // 법인명
+    brandNm: string;             // 브랜드명
+    frcsCnt: number;             // 가맹점 수
+    newFrcsRgsCnt: number;       // 신규 등록 수
+    ctrtEndCnt: number;          // 계약 종료 수
+    ctrtCncltnCnt: number;       // 계약 해지 수
+    nmChgCnt: number;            // 명칭 변경 수
+    avrgSlsAmt: number;          // 평균 매출액 (천원)
+    arUnitAvrgSlsAmt: number;    // 면적당 평균 매출 (천원)
+  }>;
+}
+
+/**
+ * 전체 프랜차이즈 브랜드 목록 조회 (페이지 단위)
+ */
+export async function listAllFranchiseBrands(
+  page: number = 1,
+  pageSize: number = 100,
+  yr: string = "2024"
+): Promise<{ brands: FTCBrandSearchResult[]; total: number; page: number; totalPages: number }> {
+  if (!FTC_API_KEY || FTC_API_KEY === "") {
+    console.error("FTC_API_KEY not configured");
+    return { brands: [], total: 0, page, totalPages: 0 };
+  }
+
+  try {
+    const params = new URLSearchParams({
+      serviceKey: FTC_API_KEY,
+      pageNo: String(page),
+      numOfRows: String(pageSize),
+      yr: yr,
+      resultType: "json",
+    });
+
+    const response = await fetch(`${FTC_API_BASE}?${params}`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`FTC API error: ${response.status}`);
+    }
+
+    const data: FTCAPIResponse = await response.json();
+
+    if (data.resultCode !== "00") {
+      throw new Error(`FTC API error: ${data.resultMsg}`);
+    }
+
+    const brands = (data.items || []).map((item) => ({
+      ftcId: `${item.corpNm}_${item.brandNm}`,
+      brandName: item.brandNm,
+      companyName: item.corpNm,
+      businessNumber: "",
+      industry: `${item.indutyLclasNm} > ${item.indutyMlsfcNm}`,
+      totalStores: item.frcsCnt,
+      avgRevenue: item.avrgSlsAmt,
+      newStores: item.newFrcsRgsCnt,
+      contractEnd: item.ctrtEndCnt,
+      contractCancel: item.ctrtCncltnCnt,
+      revenuePerArea: item.arUnitAvrgSlsAmt,
+      year: item.yr,
+    }));
+
+    const total = data.totalCount || brands.length;
+
+    return {
+      brands,
+      total,
+      page,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  } catch (error) {
+    console.error("Error listing FTC brands:", error);
+    return { brands: [], total: 0, page, totalPages: 0 };
+  }
+}
+
 /**
  * 브랜드명으로 프랜차이즈 검색
+ * @deprecated 실제 API에 검색 파라미터가 없으므로 DB 검색으로 대체 필요
  */
 export async function searchFranchiseBrands(
   brandName: string,
   page: number = 1
 ): Promise<{ brands: FTCBrandSearchResult[]; total: number }> {
-  // Dev mode: return mock data if no API key
-  if (!FTC_API_KEY || FTC_API_KEY === "") {
-    console.warn("FTC_API_KEY not configured, returning mock data");
-    return getMockSearchResults(brandName, page);
-  }
-
-  try {
-    const params = new URLSearchParams({
-      brandNm: brandName,
-      pageSize: "20",
-      pageNo: String(page),
-      apiKey: FTC_API_KEY,
-    });
-
-    const response = await fetch(`${FTC_API_BASE}/search?${params}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`FTC API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // Transform FTC response to our format
-    // Note: Actual FTC API response structure may differ
-    const brands = (data.items || []).map((item: any) => ({
-      ftcId: item.id || item.franchiseId,
-      brandName: item.brandName || item.name,
-      companyName: item.companyName || item.company,
-      businessNumber: item.businessNumber || item.bizNo,
-      industry: item.industry || item.category,
-      franchiseFee: item.franchiseFee,
-      educationFee: item.educationFee,
-      depositFee: item.depositFee || item.deposit,
-      royalty: item.royalty,
-      totalStores: item.totalStores || item.storeCount,
-      avgRevenue: item.avgRevenue || item.averageRevenue,
-      registeredAt: item.registeredAt || item.regDate,
-    }));
-
-    return {
-      brands,
-      total: data.totalCount || brands.length,
-    };
-  } catch (error) {
-    console.error("Error searching FTC brands:", error);
-    // Fallback to mock data on error
-    return getMockSearchResults(brandName, page);
-  }
+  console.warn("searchFranchiseBrands is deprecated. Use DB search directly in API route.");
+  return { brands: [], total: 0 };
 }
 
 /**
  * FTC ID로 브랜드 상세정보 조회
+ * @deprecated 단건 조회 API 없음
  */
 export async function getFranchiseBrandDetail(
   ftcId: string
 ): Promise<FTCBrandDetail | null> {
-  // Dev mode: return mock data if no API key
-  if (!FTC_API_KEY || FTC_API_KEY === "") {
-    console.warn("FTC_API_KEY not configured, returning mock data");
-    return getMockBrandDetail(ftcId);
-  }
-
-  try {
-    const response = await fetch(`${FTC_API_BASE}/${ftcId}?apiKey=${FTC_API_KEY}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`FTC API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // Transform FTC response to our format
-    return {
-      ftcId: data.id || data.franchiseId,
-      brandName: data.brandName || data.name,
-      companyName: data.companyName || data.company,
-      businessNumber: data.businessNumber || data.bizNo,
-      industry: data.industry || data.category,
-      franchiseFee: data.franchiseFee,
-      educationFee: data.educationFee,
-      depositFee: data.depositFee || data.deposit,
-      royalty: data.royalty,
-      totalStores: data.totalStores || data.storeCount,
-      avgRevenue: data.avgRevenue || data.averageRevenue,
-      registeredAt: data.registeredAt || data.regDate,
-      address: data.address,
-      representative: data.representative || data.ceo,
-      phone: data.phone || data.tel,
-      establishedAt: data.establishedAt,
-      franchiseStartedAt: data.franchiseStartedAt,
-      rawData: data,
-    };
-  } catch (error) {
-    console.error("Error fetching FTC brand detail:", error);
-    return getMockBrandDetail(ftcId);
-  }
+  console.warn("getFranchiseBrandDetail is deprecated. No detail API available.");
+  return null;
 }
 
 /**
  * 사업자등록번호로 프랜차이즈 브랜드 검색
- * 프랜차이즈 본사 가입 시 자동 매칭에 사용
+ * @deprecated 사업자번호 검색 API 없음, DB 검색으로 대체 필요
  */
 export async function searchFranchiseByBusinessNumber(
   businessNumber: string
 ): Promise<FTCBrandDetail | null> {
-  // 사업자번호 정규화 (하이픈 제거)
-  const cleanNumber = businessNumber.replace(/-/g, "");
-
-  // Dev mode: return mock data if no API key
-  if (!FTC_API_KEY || FTC_API_KEY === "") {
-    console.warn("FTC_API_KEY not configured, returning mock data for business number search");
-    return getMockBrandByBusinessNumber(cleanNumber);
-  }
-
-  try {
-    const params = new URLSearchParams({
-      bizNo: cleanNumber,
-      apiKey: FTC_API_KEY,
-    });
-
-    const response = await fetch(`${FTC_API_BASE}/search?${params}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`FTC API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const items = data.items || [];
-
-    if (items.length === 0) {
-      return null;
-    }
-
-    // 첫 번째 매칭 결과의 상세정보 반환
-    const item = items[0];
-    return {
-      ftcId: item.id || item.franchiseId,
-      brandName: item.brandName || item.name,
-      companyName: item.companyName || item.company,
-      businessNumber: item.businessNumber || item.bizNo,
-      industry: item.industry || item.category,
-      franchiseFee: item.franchiseFee,
-      educationFee: item.educationFee,
-      depositFee: item.depositFee || item.deposit,
-      royalty: item.royalty,
-      totalStores: item.totalStores || item.storeCount,
-      avgRevenue: item.avgRevenue || item.averageRevenue,
-      registeredAt: item.registeredAt || item.regDate,
-      address: item.address,
-      representative: item.representative || item.ceo,
-      phone: item.phone || item.tel,
-      establishedAt: item.establishedAt,
-      franchiseStartedAt: item.franchiseStartedAt,
-      rawData: item,
-    };
-  } catch (error) {
-    console.error("Error searching FTC brand by business number:", error);
-    // Fallback to mock data on error
-    return getMockBrandByBusinessNumber(cleanNumber);
-  }
-}
-
-// Mock data for development/testing
-function getMockBrandByBusinessNumber(cleanNumber: string): FTCBrandDetail | null {
-  const allMockBrands: FTCBrandDetail[] = [
-    {
-      ftcId: "FTC001",
-      brandName: "맥도날드",
-      companyName: "한국맥도날드(유)",
-      businessNumber: "2118121692",
-      industry: "음식점",
-      franchiseFee: 4500,
-      educationFee: 500,
-      depositFee: 5000,
-      royalty: "4%",
-      totalStores: 450,
-      avgRevenue: 15000,
-      registeredAt: "2020-01-15",
-      address: "서울특별시 강남구 테헤란로 152",
-      representative: "앤토니 마르셀",
-      phone: "02-3447-1600",
-      establishedAt: "1988-03-01",
-      franchiseStartedAt: "1988-03-01",
-      rawData: { source: "mock" },
-    },
-    {
-      ftcId: "FTC002",
-      brandName: "스타벅스",
-      companyName: "스타벅스커피코리아(주)",
-      businessNumber: "2118676277",
-      industry: "카페",
-      franchiseFee: 0,
-      educationFee: 0,
-      depositFee: 0,
-      royalty: "직영",
-      totalStores: 1800,
-      avgRevenue: 25000,
-      registeredAt: "2019-03-01",
-      address: "서울특별시 중구 을지로 281",
-      representative: "송호섭",
-      phone: "1522-3232",
-      establishedAt: "1999-07-27",
-      franchiseStartedAt: "1999-07-27",
-      rawData: { source: "mock" },
-    },
-    {
-      ftcId: "FTC003",
-      brandName: "GS25",
-      companyName: "지에스리테일(주)",
-      businessNumber: "1168151834",
-      industry: "소매점",
-      franchiseFee: 300,
-      educationFee: 100,
-      depositFee: 1000,
-      royalty: "5%",
-      totalStores: 16000,
-      avgRevenue: 8000,
-      registeredAt: "2018-06-20",
-      rawData: { source: "mock" },
-    },
-  ];
-
-  return allMockBrands.find((b) => b.businessNumber === cleanNumber) || null;
-}
-
-function getMockSearchResults(
-  brandName: string,
-  page: number
-): { brands: FTCBrandSearchResult[]; total: number } {
-  const mockBrands: FTCBrandSearchResult[] = [
-    {
-      ftcId: "FTC001",
-      brandName: "맥도날드",
-      companyName: "한국맥도날드(유)",
-      businessNumber: "211-81-21692",
-      industry: "음식점",
-      franchiseFee: 4500,
-      educationFee: 500,
-      depositFee: 5000,
-      royalty: "4%",
-      totalStores: 450,
-      avgRevenue: 15000,
-      registeredAt: "2020-01-15",
-    },
-    {
-      ftcId: "FTC002",
-      brandName: "스타벅스",
-      companyName: "스타벅스커피코리아(주)",
-      businessNumber: "211-86-76277",
-      industry: "카페",
-      franchiseFee: 0,
-      educationFee: 0,
-      depositFee: 0,
-      royalty: "직영",
-      totalStores: 1800,
-      avgRevenue: 25000,
-      registeredAt: "2019-03-01",
-    },
-    {
-      ftcId: "FTC003",
-      brandName: "GS25",
-      companyName: "지에스리테일(주)",
-      businessNumber: "116-81-51834",
-      industry: "소매점",
-      franchiseFee: 300,
-      educationFee: 100,
-      depositFee: 1000,
-      royalty: "5%",
-      totalStores: 16000,
-      avgRevenue: 8000,
-      registeredAt: "2018-06-20",
-    },
-  ];
-
-  const filtered = mockBrands.filter((b) =>
-    b.brandName.toLowerCase().includes(brandName.toLowerCase())
-  );
-
-  return {
-    brands: filtered,
-    total: filtered.length,
-  };
-}
-
-function getMockBrandDetail(ftcId: string): FTCBrandDetail | null {
-  const mockDetails: Record<string, FTCBrandDetail> = {
-    FTC001: {
-      ftcId: "FTC001",
-      brandName: "맥도날드",
-      companyName: "한국맥도날드(유)",
-      businessNumber: "211-81-21692",
-      industry: "음식점",
-      franchiseFee: 4500,
-      educationFee: 500,
-      depositFee: 5000,
-      royalty: "4%",
-      totalStores: 450,
-      avgRevenue: 15000,
-      registeredAt: "2020-01-15",
-      address: "서울특별시 강남구 테헤란로 152",
-      representative: "앤토니 마르셀",
-      phone: "02-3447-1600",
-      establishedAt: "1988-03-01",
-      franchiseStartedAt: "1988-03-01",
-      rawData: { source: "mock" },
-    },
-    FTC002: {
-      ftcId: "FTC002",
-      brandName: "스타벅스",
-      companyName: "스타벅스커피코리아(주)",
-      businessNumber: "211-86-76277",
-      industry: "카페",
-      franchiseFee: 0,
-      educationFee: 0,
-      depositFee: 0,
-      royalty: "직영",
-      totalStores: 1800,
-      avgRevenue: 25000,
-      registeredAt: "2019-03-01",
-      address: "서울특별시 중구 을지로 281",
-      representative: "송호섭",
-      phone: "1522-3232",
-      establishedAt: "1999-07-27",
-      franchiseStartedAt: "1999-07-27",
-      rawData: { source: "mock" },
-    },
-  };
-
-  return mockDetails[ftcId] || null;
+  console.warn("searchFranchiseByBusinessNumber is deprecated. Use DB search directly.");
+  return null;
 }

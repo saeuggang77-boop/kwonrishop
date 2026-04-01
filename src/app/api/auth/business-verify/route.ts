@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { validateBusiness } from "@/lib/api/nts";
-import { searchFranchiseByBusinessNumber } from "@/lib/api/ftc";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
@@ -87,7 +86,7 @@ export async function POST(req: NextRequest) {
       ? user.pendingRole
       : "SELLER";
 
-    // FRANCHISE 역할 요청 시: 공정위 API로 브랜드 매칭 필수
+    // FRANCHISE 역할 요청 시: DB에서 브랜드 매칭
     let matchedBrandId: string | null = null;
 
     if (requestedRole === "FRANCHISE") {
@@ -97,39 +96,31 @@ export async function POST(req: NextRequest) {
         select: { id: true, managerId: true, brandName: true },
       });
 
-      // 2) DB에 없으면 공정위 API에서 검색 후 자동 생성
-      if (!brand) {
-        const ftcResult = await searchFranchiseByBusinessNumber(cleanNumber);
-
-        if (!ftcResult) {
-          return NextResponse.json(
-            { error: "공정위 정보공개서에 등록된 프랜차이즈만 가입 가능합니다. 해당 사업자번호로 등록된 프랜차이즈 브랜드를 찾을 수 없습니다." },
-            { status: 400 },
-          );
-        }
-
-        // 공정위 데이터로 FranchiseBrand 자동 생성
-        brand = await prisma.franchiseBrand.create({
-          data: {
-            ftcId: ftcResult.ftcId,
-            brandName: ftcResult.brandName,
-            companyName: ftcResult.companyName,
-            businessNumber: cleanNumber,
-            industry: ftcResult.industry,
-            franchiseFee: ftcResult.franchiseFee,
-            educationFee: ftcResult.educationFee,
-            depositFee: ftcResult.depositFee,
-            royalty: ftcResult.royalty,
-            totalStores: ftcResult.totalStores,
-            avgRevenue: ftcResult.avgRevenue,
-            ftcRegisteredAt: ftcResult.registeredAt,
-            ftcRawData: ftcResult.rawData,
+      // 2) DB에 없으면 법인명(사업자명)으로 검색 시도
+      if (!brand && cleanBusinessName) {
+        brand = await prisma.franchiseBrand.findFirst({
+          where: {
+            companyName: { contains: cleanBusinessName, mode: 'insensitive' },
           },
           select: { id: true, managerId: true, brandName: true },
         });
       }
 
-      // 3) 이미 다른 사용자가 관리자로 등록된 브랜드인지 확인
+      // 3) 여전히 없으면 → 공정위 미등록 브랜드도 가입 허용 (빈 브랜드 자동 생성)
+      if (!brand) {
+        brand = await prisma.franchiseBrand.create({
+          data: {
+            ftcId: `manual_${cleanNumber}`,
+            brandName: cleanBusinessName || "미등록 브랜드",
+            companyName: cleanBusinessName || "",
+            businessNumber: cleanNumber,
+            industry: "",
+          },
+          select: { id: true, managerId: true, brandName: true },
+        });
+      }
+
+      // 4) 이미 다른 사용자가 관리자로 등록된 브랜드인지 확인
       if (brand.managerId && brand.managerId !== session.user.id) {
         return NextResponse.json(
           { error: "이미 다른 관리자가 등록된 브랜드입니다. 본사 담당자 변경은 고객센터에 문의해주세요." },

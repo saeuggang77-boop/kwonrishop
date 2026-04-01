@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { searchFranchiseBrands } from "@/lib/api/ftc";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { validateOrigin } from "@/lib/csrf";
 
 /**
- * 공정위 API로 프랜차이즈 브랜드 검색 (라이브 검색)
+ * DB에서 프랜차이즈 브랜드 검색
  * ADMIN 전용
  */
 export async function GET(request: Request) {
@@ -55,16 +54,46 @@ export async function GET(request: Request) {
       );
     }
 
-    const result = await searchFranchiseBrands(query, page);
+    const brands = await prisma.franchiseBrand.findMany({
+      where: {
+        OR: [
+          { brandName: { contains: query, mode: 'insensitive' } },
+          { companyName: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      take: 20,
+      skip: (page - 1) * 20,
+      orderBy: { totalStores: 'desc' },
+      select: {
+        id: true,
+        ftcId: true,
+        brandName: true,
+        companyName: true,
+        industry: true,
+        totalStores: true,
+        avgRevenue: true,
+        tier: true,
+        managerId: true,
+      },
+    });
+
+    const total = await prisma.franchiseBrand.count({
+      where: {
+        OR: [
+          { brandName: { contains: query, mode: 'insensitive' } },
+          { companyName: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+    });
 
     return NextResponse.json({
-      brands: result.brands,
-      total: result.total,
+      brands,
+      total,
       query,
       page,
     });
   } catch (error) {
-    console.error("Error searching FTC brands:", error);
+    console.error("Error searching franchise brands:", error);
     return NextResponse.json(
       { error: "Failed to search franchise brands" },
       { status: 500 }

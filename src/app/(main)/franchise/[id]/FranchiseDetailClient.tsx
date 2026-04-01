@@ -111,9 +111,9 @@ export default function FranchiseDetailClient() {
         </div>
         {(!brand.tier || brand.tier === "FREE") && (
           <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800 mb-2">무료 등록 브랜드입니다</p>
-            <p className="text-xs text-blue-600">유료 플랜으로 업그레이드하여 더 많은 노출과 기능을 활용하세요</p>
-            <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-blue-700 font-medium hover:underline">업그레이드 안내 보기 →</button>
+            <p className="text-sm text-blue-800 mb-2">이 브랜드의 본사이신가요?</p>
+            <p className="text-xs text-blue-600">유료 플랜으로 등록하고 더 많은 노출과 관리 기능을 활용하세요</p>
+            <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-blue-700 font-medium hover:underline">등록하고 관리하기 →</button>
           </div>
         )}
       </div>
@@ -152,6 +152,44 @@ export default function FranchiseDetailClient() {
               {brand.educationFee !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">교육비</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.educationFee.toLocaleString()}만원</span></div>}
               {brand.depositFee !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">보증금</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.depositFee.toLocaleString()}만원</span></div>}
               {brand.royalty !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">로열티</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.royalty}%</span></div>}
+
+              {(brand.tier === "SILVER" || brand.tier === "GOLD") && (brand.franchiseFee !== null || brand.educationFee !== null || brand.depositFee !== null) && (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 md:p-6 mt-6 border border-blue-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">💰</span>
+                    <h3 className="font-bold text-gray-900 text-base md:text-lg">창업 비용 계산기</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-600 text-white">{brand.tier === "GOLD" ? "골드" : "실버"} 전용</span>
+                  </div>
+                  <div className="space-y-2 mb-4">
+                    {brand.franchiseFee !== null && <div className="flex justify-between text-sm"><span className="text-gray-600">가맹비</span><span className="text-gray-900">{brand.franchiseFee.toLocaleString()}만원</span></div>}
+                    {brand.educationFee !== null && <div className="flex justify-between text-sm"><span className="text-gray-600">교육비</span><span className="text-gray-900">{brand.educationFee.toLocaleString()}만원</span></div>}
+                    {brand.depositFee !== null && <div className="flex justify-between text-sm"><span className="text-gray-600">보증금</span><span className="text-gray-900">{brand.depositFee.toLocaleString()}만원</span></div>}
+                  </div>
+                  <div className="pt-3 border-t-2 border-blue-300">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-gray-900">총 초기 비용</span>
+                      <span className="text-xl md:text-2xl font-bold text-blue-600">
+                        {((brand.franchiseFee || 0) + (brand.educationFee || 0) + (brand.depositFee || 0)).toLocaleString()}만원
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {brand.tier === "GOLD" && (
+                <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl p-4 md:p-6 mt-4 border border-yellow-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">🗺️</span>
+                    <h3 className="font-bold text-gray-900 text-base md:text-lg">가맹점 현황 지도</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-600 text-white">골드 전용</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">전국 가맹점 위치와 현황을 한눈에 확인하세요</p>
+                  <div className="bg-white rounded-lg p-8 text-center border border-yellow-300">
+                    <p className="text-gray-500 text-sm">골드 전용 기능: 가맹점 현황 지도는 준비 중입니다</p>
+                  </div>
+                </div>
+              )}
+
               <div className="bg-blue-50 rounded-lg p-3 md:p-4 mt-4"><p className="text-xs md:text-sm text-blue-800">* 상기 비용은 예상 금액이며, 실제 창업 비용은 매장 규모 및 지역에 따라 달라질 수 있습니다.</p></div>
             </div>
           )}

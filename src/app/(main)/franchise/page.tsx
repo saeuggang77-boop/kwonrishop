@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import PremiumCarousel from "@/components/shared/PremiumCarousel";
 import { toast } from "@/lib/toast";
 import { RegisterPromoBanner } from "@/components/promotion/PromotionCTA";
 
@@ -19,6 +18,9 @@ interface FranchiseBrand {
   tier: "GOLD" | "SILVER" | "BRONZE" | null;
   ftcId: string | null;
   ftcRawData: any;
+  managerId: string | null;
+  logo: string | null;
+  bannerImage: string | null;
 }
 
 // 업종 필터는 DB에서 동적으로 로드 (공정위 API 원본 데이터 기반)
@@ -36,6 +38,7 @@ export default function FranchisePage() {
 
   const [keyword, setKeyword] = useState("");
   const [industry, setIndustry] = useState("");
+  const [sort, setSort] = useState("stores");
 
   const fetchBrands = useCallback(async () => {
     setLoading(true);
@@ -43,6 +46,7 @@ export default function FranchisePage() {
     params.set("page", String(page));
     if (industry) params.set("industry", industry);
     if (keyword) params.set("search", keyword);
+    params.set("sort", sort);
 
     const res = await fetch(`/api/franchise?${params}`);
     const data = await res.json();
@@ -50,7 +54,7 @@ export default function FranchisePage() {
     setTotal(data.pagination?.total || 0);
     setTotalPages(data.pagination?.totalPages || 1);
     setLoading(false);
-  }, [page, industry, keyword]);
+  }, [page, industry, keyword, sort]);
 
   useEffect(() => {
     fetchBrands();
@@ -105,7 +109,7 @@ export default function FranchisePage() {
       {/* 네이비 헤더 */}
       <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-16 pt-10 text-center">
         <h1 className="text-2xl font-extrabold text-white mb-2">프랜차이즈 브랜드</h1>
-        <p className="text-sm text-white/60">검증된 프랜차이즈 브랜드를 만나보세요</p>
+        <p className="text-sm text-white/60">공정위 등록 {total.toLocaleString()}개 브랜드 · 검증된 창업 정보</p>
       </div>
 
       {/* 플로팅 검색바 */}
@@ -150,71 +154,125 @@ export default function FranchisePage() {
         <RegisterPromoBanner type="franchise" />
       </div>
 
-      {/* 프리미엄 프랜차이즈 캐러셀 */}
-      <PremiumCarousel
-        title="프리미엄 프랜차이즈"
-        subtitle="검증된 유료 브랜드를 먼저 확인하세요"
-        count={featuredBrands.length}
-      >
-        {featuredBrands.map((brand) => {
-          const tierColors: Record<string, string> = {
-            GOLD: "border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20",
-            SILVER: "border-gray-400 bg-gray-50 dark:bg-gray-700/30",
-            BRONZE: "border-orange-400 bg-orange-50 dark:bg-orange-900/20",
-          };
-          const tierBadgeColors: Record<string, string> = {
-            GOLD: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-            SILVER: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-            BRONZE: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-          };
-          const tier = brand.tier || "BRONZE";
-
-          return (
-            <div
-              key={brand.id}
-              onClick={() => router.push(`/franchise/${brand.id}`)}
-              className={`min-w-[280px] max-w-[280px] snap-start rounded-xl border-2 ${tierColors[tier] || tierColors.BRONZE} p-5 cursor-pointer hover:shadow-lg transition-shadow shrink-0`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg">
-                  {brand.brandName.charAt(0)}
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-bold ${tierBadgeColors[tier] || tierBadgeColors.BRONZE}`}>
-                  {tier}
-                </span>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 truncate">{brand.brandName}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 truncate">{brand.companyName}</p>
-              <div className="space-y-1">
-                {brand.franchiseFee !== null && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">가맹비</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{brand.franchiseFee.toLocaleString()}만원</span>
-                  </div>
-                )}
-                {brand.totalStores !== null && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">매장수</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{brand.totalStores.toLocaleString()}개</span>
-                  </div>
-                )}
-                {brand.avgRevenue !== null && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">평균매출</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{brand.avgRevenue.toLocaleString()}만원</span>
-                  </div>
-                )}
-              </div>
+      {/* 프리미엄 프랜차이즈 - 2열 그리드 */}
+      {featuredBrands.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-baseline justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">프리미엄 프랜차이즈</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">검증된 유료 브랜드를 먼저 확인하세요</p>
             </div>
-          );
-        })}
-      </PremiumCarousel>
+            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{featuredBrands.length}개</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {featuredBrands.map((brand) => {
+              const tier = brand.tier || "BRONZE";
 
-      {/* Result Count */}
-      <div className="mb-4">
+              if (tier === "GOLD") {
+                return (
+                  <div
+                    key={brand.id}
+                    onClick={() => router.push(`/franchise/${brand.id}`)}
+                    className="border-2 border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                  >
+                    {brand.bannerImage ? (
+                      <img src={brand.bannerImage} alt={brand.brandName} className="w-full h-20 rounded-lg object-cover mb-3" />
+                    ) : (
+                      <div className="w-full h-20 rounded-lg bg-yellow-200/50 dark:bg-yellow-800/30 flex items-center justify-center mb-3">
+                        <span className="text-xs text-yellow-600 dark:text-yellow-400">브랜드 이미지</span>
+                      </div>
+                    )}
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <h3 className="text-base font-bold text-gray-900 dark:text-white truncate">{brand.brandName}</h3>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{brand.companyName}</p>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 ml-2 shrink-0">GOLD</span>
+                    </div>
+                    {brand.totalStores !== null && (
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">매장 {brand.totalStores.toLocaleString()}개</p>
+                    )}
+                    <div className="flex gap-1 text-[10px] text-gray-600 dark:text-gray-400">
+                      <span>📍가맹점 지도</span>
+                      <span>🧮비용 계산기</span>
+                      <span>💬상담 가능</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (tier === "SILVER") {
+                return (
+                  <div
+                    key={brand.id}
+                    onClick={() => router.push(`/franchise/${brand.id}`)}
+                    className="border-2 border-gray-400 bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                  >
+                    <div className="flex gap-1 mb-3">
+                      <div className="flex-1 h-14 rounded bg-gray-200 dark:bg-gray-600" />
+                      <div className="flex-1 h-14 rounded bg-gray-200 dark:bg-gray-600" />
+                      <div className="flex-1 h-14 rounded bg-gray-200 dark:bg-gray-600" />
+                    </div>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <h3 className="text-base font-bold text-gray-900 dark:text-white truncate">{brand.brandName}</h3>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{brand.companyName}</p>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 ml-2 shrink-0">SILVER</span>
+                    </div>
+                    {brand.totalStores !== null && (
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">매장 {brand.totalStores.toLocaleString()}개</p>
+                    )}
+                    <div className="flex gap-1 text-[10px] text-gray-600 dark:text-gray-400">
+                      <span>🧮비용 계산기</span>
+                      <span>💬상담 가능</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              // BRONZE
+              return (
+                <div
+                  key={brand.id}
+                  onClick={() => router.push(`/franchise/${brand.id}`)}
+                  className="border-2 border-orange-400 bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <h3 className="text-base font-bold text-gray-900 dark:text-white truncate">{brand.brandName}</h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{brand.companyName}</p>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 ml-2 shrink-0">BRONZE</span>
+                  </div>
+                  {brand.totalStores !== null && (
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">매장 {brand.totalStores.toLocaleString()}개</p>
+                  )}
+                  <div className="text-[10px] text-gray-600 dark:text-gray-400">
+                    <span>💬상담 가능</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Result Count + Sort */}
+      <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-gray-500">
           총 <span className="font-medium text-gray-900">{total.toLocaleString()}</span>개 브랜드
         </p>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+        >
+          <option value="stores">매장수 많은순</option>
+          <option value="revenue">평균매출 높은순</option>
+          <option value="fee_asc">가맹비 낮은순</option>
+          <option value="recent">최근등록순</option>
+        </select>
       </div>
 
       {/* Brand Grid */}
@@ -231,75 +289,85 @@ export default function FranchisePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {brands.map((brand) => (
-            <div
-              key={brand.id}
-              onClick={() => router.push(`/franchise/${brand.id}`)}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all cursor-pointer"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
-                  {brand.brandName.charAt(0)}
+          {brands.map((brand) => {
+            const hasManager = !!brand.managerId;
+            return (
+              <div
+                key={brand.id}
+                onClick={() => router.push(`/franchise/${brand.id}`)}
+                className={`bg-white rounded-xl border ${hasManager ? 'border-blue-200' : 'border-gray-200'} p-6 hover:shadow-lg transition-all cursor-pointer relative`}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-12 h-12 rounded-full ${hasManager ? 'bg-blue-100' : 'bg-gray-100'} flex items-center justify-center ${hasManager ? 'text-blue-600' : 'text-gray-600'} font-bold text-lg`}>
+                    {brand.brandName.charAt(0)}
+                  </div>
+                  <div className="flex gap-2 flex-wrap justify-end">
+                    {brand.ftcId && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        공정위 등록
+                      </span>
+                    )}
+                    {hasManager && (
+                      <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
+                        본사 인증
+                      </span>
+                    )}
+                    {getTierBadge(brand.tier)}
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  {brand.ftcId && (
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      공정위 등록
-                    </span>
+
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{brand.brandName}</h3>
+                <p className="text-sm text-gray-600 mb-4">{brand.companyName}</p>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">업종</span>
+                    <span className="font-medium text-gray-900">{brand.industry}</span>
+                  </div>
+                  {brand.franchiseFee !== null && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">가맹비</span>
+                      <span className="font-medium text-gray-900">
+                        {brand.franchiseFee.toLocaleString()}만원
+                      </span>
+                    </div>
                   )}
-                  {getTierBadge(brand.tier)}
+                  {brand.totalStores !== null && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">매장수</span>
+                      <span className="font-medium text-gray-900">
+                        {brand.totalStores.toLocaleString()}개
+                      </span>
+                    </div>
+                  )}
+                  {brand.avgRevenue !== null && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">평균 매출</span>
+                      <span className="font-medium text-gray-900">
+                        {brand.avgRevenue.toLocaleString()}만원
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <h3 className="text-lg font-bold text-gray-900 mb-1">{brand.brandName}</h3>
-              <p className="text-sm text-gray-600 mb-4">{brand.companyName}</p>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">업종</span>
-                  <span className="font-medium text-gray-900">{brand.industry}</span>
-                </div>
-                {brand.franchiseFee !== null && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">가맹비</span>
-                    <span className="font-medium text-gray-900">
-                      {brand.franchiseFee.toLocaleString()}만원
-                    </span>
-                  </div>
-                )}
-                {brand.totalStores !== null && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">매장수</span>
-                    <span className="font-medium text-gray-900">
-                      {brand.totalStores.toLocaleString()}개
-                    </span>
-                  </div>
-                )}
-                {brand.avgRevenue !== null && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">평균 매출</span>
-                    <span className="font-medium text-gray-900">
-                      {brand.avgRevenue.toLocaleString()}만원
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {brand.ftcRawData && (
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toast.info("공정위 정보공개서 보기 기능은 상세페이지에서 확인할 수 있습니다");
-                    }}
-                    className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    📋 공정위 정보 보기
-                  </button>
+                  {hasManager ? (
+                    <p className="text-xs text-blue-600 font-medium">💬 본사 상담 가능</p>
+                  ) : brand.ftcRawData ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toast.info("공정위 정보공개서 보기 기능은 상세페이지에서 확인할 수 있습니다");
+                      }}
+                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      📋 공정위 정보 보기
+                    </button>
+                  ) : null}
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -326,6 +394,89 @@ export default function FranchisePage() {
           })()}
         </div>
       )}
+
+      {/* 기능 비교표 */}
+      <div className="mt-12 mb-8">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">프랜차이즈 등록 플랜 비교</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm">
+            <thead>
+              <tr className="bg-gray-100 dark:bg-gray-700">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-600">기능</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-600">무료</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-orange-700 dark:text-orange-400 border-b dark:border-gray-600">브론즈<br/><span className="text-xs font-normal">30만원/월</span></th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-600">실버<br/><span className="text-xs font-normal">60만원/월</span></th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-yellow-700 dark:text-yellow-400 border-b dark:border-gray-600">골드<br/><span className="text-xs font-normal">100만원/월</span></th>
+              </tr>
+            </thead>
+            <tbody className="text-sm">
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">목록 노출</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+              </tr>
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">티어 배지</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-orange-600 dark:text-orange-400 font-medium">BRONZE</td>
+                <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400 font-medium">SILVER</td>
+                <td className="px-4 py-3 text-center text-yellow-600 dark:text-yellow-400 font-medium">GOLD</td>
+              </tr>
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">프리미엄 영역</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">하단</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">중단</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">최상단</td>
+              </tr>
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">브랜드 편집</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">텍스트</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">+이미지 3장</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">+무제한+영상</td>
+              </tr>
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">문의 상담</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+              </tr>
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">비용 계산기</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+              </tr>
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">메인페이지 노출</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+              </tr>
+              <tr className="border-b dark:border-gray-700">
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">가맹점 지도</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">-</td>
+                <td className="px-4 py-3 text-center text-green-600 dark:text-green-400">O</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">검색 우선순위</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">기본</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">+1</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">+2</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">+3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
       </div>
     </div>
   );
