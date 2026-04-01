@@ -289,11 +289,11 @@ export default function FranchisePage() {
         </select>
       </div>
 
-      {/* Brand Grid */}
+      {/* Brand List - 밀집형 테이블 */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-gray-100 rounded-xl h-48 animate-pulse" />
+        <div className="bg-white rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-12 bg-gray-100 dark:bg-gray-800 animate-pulse border-b border-gray-50 dark:border-gray-700" />
           ))}
         </div>
       ) : brands.length === 0 ? (
@@ -302,86 +302,47 @@ export default function FranchisePage() {
           <p className="text-sm">검색 조건을 변경해보세요</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {brands.map((brand) => {
-            const hasManager = !!brand.managerId;
-            return (
-              <div
-                key={brand.id}
-                onClick={() => router.push(`/franchise/${brand.id}`)}
-                className={`bg-white rounded-xl border ${hasManager ? 'border-blue-200' : 'border-gray-200'} p-6 hover:shadow-lg transition-all cursor-pointer relative`}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-full ${hasManager ? 'bg-blue-100' : 'bg-gray-100'} flex items-center justify-center ${hasManager ? 'text-blue-600' : 'text-gray-600'} font-bold text-lg`}>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+          {/* 테이블 헤더 */}
+          <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 text-xs font-semibold text-gray-500 dark:text-gray-400">
+            <div className="col-span-4">브랜드</div>
+            <div className="col-span-3">업종</div>
+            <div className="col-span-2 text-right">매장수</div>
+            <div className="col-span-3 text-right">평균매출</div>
+          </div>
+          {/* 행 */}
+          {brands.map((brand, idx) => (
+            <div
+              key={brand.id}
+              onClick={() => router.push(`/franchise/${brand.id}`)}
+              className={`grid grid-cols-12 gap-2 px-4 py-3 cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors items-center ${idx < brands.length - 1 ? 'border-b border-gray-100 dark:border-gray-700' : ''}`}
+            >
+              <div className="col-span-12 sm:col-span-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-xs shrink-0">
                     {brand.brandName.charAt(0)}
                   </div>
-                  <div className="flex gap-2 flex-wrap justify-end">
-                    {brand.ftcId && (
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        공정위 등록
-                      </span>
-                    )}
-                    {hasManager && (
-                      <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
-                        본사 인증
-                      </span>
-                    )}
-                    {getTierBadge(brand.tier)}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{brand.brandName}</p>
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500 truncate">{brand.companyName}</p>
                   </div>
-                </div>
-
-                <h3 className="text-lg font-bold text-gray-900 mb-1">{brand.brandName}</h3>
-                <p className="text-sm text-gray-600 mb-4">{brand.companyName}</p>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">업종</span>
-                    <span className="font-medium text-gray-900">{brand.industry}</span>
-                  </div>
-                  {brand.franchiseFee !== null && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">가맹비</span>
-                      <span className="font-medium text-gray-900">
-                        {brand.franchiseFee.toLocaleString()}만원
-                      </span>
-                    </div>
-                  )}
-                  {brand.totalStores !== null && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">매장수</span>
-                      <span className="font-medium text-gray-900">
-                        {brand.totalStores.toLocaleString()}개
-                      </span>
-                    </div>
-                  )}
-                  {brand.avgRevenue !== null && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">평균 매출</span>
-                      <span className="font-medium text-gray-900">
-                        {brand.avgRevenue.toLocaleString()}만원
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  {hasManager ? (
-                    <p className="text-xs text-blue-600 font-medium">💬 본사 상담 가능</p>
-                  ) : brand.ftcRawData ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toast.info("공정위 정보공개서 보기 기능은 상세페이지에서 확인할 수 있습니다");
-                      }}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      📋 공정위 정보 보기
-                    </button>
-                  ) : null}
                 </div>
               </div>
-            );
-          })}
+              <div className="col-span-4 sm:col-span-3 flex items-center">
+                <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{brand.industry}</span>
+              </div>
+              <div className="col-span-4 sm:col-span-2 text-right">
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {brand.totalStores !== null ? `${brand.totalStores.toLocaleString()}개` : '-'}
+                </span>
+              </div>
+              <div className="col-span-4 sm:col-span-3 text-right">
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {brand.avgRevenue !== null && brand.avgRevenue > 0 ? <>{brand.avgRevenue.toLocaleString()}<span className="text-xs text-gray-400">만원</span></> : '-'}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -412,96 +373,86 @@ export default function FranchisePage() {
       {/* 기능 비교표 - 카드형 */}
       <div className="mt-12 mb-8">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">프랜차이즈 등록 플랜 비교</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">프랜차이즈 등록 플랜</h2>
           <p className="text-gray-500 dark:text-gray-400 mt-2">우리 브랜드에 맞는 최적의 플랜을 선택하세요</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 무료 */}
-          <div className="rounded-xl border-2 border-gray-200 dark:border-gray-700 p-5 bg-white dark:bg-gray-800 hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
-            <div className="text-center mb-5">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 mb-2">FREE</span>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">무료</h3>
-              <div className="mt-1"><span className="text-3xl font-extrabold text-gray-900 dark:text-white">0</span><span className="text-gray-500 text-sm">원/월</span></div>
-            </div>
-            <div className="border-t border-gray-100 dark:border-gray-700 pt-4 space-y-2.5">
-              <PlanFeature enabled text="목록 노출" />
-              <PlanFeature enabled text="기본 검색순위" />
-              <PlanFeature text="티어 배지" />
-              <PlanFeature text="프리미엄 영역" />
-              <PlanFeature text="브랜드 편집" />
-              <PlanFeature text="문의 상담" />
-              <PlanFeature text="비용 계산기" />
-              <PlanFeature text="메인페이지 노출" />
-              <PlanFeature text="가맹점 지도" />
-            </div>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
           {/* 브론즈 */}
-          <div className="rounded-xl border-2 border-orange-200 dark:border-orange-800 p-5 bg-orange-50/30 dark:bg-orange-950/20 hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
+          <div className="rounded-2xl border border-orange-200 dark:border-orange-800 p-6 bg-white dark:bg-gray-800 hover:shadow-lg transition-all">
             <div className="text-center mb-5">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 mb-2">BRONZE</span>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">브론즈</h3>
-              <div className="mt-1"><span className="text-3xl font-extrabold text-gray-900 dark:text-white">30</span><span className="text-gray-500 text-sm">만원/월</span></div>
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 mb-3">BRONZE</span>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">브론즈</h3>
+              <p className="text-xs text-gray-400 mt-1 mb-3">브랜드 노출의 시작</p>
+              <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
+                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">30</span>
+                <span className="text-gray-500 text-sm">만원/월</span>
+              </div>
             </div>
-            <div className="border-t border-orange-100 dark:border-orange-900 pt-4 space-y-2.5">
-              <PlanFeature enabled text="목록 노출" />
-              <PlanFeature enabled text="검색순위 +1" highlight="orange" />
+            <div className="space-y-3 mb-6">
+              <PlanFeature enabled text="프랜차이즈 목록 노출" />
               <PlanFeature enabled text="BRONZE 배지" highlight="orange" />
               <PlanFeature enabled text="하단 프리미엄 영역" />
-              <PlanFeature enabled text="텍스트 브랜드 편집" />
-              <PlanFeature enabled text="문의 상담" />
-              <PlanFeature text="비용 계산기" />
-              <PlanFeature text="메인페이지 노출" />
-              <PlanFeature text="가맹점 지도" />
+              <PlanFeature enabled text="텍스트 브랜드 소개" />
+              <PlanFeature enabled text="문의 상담 기능" />
+              <PlanFeature enabled text="검색 우선 노출" highlight="orange" />
             </div>
-            <button onClick={() => router.push("/pricing?tab=franchise")} className="mt-5 w-full py-2.5 rounded-lg text-sm font-semibold bg-orange-500 hover:bg-orange-600 text-white transition-colors">등록하기</button>
+            <button onClick={() => router.push("/pricing?tab=franchise")} className="w-full py-3 rounded-xl text-sm font-semibold border-2 border-orange-400 dark:border-orange-600 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors">등록하기</button>
           </div>
 
-          {/* 실버 */}
-          <div className="rounded-xl border-2 border-gray-300 dark:border-gray-600 p-5 bg-gray-50/50 dark:bg-gray-750/50 hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
-            <div className="text-center mb-5">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 mb-2">SILVER</span>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">실버</h3>
-              <div className="mt-1"><span className="text-3xl font-extrabold text-gray-900 dark:text-white">60</span><span className="text-gray-500 text-sm">만원/월</span></div>
+          {/* 실버 (인기) */}
+          <div className="rounded-2xl border-2 border-blue-500 dark:border-blue-400 p-6 bg-white dark:bg-gray-800 shadow-xl relative md:scale-[1.03]">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+              <span className="inline-block px-4 py-1 rounded-full text-xs font-bold bg-blue-600 text-white shadow-md">인기</span>
             </div>
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2.5">
-              <PlanFeature enabled text="목록 노출" />
-              <PlanFeature enabled text="검색순위 +2" highlight="gray" />
+            <div className="text-center mb-5">
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 mb-3">SILVER</span>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">실버</h3>
+              <p className="text-xs text-gray-400 mt-1 mb-3">이미지로 브랜드 차별화</p>
+              <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
+                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">60</span>
+                <span className="text-gray-500 text-sm">만원/월</span>
+              </div>
+            </div>
+            <div className="space-y-3 mb-6">
+              <PlanFeature enabled text="프랜차이즈 목록 노출" />
               <PlanFeature enabled text="SILVER 배지" highlight="gray" />
               <PlanFeature enabled text="중단 프리미엄 영역" />
-              <PlanFeature enabled text="텍스트 + 이미지 3장" />
-              <PlanFeature enabled text="문의 상담" />
-              <PlanFeature enabled text="비용 계산기" />
-              <PlanFeature text="메인페이지 노출" />
-              <PlanFeature text="가맹점 지도" />
+              <PlanFeature enabled text="텍스트 + 이미지 3장" bold />
+              <PlanFeature enabled text="문의 상담 기능" />
+              <PlanFeature enabled text="비용 계산기" bold />
+              <PlanFeature enabled text="검색 상위 노출" highlight="gray" />
             </div>
-            <button onClick={() => router.push("/pricing?tab=franchise")} className="mt-5 w-full py-2.5 rounded-lg text-sm font-semibold bg-gray-500 hover:bg-gray-600 text-white transition-colors">등록하기</button>
+            <button onClick={() => router.push("/pricing?tab=franchise")} className="w-full py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-md">등록하기</button>
           </div>
 
           {/* 골드 */}
-          <div className="rounded-xl border-2 border-yellow-400 dark:border-yellow-600 p-5 relative overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 via-yellow-100/50 to-yellow-50 dark:from-yellow-950/30 dark:via-yellow-900/20 dark:to-yellow-950/30"></div>
+          <div className="rounded-2xl border-2 border-yellow-400 dark:border-yellow-600 p-6 bg-gradient-to-b from-yellow-50/80 to-white dark:from-yellow-950/30 dark:to-gray-800 relative hover:shadow-lg transition-all">
             <div className="absolute top-3 right-3"><span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-500 text-white">BEST</span></div>
-            <div className="relative text-center mb-5">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 mb-2">GOLD</span>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">골드</h3>
-              <div className="mt-1"><span className="text-3xl font-extrabold text-gray-900 dark:text-white">100</span><span className="text-gray-500 text-sm">만원/월</span></div>
+            <div className="text-center mb-5">
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 mb-3">GOLD</span>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">골드</h3>
+              <p className="text-xs text-gray-400 mt-1 mb-3">모든 기능 + 최상위 노출</p>
+              <div className="border-t border-yellow-100 dark:border-yellow-800 pt-3">
+                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">100</span>
+                <span className="text-gray-500 text-sm">만원/월</span>
+              </div>
             </div>
-            <div className="relative border-t border-yellow-200 dark:border-yellow-800 pt-4 space-y-2.5">
-              <PlanFeature enabled text="목록 노출" />
-              <PlanFeature enabled text="검색순위 +3 (최상위)" highlight="yellow" />
+            <div className="space-y-3 mb-6">
+              <PlanFeature enabled text="프랜차이즈 목록 노출" />
               <PlanFeature enabled text="GOLD 배지" highlight="yellow" />
               <PlanFeature enabled text="최상단 프리미엄 영역" bold />
               <PlanFeature enabled text="이미지 무제한 + 영상" bold />
-              <PlanFeature enabled text="문의 상담" />
+              <PlanFeature enabled text="문의 상담 기능" />
               <PlanFeature enabled text="비용 계산기" />
               <PlanFeature enabled text="메인페이지 노출" bold />
               <PlanFeature enabled text="가맹점 지도" bold />
+              <PlanFeature enabled text="검색 최상위 노출" highlight="yellow" />
             </div>
-            <button onClick={() => router.push("/pricing?tab=franchise")} className="relative mt-5 w-full py-2.5 rounded-lg text-sm font-semibold bg-yellow-500 hover:bg-yellow-600 text-white transition-colors">등록하기</button>
+            <button onClick={() => router.push("/pricing?tab=franchise")} className="w-full py-3 rounded-xl text-sm font-semibold bg-yellow-500 hover:bg-yellow-600 text-white transition-colors">등록하기</button>
           </div>
         </div>
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500 mt-5">공정위 등록 브랜드는 자동으로 무료 목록에 노출됩니다</p>
       </div>
       </div>
     </div>
