@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       totalStores: true,
       avgRevenue: true,
       bannerImage: true,
+      majorProductName: true,
     },
   });
 
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = `${brand.brandName} - 프랜차이즈 - 권리샵`;
   const parts = [brand.industry];
+  if (brand.majorProductName) parts.push(brand.majorProductName);
   if (brand.franchiseFee !== null) parts.push(`가맹비 ${brand.franchiseFee.toLocaleString()}만원`);
   if (brand.totalStores !== null) parts.push(`매장 ${brand.totalStores.toLocaleString()}개`);
   if (brand.avgRevenue !== null) parts.push(`평균매출 월 ${brand.avgRevenue.toLocaleString()}만원`);

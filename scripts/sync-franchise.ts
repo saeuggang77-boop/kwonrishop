@@ -98,6 +98,122 @@ async function main() {
 
   console.log(`\n통계 API 완료! 총 ${totalSynced}건 동기화, 에러 ${errors}건`);
 
+  // === 1.5단계: 브랜드 목록 API (대표자명/사업자번호/주요상품/가맹사업개시일) ===
+  console.log("\n=== 브랜드 목록 API 동기화 시작 ===");
+  let brandListSynced = 0;
+  let brandListErrors = 0;
+
+  try {
+    const BRAND_API_KEY = process.env.FTC_API_KEY || "";
+    let blPage = 1;
+    let blTotalPages = 1;
+
+    do {
+      const blParams = new URLSearchParams({
+        serviceKey: BRAND_API_KEY,
+        pageNo: String(blPage),
+        numOfRows: "100",
+        resultType: "json",
+        jngBizCrtraYr: "2024",
+      });
+      const blRes = await fetch(
+        `https://apis.data.go.kr/1130000/FftcBrandRlsInfo2_Service/getBrandinfo?${blParams}`
+      );
+      const blData = await blRes.json();
+
+      if (blData.resultCode !== "00") {
+        console.error(`브랜드 목록 API 에러:`, blData.resultMsg);
+        break;
+      }
+
+      if (blPage === 1) {
+        blTotalPages = Math.ceil(blData.totalCount / 100);
+        console.log(`브랜드 목록 총 ${blData.totalCount}건, ${blTotalPages}페이지`);
+      }
+
+      for (const item of blData.items || []) {
+        try {
+          const ftcId = `${item.corpNm}_${item.brandNm}`.replace(/\s+/g, "");
+          const existing = await prisma.franchiseBrand.findUnique({
+            where: { ftcId },
+            select: {
+              id: true,
+              representativeName: true,
+              businessNumber: true,
+              franchiseStartDate: true,
+              majorProductName: true,
+            },
+          });
+
+          if (!existing) continue;
+
+          const updateData: Record<string, any> = {};
+
+          // 대표자명: 기존 null일 때만
+          if (!existing.representativeName && item.jnghdqrtrsRprsvNm) {
+            updateData.representativeName = item.jnghdqrtrsRprsvNm.trim();
+          }
+          // 사업자번호: 기존 null/빈값일 때만
+          if ((!existing.businessNumber || existing.businessNumber === "") && item.brno) {
+            updateData.businessNumber = item.brno.trim();
+          }
+          // 가맹사업개시일: YYYYMMDD → "YYYY년 M월 D일"
+          if (!existing.franchiseStartDate && item.jngBizStrtDate) {
+            const d = item.jngBizStrtDate.trim();
+            if (d.length === 8) {
+              const y = parseInt(d.substring(0, 4), 10);
+              const m = parseInt(d.substring(4, 6), 10);
+              const day = parseInt(d.substring(6, 8), 10);
+              updateData.franchiseStartDate = `${y}년 ${m}월 ${day}일`;
+            }
+          }
+          // 주요상품명
+          if (!existing.majorProductName && item.majrGdsNm) {
+            updateData.majorProductName = item.majrGdsNm.trim();
+          }
+
+          if (Object.keys(updateData).length > 0) {
+            try {
+              await prisma.franchiseBrand.update({
+                where: { id: existing.id },
+                data: updateData,
+              });
+              brandListSynced++;
+            } catch (ue: any) {
+              // businessNumber unique constraint 충돌 시 → businessNumber 빼고 재시도
+              if (ue.message?.includes("businessNumber") && updateData.businessNumber) {
+                delete updateData.businessNumber;
+                if (Object.keys(updateData).length > 0) {
+                  await prisma.franchiseBrand.update({
+                    where: { id: existing.id },
+                    data: updateData,
+                  });
+                  brandListSynced++;
+                }
+              } else {
+                throw ue;
+              }
+            }
+          }
+        } catch (e: any) {
+          brandListErrors++;
+          if (brandListErrors <= 3) console.error(`브랜드 목록 upsert 에러:`, e.message);
+        }
+      }
+
+      console.log(`브랜드 목록 진행: ${blPage}/${blTotalPages} (${brandListSynced}건 업데이트, 에러 ${brandListErrors}건)`);
+      blPage++;
+
+      if (blPage <= blTotalPages) {
+        await new Promise((r) => setTimeout(r, 300));
+      }
+    } while (blPage <= blTotalPages);
+  } catch (e: any) {
+    console.error(`브랜드 목록 API 전체 에러:`, e.message);
+  }
+
+  console.log(`\n브랜드 목록 API 완료! ${brandListSynced}건 업데이트, 에러 ${brandListErrors}건`);
+
   // === 2단계: 정보공개서 API 동기화 ===
   if (process.env.FTC_DISCLOSURE_API_KEY) {
     console.log("\n=== 정보공개서 API 동기화 시작 ===");

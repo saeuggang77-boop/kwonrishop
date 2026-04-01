@@ -62,6 +62,7 @@ interface FranchiseBrand {
     netProfit?: string;
   } | null;
   regionalStores: Record<string, number> | null;
+  majorProductName: string | null;
 }
 
 export default function FranchiseDetailClient() {
@@ -169,6 +170,7 @@ export default function FranchiseDetailClient() {
                 {brand.contractPeriod && <div><span className="text-sm text-gray-600">계약기간</span><p className="font-medium text-gray-900 mt-1">{brand.contractPeriod}</p></div>}
                 {brand.territoryProtection !== null && <div><span className="text-sm text-gray-600">영업지역 보호</span><p className="font-medium mt-1">{brand.territoryProtection ? <span className="text-green-600">O 보호</span> : <span className="text-red-600">X 미보호</span>}</p></div>}
                 {brand.companyOwnedStores !== null && <div><span className="text-sm text-gray-600">직영점수</span><p className="font-medium text-gray-900 mt-1">{brand.companyOwnedStores.toLocaleString()}개</p></div>}
+                {brand.majorProductName && <div><span className="text-sm text-gray-600">주요 상품</span><p className="font-medium text-gray-900 mt-1">{brand.majorProductName}</p></div>}
               </div>
               {brand.description && <div className="pt-4 border-t border-gray-200"><span className="text-sm text-gray-600">브랜드 소개</span><p className="text-gray-900 mt-2 whitespace-pre-wrap">{brand.description}</p></div>}
               {brand.financialSummary && (

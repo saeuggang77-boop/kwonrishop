@@ -347,6 +347,7 @@ model FranchiseBrand {
   companyOwnedStores   Int?      // 직영점수
   financialSummary     Json?     // 재무요약 {revenue, operatingProfit, netProfit, totalAssets, year}
   regionalStores       Json?     // 지역별 가맹점 {서울:N, 부산:N, ...}
+  majorProductName     String?   // 주요 상품명
 
   // 유료 서비스 - 본사가 직접 편집
   tier           FranchiseTier @default(FREE)
