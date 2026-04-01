@@ -37,6 +37,9 @@ export default function KakaoMap({
 
       const map = new window.kakao.maps.Map(container, options);
 
+      // 스크롤 줌 비활성화 (페이지 스크롤 시 지도 줌 방지)
+      map.setZoomable(false);
+
       // Add marker
       const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
       const marker = new window.kakao.maps.Marker({
