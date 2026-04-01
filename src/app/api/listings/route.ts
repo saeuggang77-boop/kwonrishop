@@ -38,30 +38,15 @@ export async function GET(req: NextRequest) {
 
   // Featured listings query - return early
   if (featured) {
-    // 역방향 조회: adPurchases에서 유효한 listingId를 먼저 가져온 뒤 listing 조회 (인덱스 활용)
-    const activeAds = await prisma.adPurchase.findMany({
+    const featuredListings = await prisma.listing.findMany({
       where: {
-        status: "PAID",
-        expiresAt: { gt: new Date() },
-        listingId: { not: null },
-      },
-      select: { listingId: true, product: { select: { name: true, features: true } } },
-      orderBy: { createdAt: "desc" },
-    });
-
-    const adMap = new Map<string, { name: string; features: any }>();
-    const featuredIds: string[] = [];
-    for (const ad of activeAds) {
-      if (ad.listingId && !adMap.has(ad.listingId)) {
-        adMap.set(ad.listingId, { name: ad.product?.name || "", features: ad.product?.features });
-        featuredIds.push(ad.listingId);
-      }
-    }
-
-    const featuredListings = featuredIds.length > 0 ? await prisma.listing.findMany({
-      where: {
-        id: { in: featuredIds },
         status: "ACTIVE",
+        adPurchases: {
+          some: {
+            status: "PAID",
+            expiresAt: { gt: new Date() },
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 10,
@@ -96,9 +81,18 @@ export async function GET(req: NextRequest) {
           orderBy: { sortOrder: "asc" },
           select: { url: true },
         },
+        adPurchases: {
+          where: {
+            status: "PAID",
+            expiresAt: { gt: new Date() },
+          },
+          select: { product: { select: { name: true, features: true } } },
+          take: 1,
+          orderBy: { createdAt: "desc" },
+        },
         _count: { select: { documents: true } },
       },
-    }) : [];
+    });
 
     // 판매자별 리뷰 평균 계산 (listingId 직접 조회로 조인 제거)
     const featuredListingIds = featuredListings.map((l) => l.id);
@@ -128,9 +122,9 @@ export async function GET(req: NextRequest) {
     // Add featuredTier and sort by tier level
     const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2 };
     const withTier = featuredListings.map((l) => {
-      const adInfo = adMap.get(l.id);
-      const productFeatures = adInfo?.features as Record<string, any> | undefined;
-      const productName = adInfo?.name || "";
+      const purchase = l.adPurchases[0];
+      const productFeatures = purchase?.product?.features as Record<string, any> | undefined;
+      const productName = purchase?.product?.name || "";
       const badge = productFeatures?.badge as string | undefined;
       let tier = "BASIC";
       if (badge) {
@@ -145,6 +139,7 @@ export async function GET(req: NextRequest) {
       return {
         ...l,
         featuredTier: tier,
+        adPurchases: undefined,
         userId: undefined,
         sellerTrust,
       };
