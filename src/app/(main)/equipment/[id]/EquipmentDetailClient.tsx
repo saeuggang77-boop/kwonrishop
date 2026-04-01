@@ -18,7 +18,7 @@ const ShareButton = dynamic(() => import("@/components/listing/ShareButton"), {
   ssr: false,
 });
 
-const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
+const StartupPartnerSection = dynamic(() => import("@/components/listing/StartupPartnerSection"), {
   ssr: false,
 });
 
@@ -328,7 +328,13 @@ export default function EquipmentDetailClient() {
       </Section>
 
       {/* 크로스셀 추천 */}
-      <CrossSellSection type="equipment" id={id} />
+      <StartupPartnerSection
+        sameType={{ type: "equipment", id, title: "추천 집기", viewAllLink: "/equipment" }}
+        tabs={[
+          { type: "franchise", label: "추천 프랜차이즈", minTier: "SILVER" },
+          { type: "partner", label: "협력업체", minTier: "PREMIUM" },
+        ]}
+      />
 
       {/* 목록으로 */}
       <div className="mt-6 text-center">

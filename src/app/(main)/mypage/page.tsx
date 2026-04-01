@@ -288,7 +288,7 @@ export default function MyPage() {
               사업자 인증하기
             </Link>
             {data.user.role === "BUYER" && (
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">사업자 인증 완료 시 사장님/프랜차이즈/협력업체로 전환됩니다</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">인증 시 역할(사장님/프랜차이즈/협력업체)을 선택할 수 있습니다</p>
             )}
           </>
         )}
@@ -808,6 +808,12 @@ export default function MyPage() {
             </Link>
           </>
         )}
+        <Link href="/mypage/blocked" className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">차단 관리</span>
+          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+          </svg>
+        </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className="w-full text-left px-5 py-4 text-sm font-medium text-red-500 hover:bg-gray-50 dark:hover:bg-gray-800"

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 // 내 채팅방 목록
 export async function GET() {
@@ -11,6 +11,16 @@ export async function GET() {
   if (!session?.user?.id) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
+
+  // 차단 관계 조회
+  const [blockedByMe, blockedMe] = await Promise.all([
+    prisma.block.findMany({ where: { userId: session.user.id }, select: { blockedId: true } }),
+    prisma.block.findMany({ where: { blockedId: session.user.id }, select: { userId: true } }),
+  ]);
+  const blockedIds = new Set([
+    ...blockedByMe.map(b => b.blockedId),
+    ...blockedMe.map(b => b.userId),
+  ]);
 
   const chatRooms = await prisma.chatRoom.findMany({
     where: {
@@ -48,9 +58,15 @@ export async function GET() {
     orderBy: { updatedAt: "desc" },
   });
 
+  // 차단된 사용자 채팅방 필터링
+  const filteredRooms = chatRooms.filter(room => {
+    const otherParticipants = room.participants.filter(p => p.userId !== session.user.id);
+    return !otherParticipants.some(p => blockedIds.has(p.userId));
+  });
+
   // 각 채팅방의 안읽은 메시지 수 계산
   const roomsWithUnread = await Promise.all(
-    chatRooms.map(async (room) => {
+    filteredRooms.map(async (room) => {
       const myParticipant = room.participants.find(p => p.userId === session.user.id);
       const lastRead = myParticipant?.lastReadAt;
 
@@ -74,9 +90,7 @@ export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(req);
-  const rl = rateLimit(ip, 10, 60000);
+  const rl = rateLimitRequest(req, 10, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }
@@ -132,6 +146,19 @@ export async function POST(req: NextRequest) {
     sellerId = listing.userId;
     roomFilter = { listingId };
     roomData = { listingId };
+  }
+
+  // 차단 관계 확인
+  const blockRelation = await prisma.block.findFirst({
+    where: {
+      OR: [
+        { userId: session.user.id, blockedId: sellerId },
+        { userId: sellerId, blockedId: session.user.id },
+      ],
+    },
+  });
+  if (blockRelation) {
+    return NextResponse.json({ error: "차단된 사용자와는 채팅할 수 없습니다." }, { status: 403 });
   }
 
   // 이미 존재하는 채팅방 확인

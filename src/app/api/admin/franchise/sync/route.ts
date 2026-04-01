@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { searchFranchiseBrands, getFranchiseBrandDetail } from "@/lib/api/ftc";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 /**
  * FTC API로부터 프랜차이즈 데이터를 가져와 DB에 동기화
@@ -13,9 +13,7 @@ export async function POST(request: Request) {
   if (!validateOrigin(request)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(request);
-  const rl = rateLimit(ip, 3, 60000);
+  const rl = rateLimitRequest(request, 3, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }

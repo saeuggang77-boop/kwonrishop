@@ -4,14 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { validateBusiness } from "@/lib/api/nts";
 import { searchFranchiseByBusinessNumber } from "@/lib/api/ftc";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 
 export async function POST(req: NextRequest) {
   // Rate limiting: 5 requests per minute
-  const ip = getClientIp(req);
-  const limiter = rateLimit(ip, 5, 60000);
+  const limiter = rateLimitRequest(req, 5, 60000);
   if (!limiter.success) {
     return NextResponse.json(
       { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },

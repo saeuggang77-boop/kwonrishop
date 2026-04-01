@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { notifyPaymentSuccess } from "@/lib/kakao-alimtalk";
 import { sendPushToUser } from "@/lib/push";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { calculateNextBumpTime } from "@/lib/bump-utils";
 import { generateSellerReport } from "@/lib/report-generator";
 
@@ -13,9 +13,7 @@ export async function POST(request: NextRequest) {
   if (!validateOrigin(request)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(request);
-  const rl = rateLimit(ip, 5, 60000);
+  const rl = rateLimitRequest(request, 5, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }

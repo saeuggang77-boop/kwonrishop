@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 export async function POST(
   req: NextRequest,
@@ -13,9 +13,7 @@ export async function POST(
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(req);
-  const rl = rateLimit(ip, 20, 60000);
+  const rl = rateLimitRequest(req, 20, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }

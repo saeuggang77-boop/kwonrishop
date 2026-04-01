@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 
@@ -45,8 +45,7 @@ export async function GET(req: NextRequest) {
 // 게시글 작성
 export async function POST(req: NextRequest) {
   // Rate limiting: 5 posts per minute
-  const ip = getClientIp(req);
-  const limiter = rateLimit(ip, 5, 60000);
+  const limiter = rateLimitRequest(req, 5, 60000);
   if (!limiter.success) {
     return NextResponse.json(
       { error: "게시글 작성이 너무 빠릅니다. 잠시 후 다시 시도해주세요." },

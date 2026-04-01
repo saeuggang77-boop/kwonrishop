@@ -399,19 +399,33 @@ function buildFeatureList(
 ): { icon: string; text: string }[] {
   const list: { icon: string; text: string }[] = [];
 
-  if (scope === "LISTING") {
-    // Layout type mapping
-    if (features.layoutType) {
-      if (features.layoutType === "row") {
-        list.push({ icon: "📋", text: "줄광고형 등록" });
-      } else if (features.layoutType === "horizontal-3col") {
-        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
-      } else if (features.layoutType === "large-2col") {
-        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
-      }
-    }
+  // 통일된 순서: 카드형 → 목록등록 → 상위노출 → 끌어올리기 → 메인노출 → 배지 → 크로스셀
 
-    // Main page exposure
+  // 1. 카드 표시형
+  if (features.layoutType) {
+    if (features.layoutType === "row") {
+      list.push({ icon: "📋", text: "줄광고형 등록" });
+    } else if (features.layoutType === "horizontal-3col") {
+      list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+    } else if (features.layoutType === "large-2col") {
+      list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+    }
+  }
+
+  // 2. 목록 등록
+  if (features.listingRegister)
+    list.push({ icon: "📝", text: "목록 등록" });
+
+  // 3. 목록 상위 노출
+  if (features.topExposure)
+    list.push({ icon: "⬆️", text: "목록 상위 노출" });
+
+  // 4. 끌어올리기
+  if (features.bumpCount)
+    list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회` });
+
+  // 5. 메인 페이지 노출 (scope별 분기)
+  if (scope === "LISTING") {
     if (features.mainVip)
       list.push({ icon: "👑", text: "메인 페이지 VIP 대형 섹션 노출" });
     if (features.mainPremium)
@@ -420,112 +434,39 @@ function buildFeatureList(
       list.push({ icon: "🏠", text: "메인 페이지 베이직 매물 섹션 노출" });
     if (features.mainFeatured)
       list.push({ icon: "⭐", text: "메인 페이지 대형 카드 노출" });
-    if (features.mainExposure)
-      list.push({ icon: "🏠", text: "메인 페이지 노출" });
-
-    // Listing features
-    if (features.listingRegister)
-      list.push({ icon: "📝", text: "목록 등록" });
-    if (features.topExposure)
-      list.push({ icon: "⬆️", text: "목록 상위 노출" });
-    if (features.bumpCount)
-      list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회` });
-
-    // Badge
-    if (features.badge)
-      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
-
   } else if (scope === "FRANCHISE") {
-    // Layout type mapping
-    if (features.layoutType) {
-      if (features.layoutType === "row") {
-        list.push({ icon: "📋", text: "줄광고형 등록" });
-      } else if (features.layoutType === "horizontal-3col") {
-        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
-      } else if (features.layoutType === "large-2col") {
-        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
-      }
-    }
-
-    // Main page exposure
-    if (features.mainVip)
-      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 노출" });
-    if (features.mainRecommend)
-      list.push({ icon: "⭐", text: "메인 페이지 VIP 대형 노출" });
-    if (features.mainExposure)
-      list.push({ icon: "🏠", text: "메인 페이지 노출" });
-
-    // Listing features
-    if (features.listingRegister)
-      list.push({ icon: "📝", text: "목록 등록" });
-    if (features.topExposure)
-      list.push({ icon: "⬆️", text: "목록 상위 노출" });
-
-    // Badge
-    if (features.badge)
-      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
-
+    if (features.mainFeatured)
+      list.push({ icon: "⭐", text: "메인 페이지 대형 카드 노출" });
   } else if (scope === "PARTNER") {
-    // Layout type mapping
-    if (features.layoutType) {
-      if (features.layoutType === "row") {
-        list.push({ icon: "📋", text: "줄광고형 등록" });
-      } else if (features.layoutType === "horizontal-3col") {
-        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
-      } else if (features.layoutType === "large-2col") {
-        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
-      }
-    }
-
-    // Main page exposure
-    if (features.mainVip)
-      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 노출" });
     if (features.mainRecommend)
       list.push({ icon: "⭐", text: "메인 페이지 VIP 대형 노출" });
     if (features.mainExposure)
       list.push({ icon: "🏠", text: "메인 페이지 노출" });
-
-    // Listing features
-    if (features.listingRegister)
-      list.push({ icon: "📝", text: "목록 등록" });
-    if (features.topExposure)
-      list.push({ icon: "⬆️", text: "목록 상위 노출" });
-
-    // Badge
-    if (features.badge)
-      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
-
   } else if (scope === "EQUIPMENT") {
-    // Layout type mapping
-    if (features.layoutType) {
-      if (features.layoutType === "row") {
-        list.push({ icon: "📋", text: "줄광고형 등록" });
-      } else if (features.layoutType === "horizontal-3col") {
-        list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
-      } else if (features.layoutType === "large-2col") {
-        list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
-      }
-    }
-
-    // Main page exposure
     if (features.mainVip)
       list.push({ icon: "👑", text: "메인 페이지 VIP 대형 노출" });
     if (features.mainPremium)
       list.push({ icon: "💎", text: "메인 페이지 프리미엄 섹션 노출" });
-    if (features.mainExposure)
-      list.push({ icon: "🏠", text: "메인 페이지 노출" });
+  }
 
-    // Listing features
-    if (features.listingRegister)
-      list.push({ icon: "📝", text: "목록 등록" });
-    if (features.topExposure)
-      list.push({ icon: "⬆️", text: "목록 상위 노출" });
-    if (features.bumpCount)
-      list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회` });
+  // 6. 등급 배지
+  if (features.badge)
+    list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
 
-    // Badge
-    if (features.badge)
-      list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
+  // 7. 크로스셀 (LISTING 제외)
+  if (scope !== "LISTING") {
+    const isTopTier =
+      (scope === "FRANCHISE" && (features.mainFeatured || features.mainRecommend)) ||
+      (scope === "PARTNER" && features.mainRecommend) ||
+      (scope === "EQUIPMENT" && features.mainVip);
+    const topLabel = scope === "FRANCHISE" ? "골드" : "VIP";
+
+    if (isTopTier) {
+      list.push({ icon: "🔗", text: "타 카테고리 상세 페이지 추천 노출" });
+      list.push({ icon: "🏅", text: `매물 상세 페이지 추천 노출 (${topLabel} 전용)` });
+    } else if (features.topExposure) {
+      list.push({ icon: "🔗", text: "타 카테고리 상세 페이지 추천 노출" });
+    }
   }
 
   return list;

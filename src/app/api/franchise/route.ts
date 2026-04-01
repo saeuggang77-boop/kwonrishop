@@ -9,16 +9,22 @@ export async function GET(request: Request) {
     const search = searchParams.get("search") || "";
     const industry = searchParams.get("industry") || "";
     const featured = searchParams.get("featured") === "true";
+    const minTier = searchParams.get("minTier");
 
     // Handle featured brands request
     if (featured) {
+      // Tier hierarchy: BRONZE < SILVER < GOLD
+      const FRANCHISE_TIERS = ["BRONZE", "SILVER", "GOLD"];
+      const minIdx = minTier ? FRANCHISE_TIERS.indexOf(minTier) : 0;
+      const allowedTiers = FRANCHISE_TIERS.slice(Math.max(0, minIdx));
+
       const featuredBrands = await prisma.franchiseBrand.findMany({
         where: {
           tier: {
-            in: ["GOLD", "SILVER", "BRONZE"]
-          }
+            in: allowedTiers,
+          } as any
         },
-        take: 10,
+        take: limit,
         include: {
           _count: { select: { inquiries: true } },
         },

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeInput, validatePhone } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { sendPushToUser } from "@/lib/push";
@@ -13,8 +13,7 @@ export async function POST(
 ) {
   try {
     // Rate limiting: 5 inquiries per minute
-    const ip = getClientIp(request);
-    const limiter = rateLimit(ip, 5, 60000);
+    const limiter = rateLimitRequest(request, 5, 60000);
     if (!limiter.success) {
       return NextResponse.json(
         { error: "문의 요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },

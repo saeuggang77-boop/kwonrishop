@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/lib/password";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
-  const ip = getClientIp(req);
-  const limit = rateLimit(ip, 10, 60000);
+  const limit = rateLimitRequest(req, 10, 60000);
   if (!limit.success) {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     return NextResponse.redirect(`${baseUrl}/login?error=RateLimit`);

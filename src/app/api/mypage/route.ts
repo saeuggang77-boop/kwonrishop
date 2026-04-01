@@ -20,6 +20,7 @@ export async function GET() {
           role: true,
           phone: true,
           createdAt: true,
+          password: true,
         },
       }),
       prisma.businessVerification.findUnique({
@@ -99,8 +100,18 @@ export async function GET() {
     unreadChatCount += count;
   }
 
+  const safeUser = user ? {
+    name: user.name,
+    email: user.email,
+    image: user.image,
+    role: user.role,
+    phone: user.phone,
+    createdAt: user.createdAt,
+    hasPassword: !!user.password,
+  } : null;
+
   return NextResponse.json({
-    user,
+    user: safeUser,
     verification,
     listing: listing?.status !== "DELETED" ? listing : null,
     favoriteCount,

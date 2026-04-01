@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useCompareStore } from "@/store/compareStore";
 import TierBadge from "@/components/shared/TierBadge";
 import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
-import { toast } from "@/lib/toast";
 
 interface ListingCardProps {
   listing: {
@@ -37,29 +35,12 @@ interface ListingCardProps {
 export default function ListingCard({ listing }: ListingCardProps) {
   const address = listing.addressRoad || listing.addressJibun || "주소 미입력";
   const shortAddress = address.split(" ").slice(0, 3).join(" ");
-  const { addToCompare, removeFromCompare, isInCompare } = useCompareStore();
-  const inCompare = isInCompare(listing.id);
-
   const tier = listing.featuredTier || "FREE";
   const tierStyles: Record<string, string> = {
     VIP: "border-2 border-yellow-400 bg-yellow-50/50 dark:bg-yellow-900/10",
     PREMIUM: "border-2 border-gray-400 bg-gray-50/50 dark:bg-gray-700/10",
     BASIC: "border-2 border-blue-300 bg-blue-50/50 dark:bg-blue-900/10",
     FREE: "border border-gray-200 dark:border-gray-700",
-  };
-
-  const handleCompareToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (inCompare) {
-      removeFromCompare(listing.id);
-    } else {
-      const success = addToCompare(listing.id);
-      if (!success) {
-        toast.info("최대 3개까지 비교 가능합니다");
-      }
-    }
   };
 
   return (
@@ -115,23 +96,6 @@ export default function ListingCard({ listing }: ListingCardProps) {
           </div>
         )}
 
-        {/* 비교하기 체크박스 */}
-        <button
-          onClick={handleCompareToggle}
-          className={`absolute top-2 right-2 w-7 h-7 rounded-md border-2 flex items-center justify-center transition-all ${
-            inCompare
-              ? "bg-blue-600 border-blue-600 dark:bg-blue-500 dark:border-blue-500"
-              : "bg-white/90 dark:bg-gray-800/90 border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500"
-          }`}
-          title="비교하기"
-          aria-label={inCompare ? "비교 목록에서 제거" : "비교 목록에 추가"}
-        >
-          {inCompare && (
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </button>
       </div>
 
       {/* 정보 */}

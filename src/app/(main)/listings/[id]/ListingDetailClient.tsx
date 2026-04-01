@@ -12,6 +12,7 @@ import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { toast } from "@/lib/toast";
 import { formatPhone } from "@/lib/utils";
+import { useCompareStore } from "@/store/compareStore";
 import { ListingUpsellBanner } from "@/components/promotion/PromotionCTA";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
@@ -35,6 +36,10 @@ const RentalTrendSection = dynamic(() => import("@/components/listing/RentalTren
 });
 
 const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
+  ssr: false,
+});
+
+const StartupPartnerSection = dynamic(() => import("@/components/listing/StartupPartnerSection"), {
   ssr: false,
 });
 
@@ -1115,6 +1120,14 @@ export default function ListingDetailClient() {
       {/* ===== 17. CrossSellSection ===== */}
       <CrossSellSection type="listing" id={listing.id} />
 
+      {/* ===== 17.5 창업 파트너 (프랜차이즈 + 협력업체) ===== */}
+      <StartupPartnerSection
+        tabs={[
+          { type: "franchise", label: "추천 프랜차이즈", minTier: "GOLD" },
+          { type: "partner", label: "협력업체", minTier: "VIP" },
+        ]}
+      />
+
       {/* ===== 18. 최근 본 매물 ===== */}
       {recentlyViewed.length > 0 && (
         <Section title="최근 본 매물">
@@ -1245,6 +1258,7 @@ export default function ListingDetailClient() {
               >
                 {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{listing.favoriteCount}</span>
               </button>
+              <CompareButton listingId={listing.id} />
               <ShareButton
                 listingId={listing.id}
                 title={listing.storeName || listing.addressRoad || "매물 상세"}
@@ -1265,6 +1279,50 @@ export default function ListingDetailClient() {
 /* ============================================
    Sub-components
    ============================================ */
+
+function CompareButton({ listingId }: { listingId: string }) {
+  const { addToCompare, removeFromCompare, isInCompare } = useCompareStore();
+  const inCompare = isInCompare(listingId);
+
+  const handleClick = () => {
+    if (inCompare) {
+      removeFromCompare(listingId);
+    } else {
+      const success = addToCompare(listingId);
+      if (!success) {
+        toast.info("최대 3개까지 비교 가능합니다");
+      }
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      aria-label={inCompare ? "비교함에서 제거" : "비교함에 담기"}
+      className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${
+        inCompare
+          ? "border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950"
+          : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600"
+      }`}
+    >
+      {inCompare ? (
+        <span className="flex items-center gap-1">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="hidden sm:inline">비교중</span>
+        </span>
+      ) : (
+        <span className="flex items-center gap-1">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span className="hidden sm:inline">비교</span>
+        </span>
+      )}
+    </button>
+  );
+}
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

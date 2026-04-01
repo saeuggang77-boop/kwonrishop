@@ -21,19 +21,40 @@ function VerifyBusinessContent() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [hasFailedOnce, setHasFailedOnce] = useState(false);
   const [success, setSuccess] = useState(false);
   const [matchedBrandId, setMatchedBrandId] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<"SELLER" | "FRANCHISE" | "PARTNER">("SELLER");
+  const [roleUpdating, setRoleUpdating] = useState(false);
+
+  // requestedRole이 있으면 그대로, 없으면 사용자 선택 값 사용
+  const effectiveRole = requestedRole || selectedRole;
 
   // 역할별 메시지
-  const roleMessages = {
+  const roleMessages: Record<string, string> = {
     SELLER: "사장님으로 매물을 등록하려면 사업자인증이 필요합니다",
     FRANCHISE: "프랜차이즈 본사 인증을 위해 사업자등록이 필요합니다",
     PARTNER: "협력업체 등록을 위해 사업자인증이 필요합니다",
   };
 
-  const roleMessage = requestedRole && roleMessages[requestedRole]
-    ? roleMessages[requestedRole]
-    : "매물을 등록하려면 사업자인증이 필요합니다";
+  const roleMessage = roleMessages[effectiveRole];
+
+  // 역할 선택 시 pendingRole DB 업데이트
+  async function handleRoleSelect(role: "SELLER" | "FRANCHISE" | "PARTNER") {
+    setSelectedRole(role);
+    setRoleUpdating(true);
+    try {
+      await fetch("/api/auth/select-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role }),
+      });
+    } catch {
+      // 네트워크 에러 무시 — 인증 시 DB pendingRole 기반으로 재확인됨
+    } finally {
+      setRoleUpdating(false);
+    }
+  }
 
   if (status === "loading") {
     return (
@@ -77,6 +98,7 @@ function VerifyBusinessContent() {
 
       if (!res.ok) {
         setError(data.error);
+        setHasFailedOnce(true);
         return;
       }
 
@@ -102,17 +124,17 @@ function VerifyBusinessContent() {
     }
 
     // 기본 역할별 리다이렉트
-    if (requestedRole === "SELLER") return "/sell";
-    if (requestedRole === "FRANCHISE" && matchedBrandId) return `/franchise/${matchedBrandId}`;
-    if (requestedRole === "FRANCHISE") return "/franchise";
-    if (requestedRole === "PARTNER") return "/partners/register";
+    if (effectiveRole === "SELLER") return "/sell";
+    if (effectiveRole === "FRANCHISE" && matchedBrandId) return `/franchise/${matchedBrandId}`;
+    if (effectiveRole === "FRANCHISE") return "/franchise";
+    if (effectiveRole === "PARTNER") return "/partners/register";
     return "/sell";
   };
 
   if (success) {
     const successRedirect = getSuccessRedirect();
-    const buttonText = requestedRole === "FRANCHISE" ? "브랜드 페이지로" :
-                       requestedRole === "PARTNER" ? "협력업체 등록하기" :
+    const buttonText = effectiveRole === "FRANCHISE" ? "브랜드 페이지로" :
+                       effectiveRole === "PARTNER" ? "협력업체 등록하기" :
                        "매물 등록하기";
 
     return (
@@ -126,10 +148,9 @@ function VerifyBusinessContent() {
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">인증 완료</h2>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
             사업자인증이 완료되었습니다.<br />
-            {requestedRole === "FRANCHISE" && "이제 브랜드 페이지를 관리할 수 있습니다."}
-            {requestedRole === "PARTNER" && "이제 협력업체로 등록할 수 있습니다."}
-            {requestedRole === "SELLER" && "이제 매물을 등록할 수 있습니다."}
-            {!requestedRole && "이제 매물을 등록할 수 있습니다."}
+            {effectiveRole === "FRANCHISE" && "이제 브랜드 페이지를 관리할 수 있습니다."}
+            {effectiveRole === "PARTNER" && "이제 협력업체로 등록할 수 있습니다."}
+            {effectiveRole === "SELLER" && "이제 매물을 등록할 수 있습니다."}
           </p>
           {/* 푸시 알림 + PWA 설치 유도 */}
           <div className="mb-4">
@@ -164,6 +185,164 @@ function VerifyBusinessContent() {
             {roleMessage}
           </p>
         </div>
+
+        {/* 역할 선택 UI (role param 없이 진입 시만 표시) */}
+        {!requestedRole && (
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-5">
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">어떤 역할로 활동하시겠어요?</h3>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">인증 후 선택한 역할로 전환됩니다</p>
+            <div className="space-y-3">
+              {/* 사장님 */}
+              <button
+                type="button"
+                disabled={roleUpdating}
+                onClick={() => handleRoleSelect("SELLER")}
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                  selectedRole === "SELLER"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">사장님 (매물 등록)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">상가/매장을 직접 등록하고 판매할 수 있습니다</p>
+                  </div>
+                  {selectedRole === "SELLER" && (
+                    <svg className="w-5 h-5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                  )}
+                </div>
+              </button>
+
+              {/* 프랜차이즈 */}
+              <button
+                type="button"
+                disabled={roleUpdating}
+                onClick={() => handleRoleSelect("FRANCHISE")}
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                  selectedRole === "FRANCHISE"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">프랜차이즈 본사</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">공정위 등록 브랜드를 관리할 수 있습니다</p>
+                  </div>
+                  {selectedRole === "FRANCHISE" && (
+                    <svg className="w-5 h-5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                  )}
+                </div>
+              </button>
+
+              {/* 협력업체 */}
+              <button
+                type="button"
+                disabled={roleUpdating}
+                onClick={() => handleRoleSelect("PARTNER")}
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                  selectedRole === "PARTNER"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">협력업체</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">인테리어, 설비, 컨설팅 등 서비스를 등록할 수 있습니다</p>
+                  </div>
+                  {selectedRole === "PARTNER" && (
+                    <svg className="w-5 h-5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                  )}
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 프랜차이즈 안내 (역할 선택 또는 URL param으로 FRANCHISE인 경우) */}
+        {effectiveRole === "FRANCHISE" && (
+          <div className="mb-5 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl text-xs text-blue-700 dark:text-blue-300 space-y-1">
+            <p className="font-medium">프랜차이즈 본사 인증 안내</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              <li>공정거래위원회 정보공개서에 등록된 브랜드만 가입 가능합니다</li>
+              <li>사업자번호로 브랜드가 자동 매칭됩니다</li>
+              <li>인증 완료 후 브랜드 페이지 편집 권한이 부여됩니다</li>
+            </ul>
+          </div>
+        )}
+
+        {/* 개업일자 주의 안내 박스 */}
+        <div className="mb-5 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+          <div className="flex gap-3">
+            <div className="shrink-0 mt-0.5">
+              <svg className="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">인증 실패가 잦은 항목: 개업일자</p>
+              <p className="text-xs text-amber-700 dark:text-amber-300 mt-1 leading-relaxed">
+                사업자등록증에 적힌 <strong>&ldquo;개업연월일&rdquo;</strong>을 정확히 입력해주세요.<br/>
+                <span className="text-amber-600 dark:text-amber-400">발급일, 신청일과 다른 경우가 많습니다.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 인증 실패 시 상세 체크리스트 */}
+        {error && hasFailedOnce && (
+          <div className="mb-5 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl p-4">
+            <div className="flex gap-3">
+              <div className="shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-red-800 dark:text-red-200">인증에 실패했습니다</p>
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 leading-relaxed">다음 항목을 다시 확인해주세요:</p>
+                <ul className="text-xs text-red-600 dark:text-red-400 mt-1 space-y-1 list-none">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-red-400 mt-px">1.</span>
+                    <span><strong>개업일자</strong> — 등록증의 &ldquo;개업연월일&rdquo;과 일치하나요?<br/>
+                    <span className="text-red-400">(발급일, 신청일과 혼동하지 않았는지 확인)</span></span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-red-400 mt-px">2.</span>
+                    <span><strong>대표자명</strong> — 공동대표인 경우 등록증에 표기된 이름 입력</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-red-400 mt-px">3.</span>
+                    <span><strong>상호명</strong> — 등록증에 적힌 상호와 동일하게 입력</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
 
         <form
           onSubmit={handleSubmit}
@@ -212,12 +391,44 @@ function VerifyBusinessContent() {
               type="date"
               value={form.openDate}
               onChange={(e) => setForm({ ...form, openDate: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className={`w-full px-4 py-3 rounded-lg outline-none ${
+                hasFailedOnce
+                  ? "border-2 border-red-400 bg-red-50 dark:bg-red-950 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  : "border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              }`}
               required
             />
-            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-              사업자등록증의 &ldquo;개업연월일&rdquo;을 입력하세요 (발급일과 다를 수 있습니다)
-            </p>
+            {hasFailedOnce ? (
+              <div className="mt-2 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2.5">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd"/>
+                  </svg>
+                  <div className="text-xs leading-relaxed">
+                    <p className="text-red-700 dark:text-red-300 font-semibold">개업일자를 다시 확인하세요!</p>
+                    <p className="text-red-600 dark:text-red-400 mt-0.5">
+                      사업자등록증의 <strong>&ldquo;개업연월일&rdquo;</strong>을 입력해야 합니다.<br/>
+                      하단의 &ldquo;발급일&rdquo;이나 신청일과 <strong>다른 경우가 많습니다.</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-2 bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-800 rounded-lg px-3 py-2.5">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd"/>
+                  </svg>
+                  <div className="text-xs leading-relaxed">
+                    <p className="text-blue-800 dark:text-blue-200 font-medium">사업자등록증 확인 방법</p>
+                    <p className="text-blue-600 dark:text-blue-400 mt-0.5">
+                      등록증 중간의 <strong>&ldquo;개업연월일&rdquo;</strong> 항목을 확인하세요.<br/>
+                      하단의 &ldquo;발급일&rdquo;이나 신청일과 <strong className="text-red-500 dark:text-red-400">다를 수 있습니다.</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
@@ -236,34 +447,18 @@ function VerifyBusinessContent() {
             />
           </div>
 
-          {error && (
-            <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          )}
-
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? "인증 중..." : "사업자 인증하기"}
+            {loading ? "인증 중..." : hasFailedOnce ? "다시 인증하기" : "사업자 인증하기"}
           </button>
 
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
             국세청 사업자등록 진위확인 API를 통해 인증됩니다
           </p>
 
-          {requestedRole === "FRANCHISE" && (
-            <div className="p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg text-xs text-blue-700 dark:text-blue-300 space-y-1">
-              <p className="font-medium">프랜차이즈 본사 인증 안내</p>
-              <ul className="list-disc list-inside space-y-0.5">
-                <li>공정거래위원회 정보공개서에 등록된 브랜드만 가입 가능합니다</li>
-                <li>사업자번호로 브랜드가 자동 매칭됩니다</li>
-                <li>인증 완료 후 브랜드 페이지 편집 권한이 부여됩니다</li>
-              </ul>
-            </div>
-          )}
         </form>
       </div>
     </div>

@@ -46,6 +46,8 @@ model User {
   reportsMade          Report[]  @relation("reporter")
   sellerReports        SellerReport[]
   franchiseInquiries   FranchiseInquiry[] @relation("UserFranchiseInquiries")
+  blockedUsers         Block[]   @relation("blocker")
+  blockedByUsers       Block[]   @relation("blocked")
 }
 
 enum UserRole {
@@ -888,4 +890,22 @@ model SellerReport {
 
   @@index([userId])
   @@index([listingId])
+}
+
+// ==========================================
+// 차단
+// ==========================================
+
+model Block {
+  id        String   @id @default(cuid())
+  userId    String   // 차단한 사용자
+  blockedId String   // 차단당한 사용자
+  createdAt DateTime @default(now())
+
+  user    User @relation("blocker", fields: [userId], references: [id], onDelete: Cascade)
+  blocked User @relation("blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blockedId])
+  @@index([userId])
+  @@index([blockedId])
 }

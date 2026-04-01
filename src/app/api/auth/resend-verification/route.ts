@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateToken, hashToken } from "@/lib/password";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
 import { emailVerificationEmail } from "@/lib/email-templates";
 
@@ -10,9 +10,7 @@ export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(req);
-  const limit = rateLimit(ip, 2, 300000); // 2 requests per 5 minutes
+  const limit = rateLimitRequest(req, 2, 300000); // 2 requests per 5 minutes
   if (!limit.success) {
     return NextResponse.json(
       { error: "인증 메일은 5분에 1회만 재발송할 수 있습니다." },

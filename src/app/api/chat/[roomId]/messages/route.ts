@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { pusher } from "@/lib/pusher";
@@ -63,8 +63,7 @@ export async function POST(
   { params }: { params: Promise<{ roomId: string }> },
 ) {
   // Rate limiting: 30 messages per minute
-  const ip = getClientIp(req);
-  const limiter = rateLimit(ip, 30, 60000);
+  const limiter = rateLimitRequest(req, 30, 60000);
   if (!limiter.success) {
     return NextResponse.json(
       { error: "메시지 전송이 너무 빠릅니다. 잠시 후 다시 시도해주세요." },

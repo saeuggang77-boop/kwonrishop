@@ -79,3 +79,19 @@ export function getClientIp(request: Request): string {
   // Fallback to a default identifier
   return "unknown";
 }
+
+/**
+ * Rate limit a request with automatic route isolation.
+ * Builds a composite key from IP + HTTP method + URL pathname,
+ * so each API endpoint has its own independent rate limit counter.
+ */
+export function rateLimitRequest(
+  request: Request,
+  limit: number,
+  windowMs: number
+): { success: boolean; remaining: number } {
+  const ip = getClientIp(request);
+  const url = new URL(request.url);
+  const key = `${request.method}:${url.pathname}:${ip}`;
+  return rateLimit(key, limit, windowMs);
+}

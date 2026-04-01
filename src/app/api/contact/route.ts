@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { validateOrigin } from "@/lib/csrf";
 
 export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-  const ip = getClientIp(req);
-  const rl = rateLimit(ip, 3, 60000); // 분당 3회
+  const rl = rateLimitRequest(req, 3, 60000); // 분당 3회
   if (!rl.success) {
     return NextResponse.json(
       { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 
 // 집기 목록 조회
@@ -22,11 +22,19 @@ export async function GET(req: NextRequest) {
   const mine = searchParams.get("mine") === "true";
   const sort = searchParams.get("sort") || "latest";
 
+  const minTier = searchParams.get("minTier");
+
   // Featured equipment - return early
   if (featured) {
+    // Tier hierarchy: BASIC < PREMIUM < VIP
+    const EQUIP_TIERS = ["BASIC", "PREMIUM", "VIP"];
+    const minIdx = minTier ? EQUIP_TIERS.indexOf(minTier) : 0;
+    const allowedTiers = EQUIP_TIERS.slice(Math.max(0, minIdx));
+
     const featuredEquipment = await prisma.equipment.findMany({
       where: {
         status: "ACTIVE",
+        tier: { in: allowedTiers } as any,
         adPurchases: {
           some: {
             status: "PAID",
@@ -35,7 +43,7 @@ export async function GET(req: NextRequest) {
         },
       },
       orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
-      take: 10,
+      take: limit,
       select: {
         id: true,
         title: true,
@@ -170,9 +178,7 @@ export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(req);
-  const rl = rateLimit(ip, 5, 60000);
+  const rl = rateLimitRequest(req, 5, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." }, { status: 429 });
   }

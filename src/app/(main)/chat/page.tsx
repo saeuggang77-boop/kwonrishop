@@ -247,6 +247,35 @@ function ChatContent() {
                     {activeRoomData?.listing?.storeName || activeRoomData?.listing?.addressRoad || activeRoomData?.equipment?.title || "매물"}
                   </p>
                 </div>
+                {otherUser && (
+                  <button
+                    onClick={async () => {
+                      if (!confirm(`${otherUser.name || "이 사용자"}를 차단하시겠습니까?\n차단하면 서로 채팅할 수 없습니다.`)) return;
+                      try {
+                        const res = await fetch("/api/users/block", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ blockedId: otherUser.id }),
+                        });
+                        if (res.ok) {
+                          alert("사용자를 차단했습니다.");
+                          window.location.reload();
+                        } else {
+                          const data = await res.json();
+                          alert(data.error || "차단에 실패했습니다.");
+                        }
+                      } catch {
+                        alert("오류가 발생했습니다.");
+                      }
+                    }}
+                    className="p-2 text-gray-400 hover:text-red-500"
+                    title="사용자 차단"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                  </button>
+                )}
               </div>
 
               {/* 푸시 알림 + PWA 설치 유도 */}

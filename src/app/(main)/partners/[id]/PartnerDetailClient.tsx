@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { toast } from "@/lib/toast";
 
-const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
+const StartupPartnerSection = dynamic(() => import("@/components/listing/StartupPartnerSection"), {
   ssr: false,
 });
 
@@ -261,7 +261,13 @@ export default function PartnerDetailClient() {
       )}
 
       {/* 크로스셀 추천 */}
-      <CrossSellSection type="partner" id={id} />
+      <StartupPartnerSection
+        sameType={{ type: "partner", id, title: "추천 협력업체", viewAllLink: "/partners" }}
+        tabs={[
+          { type: "franchise", label: "추천 프랜차이즈", minTier: "SILVER" },
+          { type: "equipment", label: "추천 집기", minTier: "PREMIUM" },
+        ]}
+      />
 
       {/* Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 md:hidden">

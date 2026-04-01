@@ -14,7 +14,7 @@ const IndustryRevenueSection = dynamic(
   { loading: () => <div className="space-y-4"><div className="h-32 bg-gray-100 rounded-xl animate-pulse" /><div className="h-48 bg-gray-100 rounded-xl animate-pulse" /></div> }
 );
 
-const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), { ssr: false });
+const StartupPartnerSection = dynamic(() => import("@/components/listing/StartupPartnerSection"), { ssr: false });
 
 interface FranchiseBrand {
   id: string;
@@ -167,7 +167,13 @@ export default function FranchiseDetailClient() {
           )}
         </div>
       </div>
-      <CrossSellSection type="franchise" id={id} />
+      <StartupPartnerSection
+        sameType={{ type: "franchise", id, title: "추천 프랜차이즈", viewAllLink: "/franchise" }}
+        tabs={[
+          { type: "partner", label: "협력업체", minTier: "PREMIUM" },
+          { type: "equipment", label: "추천 집기", minTier: "PREMIUM" },
+        ]}
+      />
     </div>
   );
 }

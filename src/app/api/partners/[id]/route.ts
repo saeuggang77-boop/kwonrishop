@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 // 협력업체 단일 조회
 export async function GET(
@@ -60,9 +60,7 @@ export async function PUT(
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(req);
-  const rl = rateLimit(ip, 10, 60000);
+  const rl = rateLimitRequest(req, 10, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }
@@ -190,9 +188,7 @@ export async function DELETE(
   if (!validateOrigin(_req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(_req);
-  const rl = rateLimit(ip, 10, 60000);
+  const rl = rateLimitRequest(_req, 10, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }

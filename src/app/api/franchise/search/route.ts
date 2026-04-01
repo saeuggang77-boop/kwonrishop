@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { searchFranchiseBrands } from "@/lib/api/ftc";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { validateOrigin } from "@/lib/csrf";
 
 /**
@@ -12,8 +12,7 @@ import { validateOrigin } from "@/lib/csrf";
  */
 export async function GET(request: Request) {
   // Rate limiting
-  const ip = getClientIp(request);
-  const limiter = rateLimit(ip, 10, 60000);
+  const limiter = rateLimitRequest(request, 10, 60000);
   if (!limiter.success) {
     return NextResponse.json(
       { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },

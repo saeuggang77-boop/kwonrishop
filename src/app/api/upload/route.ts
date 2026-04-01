@@ -3,14 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { validateOrigin } from "@/lib/csrf";
 import { uploadToS3, isS3Configured } from "@/lib/s3";
 
 export async function POST(req: NextRequest) {
   // Rate limiting: 30 uploads per minute (사진 15장 + 증빙자료)
-  const ip = getClientIp(req);
-  const limiter = rateLimit(ip, 30, 60000);
+  const limiter = rateLimitRequest(req, 30, 60000);
   if (!limiter.success) {
     return NextResponse.json(
       { error: "업로드 요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },

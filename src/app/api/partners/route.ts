@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 // 협력업체 목록 조회
 export async function GET(req: NextRequest) {
@@ -18,17 +18,24 @@ export async function GET(req: NextRequest) {
   const sort = searchParams.get("sort") || "latest";
   const featured = searchParams.get("featured") === "true";
   const tier = searchParams.get("tier"); // VIP, PREMIUM, BASIC, FREE
+  const minTier = searchParams.get("minTier");
 
   if (featured) {
+    // Tier hierarchy: BASIC < PREMIUM < VIP
+    const PARTNER_TIERS = ["BASIC", "PREMIUM", "VIP"];
+    const minIdx = minTier ? PARTNER_TIERS.indexOf(minTier) : 0;
+    const allowedTiers = PARTNER_TIERS.slice(Math.max(0, minIdx));
+
     const featuredPartners = await prisma.partnerService.findMany({
       where: {
         status: "ACTIVE",
-        tier: { not: "FREE" },
+        tier: { in: allowedTiers } as any,
       },
       orderBy: [
         { tier: "desc" },
         { viewCount: "desc" },
       ],
+      take: limit,
       select: {
         id: true,
         companyName: true,
@@ -137,9 +144,7 @@ export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-
-  const ip = getClientIp(req);
-  const rl = rateLimit(ip, 5, 60000);
+  const rl = rateLimitRequest(req, 5, 60000);
   if (!rl.success) {
     return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
   }
