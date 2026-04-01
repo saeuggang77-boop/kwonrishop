@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       page++;
     } while (page <= totalPages);
 
-    console.log(`[CronSync] 동기화 완료: ${totalSynced}건`);
+    console.log(`[CronSync] 통계 API 동기화 완료: ${totalSynced}건`);
 
     return NextResponse.json({
       success: true,

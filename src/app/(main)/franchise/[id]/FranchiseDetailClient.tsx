@@ -34,7 +34,17 @@ interface FranchiseBrand {
   tier: "GOLD" | "SILVER" | "BRONZE" | "FREE" | null;
   ftcId: string | null;
   ftcRegisteredAt: string | null;
-  ftcRawData: unknown;
+  ftcRawData: {
+    newStores?: number;
+    contractEnd?: number;
+    contractCancel?: number;
+    revenuePerArea?: number;
+    year?: string;
+  } | null;
+  managerId: boolean | null;
+  representativeName: string | null;
+  businessNumber: string | null;
+  ftcDocId: string | null;
 }
 
 export default function FranchiseDetailClient() {
@@ -120,7 +130,7 @@ export default function FranchiseDetailClient() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="flex border-b border-gray-200 overflow-x-auto" role="tablist">
-          {[{ id: "info", label: "기본정보" }, { id: "fees", label: "창업비용" }, { id: "benefits", label: "창업특혜" }, { id: "analysis", label: "업종분석" }, { id: "inquiry", label: "문의하기" }].map((tab) => (
+          {[{ id: "info", label: "기본정보" }, { id: "fees", label: "창업비용" }, { id: "benefits", label: "창업특혜" }, { id: "analysis", label: "업종분석" }, ...(brand.managerId ? [{ id: "inquiry", label: "문의하기" }] : [{ id: "inquiry", label: "가맹 상담" }])].map((tab) => (
             <button key={tab.id} role="tab" aria-selected={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 min-w-[80px] px-3 md:px-6 py-3 md:py-4 font-medium transition-colors text-sm md:text-base whitespace-nowrap ${activeTab === tab.id ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600" : "text-gray-600 hover:bg-gray-50"}`}>{tab.label}</button>
           ))}
         </div>
@@ -129,6 +139,8 @@ export default function FranchiseDetailClient() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div><span className="text-sm text-gray-600">업종</span><p className="font-medium text-gray-900 mt-1">{brand.industry}</p></div>
+                {brand.representativeName && <div><span className="text-sm text-gray-600">대표자</span><p className="font-medium text-gray-900 mt-1">{brand.representativeName}</p></div>}
+                {brand.businessNumber && brand.businessNumber !== "" && <div><span className="text-sm text-gray-600">사업자등록번호</span><p className="font-medium text-gray-900 mt-1">{brand.businessNumber.replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3")}</p></div>}
                 {brand.totalStores !== null && <div><span className="text-sm text-gray-600">전체 매장수</span><p className="font-medium text-gray-900 mt-1">{brand.totalStores.toLocaleString()}개</p></div>}
                 {brand.avgRevenue !== null && <div><span className="text-sm text-gray-600">평균 매출</span><p className="font-medium text-gray-900 mt-1">월 {brand.avgRevenue.toLocaleString()}만원</p></div>}
                 {brand.ftcRegisteredAt && <div><span className="text-sm text-gray-600">공정위 등록일</span><p className="font-medium text-gray-900 mt-1">{brand.ftcRegisteredAt}</p></div>}
@@ -136,12 +148,40 @@ export default function FranchiseDetailClient() {
               </div>
               {brand.description && <div className="pt-4 border-t border-gray-200"><span className="text-sm text-gray-600">브랜드 소개</span><p className="text-gray-900 mt-2 whitespace-pre-wrap">{brand.description}</p></div>}
               {!!brand.ftcRawData && (
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-gray-200 space-y-4">
                   <div className="bg-green-50 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2"><span className="text-lg">📋</span><h4 className="font-medium text-gray-900">공정위 정보공개서</h4></div>
-                    <p className="text-sm text-gray-600 mb-3">이 브랜드는 공정거래위원회에 정식 등록된 프랜차이즈입니다.</p>
-                    {brand.ftcId && <a href={`https://franchise.ftc.go.kr/mnu/00013/program/userRqst/view.do?firMstSn=${brand.ftcId}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium">공정위 정보공개서 원문 보기 →</a>}
+                    <div className="flex items-center gap-2 mb-3"><span className="text-lg">📊</span><h4 className="font-medium text-gray-900">공정위 공시 통계 ({brand.ftcRawData.year || '2024'}년)</h4></div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {brand.ftcRawData.newStores != null && (
+                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                          <p className="text-xs text-gray-500 mb-1">신규 가맹점</p>
+                          <p className="text-lg font-bold text-green-700">{brand.ftcRawData.newStores.toLocaleString()}<span className="text-xs font-normal text-gray-500">개</span></p>
+                        </div>
+                      )}
+                      {brand.ftcRawData.contractEnd != null && (
+                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                          <p className="text-xs text-gray-500 mb-1">계약 종료</p>
+                          <p className="text-lg font-bold text-gray-700">{brand.ftcRawData.contractEnd.toLocaleString()}<span className="text-xs font-normal text-gray-500">건</span></p>
+                        </div>
+                      )}
+                      {brand.ftcRawData.contractCancel != null && (
+                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                          <p className="text-xs text-gray-500 mb-1">계약 해지</p>
+                          <p className="text-lg font-bold text-red-600">{brand.ftcRawData.contractCancel.toLocaleString()}<span className="text-xs font-normal text-gray-500">건</span></p>
+                        </div>
+                      )}
+                      {brand.ftcRawData.revenuePerArea != null && brand.ftcRawData.revenuePerArea > 0 && (
+                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                          <p className="text-xs text-gray-500 mb-1">면적당 매출</p>
+                          <p className="text-lg font-bold text-blue-700">{Math.round(brand.ftcRawData.revenuePerArea / 1000).toLocaleString()}<span className="text-xs font-normal text-gray-500">만원</span></p>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">* 공정거래위원회 가맹사업거래 정보공개서 기준</p>
                   </div>
+                  {brand.ftcId && (
+                    <a href={`https://franchise.ftc.go.kr/mnu/00013/program/userRqst/view.do?firMstSn=${brand.ftcId}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium">공정위 정보공개서 원문 보기 →</a>
+                  )}
                 </div>
               )}
             </div>
@@ -196,12 +236,28 @@ export default function FranchiseDetailClient() {
           {activeTab === "benefits" && (<div>{brand.benefits ? <div className="prose max-w-none"><p className="text-gray-900 whitespace-pre-wrap">{brand.benefits}</p></div> : <div className="text-center py-12 text-gray-400"><p>등록된 창업특혜 정보가 없습니다</p></div>}</div>)}
           {activeTab === "analysis" && <IndustryRevenueSection industry={brand.industry} brandName={brand.brandName} brandAvgRevenue={brand.avgRevenue} />}
           {activeTab === "inquiry" && (
-            <form onSubmit={handleInquirySubmit} className="space-y-4">
-              <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="이름을 입력하세요" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="010-0000-0000" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-2">문의내용</label><textarea required value={message} onChange={(e) => setMessage(e.target.value)} rows={6} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none" placeholder="문의하실 내용을 입력하세요" /></div>
-              <button type="submit" disabled={submitting} className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">{submitting ? "전송 중..." : "문의하기"}</button>
-            </form>
+            brand.managerId ? (
+              <form onSubmit={handleInquirySubmit} className="space-y-4">
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="이름을 입력하세요" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="010-0000-0000" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">문의내용</label><textarea required value={message} onChange={(e) => setMessage(e.target.value)} rows={6} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none" placeholder="문의하실 내용을 입력하세요" /></div>
+                <button type="submit" disabled={submitting} className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">{submitting ? "전송 중..." : "문의하기"}</button>
+              </form>
+            ) : (
+              <div className="text-center py-10">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">아직 본사가 등록되지 않은 브랜드입니다</h3>
+                <p className="text-sm text-gray-500 mb-1">이 브랜드는 공정위 정보공개서 기반으로 자동 등록된 브랜드로,</p>
+                <p className="text-sm text-gray-500 mb-6">본사가 직접 관리하고 있지 않아 문의 접수가 불가합니다.</p>
+                <div className="bg-blue-50 rounded-xl p-5 max-w-md mx-auto border border-blue-200">
+                  <p className="text-sm font-medium text-blue-900 mb-1">이 브랜드의 본사이신가요?</p>
+                  <p className="text-xs text-blue-600 mb-3">유료 플랜에 등록하시면 가맹 문의를 직접 받을 수 있습니다.</p>
+                  <button onClick={() => router.push("/pricing?tab=franchise")} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">본사 등록하고 문의 받기</button>
+                </div>
+              </div>
+            )
           )}
         </div>
       </div>

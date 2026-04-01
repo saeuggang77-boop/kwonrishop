@@ -332,6 +332,8 @@ model FranchiseBrand {
   avgRevenue     Int?
   ftcRegisteredAt String?
   ftcRawData     Json?
+  ftcDocId       String?    // 정보공개서 일련번호 (jngIfrmpSn)
+  representativeName String? // 대표자명
 
   // 유료 서비스 - 본사가 직접 편집
   tier           FranchiseTier @default(FREE)
