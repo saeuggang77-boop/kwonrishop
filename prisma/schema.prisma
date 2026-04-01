@@ -508,6 +508,9 @@ model AdPurchase {
   sellerReport     SellerReport?
 
   @@index([userId, status])
+  @@index([listingId, status, expiresAt])
+  @@index([partnerServiceId, status, expiresAt])
+  @@index([equipmentId, status, expiresAt])
 }
 
 enum PaymentStatus {
@@ -665,6 +668,7 @@ model Review {
   listing  Listing @relation(fields: [listingId], references: [id])
 
   @@unique([reviewerId, listingId])
+  @@index([listingId])
 }
 
 model Notification {
