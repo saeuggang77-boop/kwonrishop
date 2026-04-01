@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyBearerToken } from "@/lib/cron-auth";
+import { rateLimitRequest } from "@/lib/rate-limit";
 import { deleteFromS3, isS3Configured } from "@/lib/s3";
 import { unlink, readdir } from "fs/promises";
 import path from "path";
@@ -23,6 +24,11 @@ export async function GET(request: NextRequest) {
 
     if (!verifyBearerToken(authHeader, cronSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = rateLimitRequest(request, 2, 60000);
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const now = new Date();

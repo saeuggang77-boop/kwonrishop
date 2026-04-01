@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculateNextBumpTime } from "@/lib/bump-utils";
+import { verifyBearerToken } from "@/lib/cron-auth";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify cron secret
+    // Verify cron secret with timing-safe comparison
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
 
@@ -13,8 +15,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Cron not configured" }, { status: 500 });
     }
 
-    if (authHeader !== `Bearer ${cronSecret}`) {
+    if (!verifyBearerToken(authHeader, cronSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = rateLimitRequest(request, 2, 60000);
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const now = new Date();

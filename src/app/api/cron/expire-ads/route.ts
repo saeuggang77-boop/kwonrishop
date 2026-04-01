@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notifyPaymentExpiring } from "@/lib/kakao-alimtalk";
 import { sendPushToUser } from "@/lib/push";
 import { verifyBearerToken } from "@/lib/cron-auth";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,6 +18,11 @@ export async function GET(request: NextRequest) {
 
     if (!verifyBearerToken(authHeader, cronSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = rateLimitRequest(request, 2, 60000);
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const now = new Date();

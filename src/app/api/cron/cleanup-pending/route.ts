@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyBearerToken } from "@/lib/cron-auth";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 /**
  * 크론잡: PENDING 결제 자동 정리
@@ -19,6 +20,11 @@ export async function GET(request: NextRequest) {
 
     if (!verifyBearerToken(authHeader, cronSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = rateLimitRequest(request, 2, 60000);
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const now = new Date();

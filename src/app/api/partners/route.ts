@@ -30,6 +30,9 @@ export async function GET(req: NextRequest) {
       where: {
         status: "ACTIVE",
         tier: { in: allowedTiers } as any,
+        tierExpiresAt: {
+          gt: new Date(),
+        },
       },
       orderBy: [
         { tier: "desc" },

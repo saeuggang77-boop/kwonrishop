@@ -22,7 +22,10 @@ export async function GET(request: Request) {
         where: {
           tier: {
             in: allowedTiers,
-          } as any
+          } as any,
+          tierExpiresAt: {
+            gt: new Date(),
+          },
         },
         take: limit,
         orderBy: [

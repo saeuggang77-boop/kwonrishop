@@ -113,8 +113,27 @@ export async function POST(request: NextRequest) {
 
     if (!tossResponse.ok) {
       console.error("Toss payment confirmation failed:", tossData);
+      // Toss 내부 에러 메시지를 사용자에게 직접 노출하지 않음
+      const userMessage = (() => {
+        switch (tossData.code) {
+          case "ALREADY_PROCESSED_PAYMENT": return "이미 처리된 결제입니다.";
+          case "PROVIDER_ERROR": return "결제 서비스에 일시적 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+          case "EXCEED_MAX_CARD_INSTALLMENT_PLAN": return "할부 개월 수가 초과되었습니다.";
+          case "NOT_ALLOWED_POINT_USE": return "포인트 사용이 불가한 결제입니다.";
+          case "INVALID_REJECT_CARD": return "카드 사용이 거절되었습니다. 카드사에 문의해주세요.";
+          case "BELOW_MINIMUM_AMOUNT": return "최소 결제 금액 미만입니다.";
+          case "INVALID_CARD_EXPIRATION": return "카드 유효기간이 올바르지 않습니다.";
+          case "INVALID_STOPPED_CARD": return "정지된 카드입니다. 카드사에 문의해주세요.";
+          case "EXCEED_MAX_DAILY_PAYMENT_COUNT": return "일일 결제 횟수를 초과했습니다. 내일 다시 시도해주세요.";
+          case "EXCEED_MAX_PAYMENT_AMOUNT": return "결제 한도를 초과했습니다.";
+          case "REJECT_ACCOUNT_PAYMENT": return "계좌 결제가 거절되었습니다. 은행에 문의해주세요.";
+          case "REJECT_CARD_PAYMENT": return "카드 결제가 거절되었습니다. 카드사에 문의해주세요.";
+          case "REJECT_CARD_COMPANY": return "카드사에서 결제를 거절했습니다. 카드사에 문의해주세요.";
+          default: return "결제 승인에 실패했습니다. 다시 시도해주세요.";
+        }
+      })();
       return NextResponse.json(
-        { error: tossData.message || "결제 승인에 실패했습니다" },
+        { error: userMessage },
         { status: 400 }
       );
     }
