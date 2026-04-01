@@ -334,7 +334,7 @@ function PackageCard({
       };
 
   // features에서 표시할 항목 생성
-  const featureList = buildFeatureList(features, product.categoryScope);
+  const featureList = buildFeatureList(features, product.categoryScope, product.duration);
 
   return (
     <div
@@ -395,89 +395,119 @@ function PackageCard({
 
 function buildFeatureList(
   features: Record<string, any>,
-  scope: string
+  scope: string,
+  duration?: number | null
 ): { icon: string; text: string }[] {
   const list: { icon: string; text: string }[] = [];
 
-  // 통일된 순서: 카드형 → 목록등록 → 상위노출 → 끌어올리기 → 메인노출 → 배지 → 크로스셀
+  // 통일된 순서: 카드형 → 디렉토리등재 → 전용페이지 → 상위노출 → 끌어올리기 → 메인노출 → 인증마크 → 노출보장 → 등급배지 → 크로스셀
 
   // 1. 카드 표시형
   if (features.layoutType) {
     if (features.layoutType === "row") {
-      list.push({ icon: "📋", text: "줄광고형 등록" });
+      list.push({ icon: "📋", text: "텍스트 목록 등록" });
     } else if (features.layoutType === "horizontal-3col") {
-      list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+      list.push({ icon: "🎴", text: "프리미엄 가로형 카드 (3열 레이아웃)" });
     } else if (features.layoutType === "large-2col") {
-      list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+      list.push({ icon: "🏆", text: "VIP 전용 대형 카드 (2열 레이아웃)" });
     }
   } else if (scope === "LISTING") {
     if (features.mainVip) {
-      list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+      list.push({ icon: "🏆", text: "VIP 전용 대형 카드 (2열 레이아웃)" });
     } else if (features.mainPremium) {
-      list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+      list.push({ icon: "🎴", text: "프리미엄 가로형 카드 (3열 레이아웃)" });
     } else {
-      list.push({ icon: "📋", text: "줄광고형 등록" });
+      list.push({ icon: "📋", text: "텍스트 줄광고형 등록" });
     }
   }
 
-  // 2. 목록 등록
+  // 2. 디렉토리 등재 (franchise)
   if (features.listingRegister)
-    list.push({ icon: "📝", text: "목록 등록" });
+    list.push({ icon: "📝", text: "프랜차이즈 디렉토리 정식 등재" });
 
-  // 3. 목록 상위 노출
-  if (features.topExposure)
-    list.push({ icon: "⬆️", text: "목록 상위 노출" });
-
-  // 4. 끌어올리기
-  if (features.bumpCount)
-    list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회` });
-
-  // 5. 메인 페이지 노출 (scope별 분기)
-  if (scope === "LISTING") {
-    if (features.mainVip)
-      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 섹션 노출" });
-    if (features.mainPremium)
-      list.push({ icon: "💎", text: "메인 페이지 프리미엄 매물 섹션 노출" });
-    if (features.mainBasic)
-      list.push({ icon: "🏠", text: "메인 페이지 베이직 매물 섹션 노출" });
-    if (features.mainFeatured)
-      list.push({ icon: "⭐", text: "메인 페이지 대형 카드 노출" });
-  } else if (scope === "FRANCHISE") {
-    if (features.mainFeatured)
-      list.push({ icon: "⭐", text: "메인 페이지 대형 카드 노출" });
+  // 3. 전용 상세 페이지 (실제 제공되는 혜택)
+  if (scope === "FRANCHISE") {
+    list.push({ icon: "🏪", text: "전용 브랜드 상세 페이지 제공" });
   } else if (scope === "PARTNER") {
-    if (features.mainRecommend)
-      list.push({ icon: "⭐", text: "메인 페이지 VIP 대형 노출" });
-    if (features.mainExposure)
-      list.push({ icon: "🏠", text: "메인 페이지 노출" });
+    list.push({ icon: "🏢", text: "전용 서비스 프로필 페이지 제공" });
   } else if (scope === "EQUIPMENT") {
-    if (features.mainVip)
-      list.push({ icon: "👑", text: "메인 페이지 VIP 대형 노출" });
-    if (features.mainPremium)
-      list.push({ icon: "💎", text: "메인 페이지 프리미엄 섹션 노출" });
+    list.push({ icon: "📦", text: "전용 상품 상세 페이지 제공" });
   }
 
-  // 6. 등급 배지
-  if (features.badge)
-    list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
+  // 4. 검색 상위 노출
+  if (features.topExposure)
+    list.push({ icon: "⬆️", text: "검색 결과 상단 우선 배치" });
 
-  // 7. 크로스셀
+  // 5. 끌어올리기
+  if (features.bumpCount)
+    list.push({ icon: "🔥", text: `끌어올리기 ${features.bumpCount}회 (목록 최상단 재노출)` });
+
+  // 6. 메인 페이지 노출 (scope별 분기)
+  if (scope === "LISTING") {
+    if (features.mainVip)
+      list.push({ icon: "👑", text: "권리샵 메인 화면 VIP 전용 대형 배너 노출" });
+    if (features.mainPremium)
+      list.push({ icon: "💎", text: "권리샵 메인 화면 프리미엄 매물 섹션 노출" });
+    if (features.mainBasic)
+      list.push({ icon: "🏠", text: "권리샵 메인 화면 매물 섹션 노출" });
+  } else if (scope === "FRANCHISE") {
+    if (features.mainFeatured)
+      list.push({ icon: "⭐", text: "권리샵 메인 화면 대형 카드 노출" });
+  } else if (scope === "PARTNER") {
+    if (features.mainRecommend)
+      list.push({ icon: "⭐", text: "권리샵 메인 화면 VIP 전용 대형 노출" });
+    if (features.mainExposure)
+      list.push({ icon: "🏠", text: "권리샵 메인 화면 노출" });
+  } else if (scope === "EQUIPMENT") {
+    // BUG FIX: seed uses mainRecommend/mainExposure (not mainVip/mainPremium)
+    if (features.mainRecommend)
+      list.push({ icon: "👑", text: "권리샵 메인 화면 VIP 전용 대형 노출" });
+    if (features.mainExposure)
+      list.push({ icon: "🏠", text: "권리샵 메인 화면 노출" });
+  }
+
+  // 7. 인증 마크 (listing basic verified)
+  if (features.verified)
+    list.push({ icon: "✅", text: "인증 매물 마크 표시" });
+
+  // 8. 노출 기간 보장
+  if (duration) {
+    const days = duration >= 365 ? "12개월" : duration >= 180 ? "6개월" : duration >= 90 ? "3개월" : `${duration}일`;
+    list.push({ icon: "📅", text: `${days} 노출 보장` });
+  }
+
+  // 9. 등급 배지
+  if (features.badge)
+    list.push({ icon: "🎖️", text: `${features.badge} 인증 마크` });
+
+  // 10. 크로스셀 (scope별 구체적 문구)
   if (scope === "LISTING") {
     if (features.mainVip) {
-      list.push({ icon: "🔗", text: "프랜차이즈/협력업체 상세 페이지 추천 매물 노출 (VIP 전용)" });
+      list.push({ icon: "🔗", text: "프랜차이즈·협력업체 상세 페이지에 추천 매물 노출 (VIP 전용)" });
     }
   } else {
     const isTopTier =
       (scope === "FRANCHISE" && (features.mainFeatured || features.mainRecommend)) ||
       (scope === "PARTNER" && features.mainRecommend) ||
-      (scope === "EQUIPMENT" && features.mainVip);
-    const topLabel = scope === "FRANCHISE" ? "골드" : "VIP";
+      (scope === "EQUIPMENT" && features.mainRecommend);
+
+    const crossSellText = scope === "FRANCHISE"
+      ? "협력업체·집기 상세 페이지에 브랜드 추천 노출"
+      : scope === "PARTNER"
+      ? "프랜차이즈·집기 상세 페이지에 업체 추천 노출"
+      : "프랜차이즈·협력업체 상세 페이지에 추천 노출";
+
+    const topCrossSellText = scope === "FRANCHISE"
+      ? "매물 상세 '추천 프랜차이즈' 노출 (골드 전용)"
+      : scope === "PARTNER"
+      ? "매물 상세 '추천 협력업체' 노출 (VIP 전용)"
+      : "매물 상세 '추천 집기' 노출 (VIP 전용)";
 
     if (isTopTier) {
-      list.push({ icon: "🔗", text: "타 카테고리 상세 페이지 추천 노출" });
-      list.push({ icon: "🏅", text: `매물 상세 페이지 추천 노출 (${topLabel} 전용)` });
+      list.push({ icon: "🔗", text: crossSellText });
+      list.push({ icon: "🏅", text: topCrossSellText });
     } else if (features.topExposure) {
-      list.push({ icon: "🔗", text: "타 카테고리 상세 페이지 추천 노출" });
+      list.push({ icon: "🔗", text: crossSellText });
     }
   }
 
