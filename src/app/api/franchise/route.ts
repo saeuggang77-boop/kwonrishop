@@ -25,22 +25,13 @@ export async function GET(request: Request) {
           } as any
         },
         take: limit,
-        include: {
-          _count: { select: { inquiries: true } },
-        },
         orderBy: [
           { tier: "desc" },
           { totalStores: "desc" },
         ],
       });
 
-      const transformed = featuredBrands.map((brand) => {
-        const { _count, ...rest } = brand;
-        return {
-          ...rest,
-          inquiryCount: _count.inquiries,
-        };
-      });
+      const transformed = featuredBrands;
 
       return NextResponse.json({ brands: transformed, featured: true });
     }
@@ -61,37 +52,21 @@ export async function GET(request: Request) {
       where.industry = industry;
     }
 
-    // Get total count
-    const total = await prisma.franchiseBrand.count({ where });
+    // count + findMany 병렬 실행
+    const [total, brands] = await Promise.all([
+      prisma.franchiseBrand.count({ where }),
+      prisma.franchiseBrand.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [
+          { tier: "desc" },
+          { totalStores: "desc" },
+        ],
+      }),
+    ]);
 
-    // Get brands with inquiry count
-    const brands = await prisma.franchiseBrand.findMany({
-      where,
-      skip,
-      take: limit,
-      include: {
-        _count: {
-          select: {
-            inquiries: true,
-          },
-        },
-      },
-      orderBy: [
-        {
-          tier: "desc", // GOLD > SILVER > BRONZE > FREE
-        },
-        {
-          totalStores: "desc",
-        },
-      ],
-    });
-
-    // Transform to include inquiryCount
-    const transformedBrands = brands.map((brand) => ({
-      ...brand,
-      inquiryCount: brand._count.inquiries,
-      _count: undefined,
-    }));
+    const transformedBrands = brands;
 
     return NextResponse.json({
       brands: transformedBrands,

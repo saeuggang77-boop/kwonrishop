@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
             status: "PAID",
             expiresAt: { gt: new Date() },
           },
-          include: { product: { select: { id: true, name: true, price: true, features: true } } },
+          select: { product: { select: { name: true, features: true } } },
           take: 1,
           orderBy: { createdAt: "desc" },
         },
@@ -94,12 +94,12 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // 판매자별 리뷰 평균 계산
-    const featuredUserIds = [...new Set(featuredListings.map((l) => l.userId))];
+    // 판매자별 리뷰 평균 계산 (listingId 직접 조회로 조인 제거)
+    const featuredListingIds = featuredListings.map((l) => l.id);
     const featuredReviewStats = await prisma.review.groupBy({
       by: ['listingId'],
       where: {
-        listing: { userId: { in: featuredUserIds } },
+        listingId: { in: featuredListingIds },
       },
       _avg: {
         accuracyRating: true,
@@ -287,7 +287,7 @@ export async function GET(req: NextRequest) {
             status: "PAID",
             expiresAt: { gt: new Date() },
           },
-          include: { product: { select: { id: true, name: true, features: true } } },
+          select: { product: { select: { name: true, features: true } } },
           take: 1,
           orderBy: { createdAt: "desc" as const },
         },
@@ -297,12 +297,12 @@ export async function GET(req: NextRequest) {
     prisma.listing.count({ where }),
   ]);
 
-  // 판매자별 리뷰 평균 계산 (모든 매물의 userId 수집)
-  const userIds = [...new Set(listings.map((l: any) => l.userId))];
+  // 판매자별 리뷰 평균 계산 (listingId 직접 조회로 조인 제거)
+  const listingIds = listings.map((l: any) => l.id);
   const reviewStats = await prisma.review.groupBy({
     by: ['listingId'],
     where: {
-      listing: { userId: { in: userIds } },
+      listingId: { in: listingIds },
     },
     _avg: {
       accuracyRating: true,
