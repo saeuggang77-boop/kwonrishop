@@ -9,6 +9,10 @@
     {
       "path": "/api/cron/expire-ads",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/sync-franchise",
+      "schedule": "0 4 1 * *"
     }
   ]
 }
