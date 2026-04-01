@@ -99,7 +99,7 @@ export default function EquipmentRegisterPage() {
   useEffect(() => {
     if (typeof window !== "undefined" && !window.daum) {
       const script = document.createElement("script");
-      script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+      script.src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
       script.async = true;
       document.head.appendChild(script);
     }

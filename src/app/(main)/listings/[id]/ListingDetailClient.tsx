@@ -680,7 +680,7 @@ export default function ListingDetailClient() {
       <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
         등록 {(() => { const days = Math.floor((Date.now() - new Date(listing.createdAt).getTime()) / (1000 * 60 * 60 * 24)); return days === 0 ? "오늘" : `${days}일째`; })()}
         <span className="mx-1">·</span>조회 {listing.viewCount}
-        <span className="mx-1">·</span>관심 {listing._count.favorites}
+        <span className="mx-1">·</span>관심 {listing.favoriteCount}
       </p>
 
       {/* ===== 4. 가격 요약 ===== */}
@@ -1029,7 +1029,7 @@ export default function ListingDetailClient() {
               />
               <RegionalPerformanceItem
                 label="관심"
-                mine={listing._count.favorites}
+                mine={listing.favoriteCount}
                 avg={listing.regionStats.avgFavoriteCount}
               />
             </div>
