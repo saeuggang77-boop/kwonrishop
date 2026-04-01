@@ -13,60 +13,61 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const listing = await prisma.listing.findUnique({
-    where: { id },
-    include: {
-      category: { select: { id: true, name: true, icon: true } },
-      subCategory: { select: { id: true, name: true } },
-      images: { orderBy: { sortOrder: "asc" } },
-      documents: { orderBy: { createdAt: "asc" } },
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          phone: true,
-          createdAt: true,
-          businessVerification: {
-            select: { verified: true },
+  // listing + session 병렬 조회
+  const [listing, session] = await Promise.all([
+    prisma.listing.findUnique({
+      where: { id },
+      include: {
+        category: { select: { id: true, name: true, icon: true } },
+        subCategory: { select: { id: true, name: true } },
+        images: { orderBy: { sortOrder: "asc" } },
+        documents: { orderBy: { createdAt: "asc" } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            phone: true,
+            createdAt: true,
+            businessVerification: {
+              select: { verified: true },
+            },
           },
         },
-      },
-      reviews: {
-        select: {
-          id: true,
-          accuracyRating: true,
-          communicationRating: true,
-          conditionRating: true,
-          content: true,
-          createdAt: true,
+        reviews: {
+          select: {
+            id: true,
+            accuracyRating: true,
+            communicationRating: true,
+            conditionRating: true,
+            content: true,
+            createdAt: true,
+          },
+        },
+        _count: {
+          select: { favorites: true, chatRooms: true },
+        },
+        adPurchases: {
+          where: {
+            status: "PAID",
+            expiresAt: { gt: new Date() },
+          },
+          include: { product: { select: { id: true, name: true, price: true, features: true } } },
+          take: 1,
+          orderBy: { createdAt: "desc" as const },
+        },
+        priceHistory: {
+          orderBy: { createdAt: "desc" },
+          take: 20,
         },
       },
-      _count: {
-        select: { favorites: true, chatRooms: true },
-      },
-      adPurchases: {
-        where: {
-          status: "PAID",
-          expiresAt: { gt: new Date() },
-        },
-        include: { product: { select: { id: true, name: true, price: true, features: true } } },
-        take: 1,
-        orderBy: { createdAt: "desc" as const },
-      },
-      priceHistory: {
-        orderBy: { createdAt: "desc" },
-        take: 20,
-      },
-    },
-  });
+    }),
+    getServerSession(authOptions),
+  ]);
 
   if (!listing || listing.status === "DELETED") {
     return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
   }
-
-  // 세션 조회 (비활성 매물 접근 제어 + favorited 조회 용)
-  const session = await getServerSession(authOptions);
 
   // 비활성 매물은 소유자만 조회 가능
   if (listing.status !== "ACTIVE" && listing.status !== "RESERVED" && listing.status !== "SOLD") {
@@ -75,21 +76,34 @@ export async function GET(
     }
   }
 
-  // 조회수 증가 (atomic)
-  const updated = await prisma.listing.update({
+  // 조회수 증가 (fire-and-forget, 응답 차단하지 않음)
+  prisma.listing.update({
     where: { id },
     data: { viewCount: { increment: 1 } },
-    select: { viewCount: true },
-  });
+  }).catch(() => {});
 
-  // favorited 여부 조회
-  let favorited = false;
-  if (session?.user?.id) {
-    const fav = await prisma.favorite.findUnique({
-      where: { userId_listingId: { userId: session.user.id, listingId: id } },
-    });
-    favorited = !!fav;
-  }
+  // favorited + regionStats 병렬 조회
+  const regionPrefix = listing.addressJibun?.split(" ").slice(0, 2).join(" ");
+  const [fav, regionAgg] = await Promise.all([
+    session?.user?.id
+      ? prisma.favorite.findUnique({
+          where: { userId_listingId: { userId: session.user.id, listingId: id } },
+        })
+      : null,
+    regionPrefix && listing.categoryId
+      ? prisma.listing.aggregate({
+          where: {
+            categoryId: listing.categoryId,
+            addressJibun: { startsWith: regionPrefix },
+            status: "ACTIVE",
+            id: { not: listing.id },
+          },
+          _avg: { viewCount: true, favoriteCount: true },
+          _count: true,
+        })
+      : null,
+  ]);
+  const favorited = !!fav;
 
   // featuredTier 계산 (features.badge 기반, 없으면 productId/productName 폴백)
   const adProduct = listing.adPurchases?.[0]?.product;
@@ -117,27 +131,14 @@ export async function GET(
   }
 
   // 지역 평균 대비 성과 (같은 지역+업종, 소유자에게만 노출)
-  const regionPrefix = listing.addressJibun?.split(" ").slice(0, 2).join(" ");
   let regionStats = null;
-  if (regionPrefix && listing.categoryId) {
-    const stats = await prisma.listing.aggregate({
-      where: {
-        categoryId: listing.categoryId,
-        addressJibun: { startsWith: regionPrefix },
-        status: "ACTIVE",
-        id: { not: listing.id },
-      },
-      _avg: { viewCount: true, favoriteCount: true },
-      _count: true,
-    });
-    if (stats._count > 0) {
-      regionStats = {
-        avgViewCount: Math.round(stats._avg.viewCount || 0),
-        avgFavoriteCount: Math.round(stats._avg.favoriteCount || 0),
-        totalCount: stats._count,
-        region: regionPrefix,
-      };
-    }
+  if (regionAgg && regionAgg._count > 0) {
+    regionStats = {
+      avgViewCount: Math.round(regionAgg._avg.viewCount || 0),
+      avgFavoriteCount: Math.round(regionAgg._avg.favoriteCount || 0),
+      totalCount: regionAgg._count,
+      region: regionPrefix,
+    };
   }
 
   // 연락처 비공개인 경우 전화번호 제거 (spread 오버라이드 방지를 위해 명시적 재구성)
@@ -152,7 +153,7 @@ export async function GET(
 
   const result = {
     ...listing,
-    viewCount: updated.viewCount,
+    viewCount: listing.viewCount + 1,
     featuredTier,
     favorited,
     sellerTrust,

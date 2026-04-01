@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: "https",
@@ -54,7 +55,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['date-fns'],
+    optimizePackageImports: ['date-fns', 'zod', '@sentry/nextjs', 'pusher-js', 'firebase'],
     staleTimes: {
       dynamic: 0,
       static: 30,

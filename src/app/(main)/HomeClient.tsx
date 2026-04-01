@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
 import NoticeBanner from "@/components/NoticeBanner";
 import ListingCard from "@/components/listing/ListingCard";
 import Image from "next/image";
@@ -34,7 +33,7 @@ interface Listing {
 interface FranchiseBrand {
   id: string;
   brandName: string;
-  industry: string;
+  industry: string | null;
   totalStores: number | null;
   logo: string | null;
   tier: string;
@@ -161,46 +160,25 @@ const CATEGORY_ITEMS = [
   },
 ];
 
-export default function HomeClient() {
+interface HomeClientProps {
+  initialListings: Listing[];
+  initialFranchiseBrands: FranchiseBrand[];
+  initialPartnerServices: PartnerService[];
+  initialEquipment: Equipment[];
+}
+
+export default function HomeClient({
+  initialListings,
+  initialFranchiseBrands,
+  initialPartnerServices,
+  initialEquipment,
+}: HomeClientProps) {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [latestListings, setLatestListings] = useState<Listing[]>([]);
-  const [franchiseBrands, setFranchiseBrands] = useState<FranchiseBrand[]>([]);
-  const [partnerServices, setPartnerServices] = useState<PartnerService[]>([]);
-  const [equipment, setEquipment] = useState<Equipment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const pathname = usePathname();
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [latestRes, franchiseRes, partnerRes, equipmentRes] = await Promise.all([
-        fetch("/api/listings?limit=20&sort=latest"),
-        fetch("/api/franchise?featured=true&limit=10"),
-        fetch("/api/partners?featured=true&limit=10"),
-        fetch("/api/equipment?featured=true&limit=8"),
-      ]);
-
-      const [latestData, franchiseData, partnerData, equipmentData] = await Promise.all([
-        latestRes.json(),
-        franchiseRes.json(),
-        partnerRes.json(),
-        equipmentRes.json(),
-      ]);
-
-      setLatestListings(latestData.listings || []);
-      setFranchiseBrands(franchiseData.brands || []);
-      setPartnerServices(partnerData.partners || []);
-      setEquipment(equipmentData.equipment || []);
-    } catch (error) {
-      console.error("Failed to fetch homepage data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData, pathname]);
+  const latestListings = initialListings;
+  const franchiseBrands = initialFranchiseBrands;
+  const partnerServices = initialPartnerServices;
+  const equipment = initialEquipment;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -354,7 +332,7 @@ export default function HomeClient() {
       </section>
 
       {/* ===== 4. VIP 매물 ===== */}
-      {!loading && vipListings.length > 0 && (
+      {vipListings.length > 0 && (
         <section className="py-14 bg-bg-warm">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-end justify-between mb-6">
@@ -366,7 +344,7 @@ export default function HomeClient() {
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {vipListings.map((listing) => {
+              {vipListings.map((listing, vipIndex) => {
                 const addr = listing.addressRoad || listing.addressJibun || "주소 미입력";
                 const shortAddr = addr.split(" ").slice(0, 3).join(" ");
                 return (
@@ -383,6 +361,7 @@ export default function HomeClient() {
                           fill
                           sizes="(max-width: 768px) 100vw, 40vw"
                           className="object-cover"
+                          priority={vipIndex === 0}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -446,7 +425,7 @@ export default function HomeClient() {
       )}
 
       {/* ===== 5. 프리미엄 · 베이직 매물 (통합) ===== */}
-      {!loading && premBasicListings.length > 0 && (
+      {premBasicListings.length > 0 && (
         <section className="py-14">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-end justify-between mb-6">
@@ -478,13 +457,6 @@ export default function HomeClient() {
               더보기 →
             </Link>
           </div>
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl h-32 animate-pulse" />
-              ))}
-            </div>
-          ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* GOLD 브랜드 (span 2) */}
               {goldBrands.slice(0, 1).map((brand) => (
@@ -566,7 +538,6 @@ export default function HomeClient() {
                 </Link>
               ))}
             </div>
-          )}
         </div>
       </section>
 
@@ -579,13 +550,6 @@ export default function HomeClient() {
               더보기 →
             </Link>
           </div>
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-gray-100 rounded-2xl h-32 animate-pulse" />
-              ))}
-            </div>
-          ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* VIP 파트너 (span 2) */}
               {vipPartners.slice(0, 1).map((partner) => (
@@ -657,12 +621,11 @@ export default function HomeClient() {
                 </Link>
               ))}
             </div>
-          )}
         </div>
       </section>
 
       {/* ===== 8. 집기장터 섹션 ===== */}
-      {!loading && (vipEquipment.length > 0 || premiumEquipment.length > 0) && (
+      {(vipEquipment.length > 0 || premiumEquipment.length > 0) && (
         <section className="py-14 bg-bg-cool">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-end justify-between mb-6">
