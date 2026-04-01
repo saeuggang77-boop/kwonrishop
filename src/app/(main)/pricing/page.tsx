@@ -410,6 +410,14 @@ function buildFeatureList(
     } else if (features.layoutType === "large-2col") {
       list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
     }
+  } else if (scope === "LISTING") {
+    if (features.mainVip) {
+      list.push({ icon: "🏆", text: "VIP 대형 카드 (2열)" });
+    } else if (features.mainPremium) {
+      list.push({ icon: "🎴", text: "가로형 카드 (3열)" });
+    } else {
+      list.push({ icon: "📋", text: "줄광고형 등록" });
+    }
   }
 
   // 2. 목록 등록
@@ -453,8 +461,12 @@ function buildFeatureList(
   if (features.badge)
     list.push({ icon: "🎖️", text: `${features.badge} 등급 배지` });
 
-  // 7. 크로스셀 (LISTING 제외)
-  if (scope !== "LISTING") {
+  // 7. 크로스셀
+  if (scope === "LISTING") {
+    if (features.mainVip) {
+      list.push({ icon: "🔗", text: "프랜차이즈/협력업체 상세 페이지 추천 매물 노출 (VIP 전용)" });
+    }
+  } else {
     const isTopTier =
       (scope === "FRANCHISE" && (features.mainFeatured || features.mainRecommend)) ||
       (scope === "PARTNER" && features.mainRecommend) ||
