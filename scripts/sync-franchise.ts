@@ -182,15 +182,14 @@ async function main() {
       }
     }
 
-    // 본문 파싱: 비용/대표자 정보가 없는 브랜드 대상
+    // 본문 파싱: SEO 확장 데이터가 없는 브랜드 대상
     console.log("\n=== 정보공개서 본문 파싱 시작 ===");
     const brandsNeedContent = await prisma.franchiseBrand.findMany({
       where: {
         ftcDocId: { not: null },
-        representativeName: null,
+        headquarterAddress: null,
       },
       select: { id: true, ftcDocId: true, brandName: true },
-      take: 100,
     });
 
     let contentParsed = 0;
