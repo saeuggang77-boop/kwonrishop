@@ -8,7 +8,9 @@
  */
 
 const FTC_DISCLOSURE_BASE = "https://franchise.ftc.go.kr/api/search.do";
-const FTC_DISCLOSURE_KEY = process.env.FTC_DISCLOSURE_API_KEY || "";
+function getFtcKey() {
+  return process.env.FTC_DISCLOSURE_API_KEY || "";
+}
 
 const REQUIRED_HEADERS: Record<string, string> = {
   "Referer": "https://franchise.ftc.go.kr/",
@@ -30,6 +32,22 @@ export interface DisclosureParsedData {
   franchiseFee?: number;        // 가맹비/가입비 (천원)
   educationFee?: number;        // 교육비/최초교육비 (천원)
   depositFee?: number;          // 계약이행보증금 (천원)
+  headquarterAddress?: string;  // 본사 주소
+  establishedDate?: string;     // 설립일
+  franchiseStartDate?: string;  // 가맹사업 시작일
+  contractPeriod?: string;      // 가맹계약 기간
+  interiorCost?: string;        // 인테리어 비용
+  adPromotionFee?: string;      // 광고판촉분담금
+  territoryProtection?: boolean; // 영업지역 보호 여부
+  companyOwnedStores?: number;  // 직영점수
+  financialSummary?: {          // 재무요약
+    year?: string;
+    totalAssets?: string;
+    revenue?: string;
+    operatingProfit?: string;
+    netProfit?: string;
+  };
+  regionalStores?: Record<string, number>; // 지역별 가맹점수
 }
 
 /**
@@ -40,13 +58,13 @@ export async function listDisclosures(
   page: number = 1,
   pageSize: number = 100
 ): Promise<{ items: DisclosureListItem[]; totalCount: number }> {
-  if (!FTC_DISCLOSURE_KEY) {
+  if (!getFtcKey()) {
     console.error("[FTC Disclosure] API key not configured");
     return { items: [], totalCount: 0 };
   }
 
   try {
-    const url = `${FTC_DISCLOSURE_BASE}?type=list&yr=${yr}&serviceKey=${encodeURIComponent(FTC_DISCLOSURE_KEY)}&pageNo=${page}&numOfRows=${pageSize}&viewType=xml`;
+    const url = `${FTC_DISCLOSURE_BASE}?type=list&yr=${yr}&serviceKey=${encodeURIComponent(getFtcKey())}&pageNo=${page}&numOfRows=${pageSize}&viewType=xml`;
 
     const res = await fetch(url, {
       headers: REQUIRED_HEADERS,
@@ -90,12 +108,12 @@ export async function listDisclosures(
 export async function getDisclosureContent(
   jngIfrmpSn: string
 ): Promise<DisclosureParsedData | null> {
-  if (!FTC_DISCLOSURE_KEY) {
+  if (!getFtcKey()) {
     return null;
   }
 
   try {
-    const url = `${FTC_DISCLOSURE_BASE}?type=content&jngIfrmpSn=${jngIfrmpSn}&serviceKey=${encodeURIComponent(FTC_DISCLOSURE_KEY)}`;
+    const url = `${FTC_DISCLOSURE_BASE}?type=content&jngIfrmpSn=${jngIfrmpSn}&serviceKey=${encodeURIComponent(getFtcKey())}`;
 
     const res = await fetch(url, {
       headers: REQUIRED_HEADERS,
@@ -166,6 +184,29 @@ function parseDisclosureHtml(html: string): DisclosureParsedData {
               result.representativePhone = stripControlChars(phone);
             }
           }
+
+          // 설립일 (사업자등록일 또는 법인설립등기일)
+          const estColIdx = headerLabels.findIndex((l) =>
+            l.replace(/\s/g, "").includes("사업자등록일")
+          );
+          if (estColIdx >= 0 && values[estColIdx]) {
+            const estDate = values[estColIdx].replace(/\u00a0/g, ' ').trim();
+            if (estDate && estDate !== '-' && estDate !== '없음' && estDate !== '개인사업자') {
+              result.establishedDate = stripControlChars(estDate);
+            }
+          }
+          // 법인설립등기일도 확인 (개인사업자가 아닌 경우)
+          if (!result.establishedDate) {
+            const corpEstColIdx = headerLabels.findIndex((l) =>
+              l.replace(/\s/g, "").includes("법인설립등기일")
+            );
+            if (corpEstColIdx >= 0 && values[corpEstColIdx]) {
+              const estDate = values[corpEstColIdx].replace(/\u00a0/g, ' ').trim();
+              if (estDate && estDate !== '-' && estDate !== '없음' && estDate !== '개인사업자') {
+                result.establishedDate = stripControlChars(estDate);
+              }
+            }
+          }
         }
       }
     }
@@ -178,6 +219,162 @@ function parseDisclosureHtml(html: string): DisclosureParsedData {
 
     // 4. 계약이행보증금
     result.depositFee = extractFeeFromRow(html, ["계약이행보증금"]);
+
+    // 5. 설립일 (대표자 파싱 블록 내부에서 이미 추출했으므로 별도 로직 불필요)
+    // 이미 위 대표자 블록에서 처리됨
+
+    // 6. 본사 주소
+    const addrIdx = html.indexOf('소재지</span>');
+    if (addrIdx >= 0) {
+      const trStart = html.lastIndexOf('<tr', addrIdx);
+      const trEnd = html.indexOf('</tr>', addrIdx);
+      if (trStart >= 0 && trEnd >= 0) {
+        const nextTrStart = html.indexOf('<tr', trEnd);
+        const nextTrEnd = html.indexOf('</tr>', nextTrStart + 1);
+        if (nextTrStart >= 0 && nextTrEnd >= 0) {
+          const valueRow = html.substring(nextTrStart, nextTrEnd);
+          const values = extractSpanTexts(valueRow);
+          const addrParts: string[] = [];
+          for (const v of values) {
+            const cleaned = v.replace(/\u00a0/g, ' ').trim();
+            if (/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)/.test(cleaned)) {
+              addrParts.push(cleaned);
+            } else if (addrParts.length > 0 && !cleaned.match(/^\d{4}\.\s/)) {
+              addrParts.push(cleaned);
+            }
+          }
+          if (addrParts.length > 0) {
+            result.headquarterAddress = stripControlChars(addrParts.join(' '));
+          }
+        }
+      }
+    }
+
+    // 7. 가맹사업 시작일
+    const startMatch = html.match(/시작한\s*날\s*[:\uff1a]\s*(\d{4}년\s*\d{1,2}월\s*\d{1,2}일)/);
+    if (startMatch) {
+      result.franchiseStartDate = stripControlChars(startMatch[1].replace(/\u00a0/g, ' '));
+    }
+
+    // 8. 가맹계약 기간
+    const ctrtIdx = html.indexOf('JNG_CTRT_UPDT_PD');
+    if (ctrtIdx >= 0) {
+      const ctrtChunk = html.substring(ctrtIdx, ctrtIdx + 3000);
+      // span 텍스트만 추출하여 합친 후 매칭 (HTML 태그가 span 사이에 있으므로)
+      const ctrtSpans = extractSpanTexts(ctrtChunk);
+      const ctrtText = ctrtSpans.join(' ').replace(/\u00a0/g, ' ');
+      const ctrtMatch = ctrtText.match(/계약기간은\s*계약체결일로부터\s*\[?(\d+)\]?\s*년/);
+      if (ctrtMatch) {
+        result.contractPeriod = `${ctrtMatch[1]}년`;
+      }
+    }
+
+    // 9. 인테리어 비용
+    const intIdx = html.indexOf('>인테리어</span>');
+    if (intIdx >= 0) {
+      const trStart = html.lastIndexOf('<tr', intIdx);
+      const trEnd = html.indexOf('</tr>', intIdx);
+      if (trStart >= 0 && trEnd >= 0) {
+        const row = html.substring(trStart, trEnd);
+        const spans = extractSpanTexts(row);
+        for (const s of spans) {
+          const cleaned = s.replace(/[\s\u00a0]/g, '').replace(/,/g, '');
+          const num = parseInt(cleaned, 10);
+          if (!isNaN(num) && num >= 100) {
+            const manwon = Math.round(num / 10);
+            result.interiorCost = `${manwon.toLocaleString()}만원`;
+            break;
+          }
+        }
+      }
+    }
+
+    // 10. 광고판촉분담금
+    const adLabels = ['광고∙판촉분담금', '광고ㆍ판촉분담금', '광고판촉분담금', '광고분담금'];
+    const adFee = extractFeeFromRow(html, adLabels);
+    if (adFee !== undefined) {
+      const manwon = Math.round(adFee / 10);
+      result.adPromotionFee = `${manwon.toLocaleString()}만원`;
+    }
+
+    // 11. 영업지역 보호
+    if (html.includes('영업지역을 설정') || html.includes('영업지역을\u00a0설정')) {
+      const noProtect = /영업지역을[\s\u00a0]*설정하[고지][\s\u00a0]*있지[\s\u00a0]*않/.test(html);
+      result.territoryProtection = !noProtect;
+    }
+
+    // 12. 직영점수
+    const ownedIdx = html.indexOf('>직영점수</span>');
+    if (ownedIdx >= 0) {
+      const trEnd = html.indexOf('</tr>', ownedIdx);
+      const nextTrStart = html.indexOf('<tr', trEnd);
+      const nextTrEnd = html.indexOf('</tr>', nextTrStart + 1);
+      if (nextTrStart >= 0 && nextTrEnd >= 0) {
+        const valueRow = html.substring(nextTrStart, nextTrEnd);
+        const values = extractSpanTexts(valueRow);
+        if (values.length >= 4 && values[0] === '전체') {
+          const lastVal = values[values.length - 1].replace(/[\s\u00a0,]/g, '');
+          const num = parseInt(lastVal, 10);
+          if (!isNaN(num)) {
+            result.companyOwnedStores = num;
+          }
+        }
+      }
+    }
+
+    // 13. 재무요약
+    const revenueIdx = html.indexOf('>매출액</span>');
+    if (revenueIdx >= 0) {
+      const trEnd = html.indexOf('</tr>', revenueIdx);
+      const nextTrStart = html.indexOf('<tr', trEnd);
+      const nextTrEnd = html.indexOf('</tr>', nextTrStart + 1);
+      if (nextTrStart >= 0 && nextTrEnd >= 0) {
+        const valueRow = html.substring(nextTrStart, nextTrEnd);
+        const values = extractSpanTexts(valueRow);
+        if (values.length >= 7) {
+          const cleanVal = (v: string) => {
+            const c = v.replace(/[\s\u00a0,]/g, '');
+            return c === '-' || c === '' ? undefined : c;
+          };
+          const summary: any = { year: cleanVal(values[0]) };
+          if (cleanVal(values[1])) summary.totalAssets = cleanVal(values[1]);
+          if (cleanVal(values[4])) summary.revenue = cleanVal(values[4]);
+          if (cleanVal(values[5])) summary.operatingProfit = cleanVal(values[5]);
+          if (cleanVal(values[6])) summary.netProfit = cleanVal(values[6]);
+          if (summary.year || summary.revenue || summary.totalAssets) {
+            result.financialSummary = summary;
+          }
+        }
+      }
+    }
+
+    // 14. 지역별 가맹점 분포
+    const seoulIdx = html.indexOf('>서울</span>');
+    if (seoulIdx >= 0) {
+      const regional: Record<string, number> = {};
+      let pos = html.lastIndexOf('<tr', seoulIdx);
+      const REGIONS = ['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
+
+      for (let i = 0; i < 17; i++) {
+        const trEnd = html.indexOf('</tr>', pos);
+        if (trEnd < 0) break;
+        const row = html.substring(pos, trEnd);
+        const spans = extractSpanTexts(row);
+        if (spans.length >= 2 && REGIONS.includes(spans[0])) {
+          const latestTotal = spans.length >= 10 ? spans[7] : spans[1];
+          const num = parseInt(latestTotal.replace(/[\s\u00a0,]/g, ''), 10);
+          if (!isNaN(num)) {
+            regional[spans[0]] = num;
+          }
+        }
+        pos = html.indexOf('<tr', trEnd);
+        if (pos < 0) break;
+      }
+
+      if (Object.keys(regional).length > 0) {
+        result.regionalStores = regional;
+      }
+    }
   } catch (error) {
     console.error("[FTC Disclosure] HTML parsing error:", error);
   }
@@ -377,6 +574,9 @@ export async function syncAllDisclosures(
       if (parsed.representativeName) {
         contentUpdate.representativeName = parsed.representativeName;
       }
+      if (parsed.representativePhone) {
+        contentUpdate.representativePhone = parsed.representativePhone;
+      }
       // 정보공개서 값은 천원 단위 → DB는 만원 단위로 저장
       // 상한선 검증: 가맹비 1억(10000만), 교육비 5천만(5000만), 보증금 1억(10000만) 초과 시 파싱 오류로 판단
       if (parsed.franchiseFee !== undefined) {
@@ -391,6 +591,16 @@ export async function syncAllDisclosures(
         const val = Math.round(parsed.depositFee / 10);
         if (val <= 10000) contentUpdate.depositFee = val;
       }
+      if (parsed.headquarterAddress) contentUpdate.headquarterAddress = parsed.headquarterAddress;
+      if (parsed.establishedDate) contentUpdate.establishedDate = parsed.establishedDate;
+      if (parsed.franchiseStartDate) contentUpdate.franchiseStartDate = parsed.franchiseStartDate;
+      if (parsed.contractPeriod) contentUpdate.contractPeriod = parsed.contractPeriod;
+      if (parsed.interiorCost) contentUpdate.interiorCost = parsed.interiorCost;
+      if (parsed.adPromotionFee) contentUpdate.adPromotionFee = parsed.adPromotionFee;
+      if (parsed.territoryProtection !== undefined) contentUpdate.territoryProtection = parsed.territoryProtection;
+      if (parsed.companyOwnedStores !== undefined) contentUpdate.companyOwnedStores = parsed.companyOwnedStores;
+      if (parsed.financialSummary) contentUpdate.financialSummary = parsed.financialSummary;
+      if (parsed.regionalStores) contentUpdate.regionalStores = parsed.regionalStores;
 
       if (Object.keys(contentUpdate).length > 0) {
         await prismaClient.franchiseBrand.update({

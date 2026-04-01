@@ -45,6 +45,23 @@ interface FranchiseBrand {
   representativeName: string | null;
   businessNumber: string | null;
   ftcDocId: string | null;
+  representativePhone: string | null;
+  headquarterAddress: string | null;
+  establishedDate: string | null;
+  franchiseStartDate: string | null;
+  contractPeriod: string | null;
+  interiorCost: string | null;
+  adPromotionFee: string | null;
+  territoryProtection: boolean | null;
+  companyOwnedStores: number | null;
+  financialSummary: {
+    year?: string;
+    totalAssets?: string;
+    revenue?: string;
+    operatingProfit?: string;
+    netProfit?: string;
+  } | null;
+  regionalStores: Record<string, number> | null;
 }
 
 export default function FranchiseDetailClient() {
@@ -145,8 +162,67 @@ export default function FranchiseDetailClient() {
                 {brand.avgRevenue !== null && <div><span className="text-sm text-gray-600">평균 매출</span><p className="font-medium text-gray-900 mt-1">월 {brand.avgRevenue.toLocaleString()}만원</p></div>}
                 {brand.ftcRegisteredAt && <div><span className="text-sm text-gray-600">공정위 등록일</span><p className="font-medium text-gray-900 mt-1">{brand.ftcRegisteredAt}</p></div>}
                 {brand.website && <div><span className="text-sm text-gray-600">웹사이트</span><a href={brand.website} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:underline mt-1 block">{brand.website}</a></div>}
+                {brand.representativePhone && <div><span className="text-sm text-gray-600">대표전화번호</span><a href={`tel:${brand.representativePhone}`} className="font-medium text-blue-600 hover:underline mt-1 block">{brand.representativePhone}</a></div>}
+                {brand.headquarterAddress && <div><span className="text-sm text-gray-600">본사 주소</span><p className="font-medium text-gray-900 mt-1">{brand.headquarterAddress}</p></div>}
+                {brand.establishedDate && <div><span className="text-sm text-gray-600">설립일</span><p className="font-medium text-gray-900 mt-1">{brand.establishedDate}</p></div>}
+                {brand.franchiseStartDate && <div><span className="text-sm text-gray-600">가맹사업 시작</span><p className="font-medium text-gray-900 mt-1">{brand.franchiseStartDate} <span className="inline-block px-2 py-0.5 ml-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{new Date().getFullYear() - parseInt(brand.franchiseStartDate.match(/\d{4}/)?.[0] || '0')}년차</span></p></div>}
+                {brand.contractPeriod && <div><span className="text-sm text-gray-600">계약기간</span><p className="font-medium text-gray-900 mt-1">{brand.contractPeriod}</p></div>}
+                {brand.territoryProtection !== null && <div><span className="text-sm text-gray-600">영업지역 보호</span><p className="font-medium mt-1">{brand.territoryProtection ? <span className="text-green-600">O 보호</span> : <span className="text-red-600">X 미보호</span>}</p></div>}
+                {brand.companyOwnedStores !== null && <div><span className="text-sm text-gray-600">직영점수</span><p className="font-medium text-gray-900 mt-1">{brand.companyOwnedStores.toLocaleString()}개</p></div>}
               </div>
               {brand.description && <div className="pt-4 border-t border-gray-200"><span className="text-sm text-gray-600">브랜드 소개</span><p className="text-gray-900 mt-2 whitespace-pre-wrap">{brand.description}</p></div>}
+              {brand.financialSummary && (
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h4 className="font-medium text-gray-900">본사 재무현황 {brand.financialSummary.year && `(${brand.financialSummary.year}년)`}</h4>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {brand.financialSummary.revenue && (
+                      <div className="bg-blue-50 rounded-lg p-3 text-center">
+                        <p className="text-xs text-gray-500 mb-1">매출액</p>
+                        <p className="text-lg font-bold text-blue-700">{Number(brand.financialSummary.revenue).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
+                      </div>
+                    )}
+                    {brand.financialSummary.operatingProfit && (
+                      <div className="bg-blue-50 rounded-lg p-3 text-center">
+                        <p className="text-xs text-gray-500 mb-1">영업이익</p>
+                        <p className="text-lg font-bold text-blue-700">{Number(brand.financialSummary.operatingProfit).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
+                      </div>
+                    )}
+                    {brand.financialSummary.netProfit && (
+                      <div className="bg-blue-50 rounded-lg p-3 text-center">
+                        <p className="text-xs text-gray-500 mb-1">당기순이익</p>
+                        <p className={`text-lg font-bold ${Number(brand.financialSummary.netProfit) >= 0 ? 'text-blue-700' : 'text-red-600'}`}>{Number(brand.financialSummary.netProfit).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
+                      </div>
+                    )}
+                    {brand.financialSummary.totalAssets && (
+                      <div className="bg-blue-50 rounded-lg p-3 text-center">
+                        <p className="text-xs text-gray-500 mb-1">자산총계</p>
+                        <p className="text-lg font-bold text-gray-700">{Number(brand.financialSummary.totalAssets).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2">* 공정거래위원회 정보공개서 기준 (단위: 천원)</p>
+                </div>
+              )}
+              {brand.regionalStores && Object.keys(brand.regionalStores).length > 0 && (
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h4 className="font-medium text-gray-900">지역별 가맹점 분포</h4>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                    {Object.entries(brand.regionalStores)
+                      .filter(([_, count]) => count > 0)
+                      .sort(([_, a], [__, b]) => b - a)
+                      .map(([region, count]) => (
+                        <div key={region} className="bg-gray-50 rounded-lg p-2 text-center">
+                          <p className="text-xs text-gray-500">{region}</p>
+                          <p className="text-sm font-bold text-gray-900">{count}<span className="text-xs font-normal text-gray-500">개</span></p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
               {!!brand.ftcRawData && (
                 <div className="pt-4 border-t border-gray-200 space-y-4">
                   <div className="bg-green-50 rounded-lg p-4">
@@ -192,6 +268,8 @@ export default function FranchiseDetailClient() {
               {brand.educationFee !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">교육비</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.educationFee.toLocaleString()}만원</span></div>}
               {brand.depositFee !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">보증금</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.depositFee.toLocaleString()}만원</span></div>}
               {brand.royalty !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">로열티</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.royalty}%</span></div>}
+              {brand.interiorCost && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">인테리어 비용</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.interiorCost}</span></div>}
+              {brand.adPromotionFee && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">광고판촉분담금</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.adPromotionFee}</span></div>}
 
               {(brand.tier === "SILVER" || brand.tier === "GOLD") && (brand.franchiseFee !== null || brand.educationFee !== null || brand.depositFee !== null) && (
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 md:p-6 mt-6 border border-blue-200">

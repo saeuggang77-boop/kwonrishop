@@ -4,6 +4,7 @@ config({ path: ".env.local" });
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { getDisclosureContent } from "../src/lib/api/ftc-disclosure";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -195,50 +196,39 @@ async function main() {
     let contentParsed = 0;
     for (const brand of brandsNeedContent) {
       try {
-        const contentUrl = `${DISCLOSURE_BASE}?type=content&jngIfrmpSn=${brand.ftcDocId}&serviceKey=${encodeURIComponent(DISCLOSURE_KEY)}`;
-
-        const res = await fetch(contentUrl, {
-          headers: HEADERS,
-        });
-        const html = await res.text();
-
-        if (!html || html.length < 100) continue;
+        const parsed = await getDisclosureContent(brand.ftcDocId!);
+        if (!parsed) continue;
 
         const contentUpdate: Record<string, any> = {};
-
-        // 대표자명 파싱
-        const repIdx = html.indexOf("대표자</span>");
-        if (repIdx >= 0) {
-          const trStart = html.lastIndexOf("<tr", repIdx);
-          const trEnd = html.indexOf("</tr>", repIdx);
-          if (trStart >= 0 && trEnd >= 0) {
-            const headerLabels = extractSpans(html.substring(trStart, trEnd));
-            const nextTr = html.indexOf("<tr", trEnd);
-            const nextTrEnd = html.indexOf("</tr>", nextTr + 1);
-            if (nextTr >= 0 && nextTrEnd >= 0) {
-              const values = extractSpans(html.substring(nextTr, nextTrEnd));
-              const repCol = headerLabels.findIndex((l) => l.replace(/\s/g, "") === "대표자");
-              if (repCol >= 0 && values[repCol] && values[repCol] !== "-") {
-                contentUpdate.representativeName = values[repCol].trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
-              }
-            }
-          }
+        if (parsed.representativeName) {
+          contentUpdate.representativeName = parsed.representativeName;
         }
-
-        // 가맹비 파싱
-        const fee = extractFee(html, ["가맹비", "가입비"]);
-        const feeVal = fee !== undefined ? Math.round(fee / 10) : undefined;
-        if (feeVal !== undefined && feeVal <= 10000) contentUpdate.franchiseFee = feeVal;
-
-        // 교육비 파싱
-        const eduFee = extractFee(html, ["최초교육비", "교육비"]);
-        const eduVal = eduFee !== undefined ? Math.round(eduFee / 10) : undefined;
-        if (eduVal !== undefined && eduVal <= 5000) contentUpdate.educationFee = eduVal;
-
-        // 보증금 파싱
-        const deposit = extractFee(html, ["계약이행보증금"]);
-        const depVal = deposit !== undefined ? Math.round(deposit / 10) : undefined;
-        if (depVal !== undefined && depVal <= 10000) contentUpdate.depositFee = depVal;
+        if (parsed.representativePhone) {
+          contentUpdate.representativePhone = parsed.representativePhone;
+        }
+        // 가맹비 (천원→만원 변환, 상한선 검증)
+        if (parsed.franchiseFee !== undefined) {
+          const val = Math.round(parsed.franchiseFee / 10);
+          if (val <= 10000) contentUpdate.franchiseFee = val;
+        }
+        if (parsed.educationFee !== undefined) {
+          const val = Math.round(parsed.educationFee / 10);
+          if (val <= 5000) contentUpdate.educationFee = val;
+        }
+        if (parsed.depositFee !== undefined) {
+          const val = Math.round(parsed.depositFee / 10);
+          if (val <= 10000) contentUpdate.depositFee = val;
+        }
+        if (parsed.headquarterAddress) contentUpdate.headquarterAddress = parsed.headquarterAddress;
+        if (parsed.establishedDate) contentUpdate.establishedDate = parsed.establishedDate;
+        if (parsed.franchiseStartDate) contentUpdate.franchiseStartDate = parsed.franchiseStartDate;
+        if (parsed.contractPeriod) contentUpdate.contractPeriod = parsed.contractPeriod;
+        if (parsed.interiorCost) contentUpdate.interiorCost = parsed.interiorCost;
+        if (parsed.adPromotionFee) contentUpdate.adPromotionFee = parsed.adPromotionFee;
+        if (parsed.territoryProtection !== undefined) contentUpdate.territoryProtection = parsed.territoryProtection;
+        if (parsed.companyOwnedStores !== undefined) contentUpdate.companyOwnedStores = parsed.companyOwnedStores;
+        if (parsed.financialSummary) contentUpdate.financialSummary = parsed.financialSummary;
+        if (parsed.regionalStores) contentUpdate.regionalStores = parsed.regionalStores;
 
         if (Object.keys(contentUpdate).length > 0) {
           await prisma.franchiseBrand.update({
@@ -248,7 +238,6 @@ async function main() {
           contentParsed++;
         }
 
-        // Rate limiting
         await new Promise((r) => setTimeout(r, 1000));
       } catch (e: any) {
         discErrors++;

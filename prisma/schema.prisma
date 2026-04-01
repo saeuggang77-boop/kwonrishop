@@ -335,6 +335,19 @@ model FranchiseBrand {
   ftcDocId       String?    // 정보공개서 일련번호 (jngIfrmpSn)
   representativeName String? // 대표자명
 
+  // 정보공개서 확장 데이터 (SEO용)
+  representativePhone  String?   // 대표전화번호
+  headquarterAddress   String?   // 본사 주소
+  establishedDate      String?   // 설립일 (법인설립등기일 또는 사업자등록일)
+  franchiseStartDate   String?   // 가맹사업 시작일
+  contractPeriod       String?   // 가맹계약 기간
+  interiorCost         String?   // 인테리어 비용
+  adPromotionFee       String?   // 광고판촉분담금
+  territoryProtection  Boolean?  // 영업지역 보호 여부
+  companyOwnedStores   Int?      // 직영점수
+  financialSummary     Json?     // 재무요약 {revenue, operatingProfit, netProfit, totalAssets, year}
+  regionalStores       Json?     // 지역별 가맹점 {서울:N, 부산:N, ...}
+
   // 유료 서비스 - 본사가 직접 편집
   tier           FranchiseTier @default(FREE)
   logo           String?
