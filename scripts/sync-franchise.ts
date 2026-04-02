@@ -25,7 +25,7 @@ async function fetchPage(page: number, yr: string) {
 }
 
 async function main() {
-  const yr = "2024";
+  const yr = "2025";
   let totalSynced = 0;
   let errors = 0;
 
@@ -114,7 +114,7 @@ async function main() {
         pageNo: String(blPage),
         numOfRows: "100",
         resultType: "json",
-        jngBizCrtraYr: "2024",
+        jngBizCrtraYr: "2025",
       });
       const blRes = await fetch(
         `https://apis.data.go.kr/1130000/FftcBrandRlsInfo2_Service/getBrandinfo?${blParams}`
