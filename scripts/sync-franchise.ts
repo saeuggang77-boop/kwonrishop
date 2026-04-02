@@ -24,8 +24,24 @@ async function fetchPage(page: number, yr: string) {
   return res.json();
 }
 
+async function findLatestYear(testFn: (yr: string) => Promise<number>): Promise<string> {
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear; y >= currentYear - 3; y--) {
+    const count = await testFn(String(y));
+    if (count > 0) {
+      console.log(`최신 데이터 연도: ${y}년 (${count}건)`);
+      return String(y);
+    }
+  }
+  return String(currentYear - 1);
+}
+
 async function main() {
-  const yr = "2025";
+  // 통계 API: 최신 연도 자동 탐색
+  const yr = await findLatestYear(async (y) => {
+    const res = await fetchPage(1, y);
+    return res.resultCode === "00" ? res.totalCount : 0;
+  });
   let totalSynced = 0;
   let errors = 0;
 
@@ -105,6 +121,21 @@ async function main() {
 
   try {
     const BRAND_API_KEY = process.env.FTC_API_KEY || "";
+    // 브랜드 목록 API: 최신 연도 자동 탐색
+    const brandListYr = await findLatestYear(async (y) => {
+      const params = new URLSearchParams({
+        serviceKey: BRAND_API_KEY,
+        pageNo: "1",
+        numOfRows: "1",
+        resultType: "json",
+        jngBizCrtraYr: y,
+      });
+      const res = await fetch(
+        `https://apis.data.go.kr/1130000/FftcBrandRlsInfo2_Service/getBrandinfo?${params}`
+      );
+      const data = await res.json();
+      return data.resultCode === "00" ? data.totalCount : 0;
+    });
     let blPage = 1;
     let blTotalPages = 1;
 
@@ -114,7 +145,7 @@ async function main() {
         pageNo: String(blPage),
         numOfRows: "100",
         resultType: "json",
-        jngBizCrtraYr: "2025",
+        jngBizCrtraYr: brandListYr,
       });
       const blRes = await fetch(
         `https://apis.data.go.kr/1130000/FftcBrandRlsInfo2_Service/getBrandinfo?${blParams}`
@@ -228,8 +259,10 @@ async function main() {
     let discMatched = 0;
     let discErrors = 0;
 
-    // 정보공개서 목록 연도별 순회
-    for (const discYr of ["2024", "2023", "2022", "2021", "2020", "2019"]) {
+    // 정보공개서 목록 연도별 순회 (현재 연도부터 6년 전까지)
+    const discCurrentYear = new Date().getFullYear();
+    const discYears = Array.from({ length: 7 }, (_, i) => String(discCurrentYear - i));
+    for (const discYr of discYears) {
       try {
         let discPage = 1;
         let discTotalPages = 1;
