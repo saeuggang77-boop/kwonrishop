@@ -32,17 +32,13 @@ export function validatePasswordStrength(password: string): {
   if (password.length > 128) {
     return { valid: false, message: "비밀번호는 128자 이하여야 합니다." };
   }
-  if (!/[a-z]/.test(password)) {
-    return { valid: false, message: "소문자를 1개 이상 포함해야 합니다." };
-  }
-  if (!/[A-Z]/.test(password)) {
-    return { valid: false, message: "대문자를 1개 이상 포함해야 합니다." };
-  }
-  if (!/[0-9]/.test(password)) {
-    return { valid: false, message: "숫자를 1개 이상 포함해야 합니다." };
-  }
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"|,.<>?/~`]/.test(password)) {
-    return { valid: false, message: "특수문자를 1개 이상 포함해야 합니다." };
+  // 영문/숫자/특수문자 중 2종 이상 조합
+  let categoryCount = 0;
+  if (/[a-zA-Z]/.test(password)) categoryCount++;
+  if (/[0-9]/.test(password)) categoryCount++;
+  if (/[!@#$%^&*()_+\-=\[\]{};':"|,.<>?/~`]/.test(password)) categoryCount++;
+  if (categoryCount < 2) {
+    return { valid: false, message: "영문, 숫자, 특수문자 중 2종 이상 조합해야 합니다." };
   }
   return { valid: true, message: "" };
 }

@@ -4,10 +4,8 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import Link from "next/link";
 
-const PASSWORD_RULES = [
-  { label: "8자 이상", test: (p: string) => p.length >= 8 },
-  { label: "대문자", test: (p: string) => /[A-Z]/.test(p) },
-  { label: "소문자", test: (p: string) => /[a-z]/.test(p) },
+const PASSWORD_CATEGORY_RULES = [
+  { label: "영문", test: (p: string) => /[a-zA-Z]/.test(p) },
   { label: "숫자", test: (p: string) => /[0-9]/.test(p) },
   { label: "특수문자", test: (p: string) => /[!@#$%^&*()_+\-=\[\]{};':"|,.<>?/~`]/.test(p) },
 ];
@@ -27,8 +25,9 @@ export default function SignupPage() {
   const [resendLoading, setResendLoading] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
 
-  const passedRules = PASSWORD_RULES.filter((r) => r.test(password));
-  const allRulesPassed = passedRules.length === PASSWORD_RULES.length;
+  const passedCategories = PASSWORD_CATEGORY_RULES.filter((r) => r.test(password));
+  const lengthOk = password.length >= 8;
+  const allRulesPassed = lengthOk && passedCategories.length >= 2;
   const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -44,7 +43,7 @@ export default function SignupPage() {
       return;
     }
     if (!allRulesPassed) {
-      setError("비밀번호 조건을 모두 충족해주세요.");
+      setError("비밀번호는 8자 이상, 영문/숫자/특수문자 중 2종 이상 조합이어야 합니다.");
       return;
     }
     if (!passwordsMatch) {
@@ -254,7 +253,16 @@ export default function SignupPage() {
               {/* Password Strength */}
               {password.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                  {PASSWORD_RULES.map((rule) => {
+                  <span
+                    className={`text-[11px] px-2 py-0.5 rounded-full ${
+                      lengthOk
+                        ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                    }`}
+                  >
+                    {lengthOk ? "✓" : "○"} 8자 이상
+                  </span>
+                  {PASSWORD_CATEGORY_RULES.map((rule) => {
                     const passed = rule.test(password);
                     return (
                       <span
@@ -269,6 +277,13 @@ export default function SignupPage() {
                       </span>
                     );
                   })}
+                  <span className={`text-[11px] px-2 py-0.5 rounded-full ${
+                    passedCategories.length >= 2
+                      ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                  }`}>
+                    {passedCategories.length >= 2 ? "✓" : "○"} 2종 이상 조합
+                  </span>
                 </div>
               )}
             </div>
@@ -312,7 +327,21 @@ export default function SignupPage() {
 
             {/* Terms */}
             <div className="space-y-2 pt-2">
-              <label className="flex items-start gap-2 cursor-pointer">
+              <label className="flex items-start gap-2 cursor-pointer pb-2 border-b border-gray-200 dark:border-gray-700">
+                <input
+                  type="checkbox"
+                  checked={agreeTerms && agreePrivacy}
+                  onChange={(e) => {
+                    setAgreeTerms(e.target.checked);
+                    setAgreePrivacy(e.target.checked);
+                  }}
+                  className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  전체 동의합니다
+                </span>
+              </label>
+              <label className="flex items-start gap-2 cursor-pointer pl-1">
                 <input
                   type="checkbox"
                   checked={agreeTerms}
@@ -320,10 +349,10 @@ export default function SignupPage() {
                   className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  <Link href="/terms" className="text-blue-600 dark:text-blue-400 underline" target="_blank">이용약관</Link>에 동의합니다 <span className="text-red-500">(필수)</span>
+                  <Link href="/terms" className="text-blue-600 dark:text-blue-400 underline" target="_blank">이용약관</Link> 동의 <span className="text-red-500">(필수)</span>
                 </span>
               </label>
-              <label className="flex items-start gap-2 cursor-pointer">
+              <label className="flex items-start gap-2 cursor-pointer pl-1">
                 <input
                   type="checkbox"
                   checked={agreePrivacy}
@@ -331,7 +360,7 @@ export default function SignupPage() {
                   className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  <Link href="/privacy" className="text-blue-600 dark:text-blue-400 underline" target="_blank">개인정보처리방침</Link>에 동의합니다 <span className="text-red-500">(필수)</span>
+                  <Link href="/privacy" className="text-blue-600 dark:text-blue-400 underline" target="_blank">개인정보처리방침</Link> 동의 <span className="text-red-500">(필수)</span>
                 </span>
               </label>
             </div>

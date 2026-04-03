@@ -5,10 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 
-const PASSWORD_RULES = [
-  { label: "8자 이상", test: (p: string) => p.length >= 8 },
-  { label: "대문자", test: (p: string) => /[A-Z]/.test(p) },
-  { label: "소문자", test: (p: string) => /[a-z]/.test(p) },
+const PASSWORD_CATEGORY_RULES = [
+  { label: "영문", test: (p: string) => /[a-zA-Z]/.test(p) },
   { label: "숫자", test: (p: string) => /[0-9]/.test(p) },
   { label: "특수문자", test: (p: string) => /[!@#$%^&*()_+\-=\[\]{};':"|,.<>?/~`]/.test(p) },
 ];
@@ -148,14 +146,15 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const passedRules = PASSWORD_RULES.filter((r) => r.test(password));
-  const allRulesPassed = passedRules.length === PASSWORD_RULES.length;
+  const passedCategories = PASSWORD_CATEGORY_RULES.filter((r) => r.test(password));
+  const lengthOk = password.length >= 8;
+  const allRulesPassed = lengthOk && passedCategories.length >= 2;
   const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!allRulesPassed) {
-      setError("비밀번호 조건을 모두 충족해주세요.");
+      setError("비밀번호는 8자 이상, 영문/숫자/특수문자 중 2종 이상 조합이어야 합니다.");
       return;
     }
     if (!passwordsMatch) {
@@ -254,7 +253,16 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
               </div>
               {password.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                  {PASSWORD_RULES.map((rule) => {
+                  <span
+                    className={`text-[11px] px-2 py-0.5 rounded-full ${
+                      lengthOk
+                        ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                    }`}
+                  >
+                    {lengthOk ? "✓" : "○"} 8자 이상
+                  </span>
+                  {PASSWORD_CATEGORY_RULES.map((rule) => {
                     const passed = rule.test(password);
                     return (
                       <span
@@ -269,6 +277,13 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
                       </span>
                     );
                   })}
+                  <span className={`text-[11px] px-2 py-0.5 rounded-full ${
+                    passedCategories.length >= 2
+                      ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                  }`}>
+                    {passedCategories.length >= 2 ? "✓" : "○"} 2종 이상 조합
+                  </span>
                 </div>
               )}
             </div>
