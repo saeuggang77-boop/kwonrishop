@@ -671,20 +671,19 @@ model Favorite {
 }
 
 model Review {
-  id                  String   @id @default(cuid())
-  reviewerId          String
-  listingId           String
-  accuracyRating      Int
-  communicationRating Int
-  conditionRating     Int
-  content             String?  @db.Text
-  createdAt           DateTime @default(now())
+  id         String    @id @default(cuid())
+  reviewerId String
+  listingId  String
+  content    String    @db.Text
+  answer     String?   @db.Text
+  answeredAt DateTime?
+  createdAt  DateTime  @default(now())
 
   reviewer User    @relation(fields: [reviewerId], references: [id])
   listing  Listing @relation(fields: [listingId], references: [id])
 
-  @@unique([reviewerId, listingId])
   @@index([listingId])
+  @@index([reviewerId])
 }
 
 model Notification {

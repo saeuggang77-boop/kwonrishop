@@ -13,8 +13,8 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  // listing + session + reviewStats 병렬 조회
-  const [listing, session, reviewStats] = await Promise.all([
+  // listing + session 병렬 조회 (reviewStats 제거)
+  const [listing, session] = await Promise.all([
     prisma.listing.findUnique({
       where: { id },
       include: {
@@ -53,11 +53,6 @@ export async function GET(
       },
     }),
     getServerSession(authOptions),
-    prisma.review.aggregate({
-      where: { listingId: id },
-      _avg: { accuracyRating: true, communicationRating: true, conditionRating: true },
-      _count: true,
-    }),
   ]);
 
   if (!listing || listing.status === "DELETED") {
@@ -113,18 +108,7 @@ export async function GET(
     featuredTier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
   }
 
-  // 판매자 신뢰도 점수 계산 (aggregate 기반)
-  const reviewCount = reviewStats._count;
-  let sellerTrust = { avgRating: 0, reviewCount: 0 };
-  if (reviewCount > 0) {
-    const avgAccuracy = reviewStats._avg.accuracyRating || 0;
-    const avgComm = reviewStats._avg.communicationRating || 0;
-    const avgCond = reviewStats._avg.conditionRating || 0;
-    sellerTrust = {
-      avgRating: Number(((avgAccuracy + avgComm + avgCond) / 3).toFixed(1)),
-      reviewCount,
-    };
-  }
+  // sellerTrust 제거 (Q&A로 전환)
 
   // 지역 평균 대비 성과 (같은 지역+업종, 소유자에게만 노출)
   let regionStats = null;
@@ -152,7 +136,6 @@ export async function GET(
     viewCount: listing.viewCount + 1,
     featuredTier,
     favorited,
-    sellerTrust,
     regionStats,
     adPurchases: undefined,
     user: safeUser,

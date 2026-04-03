@@ -50,13 +50,6 @@ export async function GET(
               take: 1,
             },
             _count: { select: { documents: true } },
-            reviews: {
-              select: {
-                accuracyRating: true,
-                communicationRating: true,
-                conditionRating: true,
-              },
-            },
           },
         },
       },
@@ -69,20 +62,7 @@ export async function GET(
       );
     }
 
-    // Calculate average rating from listing reviews
-    let avgRating = 0;
-    let reviewCount = 0;
-
-    if (user.listing && user.listing.reviews.length > 0) {
-      const reviews = user.listing.reviews;
-      reviewCount = reviews.length;
-      const totalRating = reviews.reduce((sum, review) => {
-        const avg = (review.accuracyRating + review.communicationRating + review.conditionRating) / 3;
-        return sum + avg;
-      }, 0);
-      avgRating = totalRating / reviewCount;
-    }
-
+    // reviewStats 제거 (Q&A로 전환)
     return NextResponse.json({
       user: {
         id: user.id,
@@ -94,10 +74,6 @@ export async function GET(
           ...user.listing,
           reviews: undefined, // Remove reviews from listing object
         } : null,
-        reviewStats: {
-          count: reviewCount,
-          avgRating: Number(avgRating.toFixed(1)),
-        },
       },
     });
   } catch (error) {

@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import ListingCard from "@/components/listing/ListingCard";
-import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 
 interface UserProfileData {
   id: string;
@@ -11,10 +10,6 @@ interface UserProfileData {
   createdAt: string;
   role: string;
   listing: any;
-  reviewStats: {
-    count: number;
-    avgRating: number;
-  };
 }
 
 async function getUserProfile(userId: string): Promise<UserProfileData | null> {
@@ -92,20 +87,6 @@ export default async function UserProfilePage({
               <p className="text-sm text-gray-600 mb-4">
                 회원 가입: {memberSince}
               </p>
-
-              {/* 리뷰 통계 & 신뢰도 배지 */}
-              {user.reviewStats.count > 0 && (
-                <div className="flex items-center gap-3 mb-4">
-                  <SellerTrustBadge
-                    avgRating={user.reviewStats.avgRating}
-                    reviewCount={user.reviewStats.count}
-                    size="md"
-                  />
-                  <span className="text-sm text-gray-600">
-                    리뷰 {user.reviewStats.count}개
-                  </span>
-                </div>
-              )}
 
               {/* 채팅하기 버튼 */}
               {user.listing && (

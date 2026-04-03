@@ -5,17 +5,18 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 
-interface ReviewData {
+interface QuestionData {
   id: string;
-  accuracyRating: number;
-  communicationRating: number;
-  conditionRating: number;
-  content: string | null;
+  content: string;
+  answer: string | null;
+  answeredAt: string | null;
   createdAt: string;
   isOwn?: boolean;
+  isSeller?: boolean;
   reviewer: {
     id: string;
-    name?: string;
+    name: string | null;
+    image: string | null;
   };
 }
 
@@ -30,61 +31,17 @@ interface ReviewSectionProps {
   sellerId?: string;
 }
 
-function StarIcon({ filled, className = "w-4 h-4" }: { filled: boolean; className?: string }) {
-  return (
-    <svg
-      className={`${className} ${filled ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"}`}
-      fill="currentColor"
-      viewBox="0 0 20 20"
-    >
-      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-    </svg>
-  );
-}
-
-function StarRating({
-  rating,
-  onChange,
-  readonly = false,
-  size = "sm",
-}: {
-  rating: number;
-  onChange?: (r: number) => void;
-  readonly?: boolean;
-  size?: "sm" | "md";
-}) {
-  const iconClass = size === "md" ? "w-6 h-6" : "w-4 h-4";
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          onClick={() => !readonly && onChange?.(star)}
-          className={`${readonly ? "cursor-default" : "cursor-pointer hover:scale-110"} transition-transform`}
-          disabled={readonly}
-          aria-label={`${star}점`}
-        >
-          <StarIcon filled={star <= rating} className={iconClass} />
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export default function ReviewSection({ listingId, sellerId }: ReviewSectionProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [questions, setQuestions] = useState<QuestionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    accuracyRating: 5,
-    communicationRating: 5,
-    conditionRating: 5,
-    content: "",
-  });
+  const [content, setContent] = useState("");
+  const [answeringId, setAnsweringId] = useState<string | null>(null);
+  const [answerContent, setAnswerContent] = useState("");
+  const [answerSubmitting, setAnswerSubmitting] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportData, setReportData] = useState<ReportModalData>({
     reviewId: "",
@@ -93,11 +50,13 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
   });
   const [reportSubmitting, setReportSubmitting] = useState(false);
 
-  const fetchReviews = useCallback(async () => {
+  const isOwnListing = session?.user?.id === sellerId;
+
+  const fetchQuestions = useCallback(async () => {
     try {
       const res = await fetch(`/api/reviews?listingId=${listingId}`);
       const data = await res.json();
-      setReviews(data.reviews || []);
+      setQuestions(data.questions || []);
     } catch {
       // silent fail
     } finally {
@@ -106,13 +65,17 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
   }, [listingId]);
 
   useEffect(() => {
-    fetchReviews();
-  }, [fetchReviews]);
+    fetchQuestions();
+  }, [fetchQuestions]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!session) {
       router.push("/login");
+      return;
+    }
+    if (!content.trim()) {
+      toast.error("문의 내용을 입력해주세요.");
       return;
     }
 
@@ -121,33 +84,50 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
       const res = await fetch("/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          listingId,
-          accuracyRating: formData.accuracyRating,
-          communicationRating: formData.communicationRating,
-          conditionRating: formData.conditionRating,
-          content: formData.content,
-        }),
+        body: JSON.stringify({ listingId, content: content.trim() }),
       });
 
       if (res.ok) {
-        toast.success("리뷰가 작성되었습니다.");
-        setFormData({
-          accuracyRating: 5,
-          communicationRating: 5,
-          conditionRating: 5,
-          content: "",
-        });
+        toast.success("문의가 등록되었습니다.");
+        setContent("");
         setShowForm(false);
-        fetchReviews();
+        fetchQuestions();
       } else {
         const data = await res.json();
-        toast.error(data.error || "리뷰 작성에 실패했습니다.");
+        toast.error(data.error || "문의 등록에 실패했습니다.");
       }
     } catch {
       toast.error("오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleAnswerSubmit(questionId: string) {
+    if (!answerContent.trim()) {
+      toast.error("답변 내용을 입력해주세요.");
+      return;
+    }
+    setAnswerSubmitting(true);
+    try {
+      const res = await fetch(`/api/reviews/${questionId}/answer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answer: answerContent.trim() }),
+      });
+      if (res.ok) {
+        toast.success("답변이 등록되었습니다.");
+        setAnsweringId(null);
+        setAnswerContent("");
+        fetchQuestions();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "답변 등록에 실패했습니다.");
+      }
+    } catch {
+      toast.error("오류가 발생했습니다.");
+    } finally {
+      setAnswerSubmitting(false);
     }
   }
 
@@ -162,11 +142,6 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
 
   async function handleReportSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!session) {
-      router.push("/login");
-      return;
-    }
-
     setReportSubmitting(true);
     try {
       const res = await fetch("/api/reviews/report", {
@@ -178,11 +153,9 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
           detail: reportData.detail,
         }),
       });
-
       if (res.ok) {
         toast.success("신고가 접수되었습니다.");
         setShowReportModal(false);
-        setReportData({ reviewId: "", reason: "SPAM", detail: "" });
       } else {
         const data = await res.json();
         toast.error(data.error || "신고 접수에 실패했습니다.");
@@ -193,17 +166,6 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
       setReportSubmitting(false);
     }
   }
-
-  // 본인 매물에는 리뷰 작성 불가
-  const isOwnListing = session?.user?.id === sellerId;
-  // 이미 리뷰를 작성했는지 확인
-  const hasWrittenReview = reviews.some((r) => r.isOwn === true);
-  const canWriteReview = session && !isOwnListing && !hasWrittenReview;
-
-  const avgAccuracy = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.accuracyRating, 0) / reviews.length : 0;
-  const avgCommunication = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.communicationRating, 0) / reviews.length : 0;
-  const avgCondition = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.conditionRating, 0) / reviews.length : 0;
-  const avgOverall = reviews.length > 0 ? (avgAccuracy + avgCommunication + avgCondition) / 3 : 0;
 
   if (loading) {
     return (
@@ -219,161 +181,147 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
   return (
     <div className="py-4 border-b border-gray-100">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-bold text-gray-900">블라인드 리뷰 ({reviews.length})</h2>
-        {canWriteReview && !showForm && (
+        <h2 className="font-bold text-gray-900 dark:text-white">Q&A 문의 ({questions.length})</h2>
+        {session && !isOwnListing && !showForm && (
           <button
             onClick={() => setShowForm(true)}
             className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
           >
-            리뷰 작성
+            문의하기
           </button>
         )}
       </div>
 
-      {/* Average Ratings */}
-      {reviews.length > 0 && (
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">{avgOverall.toFixed(1)}</span>
-            <StarRating rating={Math.round(avgOverall)} readonly size="md" />
-            <span className="text-sm text-gray-500 dark:text-gray-400">({reviews.length}개)</span>
-          </div>
-          <div className="grid grid-cols-3 gap-3 text-xs">
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 mb-1">매출 정보 정확성</p>
-              <div className="flex items-center gap-1">
-                <StarRating rating={Math.round(avgAccuracy)} readonly />
-                <span className="text-gray-700 dark:text-gray-300 ml-1">{avgAccuracy.toFixed(1)}</span>
-              </div>
-            </div>
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 mb-1">소통 원활성</p>
-              <div className="flex items-center gap-1">
-                <StarRating rating={Math.round(avgCommunication)} readonly />
-                <span className="text-gray-700 dark:text-gray-300 ml-1">{avgCommunication.toFixed(1)}</span>
-              </div>
-            </div>
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 mb-1">매물 상태 일치도</p>
-              <div className="flex items-center gap-1">
-                <StarRating rating={Math.round(avgCondition)} readonly />
-                <span className="text-gray-700 dark:text-gray-300 ml-1">{avgCondition.toFixed(1)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Review Form */}
+      {/* Question Form */}
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4 border border-blue-100 dark:border-blue-800">
-          <h3 className="font-bold text-gray-900 dark:text-white mb-1">블라인드 리뷰 작성</h3>
+          <h3 className="font-bold text-gray-900 dark:text-white mb-1">문의 작성</h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            매도자에 대한 솔직한 경험을 공유해주세요. 작성자 정보는 익명으로 처리됩니다.
+            매물에 대해 궁금한 점을 질문해주세요. 판매자가 답변해드립니다.
           </p>
-
-          <div className="space-y-3 mb-4">
-            <div>
-              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">매출 정보 정확성</label>
-              <StarRating rating={formData.accuracyRating} onChange={(r) => setFormData({ ...formData, accuracyRating: r })} size="md" />
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={3}
+            maxLength={2000}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+            placeholder="예: 권리금 협의 가능한가요? / 매출 자료 확인 가능한가요?"
+          />
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-xs text-gray-400">{content.length}/2,000</span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => { setShowForm(false); setContent(""); }}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                disabled={submitting || !content.trim()}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium disabled:opacity-50"
+              >
+                {submitting ? "등록 중..." : "문의 등록"}
+              </button>
             </div>
-            <div>
-              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">소통 원활성</label>
-              <StarRating rating={formData.communicationRating} onChange={(r) => setFormData({ ...formData, communicationRating: r })} size="md" />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">매물 상태 일치도</label>
-              <StarRating rating={formData.conditionRating} onChange={(r) => setFormData({ ...formData, conditionRating: r })} size="md" />
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">상세 리뷰</label>
-            <textarea
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              placeholder="이 매물에 대한 경험을 공유해주세요 (선택사항)"
-            />
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setShowForm(false)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium"
-            >
-              취소
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium disabled:opacity-50"
-            >
-              {submitting ? "작성 중..." : "작성 완료"}
-            </button>
           </div>
         </form>
       )}
 
-      {/* Reviews List */}
-      {reviews.length === 0 ? (
-        <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">아직 리뷰가 없습니다.</p>
+      {/* Q&A List */}
+      {questions.length === 0 ? (
+        <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">아직 문의가 없습니다.</p>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review) => (
-            <div key={review.id} className="border-b border-gray-100 dark:border-gray-700 pb-4 last:border-0">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm font-bold">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
+          {questions.map((q) => (
+            <div key={q.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              {/* Question */}
+              <div className="p-4 bg-white dark:bg-gray-800">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs font-bold">Q</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {q.reviewer.name || "회원"}
+                    </span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">
+                      {new Date(q.createdAt).toLocaleDateString("ko-KR")}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {session && !q.isOwn && (
+                      <button
+                        onClick={() => handleReportClick(q.id)}
+                        className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 transition-colors p-1"
+                        title="신고하기"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {review.reviewer.name || "익명 리뷰어"}
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
-                    {new Date(review.createdAt).toLocaleDateString("ko-KR")}
-                  </p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap pl-7">{q.content}</p>
+              </div>
+
+              {/* Answer */}
+              {q.answer ? (
+                <div className="p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 text-xs font-bold">A</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">판매자</span>
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">판매자</span>
+                    {q.answeredAt && (
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                        {new Date(q.answeredAt).toLocaleDateString("ko-KR")}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap pl-7">{q.answer}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <StarRating
-                    rating={Math.round((review.accuracyRating + review.communicationRating + review.conditionRating) / 3)}
-                    readonly
-                  />
-                  {session && !review.isOwn && (
+              ) : isOwnListing ? (
+                /* Seller can answer */
+                answeringId === q.id ? (
+                  <div className="p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                    <textarea
+                      value={answerContent}
+                      onChange={(e) => setAnswerContent(e.target.value)}
+                      rows={3}
+                      maxLength={2000}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                      placeholder="답변을 입력하세요"
+                    />
+                    <div className="flex gap-2 mt-2 justify-end">
+                      <button
+                        onClick={() => { setAnsweringId(null); setAnswerContent(""); }}
+                        className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm"
+                      >
+                        취소
+                      </button>
+                      <button
+                        onClick={() => handleAnswerSubmit(q.id)}
+                        disabled={answerSubmitting || !answerContent.trim()}
+                        className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                      >
+                        {answerSubmitting ? "등록 중..." : "답변 등록"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border-t border-gray-200 dark:border-gray-700">
                     <button
-                      onClick={() => handleReportClick(review.id)}
-                      className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 transition-colors"
-                      title="신고하기"
+                      onClick={() => { setAnsweringId(q.id); setAnswerContent(""); }}
+                      className="text-sm text-yellow-700 dark:text-yellow-400 font-medium hover:underline"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
-                      </svg>
+                      답변 작성하기
                     </button>
-                  )}
+                  </div>
+                )
+              ) : (
+                <div className="p-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 text-center">아직 답변이 없습니다</p>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 text-xs mb-2">
-                <div className="bg-gray-50 dark:bg-gray-800 rounded p-1.5">
-                  <span className="text-gray-500 dark:text-gray-400">정확성 </span>
-                  <StarRating rating={review.accuracyRating} readonly />
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded p-1.5">
-                  <span className="text-gray-500 dark:text-gray-400">소통 </span>
-                  <StarRating rating={review.communicationRating} readonly />
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded p-1.5">
-                  <span className="text-gray-500 dark:text-gray-400">상태 </span>
-                  <StarRating rating={review.conditionRating} readonly />
-                </div>
-              </div>
-
-              {review.content && (
-                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{review.content}</p>
               )}
             </div>
           ))}
@@ -384,7 +332,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
       {showReportModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">리뷰 신고</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">문의 신고</h3>
             <form onSubmit={handleReportSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

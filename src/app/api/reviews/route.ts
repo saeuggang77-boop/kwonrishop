@@ -5,8 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
+import { sendPushToUser } from "@/lib/push";
 
-// 리뷰 생성
+// Q&A 질문 생성
 export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
@@ -24,44 +25,20 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { listingId, accuracyRating, communicationRating, conditionRating, content } = body;
+    const { listingId, content } = body;
 
     // 필수 필드 검증
-    if (!listingId || !accuracyRating || !communicationRating || !conditionRating) {
+    if (!listingId || !content) {
       return NextResponse.json(
-        { error: "필수 항목을 모두 입력해주세요." },
-        { status: 400 }
-      );
-    }
-
-    // 평점 정수 검증
-    if (
-      !Number.isInteger(accuracyRating) ||
-      !Number.isInteger(communicationRating) ||
-      !Number.isInteger(conditionRating)
-    ) {
-      return NextResponse.json(
-        { error: "평점은 정수여야 합니다." },
-        { status: 400 }
-      );
-    }
-
-    // 평점 범위 검증 (1-5)
-    if (
-      accuracyRating < 1 || accuracyRating > 5 ||
-      communicationRating < 1 || communicationRating > 5 ||
-      conditionRating < 1 || conditionRating > 5
-    ) {
-      return NextResponse.json(
-        { error: "평점은 1-5 사이의 값이어야 합니다." },
+        { error: "매물 ID와 질문 내용을 입력해주세요." },
         { status: 400 }
       );
     }
 
     // content 길이 제한 (최대 2000자)
-    if (content && content.length > 2000) {
+    if (content.length > 2000) {
       return NextResponse.json(
-        { error: "리뷰 내용은 2000자를 초과할 수 없습니다." },
+        { error: "질문 내용은 2000자를 초과할 수 없습니다." },
         { status: 400 }
       );
     }
@@ -69,68 +46,75 @@ export async function POST(req: NextRequest) {
     // 매물 존재 및 소유자 확인
     const listing = await prisma.listing.findUnique({
       where: { id: listingId },
-      select: { userId: true, status: true },
+      select: { userId: true, status: true, storeName: true, addressRoad: true },
     });
 
     if (!listing) {
       return NextResponse.json({ error: "매물을 찾을 수 없습니다." }, { status: 404 });
     }
 
-    // 본인 매물 리뷰 방지
+    // 본인 매물 질문 방지
     if (listing.userId === session.user.id) {
       return NextResponse.json(
-        { error: "본인의 매물에는 리뷰를 작성할 수 없습니다." },
+        { error: "본인의 매물에는 질문할 수 없습니다." },
         { status: 403 }
       );
     }
 
-    // 중복 리뷰 확인 (@@unique [reviewerId, listingId])
-    const existingReview = await prisma.review.findUnique({
-      where: {
-        reviewerId_listingId: {
-          reviewerId: session.user.id,
-          listingId,
-        },
-      },
-    });
-
-    if (existingReview) {
-      return NextResponse.json(
-        { error: "이미 이 매물에 리뷰를 작성하셨습니다." },
-        { status: 400 }
-      );
-    }
-
-    // 리뷰 생성
+    // Q&A 생성 (평점 필드 제거, 중복 체크 제거)
     const review = await prisma.review.create({
       data: {
         reviewerId: session.user.id,
         listingId,
-        accuracyRating,
-        communicationRating,
-        conditionRating,
-        content: content ? sanitizeHtml(content) : null,
+        content: sanitizeHtml(content),
       },
       include: {
         reviewer: {
           select: {
             id: true,
+            name: true,
+            image: true,
           },
         },
       },
     });
 
+    // 판매자에게 알림 전송 (non-blocking)
+    (async () => {
+      try {
+        const storeName = listing.storeName || listing.addressRoad || "매물";
+        await prisma.notification.create({
+          data: {
+            userId: listing.userId,
+            type: "QUESTION_RECEIVED",
+            title: `${storeName}에 새 질문이 등록되었습니다`,
+            message: content.slice(0, 100),
+            link: `/listings/${listingId}`,
+          },
+        });
+
+        sendPushToUser(
+          listing.userId,
+          `${storeName}에 새 질문`,
+          content.slice(0, 100),
+          `/listings/${listingId}`
+        ).catch(() => {});
+      } catch (err) {
+        console.error("[Q&A] 알림 전송 실패:", err);
+      }
+    })();
+
     return NextResponse.json(review, { status: 201 });
   } catch (error) {
-    console.error("리뷰 생성 오류:", error);
+    console.error("Q&A 질문 생성 오류:", error);
     return NextResponse.json(
-      { error: "리뷰 작성 중 오류가 발생했습니다." },
+      { error: "질문 작성 중 오류가 발생했습니다." },
       { status: 500 }
     );
   }
 }
 
-// 특정 매물의 리뷰 조회
+// 특정 매물의 Q&A 목록 조회
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const listingId = searchParams.get("listingId");
@@ -151,42 +135,37 @@ export async function GET(req: NextRequest) {
         reviewer: {
           select: {
             id: true,
+            name: true,
+            image: true,
           },
         },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    // 평균 평점 계산
-    const averageRatings = reviews.length > 0 ? {
-      accuracy: reviews.reduce((sum, r) => sum + r.accuracyRating, 0) / reviews.length,
-      communication: reviews.reduce((sum, r) => sum + r.communicationRating, 0) / reviews.length,
-      condition: reviews.reduce((sum, r) => sum + r.conditionRating, 0) / reviews.length,
-      overall: reviews.reduce(
-        (sum, r) => sum + (r.accuracyRating + r.communicationRating + r.conditionRating) / 3,
-        0
-      ) / reviews.length,
-    } : null;
-
-    // 리뷰 익명화 처리
-    const anonymizedReviews = reviews.map((review, index) => ({
-      ...review,
+    // 실명 표시, 평점 제거
+    const qnaList = reviews.map((review) => ({
+      id: review.id,
+      content: review.content,
+      answer: review.answer,
+      answeredAt: review.answeredAt,
+      createdAt: review.createdAt,
       isOwn: session?.user?.id === review.reviewerId,
       reviewer: {
-        id: review.reviewerId, // 본인 리뷰 삭제를 위해 ID는 유지 (프론트에서 isOwn 사용)
-        name: `익명 ${index + 1}`,
+        id: review.reviewer.id,
+        name: review.reviewer.name,
+        image: review.reviewer.image,
       },
     }));
 
     return NextResponse.json({
-      reviews: anonymizedReviews,
-      averageRatings,
-      totalReviews: reviews.length,
+      questions: qnaList,
+      totalQuestions: reviews.length,
     });
   } catch (error) {
-    console.error("리뷰 조회 오류:", error);
+    console.error("Q&A 조회 오류:", error);
     return NextResponse.json(
-      { error: "리뷰 조회 중 오류가 발생했습니다." },
+      { error: "Q&A 조회 중 오류가 발생했습니다." },
       { status: 500 }
     );
   }

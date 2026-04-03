@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-// 특정 매물의 리뷰 조회 (동일한 기능을 경로별로 제공)
+// 특정 매물의 Q&A 조회 (동일한 기능을 경로별로 제공)
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -9,46 +11,45 @@ export async function GET(
   const { id } = await params;
 
   try {
+    const session = await getServerSession(authOptions);
+
     const reviews = await prisma.review.findMany({
       where: { listingId: id },
       include: {
         reviewer: {
           select: {
             id: true,
+            name: true,
+            image: true,
           },
         },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    // 평균 평점 계산
-    const averageRatings = reviews.length > 0 ? {
-      accuracy: reviews.reduce((sum, r) => sum + r.accuracyRating, 0) / reviews.length,
-      communication: reviews.reduce((sum, r) => sum + r.communicationRating, 0) / reviews.length,
-      condition: reviews.reduce((sum, r) => sum + r.conditionRating, 0) / reviews.length,
-      overall: reviews.reduce(
-        (sum, r) => sum + (r.accuracyRating + r.communicationRating + r.conditionRating) / 3,
-        0
-      ) / reviews.length,
-    } : null;
-
-    // 리뷰 익명화 처리 (reviewer.id 제거)
-    const anonymizedReviews = reviews.map((review, index) => ({
-      ...review,
+    // 실명 표시, 평점 제거
+    const qnaList = reviews.map((review) => ({
+      id: review.id,
+      content: review.content,
+      answer: review.answer,
+      answeredAt: review.answeredAt,
+      createdAt: review.createdAt,
+      isOwn: session?.user?.id === review.reviewerId,
       reviewer: {
-        name: `익명 ${index + 1}`,
+        id: review.reviewer.id,
+        name: review.reviewer.name,
+        image: review.reviewer.image,
       },
     }));
 
     return NextResponse.json({
-      reviews: anonymizedReviews,
-      averageRatings,
-      totalReviews: reviews.length,
+      questions: qnaList,
+      totalQuestions: reviews.length,
     });
   } catch (error) {
-    console.error("리뷰 조회 오류:", error);
+    console.error("Q&A 조회 오류:", error);
     return NextResponse.json(
-      { error: "리뷰 조회 중 오류가 발생했습니다." },
+      { error: "Q&A 조회 중 오류가 발생했습니다." },
       { status: 500 }
     );
   }

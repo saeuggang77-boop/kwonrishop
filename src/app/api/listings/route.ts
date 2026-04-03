@@ -94,32 +94,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // 판매자별 리뷰 평균 계산 (listingId 직접 조회로 조인 제거)
-    const featuredListingIds = featuredListings.map((l) => l.id);
-    const featuredReviewStats = await prisma.review.groupBy({
-      by: ['listingId'],
-      where: {
-        listingId: { in: featuredListingIds },
-      },
-      _avg: {
-        accuracyRating: true,
-        communicationRating: true,
-        conditionRating: true,
-      },
-      _count: true,
-    });
-
-    const featuredReviewMap = new Map(
-      featuredReviewStats.map((r) => {
-        const avgRating =
-          ((r._avg.accuracyRating || 0) +
-            (r._avg.communicationRating || 0) +
-            (r._avg.conditionRating || 0)) / 3;
-        return [r.listingId, { avgRating, reviewCount: r._count }];
-      })
-    );
-
-    // Add featuredTier and sort by tier level
+    // Add featuredTier and sort by tier level (reviewStats 제거)
     const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2 };
     const withTier = featuredListings.map((l) => {
       const purchase = l.adPurchases[0];
@@ -135,13 +110,11 @@ export async function GET(req: NextRequest) {
         else if (productName.includes("프리미엄")) tier = "PREMIUM";
         else tier = "BASIC";
       }
-      const sellerTrust = featuredReviewMap.get(l.id) || { avgRating: 0, reviewCount: 0 };
       return {
         ...l,
         featuredTier: tier,
         adPurchases: undefined,
         userId: undefined,
-        sellerTrust,
       };
     }).sort((a, b) => {
       const aOrder = tierOrder[a.featuredTier] ?? 99;
@@ -297,32 +270,7 @@ export async function GET(req: NextRequest) {
     prisma.listing.count({ where }),
   ]);
 
-  // 판매자별 리뷰 평균 계산 (listingId 직접 조회로 조인 제거)
-  const listingIds = listings.map((l: any) => l.id);
-  const reviewStats = await prisma.review.groupBy({
-    by: ['listingId'],
-    where: {
-      listingId: { in: listingIds },
-    },
-    _avg: {
-      accuracyRating: true,
-      communicationRating: true,
-      conditionRating: true,
-    },
-    _count: true,
-  });
-
-  // listingId → avgRating, reviewCount 매핑
-  const reviewMap = new Map(
-    reviewStats.map((r) => {
-      const avgRating =
-        ((r._avg.accuracyRating || 0) +
-          (r._avg.communicationRating || 0) +
-          (r._avg.conditionRating || 0)) / 3;
-      return [r.listingId, { avgRating, reviewCount: r._count }];
-    })
-  );
-
+  // reviewStats 제거
   const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2, FREE: 3 };
   const listingsWithTier = listings.map((l: any) => {
     const purchase = l.adPurchases?.[0];
@@ -342,13 +290,11 @@ export async function GET(req: NextRequest) {
         tier = "BASIC";
       }
     }
-    const sellerTrust = reviewMap.get(l.id) || { avgRating: 0, reviewCount: 0 };
     return {
       ...l,
       featuredTier: tier,
       adPurchases: undefined,
       userId: undefined, // 보안상 userId 제거
-      sellerTrust,
     };
   }).sort((a: any, b: any) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3));
 

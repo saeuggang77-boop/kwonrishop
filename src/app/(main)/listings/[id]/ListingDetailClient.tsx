@@ -8,7 +8,6 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import TierBadge from "@/components/shared/TierBadge";
-import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { toast } from "@/lib/toast";
 import { formatPhone } from "@/lib/utils";
@@ -99,7 +98,6 @@ interface ListingDetail {
   user: { id: string; name: string | null; image: string | null; phone: string | null; createdAt: string; businessVerified?: boolean };
   _count: { favorites: number; chatRooms: number };
   featuredTier?: string;
-  sellerTrust?: { avgRating: number; reviewCount: number };
   priceHistory?: { id: string; field: string; oldValue: number; newValue: number; createdAt: string }[];
   regionStats?: { avgViewCount: number; avgFavoriteCount: number; totalCount: number; region: string } | null;
 }
@@ -1062,9 +1060,6 @@ export default function ListingDetailClient() {
                     </svg>
                     사업자 인증완료
                   </span>
-                )}
-                {listing.sellerTrust && listing.sellerTrust.reviewCount > 0 && (
-                  <SellerTrustBadge avgRating={listing.sellerTrust.avgRating} reviewCount={listing.sellerTrust.reviewCount} />
                 )}
               </div>
               {listing.contactPublic && listing.user.phone && (

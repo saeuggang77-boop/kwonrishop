@@ -6,7 +6,7 @@ import { sanitizeHtml } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
 
-// 리뷰 신고
+// Q&A 신고
 export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     // 필수 필드 검증
     if (!reviewId || !reason) {
       return NextResponse.json(
-        { error: "리뷰 ID와 신고 사유를 입력해주세요." },
+        { error: "질문 ID와 신고 사유를 입력해주세요." },
         { status: 400 }
       );
     }
@@ -43,25 +43,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 리뷰 존재 확인
+    // Q&A 존재 확인
     const review = await prisma.review.findUnique({
       where: { id: reviewId },
       select: { id: true, reviewerId: true },
     });
 
     if (!review) {
-      return NextResponse.json({ error: "리뷰를 찾을 수 없습니다." }, { status: 404 });
+      return NextResponse.json({ error: "질문을 찾을 수 없습니다." }, { status: 404 });
     }
 
-    // 본인 리뷰 신고 방지
+    // 본인 질문 신고 방지
     if (review.reviewerId === session.user.id) {
       return NextResponse.json(
-        { error: "본인이 작성한 리뷰는 신고할 수 없습니다." },
+        { error: "본인이 작성한 질문은 신고할 수 없습니다." },
         { status: 403 }
       );
     }
 
-    // 중복 신고 확인 (같은 사용자가 같은 리뷰를 이미 신고했는지)
+    // 중복 신고 확인 (같은 사용자가 같은 질문을 이미 신고했는지)
     const existingReport = await prisma.report.findFirst({
       where: {
         reporterId: session.user.id,
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
 
     if (existingReport) {
       return NextResponse.json(
-        { error: "이미 이 리뷰를 신고하셨습니다." },
+        { error: "이미 이 질문을 신고하셨습니다." },
         { status: 400 }
       );
     }
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("리뷰 신고 오류:", error);
+    console.error("Q&A 신고 오류:", error);
     return NextResponse.json(
       { error: "신고 접수 중 오류가 발생했습니다." },
       { status: 500 }

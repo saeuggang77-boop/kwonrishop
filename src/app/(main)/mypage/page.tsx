@@ -773,7 +773,7 @@ export default function MyPage() {
               <span className="text-sm text-gray-400">{data.chatCount}건</span>
             </Link>
             <Link href="/mypage/reviews" className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">리뷰</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Q&A</span>
             </Link>
             <div className="px-5 py-2 bg-gray-50 dark:bg-gray-800">
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">기타</p>
@@ -804,7 +804,7 @@ export default function MyPage() {
               <span className="text-sm text-gray-400">{data.chatCount}건</span>
             </Link>
             <Link href="/mypage/reviews" className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">리뷰</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Q&A</span>
             </Link>
           </>
         )}

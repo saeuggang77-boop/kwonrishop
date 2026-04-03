@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// 마이페이지: 내가 받은 리뷰 + 내가 작성한 리뷰 조회
+// 마이페이지: 내가 받은 Q&A + 내가 작성한 Q&A 조회
 export async function GET() {
   const session = await getServerSession(authOptions);
 
@@ -12,7 +12,7 @@ export async function GET() {
   }
 
   try {
-    // 내가 받은 리뷰 (내 매물에 달린 리뷰) - 블라인드 리뷰이므로 reviewer 정보 제거
+    // 내가 받은 Q&A (내 매물에 달린 질문) - 실명 표시
     const receivedReviews = await prisma.review.findMany({
       where: {
         listing: {
@@ -26,11 +26,18 @@ export async function GET() {
             storeName: true,
           },
         },
+        reviewer: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    // 내가 작성한 리뷰
+    // 내가 작성한 Q&A
     const writtenReviews = await prisma.review.findMany({
       where: {
         reviewerId: session.user.id,
@@ -52,14 +59,34 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
+    // 평점 필드 제거
+    const receivedQnA = receivedReviews.map((r) => ({
+      id: r.id,
+      content: r.content,
+      answer: r.answer,
+      answeredAt: r.answeredAt,
+      createdAt: r.createdAt,
+      listing: r.listing,
+      reviewer: r.reviewer,
+    }));
+
+    const writtenQnA = writtenReviews.map((r) => ({
+      id: r.id,
+      content: r.content,
+      answer: r.answer,
+      answeredAt: r.answeredAt,
+      createdAt: r.createdAt,
+      listing: r.listing,
+    }));
+
     return NextResponse.json({
-      received: receivedReviews,
-      written: writtenReviews,
+      received: receivedQnA,
+      written: writtenQnA,
     });
   } catch (error) {
-    console.error("마이페이지 리뷰 조회 오류:", error);
+    console.error("마이페이지 Q&A 조회 오류:", error);
     return NextResponse.json(
-      { error: "리뷰 조회 중 오류가 발생했습니다." },
+      { error: "Q&A 조회 중 오류가 발생했습니다." },
       { status: 500 }
     );
   }

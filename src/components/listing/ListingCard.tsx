@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import TierBadge from "@/components/shared/TierBadge";
-import SellerTrustBadge from "@/components/shared/SellerTrustBadge";
 
 interface ListingCardProps {
   listing: {
@@ -27,7 +26,6 @@ interface ListingCardProps {
     subCategory: { name: string } | null;
     images: { url: string }[];
     featuredTier?: string;
-    sellerTrust?: { avgRating: number; reviewCount: number };
     _count?: { documents: number };
   };
 }
@@ -114,13 +112,6 @@ export default function ListingCard({ listing }: ListingCardProps) {
               </>
             )}
           </div>
-          {listing.sellerTrust && listing.sellerTrust.reviewCount > 0 && (
-            <SellerTrustBadge
-              avgRating={listing.sellerTrust.avgRating}
-              reviewCount={listing.sellerTrust.reviewCount}
-              size="sm"
-            />
-          )}
         </div>
 
         <p className="text-sm text-gray-600 dark:text-gray-400 truncate mb-1">{shortAddress}</p>
