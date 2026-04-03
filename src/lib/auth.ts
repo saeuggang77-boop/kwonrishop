@@ -33,6 +33,11 @@ export const authOptions: NextAuthOptions = {
           throw new Error("이메일과 비밀번호를 입력해주세요.");
         }
 
+        // 탈퇴된 이메일 패턴으로 직접 로그인 시도 차단
+        if (credentials.email.toLowerCase().includes("@withdrawn.local")) {
+          throw new Error("탈퇴된 계정입니다. 새로 가입해주세요.");
+        }
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email.toLowerCase() },
           select: {
@@ -47,6 +52,11 @@ export const authOptions: NextAuthOptions = {
 
         if (!user || !user.password) {
           throw new Error("이메일 또는 비밀번호가 올바르지 않습니다.");
+        }
+
+        // 탈퇴 회원 로그인 차단
+        if (user.email?.includes("@withdrawn.local") || user.name === "탈퇴회원") {
+          throw new Error("탈퇴된 계정입니다. 새로 가입해주세요.");
         }
 
         if (!user.emailVerified) {
@@ -96,6 +106,11 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (existingUser) {
+            // 탈퇴 회원 재로그인 차단
+            if (existingUser.email?.includes("@withdrawn.local") || existingUser.name === "탈퇴회원") {
+              return `/login?error=WithdrawnAccount`;
+            }
+
             // 이미 해당 소셜 계정으로 연결된 경우 → 정상 로그인
             const alreadyLinked = existingUser.accounts.some(
               (a) => a.provider === account.provider
@@ -119,6 +134,8 @@ export const authOptions: NextAuthOptions = {
           where: { id: (user?.id || token.id) as string },
           select: {
             id: true,
+            email: true,
+            name: true,
             role: true,
             phone: true,
             roleSelectedAt: true,
@@ -126,6 +143,10 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (dbUser) {
+          // 탈퇴 회원이면 토큰 무효화 → 세션 끊김
+          if (dbUser.email?.includes("@withdrawn.local") || dbUser.name === "탈퇴회원") {
+            return { ...token, id: null, role: null, withdrawn: true };
+          }
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.phone = dbUser.phone;
@@ -136,6 +157,11 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      // 탈퇴 회원 토큰이면 세션 무효화
+      if (token.withdrawn) {
+        session.user = { id: "", role: "BUYER" as UserRole, phone: null, roleSelected: false, verified: false } as typeof session.user;
+        return session;
+      }
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;

@@ -122,7 +122,15 @@ function LoginContent() {
             </p>
           </div>
         )}
-        {errorParam && !["InvalidToken", "TokenExpired", "RateLimit", "OAuthAccountNotLinked"].includes(errorParam) && (
+        {errorParam === "WithdrawnAccount" && (
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400 text-center">
+            <p className="font-medium mb-1">탈퇴된 계정입니다</p>
+            <p className="text-xs text-red-500 dark:text-red-400">
+              해당 계정은 이미 탈퇴 처리되었습니다. 새로 가입해주세요.
+            </p>
+          </div>
+        )}
+        {errorParam && !["InvalidToken", "TokenExpired", "RateLimit", "OAuthAccountNotLinked", "WithdrawnAccount"].includes(errorParam) && (
           <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400 text-center">
             로그인에 실패했습니다. 다시 시도해주세요.
           </div>
