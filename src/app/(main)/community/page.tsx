@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-const TAGS = ["전체", "자유", "양도후기", "창업팁", "질문", "상권정보"];
+const TAGS = ["전체", "공지", "자유게시판", "양도후기", "사이트이용문의"];
 
 interface Post {
   id: string;
@@ -96,17 +96,29 @@ function CommunityContent() {
             <Link
               key={post.id}
               href={`/community/${post.id}`}
-              className="block py-4 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors"
+              className={`block py-4 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors ${
+                post.tag === "공지" ? "bg-blue-50/60" : ""
+              }`}
             >
               <div className="flex items-start gap-3">
                 {post.tag && (
-                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded shrink-0 mt-0.5">
+                  <span className={`px-2 py-0.5 text-xs rounded shrink-0 mt-0.5 font-medium ${
+                    post.tag === "공지"
+                      ? "bg-blue-100 text-blue-700"
+                      : post.tag === "사이트이용문의"
+                        ? "bg-purple-100 text-purple-700"
+                        : post.tag === "양도후기"
+                          ? "bg-amber-100 text-amber-700"
+                          : "bg-gray-100 text-gray-600"
+                  }`}>
                     {post.tag}
                   </span>
                 )}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-medium text-gray-900 truncate">
+                    {post.tag === "공지" && <span className="mr-1">&#128204;</span>}
                     {post.title}
+                    {post.tag === "사이트이용문의" && <span className="ml-1 text-gray-400">&#128274;</span>}
                   </h3>
                   <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
                     <span>{post.author.name || "익명"}</span>

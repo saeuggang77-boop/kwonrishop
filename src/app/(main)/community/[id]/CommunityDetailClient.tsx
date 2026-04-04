@@ -23,6 +23,7 @@ interface PostDetail {
   createdAt: string;
   author: { id: string; name: string | null; image: string | null };
   comments: Comment[];
+  isRestricted?: boolean;
 }
 
 export default function CommunityDetailClient() {
@@ -89,8 +90,17 @@ export default function CommunityDetailClient() {
       {/* 헤더 */}
       <div className="mb-6">
         {post.tag && (
-          <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded mb-2 inline-block">
-            {post.tag}
+          <span className={`px-2 py-0.5 text-xs rounded mb-2 inline-block font-medium ${
+            post.tag === "공지"
+              ? "bg-blue-100 text-blue-700"
+              : post.tag === "사이트이용문의"
+                ? "bg-purple-100 text-purple-700"
+                : post.tag === "양도후기"
+                  ? "bg-amber-100 text-amber-700"
+                  : "bg-gray-100 text-gray-600"
+          }`}>
+            {post.tag === "공지" && "📌 "}{post.tag}
+            {post.tag === "사이트이용문의" && " 🔒"}
           </span>
         )}
         <h1 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h1>
@@ -124,12 +134,20 @@ export default function CommunityDetailClient() {
       </div>
 
       {/* 본문 */}
-      <div className="prose prose-sm max-w-none mb-8 whitespace-pre-wrap text-gray-700 leading-relaxed">
-        {post.content}
-      </div>
+      {post.isRestricted ? (
+        <div className="mb-8 py-12 text-center bg-gray-50 rounded-xl border border-gray-200">
+          <span className="text-3xl mb-3 block">&#128274;</span>
+          <p className="text-gray-500 font-medium">비공개 글입니다</p>
+          <p className="text-sm text-gray-400 mt-1">작성자와 관리자만 내용을 볼 수 있습니다</p>
+        </div>
+      ) : (
+        <div className="prose prose-sm max-w-none mb-8 whitespace-pre-wrap text-gray-700 leading-relaxed">
+          {post.content}
+        </div>
+      )}
 
       {/* 댓글 */}
-      <div className="border-t pt-6">
+      {!post.isRestricted && <div className="border-t pt-6">
         <h2 className="font-bold text-gray-900 mb-4">
           댓글 {post.comments.reduce((acc, c) => acc + 1 + (c.replies?.length || 0), 0)}
         </h2>
@@ -225,7 +243,7 @@ export default function CommunityDetailClient() {
             </div>
           ))}
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

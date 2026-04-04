@@ -6,6 +6,17 @@ import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 
+const postSelectFields = {
+  id: true,
+  title: true,
+  tag: true,
+  viewCount: true,
+  likeCount: true,
+  createdAt: true,
+  author: { select: { id: true, name: true, image: true } },
+  _count: { select: { comments: true } },
+};
+
 // 게시글 목록
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -13,25 +24,41 @@ export async function GET(req: NextRequest) {
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20")));
   const tag = searchParams.get("tag");
 
-  const where: Record<string, unknown> = {};
-  if (tag) where.tag = tag;
+  // 전체 보기: 공지 상단 고정 + 나머지 최신순
+  if (!tag) {
+    const [notices, posts, total] = await Promise.all([
+      page === 1
+        ? prisma.post.findMany({
+            where: { tag: "공지" },
+            orderBy: { createdAt: "desc" },
+            select: postSelectFields,
+          })
+        : Promise.resolve([]),
+      prisma.post.findMany({
+        where: { NOT: { tag: "공지" } },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+        select: postSelectFields,
+      }),
+      prisma.post.count({ where: { NOT: { tag: "공지" } } }),
+    ]);
 
+    return NextResponse.json({
+      posts: [...notices, ...posts],
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    });
+  }
+
+  // 특정 태그 필터
+  const where = { tag };
   const [posts, total] = await Promise.all([
     prisma.post.findMany({
       where,
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * limit,
       take: limit,
-      select: {
-        id: true,
-        title: true,
-        tag: true,
-        viewCount: true,
-        likeCount: true,
-        createdAt: true,
-        author: { select: { id: true, name: true, image: true } },
-        _count: { select: { comments: true } },
-      },
+      select: postSelectFields,
     }),
     prisma.post.count({ where }),
   ]);
@@ -64,6 +91,17 @@ export async function POST(req: NextRequest) {
   }
 
   const { title, content, tag } = await req.json();
+
+  // 공지 태그는 관리자만 작성 가능
+  if (tag === "공지") {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    });
+    if (user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "공지는 관리자만 작성할 수 있습니다." }, { status: 403 });
+    }
+  }
 
   // Sanitize inputs (title uses sanitizeInput, content uses sanitizeHtml for XSS prevention)
   const cleanTitle = sanitizeInput(title);

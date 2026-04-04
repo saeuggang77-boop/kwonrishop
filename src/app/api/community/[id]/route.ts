@@ -6,7 +6,7 @@ import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
@@ -39,6 +39,30 @@ export async function GET(
     where: { id },
     data: { viewCount: { increment: 1 } },
   });
+
+  // 사이트이용문의: 작성자와 관리자만 내용 열람 가능
+  if (post.tag === "사이트이용문의") {
+    const session = await getServerSession(authOptions);
+    const isAuthor = session?.user?.id === post.author.id;
+    let isAdmin = false;
+    if (session?.user?.id && !isAuthor) {
+      const viewer = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { role: true },
+      });
+      isAdmin = viewer?.role === "ADMIN";
+    }
+
+    if (!isAuthor && !isAdmin) {
+      return NextResponse.json({
+        ...post,
+        viewCount: post.viewCount + 1,
+        content: "",
+        comments: [],
+        isRestricted: true,
+      });
+    }
+  }
 
   return NextResponse.json({ ...post, viewCount: post.viewCount + 1 });
 }
@@ -74,6 +98,17 @@ export async function PUT(
 
   if (post.authorId !== session.user.id) {
     return NextResponse.json({ error: "수정 권한이 없습니다." }, { status: 403 });
+  }
+
+  // 공지 태그는 관리자만
+  if (tag === "공지") {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    });
+    if (user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "공지는 관리자만 작성할 수 있습니다." }, { status: 403 });
+    }
   }
 
   const updated = await prisma.post.update({

@@ -24,6 +24,25 @@ export async function POST(
   }
 
   const { id: postId } = await params;
+
+  // 사이트이용문의: 작성자와 관리자만 댓글 작성 가능
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    select: { tag: true, authorId: true },
+  });
+  if (post?.tag === "사이트이용문의") {
+    const isAuthor = post.authorId === session.user.id;
+    if (!isAuthor) {
+      const viewer = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { role: true },
+      });
+      if (viewer?.role !== "ADMIN") {
+        return NextResponse.json({ error: "작성자와 관리자만 댓글을 작성할 수 있습니다." }, { status: 403 });
+      }
+    }
+  }
+
   const { content, parentId } = await req.json();
 
   if (!content?.trim()) {

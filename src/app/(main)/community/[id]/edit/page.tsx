@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-const TAGS = ["자유", "양도후기", "창업팁", "질문", "상권정보"];
+const BASE_TAGS = ["자유게시판", "양도후기", "사이트이용문의"];
 
 export default function CommunityEditPage() {
   const router = useRouter();
@@ -13,7 +13,9 @@ export default function CommunityEditPage() {
   const { data: session, status } = useSession();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [tag, setTag] = useState("자유");
+  const [tag, setTag] = useState("자유게시판");
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
+  const TAGS = isAdmin ? ["공지", ...BASE_TAGS] : BASE_TAGS;
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
@@ -34,7 +36,10 @@ export default function CommunityEditPage() {
           }
           setTitle(data.title || "");
           setContent(data.content || "");
-          setTag(data.tag || "자유");
+          // 기존 태그 호환: 삭제된 태그는 자유게시판으로 매핑
+          const oldTag = data.tag || "자유게시판";
+          const validTags = ["공지", "자유게시판", "양도후기", "사이트이용문의"];
+          setTag(validTags.includes(oldTag) ? oldTag : "자유게시판");
           setFetching(false);
         })
         .catch(() => {

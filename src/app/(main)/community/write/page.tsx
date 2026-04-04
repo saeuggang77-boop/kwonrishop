@@ -4,14 +4,16 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-const TAGS = ["자유", "양도후기", "창업팁", "질문", "상권정보"];
+const BASE_TAGS = ["자유게시판", "양도후기", "사이트이용문의"];
 
 export default function CommunityWritePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [tag, setTag] = useState("자유");
+  const [tag, setTag] = useState("자유게시판");
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
+  const TAGS = isAdmin ? ["공지", ...BASE_TAGS] : BASE_TAGS;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
