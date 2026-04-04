@@ -69,6 +69,7 @@ interface Equipment {
 
 const SERVICE_TYPE_LABELS: Record<string, string> = {
   INTERIOR: "인테리어",
+  SIGNAGE: "간판",
   ACCOUNTING: "세무/회계",
   LEGAL: "법무/법률",
   MARKETING: "마케팅",
@@ -80,6 +81,9 @@ const SERVICE_TYPE_LABELS: Record<string, string> = {
   LOGISTICS: "물류/배송",
   CLEANING: "청소/방역",
   SECURITY: "보안/경비",
+  EQUIPMENT: "주방/설비",
+  POS_SYSTEM: "POS/키오스크",
+  DELIVERY: "배달/포장",
   OTHER: "기타",
 };
 
@@ -628,56 +632,67 @@ export default function HomeClient({
 
           {/* 집기장터 패널 */}
           {activeTab === "equipment" && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {vipEquipment.slice(0, 1).map((item) => (
                 <Link
                   key={item.id}
                   href={`/equipment/${item.id}`}
-                  className="md:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all"
+                  className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all"
                 >
-                  <div className="flex items-start gap-3 p-4">
-                    {item.images[0] ? (
-                      <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      {item.images[0] ? (
+                        <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                          🛠️
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
+                        <p className="text-sm font-bold text-blue-600">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
                       </div>
-                    ) : (
-                      <div className="w-20 h-20 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center text-2xl flex-shrink-0">
-                        🛠️
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 bg-gradient-to-r from-gold to-amber-700 text-white text-[10px] font-bold rounded-md">VIP</span>
-                      </div>
-                      <h3 className="text-sm font-bold text-gray-900 truncate">{item.title}</h3>
-                      <p className="text-sm font-bold text-blue-600 mt-1">
-                        {item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.condition === "NEW" ? "신품" : item.condition === "USED_LIKE_NEW" ? "거의새것" : "중고"}</p>
                     </div>
+                    <span className="px-2 py-0.5 bg-gradient-to-r from-gold to-amber-700 text-white text-[10px] font-bold rounded-md">VIP</span>
                   </div>
+                  <p className="text-xs text-gray-400">
+                    {item.condition === "NEW" ? "신품" : item.condition === "USED_LIKE_NEW" ? "거의새것" : "중고"}
+                  </p>
                 </Link>
               ))}
-              {premiumEquipment.slice(0, vipEquipment.length > 0 ? 2 : 4).map((item) => (
+              {premiumEquipment.slice(0, vipEquipment.length > 0 ? 2 : 3).map((item) => (
                 <Link
                   key={item.id}
                   href={`/equipment/${item.id}`}
-                  className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all"
+                  className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all"
                 >
-                  <div className="relative h-32 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                    {item.images[0] ? (
-                      <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
-                    ) : (
-                      <span className="text-3xl">🛠️</span>
-                    )}
-                    <span className="absolute top-2 left-2 px-2 py-0.5 bg-gray-500 text-white text-[10px] font-bold rounded-md">PREMIUM</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      {item.images[0] ? (
+                        <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                          🛠️
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
+                        <p className="text-sm font-bold text-blue-600">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
+                      </div>
+                    </div>
+                    <span className={`px-2 py-0.5 text-white text-[10px] font-bold rounded-md ${
+                      item.tier === "PREMIUM" ? "bg-gray-500" : "bg-blue-500"
+                    }`}>
+                      {item.tier}
+                    </span>
                   </div>
-                  <div className="p-3">
-                    <h3 className="text-sm font-semibold text-gray-900 truncate">{item.title}</h3>
-                    <p className="text-sm font-bold text-blue-600 mt-1">
-                      {item.price === 0 ? "무료" : `${item.price.toLocaleString()}원`}
-                    </p>
-                  </div>
+                  <p className="text-xs text-gray-400">
+                    {item.condition === "NEW" ? "신품" : item.condition === "USED_LIKE_NEW" ? "거의새것" : "중고"}
+                  </p>
                 </Link>
               ))}
             </div>
