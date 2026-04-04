@@ -182,7 +182,7 @@ export default function EquipmentDetailClient() {
   const isFree = equipment.price === 0;
   const conditionColors: Record<string, string> = {
     EXCELLENT: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    GOOD: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+    GOOD: "bg-navy-100 text-navy-800 dark:bg-navy-900 dark:text-navy-200",
     FAIR: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   };
 
@@ -324,7 +324,7 @@ export default function EquipmentDetailClient() {
             <div className="flex items-center gap-2">
               <p className="font-medium text-gray-900 dark:text-white">{equipment.user.name || "판매자"}</p>
               {equipment.user.businessVerification?.verified && (
-                <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-300 text-[10px] font-medium rounded">
+                <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-300 text-[10px] font-medium rounded">
                   사업자인증
                 </span>
               )}
@@ -379,7 +379,7 @@ export default function EquipmentDetailClient() {
           </button>
           <button
             onClick={handleChat}
-            className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-blue-800 transition-colors text-sm md:text-base"
+            className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-navy-800 transition-colors text-sm md:text-base"
           >
             채팅하기
           </button>

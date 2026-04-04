@@ -105,7 +105,7 @@ export default function CommunityDetailClient() {
             post.tag === "공지"
               ? "bg-navy-100 text-navy-700"
               : post.tag === "사이트이용문의"
-                ? "bg-purple-100 text-purple-700"
+                ? "bg-navy-100 text-navy-700"
                 : post.tag === "양도후기"
                   ? "bg-amber-100 text-amber-700"
                   : "bg-gray-100 text-gray-600"
@@ -173,11 +173,11 @@ export default function CommunityDetailClient() {
               onChange={(e) => setComment(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && submitComment()}
               maxLength={500}
-              className="flex-1 px-3 md:px-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-navy-500"
+              className="flex-1 px-3 md:px-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-navy-700"
             />
             <button
               onClick={() => submitComment()}
-              className="px-3 md:px-4 py-2.5 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 active:bg-blue-800 min-w-[60px]"
+              className="px-3 md:px-4 py-2.5 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 active:bg-navy-800 min-w-[60px]"
             >
               등록
             </button>
@@ -230,7 +230,7 @@ export default function CommunityDetailClient() {
                         value={replyContent}
                         onChange={(e) => setReplyContent(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && submitComment(c.id)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-navy-500"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-navy-700"
                         autoFocus
                       />
                       <button

@@ -106,7 +106,7 @@ function CommunityContent() {
                     post.tag === "공지"
                       ? "bg-navy-100 text-navy-700"
                       : post.tag === "사이트이용문의"
-                        ? "bg-purple-100 text-purple-700"
+                        ? "bg-navy-100 text-navy-700"
                         : post.tag === "양도후기"
                           ? "bg-amber-100 text-amber-700"
                           : "bg-gray-100 text-gray-600"

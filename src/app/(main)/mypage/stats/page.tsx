@@ -225,7 +225,7 @@ export default function StatsPage() {
             {data.recentFavorites.map((fav, idx) => (
               <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-navy-100 dark:bg-blue-950 flex items-center justify-center text-navy-700 dark:text-navy-400 text-sm font-bold">
+                  <div className="w-8 h-8 rounded-full bg-navy-100 dark:bg-navy-950 flex items-center justify-center text-navy-700 dark:text-navy-400 text-sm font-bold">
                     {fav.userName[0]}
                   </div>
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{fav.userName}</span>

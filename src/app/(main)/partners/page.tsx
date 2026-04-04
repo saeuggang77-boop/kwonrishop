@@ -407,7 +407,7 @@ function TierSection({
         {displayed.map((p) => (
           <div
             key={p.id}
-            className="flex items-center justify-between px-5 py-3.5 hover:bg-navy-50/30 dark:hover:bg-blue-950/20 cursor-pointer transition-colors group"
+            className="flex items-center justify-between px-5 py-3.5 hover:bg-navy-50/30 dark:hover:bg-navy-950/20 cursor-pointer transition-colors group"
             onClick={() => onPartnerClick(p.id)}
           >
             <div className="min-w-0 flex-1">

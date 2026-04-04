@@ -186,7 +186,7 @@ export default function TossPayment({
           <>
             <button
               onClick={handlePayment}
-              className="w-full py-4 bg-navy-700 text-white rounded-xl font-bold text-lg hover:bg-navy-600 active:bg-blue-800 transition-colors"
+              className="w-full py-4 bg-navy-700 text-white rounded-xl font-bold text-lg hover:bg-navy-600 active:bg-navy-800 transition-colors"
             >
               결제하기
             </button>

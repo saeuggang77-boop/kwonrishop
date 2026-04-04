@@ -69,8 +69,8 @@ export default function IndustryRevenueSection({
     const absDiff = Math.abs(diff).toFixed(1);
 
     return (
-      <div className={`p-4 rounded-lg ${isHigher ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'}`}>
-        <p className={`text-sm ${isHigher ? 'text-green-800 dark:text-green-200' : 'text-yellow-800 dark:text-yellow-200'}`}>
+      <div className={`p-4 rounded-lg ${isHigher ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 'bg-navy-50 dark:bg-navy-900/20 border border-navy-200 dark:border-navy-800'}`}>
+        <p className={`text-sm ${isHigher ? 'text-green-800 dark:text-green-200' : 'text-navy-800 dark:text-navy-200'}`}>
           해당 브랜드의 평균 매출은 업종 평균 대비 <span className="font-bold">{absDiff}%</span> {isHigher ? '높습니다' : '낮습니다'}
         </p>
       </div>

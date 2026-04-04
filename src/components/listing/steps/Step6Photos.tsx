@@ -21,7 +21,7 @@ const UPLOAD_SLOTS = [
 const TYPE_COLORS: Record<string, { bg: string; border: string; lightBg: string; text: string; hoverBorder: string }> = {
   EXTERIOR: { bg: "bg-orange-500", border: "border-orange-300 dark:border-orange-700", lightBg: "bg-orange-50 dark:bg-orange-950/30", text: "text-orange-500 dark:text-orange-400", hoverBorder: "hover:border-orange-400" },
   INTERIOR: { bg: "bg-navy-500", border: "border-navy-300 dark:border-navy-600", lightBg: "bg-navy-50 dark:bg-navy-950/30", text: "text-navy-500 dark:text-navy-400", hoverBorder: "hover:border-navy-400" },
-  KITCHEN: { bg: "bg-purple-500", border: "border-purple-300 dark:border-purple-700", lightBg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-500 dark:text-purple-400", hoverBorder: "hover:border-purple-400" },
+  KITCHEN: { bg: "bg-navy-600", border: "border-navy-300 dark:border-navy-700", lightBg: "bg-navy-50 dark:bg-navy-900/30", text: "text-navy-600 dark:text-navy-400", hoverBorder: "hover:border-navy-400" },
   OTHER: { bg: "bg-gray-500", border: "border-gray-300 dark:border-gray-600", lightBg: "", text: "text-gray-400 dark:text-gray-500", hoverBorder: "hover:border-gray-400" },
 };
 
@@ -169,13 +169,13 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">매물 사진을 등록하고 연락처 공개 여부를 설정해주세요</p>
 
       {wasRefreshed && (
-        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-lg flex gap-3">
-          <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="mb-6 p-4 bg-navy-50 dark:bg-navy-900/50 border border-navy-200 dark:border-navy-800 rounded-lg flex gap-3">
+          <svg className="w-5 h-5 text-navy-600 dark:text-navy-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
           <div>
-            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">새로고침으로 인해 이미지가 초기화되었습니다</p>
-            <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
+            <p className="text-sm font-medium text-navy-800 dark:text-navy-300">새로고침으로 인해 이미지가 초기화되었습니다</p>
+            <p className="text-xs text-navy-700 dark:text-navy-400 mt-1">
               이전에 업로드한 사진은 브라우저 새로고침으로 인해 삭제되었습니다. 다시 업로드해주세요.
               <br />
               <span className="font-medium">작성 중 페이지 이탈 시 경고 메시지가 표시되니 참고해주세요.</span>
@@ -307,8 +307,8 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
 
           {/* 사진 유형 필수 체크 */}
           {data.images.length > 0 && !photoRequirementMet && (
-            <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-              <p className="text-xs text-yellow-700 dark:text-yellow-300 font-medium">
+            <div className="mt-3 p-3 bg-navy-50 dark:bg-navy-900/50 border border-navy-200 dark:border-navy-800 rounded-lg">
+              <p className="text-xs text-navy-700 dark:text-navy-300 font-medium">
                 {!hasExterior && !hasInterior
                   ? "외부 사진 1장, 내부 사진 1장 이상 필요합니다. 사진 유형을 선택해주세요."
                   : !hasExterior
@@ -424,7 +424,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
 
           {/* 공개 시 전화번호 미입력 경고 */}
           {data.contactPublic && !phoneLoading && !data.contactPhone && (
-            <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
+            <p className="text-xs text-navy-600 dark:text-navy-400 mt-2">
               전화번호를 입력해야 매물 상세에 연락처가 노출됩니다
             </p>
           )}

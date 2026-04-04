@@ -137,16 +137,16 @@ export default function PushPromptCard({
     blue: {
       bg: "bg-navy-50 dark:bg-navy-800/20",
       border: "border-navy-200 dark:border-navy-700",
-      iconBg: "bg-navy-100 dark:bg-blue-900/50",
+      iconBg: "bg-navy-100 dark:bg-navy-900/50",
       iconText: "text-navy-700 dark:text-navy-400",
       button: "bg-navy-700 hover:bg-navy-600",
     },
     purple: {
-      bg: "bg-purple-50 dark:bg-purple-900/20",
-      border: "border-purple-200 dark:border-purple-800",
-      iconBg: "bg-purple-100 dark:bg-purple-900/50",
-      iconText: "text-purple-600 dark:text-purple-400",
-      button: "bg-purple-600 hover:bg-purple-700",
+      bg: "bg-navy-50 dark:bg-navy-900/20",
+      border: "border-navy-200 dark:border-navy-800",
+      iconBg: "bg-navy-100 dark:bg-navy-900/50",
+      iconText: "text-navy-600 dark:text-navy-400",
+      button: "bg-navy-600 hover:bg-navy-700",
     },
     green: {
       bg: "bg-green-50 dark:bg-green-900/20",

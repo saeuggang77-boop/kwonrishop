@@ -221,7 +221,7 @@ export default function ReviewsPage() {
               <div className="p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-400 text-sm font-bold">Q</span>
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-400 text-sm font-bold">Q</span>
                     <span className="text-sm text-gray-400 dark:text-gray-500">
                       {formatDate(review.createdAt)}
                     </span>
@@ -288,10 +288,10 @@ export default function ReviewsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="px-5 py-3 bg-yellow-50 dark:bg-yellow-900/20 border-t border-gray-200 dark:border-gray-700">
+                  <div className="px-5 py-3 bg-navy-50 dark:bg-navy-900/20 border-t border-gray-200 dark:border-gray-700">
                     <button
                       onClick={() => { setAnsweringId(review.id); setAnswerContent(""); }}
-                      className="text-sm text-yellow-700 dark:text-yellow-400 font-medium hover:underline"
+                      className="text-sm text-navy-700 dark:text-navy-400 font-medium hover:underline"
                     >
                       답변 작성하기
                     </button>

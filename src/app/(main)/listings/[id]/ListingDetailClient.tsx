@@ -793,7 +793,7 @@ export default function ListingDetailClient() {
           const months = (investmentTotal / listing.monthlyProfit).toFixed(0);
           cards.push({ icon: "⏱", label: "회수기간", value: `${months}개월`, color: "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300" });
           const annualReturn = ((listing.monthlyProfit * 12) / investmentTotal * 100).toFixed(0);
-          cards.push({ icon: "📈", label: "연수익률", value: `${annualReturn}%`, color: "bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300" });
+          cards.push({ icon: "📈", label: "연수익률", value: `${annualReturn}%`, color: "bg-navy-50 dark:bg-navy-900 text-navy-700 dark:text-navy-300" });
         }
         if (cards.length === 0) return null;
         return (
@@ -986,7 +986,7 @@ export default function ListingDetailClient() {
               )}
 
               {profit > 0 && (
-                <div className="flex justify-between items-center py-3 border-t-2 border-navy-200 dark:border-navy-700 bg-navy-50 dark:bg-blue-950 rounded-lg px-4">
+                <div className="flex justify-between items-center py-3 border-t-2 border-navy-200 dark:border-navy-700 bg-navy-50 dark:bg-navy-900 rounded-lg px-4">
                   <span className="text-sm font-bold text-navy-700 dark:text-navy-300">월 수익</span>
                   <span className="text-lg font-bold text-navy-700 dark:text-navy-400">+{fmt(profit)}만원 <span className="text-sm">{profitPct}%</span></span>
                 </div>
@@ -1308,7 +1308,7 @@ export default function ListingDetailClient() {
               {/* 광고 업그레이드 */}
               <Link
                 href={`/pricing?listingId=${listing.id}`}
-                className={`min-h-[44px] flex items-center justify-center py-2 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-blue-800 transition-colors text-xs md:text-sm ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+                className={`min-h-[44px] flex items-center justify-center py-2 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-navy-800 transition-colors text-xs md:text-sm ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
               >
                 광고 업그레이드
               </Link>
@@ -1345,7 +1345,7 @@ export default function ListingDetailClient() {
                 title={listing.storeName || listing.addressRoad || "매물 상세"}
                 imageUrl={listing.images.length > 0 ? listing.images[0].url : undefined}
               />
-              <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-blue-800 transition-colors text-sm md:text-base">
+              <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-navy-800 transition-colors text-sm md:text-base">
                 채팅하기
               </Link>
             </div>

@@ -81,7 +81,7 @@ export default function MyAdsPage() {
       </div>
 
       {/* 새 광고 구매 */}
-      <div className="bg-navy-50 dark:bg-blue-950 rounded-xl p-4 mb-6">
+      <div className="bg-navy-50 dark:bg-navy-950 rounded-xl p-4 mb-6">
         <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
           광고 상품으로 매물의 노출을 높이고 빠른 거래를 경험하세요
         </p>
@@ -144,7 +144,7 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
   if (ad.partnerService) renewParams.set("partnerServiceId", ad.partnerService.id);
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl border p-4 ${isActive ? "border-navy-200 dark:border-blue-900" : "border-gray-200 dark:border-gray-700 opacity-70"}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl border p-4 ${isActive ? "border-navy-200 dark:border-navy-900" : "border-gray-200 dark:border-gray-700 opacity-70"}`}>
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">

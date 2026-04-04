@@ -318,7 +318,7 @@ export default function HomeClient({
       </section>
 
       {/* ===== 섹션 2: 업종별 매물 찾기 ===== */}
-      <section className="py-8 md:py-12 bg-white dark:bg-navy-950">
+      <section className="py-8 md:py-12 bg-white dark:bg-navy-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-center gap-3 mb-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center">
@@ -460,7 +460,7 @@ export default function HomeClient({
       )}
 
       {/* ===== 섹션 4: 프랜차이즈 (가로 스크롤) ===== */}
-      <section className="py-8 md:py-12 bg-white dark:bg-navy-950">
+      <section className="py-8 md:py-12 bg-white dark:bg-navy-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-end justify-between mb-5">
             <div className="flex items-center gap-3">

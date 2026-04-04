@@ -182,7 +182,7 @@ export default function ProfileEditPage() {
               {formData.image ? (
                 <Image src={formData.image} alt="프로필" width={80} height={80} className="w-20 h-20 rounded-full object-cover" />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-navy-100 dark:bg-blue-900 flex items-center justify-center text-navy-700 dark:text-navy-400 text-2xl font-bold">
+                <div className="w-20 h-20 rounded-full bg-navy-100 dark:bg-navy-900 flex items-center justify-center text-navy-700 dark:text-navy-400 text-2xl font-bold">
                   {formData.name?.[0] || "U"}
                 </div>
               )}

@@ -360,10 +360,10 @@ function PackageCard({
     : isMid
     ? {
         border: "border-navy-400 dark:border-navy-500",
-        bg: "bg-gradient-to-br from-navy-50 to-white dark:from-blue-950 dark:to-gray-800",
+        bg: "bg-gradient-to-br from-navy-50 to-white dark:from-navy-950 dark:to-gray-800",
         badge: "추천",
         badgeBg: "bg-navy-500 text-white",
-        btn: "bg-navy-700 hover:bg-navy-600 active:bg-blue-800",
+        btn: "bg-navy-700 hover:bg-navy-600 active:bg-navy-800",
         ring: "ring-2 ring-navy-400 dark:ring-navy-500 shadow-md",
       }
     : {
@@ -591,7 +591,7 @@ function SingleCard({
       <button
         onClick={() => onPurchase(product.id)}
         disabled={purchasing}
-        className="w-full py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+        className="w-full py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 active:bg-navy-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
       >
         {purchasing ? "처리 중..." : "구매하기"}
       </button>
@@ -688,7 +688,7 @@ function SubscriptionCard({
         disabled={purchasing}
         className={`w-full py-2.5 rounded-lg font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
           isPopular
-            ? "bg-navy-700 hover:bg-navy-600 active:bg-blue-800"
+            ? "bg-navy-700 hover:bg-navy-600 active:bg-navy-800"
             : "bg-gray-800 hover:bg-gray-900 active:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500"
         }`}
       >

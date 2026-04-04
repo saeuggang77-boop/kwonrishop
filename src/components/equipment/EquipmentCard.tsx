@@ -29,7 +29,7 @@ export default function EquipmentCard({ equipment }: EquipmentCardProps) {
 
   const conditionColors: Record<string, string> = {
     EXCELLENT: "bg-green-500 text-white",
-    GOOD: "bg-yellow-500 text-white",
+    GOOD: "bg-navy-500 text-white",
     FAIR: "bg-red-500 text-white",
   };
 

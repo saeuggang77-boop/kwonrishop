@@ -199,12 +199,12 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("SELLER")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "SELLER"
-                    ? "border-navy-500 bg-navy-50 dark:bg-blue-950"
+                    ? "border-navy-500 bg-navy-50 dark:bg-navy-950"
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-navy-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-navy-100 dark:bg-navy-900 flex items-center justify-center shrink-0">
                     <svg className="w-5 h-5 text-navy-700 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
@@ -228,7 +228,7 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("FRANCHISE")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "FRANCHISE"
-                    ? "border-navy-500 bg-navy-50 dark:bg-blue-950"
+                    ? "border-navy-500 bg-navy-50 dark:bg-navy-950"
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                 }`}
               >
@@ -257,7 +257,7 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("PARTNER")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "PARTNER"
-                    ? "border-navy-500 bg-navy-50 dark:bg-blue-950"
+                    ? "border-navy-500 bg-navy-50 dark:bg-navy-950"
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                 }`}
               >
@@ -284,7 +284,7 @@ function VerifyBusinessContent() {
 
         {/* 프랜차이즈 안내 (역할 선택 또는 URL param으로 FRANCHISE인 경우) */}
         {effectiveRole === "FRANCHISE" && (
-          <div className="mb-5 p-3 bg-navy-50 dark:bg-blue-950 border border-navy-200 dark:border-navy-700 rounded-xl text-xs text-navy-700 dark:text-navy-300 space-y-1">
+          <div className="mb-5 p-3 bg-navy-50 dark:bg-navy-950 border border-navy-200 dark:border-navy-700 rounded-xl text-xs text-navy-700 dark:text-navy-300 space-y-1">
             <p className="font-medium">프랜차이즈 본사 인증 안내</p>
             <ul className="list-disc list-inside space-y-0.5">
               <li>공정거래위원회 정보공개서에 등록된 브랜드만 가입 가능합니다</li>
@@ -414,7 +414,7 @@ function VerifyBusinessContent() {
                 </div>
               </div>
             ) : (
-              <div className="mt-2 bg-navy-50 dark:bg-blue-950 border border-blue-100 dark:border-navy-700 rounded-lg px-3 py-2.5">
+              <div className="mt-2 bg-navy-50 dark:bg-navy-950 border border-navy-100 dark:border-navy-700 rounded-lg px-3 py-2.5">
                 <div className="flex items-start gap-2">
                   <svg className="w-4 h-4 text-navy-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd"/>

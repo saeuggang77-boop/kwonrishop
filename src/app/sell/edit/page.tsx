@@ -253,8 +253,8 @@ export default function ListingEditPage() {
   if (!listingId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-xl p-5 text-center">
-          <p className="text-yellow-800 dark:text-yellow-300">{message || "등록된 매물이 없습니다."}</p>
+        <div className="bg-navy-50 dark:bg-navy-950 border border-navy-200 dark:border-navy-800 rounded-xl p-5 text-center">
+          <p className="text-navy-800 dark:text-navy-300">{message || "등록된 매물이 없습니다."}</p>
           <button
             onClick={() => router.push("/sell")}
             className="mt-4 px-4 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600"
@@ -559,7 +559,7 @@ export default function ListingEditPage() {
 
             {/* 사진 추가 버튼 */}
             <div>
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-navy-500 hover:bg-navy-50 dark:hover:bg-blue-950 transition-colors">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-navy-500 hover:bg-navy-50 dark:hover:bg-navy-950 transition-colors">
                 <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
@@ -611,7 +611,7 @@ export default function ListingEditPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full sm:flex-1 px-4 py-3 bg-navy-700 text-white rounded-lg hover:bg-navy-600 active:bg-blue-800 font-medium disabled:opacity-50 touch-manipulation"
+            className="w-full sm:flex-1 px-4 py-3 bg-navy-700 text-white rounded-lg hover:bg-navy-600 active:bg-navy-800 font-medium disabled:opacity-50 touch-manipulation"
           >
             {saving ? "저장 중..." : "저장"}
           </button>

@@ -194,7 +194,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
 
       {/* Question Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-navy-50 dark:bg-navy-800/20 rounded-lg p-4 mb-4 border border-blue-100 dark:border-navy-700">
+        <form onSubmit={handleSubmit} className="bg-navy-50 dark:bg-navy-800/20 rounded-lg p-4 mb-4 border border-navy-100 dark:border-navy-700">
           <h3 className="font-bold text-gray-900 dark:text-white mb-1">문의 작성</h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
             매물에 대해 궁금한 점을 질문해주세요. 판매자가 답변해드립니다.
@@ -240,7 +240,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
               <div className="p-4 bg-white dark:bg-gray-800">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-400 text-xs font-bold">Q</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-400 text-xs font-bold">Q</span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {q.reviewer.name || "회원"}
                     </span>
@@ -271,7 +271,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                   <div className="flex items-center gap-2 mb-2">
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 text-xs font-bold">A</span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">판매자</span>
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-300">판매자</span>
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-300">판매자</span>
                     {q.answeredAt && (
                       <span className="text-xs text-gray-400 dark:text-gray-500">
                         {new Date(q.answeredAt).toLocaleDateString("ko-KR")}
@@ -309,10 +309,10 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                     </div>
                   </div>
                 ) : (
-                  <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border-t border-gray-200 dark:border-gray-700">
+                  <div className="p-3 bg-navy-50 dark:bg-navy-900/20 border-t border-gray-200 dark:border-gray-700">
                     <button
                       onClick={() => { setAnsweringId(q.id); setAnswerContent(""); }}
-                      className="text-sm text-yellow-700 dark:text-yellow-400 font-medium hover:underline"
+                      className="text-sm text-navy-700 dark:text-navy-400 font-medium hover:underline"
                     >
                       답변 작성하기
                     </button>

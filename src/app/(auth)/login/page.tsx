@@ -76,11 +76,11 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-blue-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-navy-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-[52px] h-[52px] bg-gradient-to-br from-navy-600 to-blue-500 rounded-[14px] mb-3 shadow-lg shadow-blue-600/25">
+          <div className="inline-flex items-center justify-center w-[52px] h-[52px] bg-gradient-to-br from-navy-600 to-navy-500 rounded-[14px] mb-3 shadow-lg shadow-navy-600/25">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
@@ -213,7 +213,7 @@ function LoginContent() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 autoComplete="email"
-                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
               />
             </div>
 
@@ -228,7 +228,7 @@ function LoginContent() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
                 autoComplete="current-password"
-                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
               />
             </div>
 
@@ -248,7 +248,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-navy-600 to-blue-500 text-white rounded-xl font-bold text-[15px] hover:from-blue-700 hover:to-blue-600 active:scale-[0.98] transition-all disabled:from-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:to-gray-600 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
+              className="w-full py-3 bg-gradient-to-r from-navy-600 to-navy-500 text-white rounded-xl font-bold text-[15px] hover:from-navy-700 hover:to-navy-600 active:scale-[0.98] transition-all disabled:from-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:to-gray-600 disabled:cursor-not-allowed shadow-sm shadow-navy-600/20"
             >
               {loading ? "로그인 중..." : "로그인"}
             </button>

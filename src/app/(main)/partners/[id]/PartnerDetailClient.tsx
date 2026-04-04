@@ -100,9 +100,9 @@ export default function PartnerDetailClient() {
   const getTierBadge = (tier: Partner["tier"]) => {
     if (tier === "FREE") return null;
     const colors = {
-      BASIC: "bg-navy-100 text-navy-800 dark:bg-blue-900 dark:text-navy-200",
+      BASIC: "bg-navy-100 text-navy-800 dark:bg-navy-900 dark:text-navy-200",
       PREMIUM: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-      VIP: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+      VIP: "bg-navy-100 text-navy-800 dark:bg-navy-900 dark:text-navy-200",
     };
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[tier]}`}>
@@ -154,7 +154,7 @@ export default function PartnerDetailClient() {
               {partner.companyName}
             </h1>
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-navy-100 dark:bg-blue-900 text-navy-800 dark:text-navy-200 rounded-full text-sm font-medium">
+              <span className="px-3 py-1 bg-navy-100 dark:bg-navy-900 text-navy-800 dark:text-navy-200 rounded-full text-sm font-medium">
                 {SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}
               </span>
               {getTierBadge(partner.tier)}

@@ -66,7 +66,7 @@ const roles: RoleOption[] = [
     popular: true,
     iconColor: "text-navy-500",
     hoverBorder: "hover:border-navy-500",
-    iconBg: "bg-gradient-to-br from-navy-50 to-blue-100 dark:from-blue-950 dark:to-blue-900",
+    iconBg: "bg-gradient-to-br from-navy-50 to-navy-100 dark:from-navy-950 dark:to-navy-900",
     icon: <SearchIcon />,
   },
   {
@@ -94,9 +94,9 @@ const roles: RoleOption[] = [
     label: "협력업체",
     description: "창업 관련 서비스를 제공해요",
     note: "사업자인증 필요",
-    iconColor: "text-purple-500",
-    hoverBorder: "hover:border-purple-500",
-    iconBg: "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900",
+    iconColor: "text-navy-600",
+    hoverBorder: "hover:border-navy-500",
+    iconBg: "bg-gradient-to-br from-navy-50 to-navy-100 dark:from-navy-950 dark:to-navy-900",
     icon: <WrenchIcon />,
   },
 ];
@@ -111,8 +111,8 @@ function SelectRoleContent() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-blue-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
-        <div className="animate-pulse text-gray-400">로딩 중...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-navy-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
+        <div className="animate-pulse text-gray-400 dark:text-gray-500">로딩 중...</div>
       </div>
     );
   }
@@ -162,7 +162,7 @@ function SelectRoleContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-blue-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-navy-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
       <div className="w-full max-w-xl">
         {/* Header */}
         <div className="text-center mb-7">
@@ -264,8 +264,8 @@ function SelectRoleContent() {
 export default function SelectRolePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-blue-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
-        <div className="animate-pulse text-gray-400">로딩 중...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-navy-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
+        <div className="animate-pulse text-gray-400 dark:text-gray-500">로딩 중...</div>
       </div>
     }>
       <SelectRoleContent />

@@ -96,7 +96,7 @@ export default function CommercialDistrictSection({
   const getBarColor = (index: number) => {
     const colors = [
       'bg-navy-400',
-      'bg-purple-400',
+      'bg-navy-500',
       'bg-green-400',
       'bg-orange-400',
       'bg-pink-400',
@@ -158,7 +158,7 @@ export default function CommercialDistrictSection({
         {/* 핵심 지표 4개 카드 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* 일평균 유동인구 */}
-          <div className="bg-gradient-to-br from-navy-50 to-blue-100/50 dark:from-blue-900/20 dark:to-navy-800/10 rounded-xl p-4 text-center">
+          <div className="bg-gradient-to-br from-navy-50 to-navy-100/50 dark:from-navy-900/20 dark:to-navy-800/10 rounded-xl p-4 text-center">
             <div className="text-xs font-medium text-navy-700 dark:text-navy-400 mb-1">일평균 유동인구</div>
             <div className="text-2xl font-bold text-navy-900 dark:text-navy-100">
               {(data.populationByTime.reduce((a, b) => a + b, 0) / data.populationByTime.length).toFixed(0)}
@@ -181,9 +181,9 @@ export default function CommercialDistrictSection({
             </div>
           </div>
           {/* 총 점포 수 */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/10 rounded-xl p-4 text-center">
-            <div className="text-xs font-medium text-purple-600 dark:text-purple-400 mb-1">전체 점포 수</div>
-            <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">{data.totalStores}<span className="text-sm font-normal">개</span></div>
+          <div className="bg-gradient-to-br from-navy-50 to-navy-100/50 dark:from-navy-900/20 dark:to-navy-800/10 rounded-xl p-4 text-center">
+            <div className="text-xs font-medium text-navy-600 dark:text-navy-400 mb-1">전체 점포 수</div>
+            <div className="text-2xl font-bold text-navy-900 dark:text-navy-100">{data.totalStores}<span className="text-sm font-normal">개</span></div>
             <div className="flex items-center justify-center gap-1 mt-1">
               <span className="text-xs text-gray-400">반경 500m 내</span>
             </div>

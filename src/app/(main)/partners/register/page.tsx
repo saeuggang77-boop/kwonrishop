@@ -291,7 +291,7 @@ export default function PartnerRegisterPage() {
             </div>
             <button
               onClick={() => router.push(`/partners/${registeredId}`)}
-              className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+              className="w-full px-6 py-3 bg-navy-700 hover:bg-navy-600 text-white rounded-lg font-medium transition-colors"
             >
               내 서비스 보기
             </button>

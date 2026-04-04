@@ -204,7 +204,7 @@ export default function NotificationsPage() {
         {data.unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="px-4 py-2 text-sm font-medium text-navy-700 dark:text-navy-400 hover:text-navy-700 dark:hover:text-blue-300 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-navy-700 dark:text-navy-400 hover:text-navy-700 dark:hover:text-navy-300 transition-colors"
           >
             모두 읽음
           </button>
@@ -241,7 +241,7 @@ export default function NotificationsPage() {
                 key={notif.id}
                 onClick={() => handleNotificationClick(notif)}
                 className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors cursor-pointer hover:border-navy-300 dark:hover:border-navy-700 ${
-                  !notif.read ? "bg-navy-50/50 dark:bg-blue-900/10" : ""
+                  !notif.read ? "bg-navy-50/50 dark:bg-navy-900/10" : ""
                 }`}
               >
                 <div className="flex gap-4">

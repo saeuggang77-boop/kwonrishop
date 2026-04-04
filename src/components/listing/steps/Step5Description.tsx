@@ -36,8 +36,8 @@ export default function Step5Description({ onNext, onPrev }: Props) {
       </div>
 
       {hasContact && (
-        <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-          <p className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">
+        <div className="mb-4 p-3 bg-navy-50 dark:bg-navy-900/50 border border-navy-200 dark:border-navy-800 rounded-lg">
+          <p className="text-sm text-navy-700 dark:text-navy-300 font-medium">
             연락처 또는 메신저 정보가 감지되었습니다. 삭제 후 등록해주세요.
           </p>
         </div>

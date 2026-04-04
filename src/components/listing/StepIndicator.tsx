@@ -26,7 +26,7 @@ export default function StepIndicator({
         </p>
         <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-navy-500 to-blue-600 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-navy-500 to-navy-600 rounded-full transition-all duration-500"
             style={{ width: `${(currentStep / totalSteps) * 100}%` }}
           />
         </div>
@@ -41,7 +41,7 @@ export default function StepIndicator({
                   step.number === currentStep
                     ? "bg-navy-700 text-white"
                     : step.number < currentStep
-                      ? "bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-400"
+                      ? "bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-400"
                       : "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
                 }`}
               >
@@ -70,7 +70,7 @@ export default function StepIndicator({
             {step.number < steps.length && (
               <div
                 className={`w-4 h-0.5 mt-[-12px] ${
-                  step.number < currentStep ? "bg-blue-300 dark:bg-navy-700" : "bg-gray-200 dark:bg-gray-700"
+                  step.number < currentStep ? "bg-navy-300 dark:bg-navy-700" : "bg-gray-200 dark:bg-gray-700"
                 }`}
               />
             )}

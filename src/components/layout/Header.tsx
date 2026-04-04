@@ -79,7 +79,7 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-navy-900 border-b border-gray-200 dark:border-navy-700">
+    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold text-navy-700 dark:text-white">
           권리샵
@@ -215,7 +215,7 @@ export default function Header() {
                         {unreadCount > 0 && (
                           <button
                             onClick={markAllRead}
-                            className="text-xs text-navy-700 hover:text-navy-700 dark:text-navy-400 dark:hover:text-blue-300"
+                            className="text-xs text-navy-700 hover:text-navy-600 dark:text-navy-400 dark:hover:text-navy-300"
                           >
                             모두 읽음
                           </button>
@@ -250,7 +250,7 @@ export default function Header() {
                           <Link
                             href="/notifications"
                             onClick={() => setNotifOpen(false)}
-                            className="block px-4 py-2 text-center text-sm font-medium text-navy-700 hover:text-navy-700 dark:text-navy-400 dark:hover:text-blue-300 border-t border-gray-100 dark:border-gray-700"
+                            className="block px-4 py-2 text-center text-sm font-medium text-navy-700 hover:text-navy-600 dark:text-navy-400 dark:hover:text-navy-300 border-t border-gray-100 dark:border-gray-700"
                           >
                             모든 알림 보기
                           </Link>

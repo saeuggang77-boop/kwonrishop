@@ -280,7 +280,7 @@ export default function GuidePage() {
             {currentGuide.steps.map((step, index) => (
               <div
                 key={step.id}
-                className="flex gap-4 items-start p-5 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-navy-50 dark:hover:bg-blue-900/20 transition-colors"
+                className="flex gap-4 items-start p-5 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-navy-50 dark:hover:bg-navy-900/20 transition-colors"
               >
                 {/* Step Number & Icon */}
                 <div className="flex-shrink-0">
@@ -323,7 +323,7 @@ export default function GuidePage() {
               <span className="text-navy-700 dark:text-navy-400 mt-0.5">•</span>
               <span>
                 궁금한 내용은{" "}
-                <a href="/faq" className="text-navy-700 dark:text-navy-400 underline hover:text-navy-700 dark:hover:text-blue-300">
+                <a href="/faq" className="text-navy-700 dark:text-navy-400 underline hover:text-navy-700 dark:hover:text-navy-300">
                   자주 묻는 질문
                 </a>
                 에서 확인하세요
@@ -333,7 +333,7 @@ export default function GuidePage() {
               <span className="text-navy-700 dark:text-navy-400 mt-0.5">•</span>
               <span>
                 문제가 있으시면{" "}
-                <a href="/contact" className="text-navy-700 dark:text-navy-400 underline hover:text-navy-700 dark:hover:text-blue-300">
+                <a href="/contact" className="text-navy-700 dark:text-navy-400 underline hover:text-navy-700 dark:hover:text-navy-300">
                   고객센터
                 </a>
                 로 문의하세요
@@ -362,7 +362,7 @@ export default function GuidePage() {
             </a>
             <a
               href="/listings"
-              className="px-6 py-3 bg-white dark:bg-gray-800 text-navy-700 dark:text-navy-400 font-semibold rounded-lg border border-navy-600 dark:border-navy-500 hover:bg-navy-50 dark:hover:bg-blue-900/20 transition-colors"
+              className="px-6 py-3 bg-white dark:bg-gray-800 text-navy-700 dark:text-navy-400 font-semibold rounded-lg border border-navy-600 dark:border-navy-500 hover:bg-navy-50 dark:hover:bg-navy-900/20 transition-colors"
             >
               매물 둘러보기
             </a>

@@ -257,7 +257,7 @@ export default function StartupPartnerSection({
         <>
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">창업 파트너</h3>
-            <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-400 text-[10px] font-semibold rounded">AD</span>
+            <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-400 text-[10px] font-semibold rounded">AD</span>
           </div>
 
           <div className="flex items-center gap-4 border-b border-gray-200 dark:border-gray-700 mb-4">

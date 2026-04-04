@@ -141,7 +141,7 @@ export default function FranchisePage() {
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               industry === ind.value
                 ? "bg-navy-700 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
             {ind.label}
@@ -296,7 +296,7 @@ export default function FranchisePage() {
             <div
               key={brand.id}
               onClick={() => router.push(`/franchise/${brand.id}`)}
-              className={`grid grid-cols-12 gap-2 px-4 py-3 cursor-pointer hover:bg-navy-50/50 dark:hover:bg-blue-900/10 transition-colors items-center ${idx < brands.length - 1 ? 'border-b border-gray-100 dark:border-gray-700' : ''}`}
+              className={`grid grid-cols-12 gap-2 px-4 py-3 cursor-pointer hover:bg-navy-50/50 dark:hover:bg-navy-900/10 transition-colors items-center ${idx < brands.length - 1 ? 'border-b border-gray-100 dark:border-gray-700' : ''}`}
             >
               <div className="col-span-12 sm:col-span-4">
                 <div className="flex items-center gap-2.5">
