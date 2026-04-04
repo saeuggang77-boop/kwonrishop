@@ -326,7 +326,7 @@ export default function StartupPartnerSection({
 
 function SameTypeCard({ item }: { item: RecommendItem }) {
   return (
-    <Link href={item.href} className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+    <Link href={item.href} className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
       <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-700 relative">
         {item.imageUrl ? (
           <Image src={item.imageUrl} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />
@@ -394,7 +394,7 @@ function TierCardMobile({ href, icon, name, badge, subtitle, tierLevel }: {
 }) {
   const s = TIER_MOBILE_STYLES[tierLevel];
   return (
-    <Link href={href} className={`block rounded-xl hover:shadow-lg transition-shadow ${s.card}`}>
+    <Link href={href} className={`block rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${s.card}`}>
       <div className="flex items-center gap-3">
         <div className={`shrink-0 flex items-center justify-center ${s.icon}`}>{icon}</div>
         <div className="flex-1 min-w-0">
@@ -415,7 +415,7 @@ function TierCardPC({ href, icon, name, badge, subtitle, extra, tierLevel }: {
 }) {
   const s = TIER_PC_STYLES[tierLevel];
   return (
-    <Link href={href} className={`flex flex-col items-center text-center rounded-xl hover:shadow-lg transition-shadow ${s.card}`}>
+    <Link href={href} className={`flex flex-col items-center text-center rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${s.card}`}>
       <div className={`flex items-center justify-center mb-3 ${s.icon}`}>{icon}</div>
       <div className="flex items-center gap-1.5 mb-1">
         <p className={`font-bold text-gray-900 dark:text-white ${s.name}`}>{name}</p>

@@ -171,7 +171,7 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
                   placeholder="정직원 수"
                   value={data.employeesFull ?? ""}
                   onChange={(e) => numInput("employeesFull", e.target.value)}
-                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">명</span>
               </div>
@@ -181,7 +181,7 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
                   placeholder="파트타임 수"
                   value={data.employeesPart ?? ""}
                   onChange={(e) => numInput("employeesPart", e.target.value)}
-                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">명</span>
               </div>
@@ -220,7 +220,7 @@ export default function Step4Additional({ onNext, onPrev }: Props) {
                         if (field === "expenseMaintenance") setManualMaintenanceEdit(true);
                         numInput(field, e.target.value);
                       }}
-                      className={`w-full px-3 py-2.5 pr-12 border ${isAuto ? "border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/10" : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900"} text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right`}
+                      className={`w-full px-3 py-3 min-h-[44px] pr-12 border ${isAuto ? "border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/10" : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900"} text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right`}
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                   </div>

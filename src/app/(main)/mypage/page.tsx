@@ -105,6 +105,7 @@ export default function MyPage() {
   const [sellerReports, setSellerReports] = useState<SellerReportItem[]>([]);
   const [pushStatus, setPushStatus] = useState<"loading" | "granted" | "denied" | "default" | "unsupported">("loading");
   const [pushToggling, setPushToggling] = useState(false);
+  const [activeTab, setActiveTab] = useState<'profile' | 'business' | 'ads' | 'settings'>('profile');
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -233,7 +234,7 @@ export default function MyPage() {
     <div className="max-w-2xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">마이페이지</h1>
 
-      {/* 프로필 */}
+      {/* 프로필 카드 (항상 표시) */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900 dark:text-gray-100">프로필</h3>
@@ -269,7 +270,32 @@ export default function MyPage() {
         </div>
       </div>
 
-      {/* 사업자인증 */}
+      {/* 탭 바 */}
+      <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4 gap-1">
+        {([
+          { key: 'profile', label: '프로필' },
+          { key: 'business', label: '매물관리' },
+          { key: 'ads', label: '광고/결제' },
+          { key: 'settings', label: '설정' },
+        ] as const).map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex-1 py-3 min-h-[44px] text-sm font-semibold rounded-lg transition-all ${
+              activeTab === tab.key
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* 프로필 탭 */}
+      {activeTab === 'profile' && (
+        <>
+          {/* 사업자인증 */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
         <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3">사업자인증</h3>
         {data.verification?.verified ? (
@@ -297,14 +323,49 @@ export default function MyPage() {
       {/* 최근 본 매물 (BUYER만) */}
       {data.user.role === "BUYER" && <RecentlyViewedSection />}
 
-      {/* 플랜 업그레이드 카드 (SELLER만) */}
-      {data.user.role === "SELLER" && (
-        <div className="mb-4">
-          <DashboardPlanCard currentPlan={data.activeListingAd?.name} />
+      {/* KPI 카드 */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+          <div className="flex justify-center mb-2">
+            <svg className="w-6 h-6 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+            {data.favoriteCount + data.equipmentFavoriteCount}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">관심매물</div>
         </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+          <div className="flex justify-center mb-2">
+            <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+            {data.chatCount}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">채팅</div>
+        </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
+          <div className="flex justify-center mb-2">
+            <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </div>
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+            {data.unreadChatCount}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">안읽음</div>
+        </div>
+      </div>
+        </>
       )}
 
-      {/* 내 매물 */}
+      {/* 매물관리 탭 */}
+      {activeTab === 'business' && (
+        <>
+          {/* 내 매물 */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900 dark:text-gray-100">내 매물</h3>
@@ -329,7 +390,7 @@ export default function MyPage() {
         {data.listing ? (
           <div>
             {/* KPI 요약 카드 */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
                 <div className="flex justify-center mb-2">
                   <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -396,7 +457,7 @@ export default function MyPage() {
                         toast.error("상태 변경 중 오류가 발생했습니다");
                       }
                     }}
-                    className={`appearance-none cursor-pointer px-2.5 py-0.5 text-xs rounded font-medium border-0 pr-6 focus:ring-2 ${
+                    className={`appearance-none cursor-pointer px-2.5 py-0.5 min-h-[36px] text-xs rounded font-medium border-0 pr-6 focus:ring-2 ${
                       data.listing.status === "ACTIVE"
                         ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 focus:ring-green-300"
                         : "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 focus:ring-orange-300"
@@ -664,8 +725,146 @@ export default function MyPage() {
           <p className="text-sm text-gray-400 dark:text-gray-500">등록된 집기가 없습니다</p>
         )}
       </div>
+        </>
+      )}
 
-      {/* 내 분석 리포트 (SELLER만) */}
+      {/* 광고/결제 탭 */}
+      {activeTab === 'ads' && (
+        <>
+          {/* 플랜 업그레이드 카드 (SELLER만) */}
+          {data.user.role === "SELLER" && (
+            <div className="mb-4">
+              <DashboardPlanCard currentPlan={data.activeListingAd?.name} />
+            </div>
+          )}
+
+          {/* 광고 현황 (SELLER만, 매물 있을 때) */}
+          {data.user.role === "SELLER" && data.listing && data.activeListingAd && (
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
+              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3">광고 현황</h3>
+              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600">
+                    {data.listing.storeName || "매물"}
+                  </Link>
+                  {data.activeListingAd.daysLeft <= 3 && data.activeListingAd.daysLeft > 0 ? (
+                    <span className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs rounded font-medium">
+                      {data.activeListingAd.name} {data.activeListingAd.daysLeft}일 남음 · 만료 임박
+                    </span>
+                  ) : data.activeListingAd.daysLeft <= 0 ? (
+                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded font-medium">
+                      만료됨
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs rounded font-medium">
+                      {data.activeListingAd.name} {data.activeListingAd.daysLeft}일 남음
+                    </span>
+                  )}
+                </div>
+                {data.activeListingAd.viewCountAtAdStart !== null && data.activeListingAd.daysLeft > 0 && (
+                  <div className="text-xs">
+                    {(() => {
+                      const adEffect = data.listing!.viewCount - data.activeListingAd!.viewCountAtAdStart!;
+                      return adEffect > 0 ? (
+                        <span className="text-green-600 dark:text-green-400 font-medium">
+                          광고 효과: +{adEffect}회 조회
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 dark:text-gray-500">
+                          광고 효과: {adEffect}회 조회
+                        </span>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
+              <div className="mt-3">
+                {!data.activeListingAd || data.activeListingAd.daysLeft <= 0 ? (
+                  <Link
+                    href="/pricing"
+                    className="inline-block w-full px-4 py-2.5 bg-blue-600 dark:bg-blue-500 text-white text-sm rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 text-center"
+                  >
+                    광고로 노출 올리기
+                  </Link>
+                ) : data.activeListingAd.daysLeft <= 3 ? (
+                  <Link
+                    href="/pricing"
+                    className="inline-block w-full px-4 py-2.5 bg-orange-600 dark:bg-orange-500 text-white text-sm rounded-lg font-medium hover:bg-orange-700 dark:hover:bg-orange-600 text-center"
+                  >
+                    광고 연장하기
+                  </Link>
+                ) : (
+                  <Link
+                    href="/mypage/ads"
+                    className="inline-block w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 text-center"
+                  >
+                    광고 관리
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 끌어올리기 구독 (SELLER만, 매물이 있을 때) */}
+          {data.user.role === "SELLER" && data.listing && (
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-gray-900 dark:text-gray-100">🔄 정기 끌어올리기</h3>
+              </div>
+              {bumpSubscription ? (
+                <div>
+                  <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">✅</span>
+                        <span className="font-bold text-green-700 dark:text-green-400">구독 활성화</span>
+                      </div>
+                      <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded font-medium">
+                        {bumpSubscription.frequency === "TWICE_WEEKLY" && "주 2회"}
+                        {bumpSubscription.frequency === "WEEKDAY_DAILY" && "평일 매일"}
+                        {bumpSubscription.frequency === "DAILY" && "매일 1회"}
+                        {bumpSubscription.frequency === "TWICE_DAILY" && "매일 2회"}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                      <p>
+                        다음 끌올: <span className="font-medium text-gray-900 dark:text-gray-100">
+                          {new Date(bumpSubscription.nextBumpAt).toLocaleString("ko-KR", {
+                            month: "long",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">자동으로 매물이 최상단에 노출됩니다</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleCancelSubscription}
+                    disabled={cancellingSubscription}
+                    className="mt-3 w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {cancellingSubscription ? "처리 중..." : "구독 해지하기"}
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm text-gray-600 mb-3">
+                    정기 끌어올리기로 항상 상단 노출을 유지하세요!
+                  </p>
+                  <Link
+                    href={`/pricing?listingId=${data.listing.id}#subscription`}
+                    className="inline-block w-full px-4 py-2.5 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 text-center"
+                  >
+                    구독 상품 보기
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 내 분석 리포트 (SELLER만) */}
       {data.user.role === "SELLER" && data.listing && (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
@@ -697,8 +896,13 @@ export default function MyPage() {
           )}
         </div>
       )}
+        </>
+      )}
 
-      {/* 알림 설정 */}
+      {/* 설정 탭 */}
+      {activeTab === 'settings' && (
+        <>
+          {/* 알림 설정 */}
       {pushStatus !== "loading" && pushStatus !== "unsupported" && (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
           <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3">알림 설정</h3>
@@ -821,6 +1025,8 @@ export default function MyPage() {
           로그아웃
         </button>
       </div>
+        </>
+      )}
     </div>
   );
 }

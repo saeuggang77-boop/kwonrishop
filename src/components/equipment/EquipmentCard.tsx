@@ -47,7 +47,7 @@ export default function EquipmentCard({ equipment }: EquipmentCardProps) {
 
   return (
     <Link href={`/equipment/${equipment.id}`}>
-      <div className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+      <div className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
         {/* 이미지 */}
         <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
           {equipment.images[0] ? (
@@ -70,7 +70,7 @@ export default function EquipmentCard({ equipment }: EquipmentCardProps) {
           {/* 나눔 배지 */}
           {isFree && (
             <div className="absolute top-2 left-2">
-              <span className="px-2 py-0.5 bg-green-500 text-white text-[10px] font-medium rounded">
+              <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-medium rounded">
                 나눔
               </span>
             </div>
@@ -78,7 +78,7 @@ export default function EquipmentCard({ equipment }: EquipmentCardProps) {
 
           {/* 상태 배지 */}
           <div className="absolute top-2 right-2">
-            <span className={`px-2 py-0.5 text-[10px] font-medium rounded ${conditionColors[equipment.condition] || "bg-gray-500 text-white"}`}>
+            <span className={`px-2 py-0.5 text-xs font-medium rounded ${conditionColors[equipment.condition] || "bg-gray-500 text-white"}`}>
               {EQUIPMENT_CONDITION_LABELS[equipment.condition] || equipment.condition}
             </span>
           </div>

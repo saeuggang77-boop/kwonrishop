@@ -225,7 +225,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
             className="hidden"
           />
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {/* 업로드된 사진 */}
             {data.images.map((img, i) => {
               const colors = TYPE_COLORS[img.type] || TYPE_COLORS.OTHER;
@@ -242,7 +242,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                   <button
                     type="button"
                     onClick={() => removeImage(i)}
-                    className="absolute top-1 right-1 w-6 h-6 bg-black/60 text-white rounded-full flex items-center justify-center text-xs"
+                    className="absolute top-1 right-1 w-8 h-8 bg-black/60 text-white rounded-full flex items-center justify-center text-sm"
                   >
                     X
                   </button>
@@ -416,7 +416,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                   value={data.contactPhone}
                   onChange={(e) => updateData({ contactPhone: formatPhoneInput(e.target.value) })}
                   placeholder="010-1234-5678"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-3 min-h-[44px] border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               )}
             </div>

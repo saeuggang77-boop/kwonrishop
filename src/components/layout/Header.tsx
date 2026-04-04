@@ -149,7 +149,7 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => setNotifOpen(!notifOpen)}
-                  className="relative p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                  className="relative p-3 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label="알림"
                   aria-expanded={notifOpen}
                 >
@@ -300,7 +300,7 @@ export default function Header() {
 
           {/* 모바일 메뉴 버튼 */}
           <button
-            className="md:hidden p-1"
+            className="md:hidden p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-expanded={mobileMenuOpen}
             aria-label="모바일 메뉴"

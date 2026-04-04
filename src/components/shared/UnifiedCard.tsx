@@ -31,7 +31,7 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
   return (
     <Link
       href={linkPath}
-      className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
+      className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
     >
       {/* Image area with tier badge */}
       <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
@@ -63,7 +63,7 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
             {data.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 bg-blue-600 dark:bg-blue-500 text-white text-[10px] font-medium rounded"
+                className="px-2 py-0.5 bg-blue-600 dark:bg-blue-500 text-white text-xs font-medium rounded"
               >
                 {tag}
               </span>

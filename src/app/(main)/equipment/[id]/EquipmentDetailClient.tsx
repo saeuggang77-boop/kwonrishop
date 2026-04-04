@@ -205,15 +205,21 @@ export default function EquipmentDetailClient() {
               <>
                 <button
                   onClick={() => setCurrentImage((p) => (p > 0 ? p - 1 : equipment.images.length - 1))}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-8 md:h-8 bg-black/40 text-white rounded-full flex items-center justify-center active:bg-black/60 touch-manipulation"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 md:w-9 md:h-9 bg-black/50 backdrop-blur-sm text-white rounded-full flex items-center justify-center active:bg-black/70 touch-manipulation"
+                  aria-label="이전 사진"
                 >
-                  &lt;
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
                 </button>
                 <button
                   onClick={() => setCurrentImage((p) => (p < equipment.images.length - 1 ? p + 1 : 0))}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-8 md:h-8 bg-black/40 text-white rounded-full flex items-center justify-center active:bg-black/60 touch-manipulation"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 md:w-9 md:h-9 bg-black/50 backdrop-blur-sm text-white rounded-full flex items-center justify-center active:bg-black/70 touch-manipulation"
+                  aria-label="다음 사진"
                 >
-                  &gt;
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </button>
                 <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
                   {currentImage + 1} / {equipment.images.length}
@@ -348,13 +354,14 @@ export default function EquipmentDetailClient() {
         <div className="max-w-3xl mx-auto flex items-center gap-2 md:gap-3">
           <button
             onClick={handleFavorite}
+            aria-label={favorited ? "관심매물 해제" : "관심매물 등록"}
             className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${
               favorited
                 ? "border-red-300 dark:border-red-700 text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20"
                 : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100"
             }`}
           >
-            {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{equipment.favoriteCount}</span>
+            <span aria-hidden="true">{favorited ? "♥" : "♡"}</span> <span className="hidden sm:inline">{equipment.favoriteCount}</span>
           </button>
           <ShareButton
             listingId={id}

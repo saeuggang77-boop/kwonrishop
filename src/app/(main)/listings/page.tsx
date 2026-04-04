@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo, Suspense } from "react";
+import React, { useEffect, useState, useCallback, useMemo, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ListingCard from "@/components/listing/ListingCard";
 import ListingMapView from "@/components/map/ListingMapView";
@@ -57,12 +57,17 @@ function ListingsContent() {
   const [page, setPage] = useState(parseInt(searchParams.get("page") || "1") || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
   const [categoryId, setCategoryId] = useState(searchParams.get("categoryId") || "");
   const [subCategoryId, setSubCategoryId] = useState(searchParams.get("subCategoryId") || "");
   const [sort, setSort] = useState(searchParams.get("sort") || "latest");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [gridMode, setGridMode] = useState<"grid" | "list">("grid");
 
   // Advanced filters (URL에서 복원)
   const [showFilters, setShowFilters] = useState(!!searchParams.get("region") || !!searchParams.get("premiumMin") || !!searchParams.get("depositMin") || !!searchParams.get("rentMin") || !!searchParams.get("areaMin") || !!searchParams.get("themes"));
@@ -78,6 +83,52 @@ function ListingsContent() {
   const [selectedThemes, setSelectedThemes] = useState<string[]>(searchParams.get("themes")?.split(",").filter(Boolean) || []);
 
   const debouncedKeyword = useDebounce(keyword, 300);
+
+  // 1. 필터 모달 body scroll lock (iOS Safari 대응)
+  useEffect(() => {
+    if (showFilterModal) {
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${scrollY}px`;
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY) * -1);
+      }
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+    };
+  }, [showFilterModal]);
+
+  // 2. 필터 모달 뒤로가기 처리
+  useEffect(() => {
+    if (showFilterModal) {
+      window.history.pushState({ filterModal: true }, '');
+      const handlePopState = () => {
+        setShowFilterModal(false);
+      };
+      window.addEventListener('popstate', handlePopState);
+      return () => window.removeEventListener('popstate', handlePopState);
+    }
+  }, [showFilterModal]);
+
+  // 모달 닫기 함수
+  const closeFilterModal = useCallback(() => {
+    setShowFilterModal(false);
+    if (window.history.state?.filterModal) {
+      window.history.back();
+    }
+  }, []);
 
   // 지도 모드에서 bounds 기반 필터용 파라미터
   const mapFilterParams = useMemo(() => {
@@ -99,10 +150,18 @@ function ListingsContent() {
     return p;
   }, [categoryId, subCategoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes]);
 
-  const fetchListings = useCallback(async () => {
-    setLoading(true);
+  const fetchListings = useCallback(async (append = false) => {
+    if (append) {
+      setIsLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
+
     const params = new URLSearchParams();
-    params.set("page", String(page));
+    // 모바일 무한스크롤에서는 page를 URL에 반영하지 않음 (데이터 오염 방지)
+    if (!isMobile || page === 1) {
+      params.set("page", String(page));
+    }
     if (categoryId) params.set("categoryId", categoryId);
     if (subCategoryId) params.set("subCategoryId", subCategoryId);
     if (debouncedKeyword) params.set("keyword", debouncedKeyword);
@@ -125,11 +184,50 @@ function ListingsContent() {
 
     const res = await fetch(`/api/listings?${params}`);
     const data = await res.json();
-    setListings(data.listings || []);
+
+    if (append) {
+      setListings(prev => [...prev, ...(data.listings || [])]);
+    } else {
+      setListings(data.listings || []);
+    }
+
     setTotal(data.pagination?.total || 0);
     setTotalPages(data.pagination?.totalPages || 1);
     setLoading(false);
-  }, [page, categoryId, subCategoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes]);
+    setIsLoadingMore(false);
+  }, [page, categoryId, subCategoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes, router]);
+
+  // 모바일 감지
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // 무한 스크롤 (모바일 전용)
+  useEffect(() => {
+    if (!isMobile || viewMode !== "list") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && !isLoadingMore && page < totalPages) {
+          setPage(prev => prev + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isMobile, viewMode, loading, isLoadingMore, page, totalPages]);
 
   useEffect(() => {
     fetch("/api/categories")
@@ -144,8 +242,9 @@ function ListingsContent() {
   }, []);
 
   useEffect(() => {
-    fetchListings();
-  }, [fetchListings]);
+    const shouldAppend = isMobile && page > 1;
+    fetchListings(shouldAppend);
+  }, [fetchListings, isMobile, page]);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -156,11 +255,13 @@ function ListingsContent() {
   function handleCategoryClick(id: string) {
     setCategoryId(categoryId === id ? "" : id);
     setSubCategoryId("");
+    setListings([]);
     setPage(1);
   }
 
   function handleSubCategoryClick(id: string) {
     setSubCategoryId(subCategoryId === id ? "" : id);
+    setListings([]);
     setPage(1);
   }
 
@@ -170,6 +271,7 @@ function ListingsContent() {
     setSelectedThemes((prev) =>
       prev.includes(theme) ? prev.filter((t) => t !== theme) : [...prev, theme]
     );
+    setListings([]);
     setPage(1);
   }
 
@@ -185,6 +287,7 @@ function ListingsContent() {
     setAreaMax("");
     setSelectedThemes([]);
     setSubCategoryId("");
+    setListings([]);
     setPage(1);
   }
 
@@ -287,7 +390,13 @@ function ListingsContent() {
       {/* 상세 필터 버튼 */}
       <div className="mb-4">
         <button
-          onClick={() => setShowFilters(!showFilters)}
+          onClick={() => {
+            if (isMobile) {
+              setShowFilterModal(true);
+            } else {
+              setShowFilters(!showFilters);
+            }
+          }}
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
           aria-expanded={showFilters}
           aria-label="상세 필터 옵션"
@@ -304,9 +413,13 @@ function ListingsContent() {
         </button>
       </div>
 
-      {/* 필터 패널 */}
-      {showFilters && (
-        <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
+      {/* 필터 패널 (데스크톱 전용) */}
+      <div
+        className={`md:block hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          showFilters ? 'max-h-[800px] opacity-100 mb-4' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="bg-white border border-gray-200 rounded-xl p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             {/* 지역 검색 */}
             <div>
@@ -457,7 +570,7 @@ function ListingsContent() {
             </button>
           </div>
         </div>
-      )}
+      </div>
 
       {/* 프리미엄 매물 캐러셀 */}
       <PremiumCarousel
@@ -528,7 +641,7 @@ function ListingsContent() {
       </PremiumCarousel>
 
       {/* 보기 모드 전환 + 정렬 + 결과수 */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-4">
           <p className="text-sm text-gray-500">
             총 <span className="font-medium text-gray-900">{total.toLocaleString()}</span>건
@@ -559,6 +672,38 @@ function ListingsContent() {
               지도
             </button>
           </div>
+          {viewMode === "list" && (
+            <div className="md:hidden flex gap-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setGridMode("grid")}
+                className={`p-1.5 rounded transition-colors ${
+                  gridMode === "grid"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                aria-label="그리드 보기"
+                aria-pressed={gridMode === "grid"}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              </button>
+              <button
+                onClick={() => setGridMode("list")}
+                className={`p-1.5 rounded transition-colors ${
+                  gridMode === "list"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                aria-label="리스트 보기"
+                aria-pressed={gridMode === "list"}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
         <select
           value={sort}
@@ -597,19 +742,49 @@ function ListingsContent() {
       ) : loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-gray-100 rounded-xl aspect-[3/4] animate-pulse" />
+            <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-200 animate-pulse">
+              <div className="aspect-[4/3] bg-gray-200" />
+              <div className="p-3 space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="h-4 bg-gray-200 rounded w-1/2" />
+                <div className="h-4 bg-gray-200 rounded w-2/3" />
+                <div className="flex gap-2 mt-2">
+                  <div className="h-3 bg-gray-200 rounded w-12" />
+                  <div className="h-3 bg-gray-200 rounded w-12" />
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       ) : listings.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <p className="text-lg mb-2">등록된 매물이 없습니다</p>
-          <p className="text-sm">검색 조건을 변경해보세요</p>
+        <div className="text-center py-20">
+          <div className="flex justify-center mb-6">
+            <svg className="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <p className="text-lg font-medium text-gray-700 mb-2">검색 결과가 없습니다</p>
+          <p className="text-sm text-gray-500 mb-6">검색 조건을 변경하거나 아래 인기 키워드를 선택해보세요</p>
+          <div className="flex flex-wrap justify-center gap-2 max-w-md mx-auto">
+            {commonThemes.map((theme) => (
+              <button
+                key={theme}
+                onClick={() => {
+                  setSelectedThemes([theme]);
+                  setPage(1);
+                }}
+                className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"
+              >
+                {theme}
+              </button>
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className={gridMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" : "flex flex-col gap-3"}>
           {listings.map((listing, index) => (
             <React.Fragment key={listing.id}>
-              {index === 5 && (
+              {index === 5 && gridMode === "grid" && (
                 <div className="col-span-2 md:col-span-3 lg:col-span-4">
                   <ListingInfeedPromo />
                 </div>
@@ -622,7 +797,22 @@ function ListingsContent() {
         </div>
       )}
 
-      {/* 페이지네이션 */}
+      {/* 무한 스크롤 센티널 (모바일 전용) */}
+      {isMobile && viewMode === "list" && !loading && (
+        <div ref={sentinelRef} className="md:hidden py-8">
+          {isLoadingMore && (
+            <div className="flex flex-col items-center justify-center">
+              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-2" />
+              <p className="text-sm text-gray-500">매물 불러오는 중...</p>
+            </div>
+          )}
+          {!isLoadingMore && page >= totalPages && listings.length > 0 && (
+            <p className="text-center text-sm text-gray-500">모든 매물을 불러왔습니다</p>
+          )}
+        </div>
+      )}
+
+      {/* 페이지네이션 (데스크톱 전용) */}
       {totalPages > 1 && (() => {
         const windowSize = 5;
         let start = Math.max(1, page - Math.floor(windowSize / 2));
@@ -631,7 +821,7 @@ function ListingsContent() {
         const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
         return (
-          <div className="flex justify-center items-center gap-1.5 mt-8">
+          <div className="hidden md:flex justify-center items-center gap-1.5 mt-8">
             <button
               onClick={() => setPage(1)}
               disabled={page === 1}
@@ -688,6 +878,184 @@ function ListingsContent() {
         <RegisterPromoBanner type="listing" />
       </div>
       </div>
+
+      {/* 모바일 필터 풀스크린 모달 */}
+      {showFilterModal && (
+        <div className="fixed inset-0 z-50 bg-white md:hidden flex flex-col">
+          {/* 모달 헤더 */}
+          <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-gray-900">상세 필터</h2>
+            <button
+              onClick={closeFilterModal}
+              className="p-3 hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="필터 닫기"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* 모달 바디 (스크롤 가능) */}
+          <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+            {/* 지역 검색 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                지역 (시/구/동)
+              </label>
+              <input
+                type="text"
+                placeholder="예: 강남구, 역삼동"
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+            </div>
+
+            {/* 권리금 범위 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                권리금 (만원)
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  placeholder="최소"
+                  value={premiumMin}
+                  onChange={(e) => setPremiumMin(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="text-gray-400">~</span>
+                <input
+                  type="number"
+                  placeholder="최대"
+                  value={premiumMax}
+                  onChange={(e) => setPremiumMax(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* 보증금 범위 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                보증금 (만원)
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  placeholder="최소"
+                  value={depositMin}
+                  onChange={(e) => setDepositMin(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="text-gray-400">~</span>
+                <input
+                  type="number"
+                  placeholder="최대"
+                  value={depositMax}
+                  onChange={(e) => setDepositMax(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* 월세 범위 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                월세 (만원)
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  placeholder="최소"
+                  value={rentMin}
+                  onChange={(e) => setRentMin(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="text-gray-400">~</span>
+                <input
+                  type="number"
+                  placeholder="최대"
+                  value={rentMax}
+                  onChange={(e) => setRentMax(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* 면적 범위 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                면적 (평)
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  placeholder="최소"
+                  value={areaMin}
+                  onChange={(e) => setAreaMin(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+                <span className="text-gray-400">~</span>
+                <input
+                  type="number"
+                  placeholder="최대"
+                  value={areaMax}
+                  onChange={(e) => setAreaMax(e.target.value)}
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* 테마 필터 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">테마</label>
+              <div className="flex flex-wrap gap-2">
+                {commonThemes.map((theme) => (
+                  <button
+                    key={theme}
+                    onClick={() => handleThemeToggle(theme)}
+                    className={`px-4 py-2.5 text-base rounded-full font-medium transition-colors ${
+                      selectedThemes.includes(theme)
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {theme}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 모달 푸터 (sticky) */}
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 py-4 flex gap-3">
+            <button
+              onClick={() => {
+                handleResetFilters();
+                closeFilterModal();
+              }}
+              className="flex-1 min-h-[48px] px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-base font-medium hover:bg-gray-200 transition-colors"
+              aria-label="모든 필터 초기화"
+            >
+              초기화
+            </button>
+            <button
+              onClick={() => {
+                setListings([]);
+                setPage(1);
+                fetchListings();
+                closeFilterModal();
+              }}
+              className="flex-[2] min-h-[48px] px-4 py-3 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 transition-colors"
+              aria-label="필터 적용하기"
+            >
+              필터 적용하기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

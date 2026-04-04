@@ -90,3 +90,25 @@ select:focus-visible {
 .animate-slide-in {
   animation: slide-in 0.3s ease-out;
 }
+
+/* Fade out animation for swipe hint */
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-fade-out {
+  animation: fade-out 3s ease-in-out forwards;
+}
+
+/* Safe area padding for iOS notch/home indicator */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

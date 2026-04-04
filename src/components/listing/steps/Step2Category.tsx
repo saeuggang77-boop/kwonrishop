@@ -195,7 +195,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.deposit)}
                     onChange={(e) => handleNumberInput("deposit", e.target.value)}
-                    className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -209,7 +209,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.monthlyRent)}
                     onChange={(e) => handleNumberInput("monthlyRent", e.target.value)}
-                    className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -253,7 +253,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.premium)}
                     onChange={(e) => handleNumberInput("premium", e.target.value)}
-                    className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -271,7 +271,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   placeholder="0"
                   value={data.maintenanceFee !== null ? formatNumber(data.maintenanceFee) : ""}
                   onChange={(e) => handleNumberInput("maintenanceFee", e.target.value)}
-                  className="w-full px-3 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                  className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
               </div>

@@ -213,7 +213,7 @@ function LoginContent() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 autoComplete="email"
-                className="w-full px-4 py-3 border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
               />
             </div>
 
@@ -228,7 +228,7 @@ function LoginContent() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
                 autoComplete="current-password"
-                className="w-full px-4 py-3 border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
               />
             </div>
 

@@ -160,7 +160,7 @@ function ChatContent() {
     <div className="max-w-5xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-gray-900 mb-4">채팅</h1>
 
-      <div className="flex gap-4 h-[calc(100vh-12rem)]">
+      <div className="flex gap-4 h-[calc(100dvh-12rem)]">
         {/* 채팅방 목록 */}
         <div className={`w-full md:w-80 bg-white rounded-xl border border-gray-200 overflow-y-auto md:shrink-0 ${
           showRoomList ? "block" : "hidden md:block"

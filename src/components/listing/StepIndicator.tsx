@@ -14,9 +14,24 @@ export default function StepIndicator({
   currentStep: number;
 }) {
   const current = steps.find((s) => s.number === currentStep);
+  const totalSteps = steps.length;
+  const currentStepLabel = current?.label || "";
 
   return (
     <div>
+      {/* 진행률 */}
+      <div className="mb-3">
+        <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 text-center mb-2">
+          <span className="text-blue-600 dark:text-blue-400">{currentStep}</span> / {totalSteps} 단계 — {currentStepLabel}
+        </p>
+        <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+          />
+        </div>
+      </div>
+
       <div className="flex items-center gap-1 overflow-x-auto pb-2">
         {steps.map((step) => (
           <div key={step.number} className="flex items-center">
@@ -41,12 +56,12 @@ export default function StepIndicator({
                 )}
               </div>
               <span
-                className={`text-[10px] mt-1 whitespace-nowrap ${
+                className={`mt-1 whitespace-nowrap ${
                   step.number === currentStep
-                    ? "text-blue-600 dark:text-blue-400 font-medium"
+                    ? "block text-xs text-blue-600 dark:text-blue-400 font-medium"
                     : step.number < currentStep
-                      ? "text-blue-400 dark:text-blue-500"
-                      : "text-gray-400 dark:text-gray-500"
+                      ? "hidden sm:block text-[10px] text-blue-400 dark:text-blue-500"
+                      : "hidden sm:block text-[10px] text-gray-400 dark:text-gray-500"
                 }`}
               >
                 {step.label}

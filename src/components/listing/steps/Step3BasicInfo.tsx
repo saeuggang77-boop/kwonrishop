@@ -69,7 +69,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
             placeholder="미입력 시 주소가 대신 표시됩니다"
             value={data.storeName}
             onChange={(e) => updateData({ storeName: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           />
         </div>
 
@@ -98,7 +98,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                   onChange={(e) =>
                     updateData({ currentFloor: e.target.value ? parseInt(e.target.value) : null })
                   }
-                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">층</span>
               </div>
@@ -113,7 +113,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                   onChange={(e) =>
                     updateData({ totalFloor: e.target.value ? parseInt(e.target.value) : null })
                   }
-                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">층</span>
               </div>
@@ -134,7 +134,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                   placeholder="예: 15"
                   value={data.areaPyeong ?? ""}
                   onChange={(e) => handlePyeongChange(e.target.value)}
-                  className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">평</span>
               </div>
@@ -198,7 +198,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                     onChange={(e) =>
                       updateData({ parkingTotal: e.target.value ? parseInt(e.target.value) : null })
                     }
-                    className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">대</span>
                 </div>
@@ -213,7 +213,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                     onChange={(e) =>
                       updateData({ parkingPerUnit: e.target.value ? parseInt(e.target.value) : null })
                     }
-                    className="w-full px-3 py-2.5 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">대</span>
                 </div>

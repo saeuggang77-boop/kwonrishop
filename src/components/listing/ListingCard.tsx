@@ -42,7 +42,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
   };
 
   return (
-    <div className={`relative block bg-white dark:bg-gray-800 rounded-xl ${tierStyles[tier] || tierStyles.FREE} overflow-hidden hover:shadow-md transition-shadow`}>
+    <div className={`relative block bg-white dark:bg-gray-800 rounded-xl ${tierStyles[tier] || tierStyles.FREE} overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300`}>
       <Link href={`/listings/${listing.id}`}>
       {/* 이미지 */}
       <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
@@ -69,7 +69,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
             {listing.themes.slice(0, 2).map((theme) => (
               <span
                 key={theme}
-                className="px-2 py-0.5 bg-blue-600 dark:bg-blue-500 text-white text-[10px] font-medium rounded"
+                className="px-2.5 py-1 bg-blue-600 dark:bg-blue-500 text-white text-xs font-medium rounded-md"
               >
                 {theme}
               </span>
@@ -86,7 +86,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
 
         {/* 매출 인증 배지 */}
         {(listing._count?.documents ?? 0) > 0 && (
-          <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 bg-emerald-600/90 text-white text-[10px] font-semibold rounded backdrop-blur-sm">
+          <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 bg-emerald-600/90 text-white text-xs font-semibold rounded backdrop-blur-sm">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
@@ -99,7 +99,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
       {/* 정보 */}
       <div className="p-3">
         <div className="flex items-center justify-between gap-2 mb-1">
-          <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
             {listing.category && (
               <span>
                 {listing.category.icon} {listing.category.name}
@@ -135,7 +135,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
         </div>
 
         {/* 면적 & 메타 */}
-        <div className="flex items-center justify-between mt-2 text-xs text-gray-400 dark:text-gray-500">
+        <div className="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-500">
           <div className="flex gap-2">
             {listing.areaPyeong && <span>{listing.areaPyeong}평</span>}
             {listing.currentFloor && <span>{listing.currentFloor}층</span>}

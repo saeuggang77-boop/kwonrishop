@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -154,6 +154,10 @@ export default function ListingDetailClient() {
     frequency: string;
     nextBumpAt: string;
   } | null>(null);
+  const [activeDetailTab, setActiveDetailTab] = useState<"overview" | "detail" | "location" | "review">("overview");
+  const [showSwipeHint, setShowSwipeHint] = useState(true);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   useEffect(() => {
     setError(false);
@@ -257,6 +261,12 @@ export default function ListingDetailClient() {
     setCurrentImage(0);
   }, [imageTab]);
 
+  // Hide swipe hint after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSwipeHint(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Tab counts
   const imageCounts = useMemo(() => {
     if (!listing) return {};
@@ -266,6 +276,36 @@ export default function ListingDetailClient() {
     }
     return counts;
   }, [listing]);
+
+  // Gallery swipe handlers
+  const handleGalleryTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleGalleryTouchEnd = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) { // 50px 이상 드래그 시
+      if (diff > 0) {
+        // 왼쪽 스와이프 → 다음 이미지
+        setCurrentImage(prev => prev < filteredImages.length - 1 ? prev + 1 : 0);
+      } else {
+        // 오른쪽 스와이프 → 이전 이미지
+        setCurrentImage(prev => prev > 0 ? prev - 1 : filteredImages.length - 1);
+      }
+    }
+  }, [filteredImages.length]);
+
+  // Tab change handler with scroll
+  const handleDetailTabChange = useCallback((tab: "overview" | "detail" | "location" | "review") => {
+    setActiveDetailTab(tab);
+    // 탭바 위치로 부드러운 스크롤
+    const tabBar = document.getElementById('detail-tab-bar');
+    if (tabBar) {
+      const top = tabBar.getBoundingClientRect().top + window.scrollY - 56; // 헤더 높이
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, []);
 
   async function handleFavorite() {
     if (!session) {
@@ -549,7 +589,11 @@ export default function ListingDetailClient() {
         </div>
       )}
 
-      <div className="relative aspect-[16/9] bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none">
+      <div
+        className="relative aspect-[16/9] bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none"
+        onTouchStart={handleGalleryTouchStart}
+        onTouchEnd={handleGalleryTouchEnd}
+      >
         {filteredImages.length > 0 ? (
           <>
             <Image
@@ -579,6 +623,14 @@ export default function ListingDetailClient() {
                 <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
                   {currentImage + 1} / {filteredImages.length}
                 </div>
+                {/* Swipe hint - mobile only */}
+                {showSwipeHint && (
+                  <div className="md:hidden absolute bottom-12 left-0 right-0 flex justify-center pointer-events-none">
+                    <div className="bg-black/60 text-white text-xs px-3 py-1.5 rounded-full animate-fade-out">
+                      ← 스와이프하여 넘기기 →
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </>
@@ -626,6 +678,26 @@ export default function ListingDetailClient() {
         </div>
       )}
 
+      {/* ===== 모바일 탭 네비게이션 (sticky) ===== */}
+      <div id="detail-tab-bar" className="md:hidden sticky top-14 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 -mx-4 px-4 mb-4">
+        <div className="flex">
+          <button onClick={() => handleDetailTabChange("overview")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+            activeDetailTab === "overview" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+          }`}>개요</button>
+          <button onClick={() => handleDetailTabChange("detail")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+            activeDetailTab === "detail" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+          }`}>상세</button>
+          <button onClick={() => handleDetailTabChange("location")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+            activeDetailTab === "location" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+          }`}>위치</button>
+          <button onClick={() => handleDetailTabChange("review")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+            activeDetailTab === "review" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+          }`}>리뷰</button>
+        </div>
+      </div>
+
+      {/* ===== 개요 탭 콘텐츠 ===== */}
+      <div className={activeDetailTab === "overview" ? "block" : "hidden md:block"}>
       {/* ===== 2. 테마 태그 + TierBadge ===== */}
       {listing.themes.length > 0 && (
         <div className="flex gap-2 mb-3">
@@ -739,6 +811,10 @@ export default function ListingDetailClient() {
         );
       })()}
 
+      </div>
+
+      {/* ===== 상세 탭 콘텐츠 ===== */}
+      <div className={activeDetailTab === "detail" ? "block" : "hidden md:block"}>
       {/* ===== 5. 권리금 해부하기 ===== */}
       {hasPremiumBreakdown && (
         <Section title="권리금 해부하기">
@@ -1070,6 +1146,10 @@ export default function ListingDetailClient() {
         </div>
       </Section>
 
+      </div>
+
+      {/* ===== 위치 탭 콘텐츠 ===== */}
+      <div className={activeDetailTab === "location" ? "block" : "hidden md:block"}>
       {/* ===== 13. 위치 (카카오맵) ===== */}
       {listing.latitude && listing.longitude && (
         <Section title="위치">
@@ -1109,6 +1189,10 @@ export default function ListingDetailClient() {
       )}
 
 
+      </div>
+
+      {/* ===== 리뷰 탭 콘텐츠 ===== */}
+      <div className={activeDetailTab === "review" ? "block" : "hidden md:block"}>
       {/* ===== 16. 블라인드 리뷰 ===== */}
       <ReviewSection listingId={listing.id} sellerId={listing.user.id} />
 
@@ -1154,6 +1238,8 @@ export default function ListingDetailClient() {
           </div>
         </Section>
       )}
+
+      </div>
 
       {/* ===== 19. 하단 고정바 ===== */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10 md:static md:mt-6 md:rounded-xl md:border md:shadow-sm">

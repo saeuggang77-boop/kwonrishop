@@ -36,6 +36,12 @@ const nextConfig: NextConfig = {
         hostname: "**.r2.cloudflarestorage.com",
         pathname: "/**",
       },
+      // Vercel Blob Storage (이미지 업로드)
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+        pathname: "/**",
+      },
       // Placeholder images (demo)
       {
         protocol: "https",
