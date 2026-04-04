@@ -149,42 +149,49 @@ export async function GET(req: NextRequest) {
   if (brandType) where.brandType = brandType;
   if (premiumNone === "true") where.premiumNone = true;
 
+  // Build OR conditions array for keyword and region filters
+  const orConditions: any[] = [];
+
   if (keyword) {
-    where.OR = [
+    orConditions.push(
       { storeName: { contains: keyword, mode: "insensitive" } },
       { description: { contains: keyword, mode: "insensitive" } },
       { addressRoad: { contains: keyword, mode: "insensitive" } },
-      { addressJibun: { contains: keyword, mode: "insensitive" } },
-    ];
+      { addressJibun: { contains: keyword, mode: "insensitive" } }
+    );
   }
 
-  // Region filter (new)
+  // Region filter (new) - search both road and jibun addresses
   if (region) {
-    if (!where.AND) where.AND = [];
-    (where.AND as Array<Record<string, unknown>>).push({
-      addressRoad: { contains: region, mode: "insensitive" },
-    });
+    orConditions.push(
+      { addressRoad: { contains: region, mode: "insensitive" } },
+      { addressJibun: { contains: region, mode: "insensitive" } }
+    );
   }
 
-  // New advanced filters for premium range
+  if (orConditions.length > 0) {
+    where.OR = orConditions;
+  }
+
+  // New advanced filters for premium range (DB stores in 만원 units, no conversion needed)
   if (premiumMin || premiumMax) {
     where.premium = {};
-    if (premiumMin) (where.premium as Record<string, number>).gte = parseInt(premiumMin) * 10000;
-    if (premiumMax) (where.premium as Record<string, number>).lte = parseInt(premiumMax) * 10000;
+    if (premiumMin) (where.premium as Record<string, number>).gte = parseInt(premiumMin);
+    if (premiumMax) (where.premium as Record<string, number>).lte = parseInt(premiumMax);
   }
 
-  // Deposit range filter
+  // Deposit range filter (DB stores in 만원 units, no conversion needed)
   if (depositMin || depositMax) {
     where.deposit = {};
-    if (depositMin) (where.deposit as Record<string, number>).gte = parseInt(depositMin) * 10000;
-    if (depositMax) (where.deposit as Record<string, number>).lte = parseInt(depositMax) * 10000;
+    if (depositMin) (where.deposit as Record<string, number>).gte = parseInt(depositMin);
+    if (depositMax) (where.deposit as Record<string, number>).lte = parseInt(depositMax);
   }
 
-  // Monthly rent range filter
+  // Monthly rent range filter (DB stores in 만원 units, no conversion needed)
   if (rentMin || rentMax) {
     where.monthlyRent = {};
-    if (rentMin) (where.monthlyRent as Record<string, number>).gte = parseInt(rentMin) * 10000;
-    if (rentMax) (where.monthlyRent as Record<string, number>).lte = parseInt(rentMax) * 10000;
+    if (rentMin) (where.monthlyRent as Record<string, number>).gte = parseInt(rentMin);
+    if (rentMax) (where.monthlyRent as Record<string, number>).lte = parseInt(rentMax);
   }
 
   // Area range filter
@@ -296,10 +303,15 @@ export async function GET(req: NextRequest) {
       adPurchases: undefined,
       userId: undefined, // 보안상 userId 제거
     };
-  }).sort((a: any, b: any) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3));
+  });
+
+  // Apply tier sorting only for default "latest" sort, not for explicit user-selected sorts
+  const finalListings = sort === "latest"
+    ? listingsWithTier.sort((a: any, b: any) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3))
+    : listingsWithTier;
 
   return NextResponse.json({
-    listings: listingsWithTier,
+    listings: finalListings,
     pagination: {
       page,
       limit,

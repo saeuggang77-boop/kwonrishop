@@ -52,6 +52,10 @@ export async function middleware(req: NextRequest) {
     if (pathname.startsWith("/franchise/edit") && userRole !== "FRANCHISE" && userRole !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
+
+    if (pathname.startsWith("/franchise/edit") && userRole === "FRANCHISE" && !verified) {
+      return NextResponse.redirect(new URL("/verify-business?role=FRANCHISE", req.url));
+    }
   }
 
   // 이미 로그인 된 상태에서 로그인 페이지 접근 시 홈으로
@@ -87,7 +91,7 @@ export async function middleware(req: NextRequest) {
       "Content-Security-Policy",
       [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daumcdn.net https://cdn.vercel-insights.com https://*.kakao.com https://js.tosspayments.com https://www.googletagmanager.com",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daumcdn.net https://cdn.vercel-insights.com https://*.kakao.com https://js.tosspayments.com https://www.googletagmanager.com https://www.gstatic.com",
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
         "img-src 'self' data: blob: https: http:",
         "font-src 'self' data: https://cdn.jsdelivr.net",

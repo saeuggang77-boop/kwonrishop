@@ -195,7 +195,7 @@ function ListingsContent() {
     setTotalPages(data.pagination?.totalPages || 1);
     setLoading(false);
     setIsLoadingMore(false);
-  }, [page, categoryId, subCategoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes, router]);
+  }, [page, categoryId, subCategoryId, debouncedKeyword, sort, region, premiumMin, premiumMax, depositMin, depositMax, rentMin, rentMax, areaMin, areaMax, selectedThemes, router, isMobile]);
 
   // 모바일 감지
   useEffect(() => {

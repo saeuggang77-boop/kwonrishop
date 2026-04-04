@@ -45,6 +45,15 @@ export async function PUT(
       );
     }
 
+    // 허용된 상태값만 허용 (Prisma ListingStatus enum)
+    const ALLOWED_STATUSES = ["DRAFT", "ACTIVE", "RESERVED", "SOLD", "EXPIRED", "DELETED"];
+    if (!ALLOWED_STATUSES.includes(status)) {
+      return NextResponse.json(
+        { error: "Invalid status value" },
+        { status: 400 }
+      );
+    }
+
     const partner = await prisma.partnerService.update({
       where: { id },
       data: { status },
