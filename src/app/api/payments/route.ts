@@ -163,6 +163,17 @@ export async function POST(req: NextRequest) {
           { status: 403 }
         );
       }
+      // 브랜드 존재 검증 (결제 후 tier 업데이트 대상이 없으면 돈만 빠지는 문제 방지)
+      const myBrand = await prisma.franchiseBrand.findFirst({
+        where: { managerId: session.user.id },
+        select: { id: true },
+      });
+      if (!myBrand) {
+        return NextResponse.json(
+          { error: "등록된 브랜드가 없습니다. 먼저 사업자인증을 완료해주세요." },
+          { status: 400 }
+        );
+      }
     } else if (scope === "PARTNER") {
       if (userRole !== "PARTNER" && userRole !== "ADMIN") {
         return NextResponse.json(

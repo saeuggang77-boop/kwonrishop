@@ -83,7 +83,7 @@ export async function PUT(
     // 브랜드 조회
     const brand = await prisma.franchiseBrand.findUnique({
       where: { id },
-      select: { managerId: true, businessNumber: true },
+      select: { managerId: true, businessNumber: true, ftcId: true },
     });
 
     if (!brand) {
@@ -107,7 +107,10 @@ export async function PUT(
 
     const body = await request.json();
 
-    // 편집 가능 필드만 업데이트 (공정위 기본 데이터는 수정 불가)
+    // 수동 등록 브랜드 여부 확인 (첫 번째 조회에서 이미 가져온 ftcId 활용)
+    const isManualBrand = brand.ftcId?.startsWith("manual_") ?? false;
+
+    // 편집 가능 필드만 업데이트 (공정위 기본 데이터는 수정 불가, 수동 브랜드는 허용)
     const updated = await prisma.franchiseBrand.update({
       where: { id },
       data: {
@@ -118,6 +121,12 @@ export async function PUT(
         contactPhone: body.contactPhone !== undefined ? sanitizeInput(body.contactPhone || "") : undefined,
         contactEmail: body.contactEmail !== undefined ? sanitizeInput(body.contactEmail || "") : undefined,
         website: body.website !== undefined ? sanitizeInput(body.website || "") : undefined,
+        // 수동 브랜드는 기본 정보(브랜드명/회사명/업종)도 수정 가능
+        ...(isManualBrand && {
+          ...(body.brandName !== undefined ? { brandName: sanitizeInput(body.brandName) } : {}),
+          ...(body.companyName !== undefined ? { companyName: sanitizeInput(body.companyName) } : {}),
+          ...(body.industry !== undefined ? { industry: sanitizeInput(body.industry) } : {}),
+        }),
         // managerId 연결 (첫 편집 시)
         ...(brand.managerId === null ? { managerId: session.user.id } : {}),
       },

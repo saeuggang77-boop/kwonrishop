@@ -14,6 +14,7 @@ interface FranchiseBrand {
   benefits: string | null;
   website: string | null;
   tier: string | null;
+  ftcId: string | null;
 }
 
 export default function FranchiseEditPage() {
@@ -25,6 +26,10 @@ export default function FranchiseEditPage() {
   const [description, setDescription] = useState("");
   const [benefits, setBenefits] = useState("");
   const [website, setWebsite] = useState("");
+  const [isManual, setIsManual] = useState(false);
+  const [brandName, setBrandName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [industry, setIndustry] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -41,6 +46,11 @@ export default function FranchiseEditPage() {
             fetch(`/api/franchise/${data.franchiseBrand.id}`)
               .then((r) => r.json())
               .then((brandData) => {
+                const manual = brandData.ftcId?.startsWith("manual_") || false;
+                setIsManual(manual);
+                setBrandName(brandData.brandName || "");
+                setCompanyName(brandData.companyName || "");
+                setIndustry(brandData.industry || "");
                 setDescription(brandData.description || "");
                 setBenefits(brandData.benefits || "");
                 setWebsite(brandData.website || "");
@@ -72,6 +82,11 @@ export default function FranchiseEditPage() {
           description: description.trim() || null,
           benefits: benefits.trim() || null,
           website: website.trim() || null,
+          ...(isManual && {
+            brandName: brandName.trim() || "미등록 브랜드",
+            companyName: companyName.trim() || "",
+            industry: industry.trim() || "기타",
+          }),
         }),
       });
 
@@ -113,26 +128,74 @@ export default function FranchiseEditPage() {
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
-        {/* 기본 정보 (수정 불가) */}
+        {/* 기본 정보 */}
         <div className="bg-gray-50 rounded-xl border border-gray-200 p-5">
-          <h3 className="font-semibold text-gray-900 mb-3">기본 정보 (공정위 등록 정보)</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex">
-              <span className="w-24 text-gray-500">브랜드명</span>
-              <span className="text-gray-900">{brand.brandName}</span>
+          <h3 className="font-semibold text-gray-900 mb-3">
+            {isManual ? "기본 정보" : "기본 정보 (공정위 등록 정보)"}
+          </h3>
+
+          {isManual ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">브랜드명 *</label>
+                <input
+                  type="text"
+                  value={brandName}
+                  onChange={(e) => setBrandName(e.target.value)}
+                  required
+                  placeholder="브랜드명을 입력하세요"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">회사명</label>
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder="법인명 또는 상호를 입력하세요"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">업종</label>
+                <input
+                  type="text"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  placeholder="예: 치킨, 카페, 편의점 등"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+              <div className="flex">
+                <span className="w-24 text-sm text-gray-500">등급</span>
+                <span className="text-sm text-gray-900">{brand.tier || "FREE"}</span>
+              </div>
+              <p className="text-xs text-blue-600 bg-blue-50 rounded-lg p-3">
+                공정위 미등록 브랜드입니다. 브랜드명, 회사명, 업종을 직접 수정할 수 있습니다.
+              </p>
             </div>
-            <div className="flex">
-              <span className="w-24 text-gray-500">업종</span>
-              <span className="text-gray-900">{brand.industry}</span>
-            </div>
-            <div className="flex">
-              <span className="w-24 text-gray-500">등급</span>
-              <span className="text-gray-900">{brand.tier || "FREE"}</span>
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 mt-3">
-            * 기본 정보는 공정위 등록 데이터로 수정할 수 없습니다.
-          </p>
+          ) : (
+            <>
+              <div className="space-y-2 text-sm">
+                <div className="flex">
+                  <span className="w-24 text-gray-500">브랜드명</span>
+                  <span className="text-gray-900">{brand.brandName}</span>
+                </div>
+                <div className="flex">
+                  <span className="w-24 text-gray-500">업종</span>
+                  <span className="text-gray-900">{brand.industry}</span>
+                </div>
+                <div className="flex">
+                  <span className="w-24 text-gray-500">등급</span>
+                  <span className="text-gray-900">{brand.tier || "FREE"}</span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-3">
+                * 기본 정보는 공정위 등록 데이터로 수정할 수 없습니다.
+              </p>
+            </>
+          )}
         </div>
 
         {/* 브랜드 소개 */}
