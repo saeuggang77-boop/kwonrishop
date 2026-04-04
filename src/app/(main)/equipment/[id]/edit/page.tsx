@@ -275,7 +275,7 @@ export default function EquipmentEditPage() {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
             placeholder="예: 업소용 냉장고 1200L 판매합니다"
           />
         </div>
@@ -293,7 +293,7 @@ export default function EquipmentEditPage() {
                 onClick={() => setCategory(key)}
                 className={`flex flex-col items-center gap-1 px-3 py-3 rounded-xl text-sm font-medium transition-colors border-2 ${
                   category === key
-                    ? "border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                    ? "border-navy-600 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
                     : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
@@ -347,7 +347,7 @@ export default function EquipmentEditPage() {
                 value={isFree ? "0" : (price === 0 ? "" : price)}
                 onChange={(e) => setPrice(parseInt(e.target.value) || 0)}
                 disabled={isFree}
-                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-400"
+                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-400"
                 placeholder="가격을 입력하세요"
               />
               <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">원</span>
@@ -374,7 +374,7 @@ export default function EquipmentEditPage() {
                   checked={negotiable}
                   disabled={isFree}
                   onChange={(e) => setNegotiable(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 disabled:opacity-50"
+                  className="w-4 h-4 text-navy-700 rounded border-gray-300 focus:ring-navy-500 disabled:opacity-50"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">협의가능</span>
               </label>
@@ -399,7 +399,7 @@ export default function EquipmentEditPage() {
                 onClick={() => setTradeMethod(key)}
                 className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-colors border-2 ${
                   tradeMethod === key
-                    ? "border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                    ? "border-navy-600 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
                     : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
@@ -419,7 +419,7 @@ export default function EquipmentEditPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={6}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none"
             placeholder="집기의 상태, 사용기간, 특이사항 등을 상세히 작성해주세요 (최소 10자)"
           />
           <p className={`text-sm mt-1 ${description.length < 10 ? "text-red-500" : "text-gray-500 dark:text-gray-400"}`}>
@@ -434,7 +434,7 @@ export default function EquipmentEditPage() {
             type="text"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
             placeholder="예: 삼성, LG, 대우 등"
           />
         </div>
@@ -446,7 +446,7 @@ export default function EquipmentEditPage() {
             type="text"
             value={modelName}
             onChange={(e) => setModelName(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
             placeholder="예: RF-520"
           />
         </div>
@@ -457,7 +457,7 @@ export default function EquipmentEditPage() {
           <select
             value={purchaseYear}
             onChange={(e) => setPurchaseYear(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
           >
             <option value="">선택하세요</option>
             {yearOptions.map((y) => (
@@ -474,7 +474,7 @@ export default function EquipmentEditPage() {
             min={1}
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
           />
         </div>
 
@@ -501,7 +501,7 @@ export default function EquipmentEditPage() {
                 value={addressDetail}
                 onChange={(e) => setAddressDetail(e.target.value)}
                 placeholder="상세 주소 (예: 3층)"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
               />
             </div>
           )}
@@ -519,7 +519,7 @@ export default function EquipmentEditPage() {
             multiple
             onChange={handleImageUpload}
             disabled={uploading}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
           />
           {uploading && <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">업로드 중...</p>}
           {images.length > 0 && (
@@ -553,7 +553,7 @@ export default function EquipmentEditPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
+            className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             {submitting ? "수정 중..." : "수정하기"}
           </button>

@@ -109,7 +109,7 @@ export default function CommunityEditPage() {
               onClick={() => setTag(t)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 tag === t
-                  ? "bg-blue-600 text-white"
+                  ? "bg-navy-700 text-white"
                   : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
@@ -123,7 +123,7 @@ export default function CommunityEditPage() {
           placeholder="제목을 입력하세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-lg outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-lg outline-none focus:ring-2 focus:ring-navy-500"
         />
 
         <textarea
@@ -131,7 +131,7 @@ export default function CommunityEditPage() {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={15}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-navy-500 resize-none"
         />
 
         {error && (
@@ -149,7 +149,7 @@ export default function CommunityEditPage() {
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50"
           >
             {loading ? "수정 중..." : "수정"}
           </button>

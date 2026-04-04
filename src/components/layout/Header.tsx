@@ -79,52 +79,79 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <header className="sticky top-0 z-50 bg-white dark:bg-navy-900 border-b border-gray-200 dark:border-navy-700">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
+        <Link href="/" className="text-xl font-bold text-navy-700 dark:text-white">
           권리샵
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600 dark:text-gray-300" aria-label="주요 메뉴">
           <Link
             href="/listings"
-            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
+            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
+              pathname === "/listings" ? "text-navy-700 dark:text-white" : ""
+            }`}
             aria-current={pathname === "/listings" ? "page" : undefined}
           >
             매물검색
+            {pathname === "/listings" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+            )}
           </Link>
           <Link
             href="/franchise"
-            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
+            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
+              pathname === "/franchise" ? "text-navy-700 dark:text-white" : ""
+            }`}
             aria-current={pathname === "/franchise" ? "page" : undefined}
           >
             프랜차이즈
+            {pathname === "/franchise" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+            )}
           </Link>
           <Link
             href="/partners"
-            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
+            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
+              pathname === "/partners" ? "text-navy-700 dark:text-white" : ""
+            }`}
             aria-current={pathname === "/partners" ? "page" : undefined}
           >
             협력업체
+            {pathname === "/partners" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+            )}
           </Link>
           <Link
             href="/equipment"
-            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
+            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
+              pathname === "/equipment" ? "text-navy-700 dark:text-white" : ""
+            }`}
             aria-current={pathname === "/equipment" ? "page" : undefined}
           >
             집기장터
+            {pathname === "/equipment" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+            )}
           </Link>
           <Link
             href="/community"
-            className="hover:text-gray-900 dark:hover:text-gray-100 outline-none"
+            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
+              pathname === "/community" ? "text-navy-700 dark:text-white" : ""
+            }`}
             aria-current={pathname === "/community" ? "page" : undefined}
           >
             커뮤니티
+            {pathname === "/community" && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+            )}
           </Link>
           {session && (
             <Link
               href="/chat"
-              className="hover:text-gray-900 dark:hover:text-gray-100 outline-none relative"
+              className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
+                pathname === "/chat" ? "text-navy-700 dark:text-white" : ""
+              }`}
               aria-current={pathname === "/chat" ? "page" : undefined}
             >
               채팅
@@ -132,6 +159,9 @@ export default function Header() {
                 <span className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full inline-flex items-center justify-center">
                   {chatUnreadCount > 9 ? "9+" : chatUnreadCount}
                 </span>
+              )}
+              {pathname === "/chat" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
               )}
             </Link>
           )}
@@ -185,7 +215,7 @@ export default function Header() {
                         {unreadCount > 0 && (
                           <button
                             onClick={markAllRead}
-                            className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                            className="text-xs text-navy-700 hover:text-navy-700 dark:text-navy-400 dark:hover:text-blue-300"
                           >
                             모두 읽음
                           </button>
@@ -203,7 +233,7 @@ export default function Header() {
                               href={notif.link || "#"}
                               onClick={() => setNotifOpen(false)}
                               className={`block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-50 dark:border-gray-700 ${
-                                !notif.read ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
+                                !notif.read ? "bg-navy-50/50 dark:bg-navy-800/20" : ""
                               }`}
                             >
                               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -220,7 +250,7 @@ export default function Header() {
                           <Link
                             href="/notifications"
                             onClick={() => setNotifOpen(false)}
-                            className="block px-4 py-2 text-center text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-100 dark:border-gray-700"
+                            className="block px-4 py-2 text-center text-sm font-medium text-navy-700 hover:text-navy-700 dark:text-navy-400 dark:hover:text-blue-300 border-t border-gray-100 dark:border-gray-700"
                           >
                             모든 알림 보기
                           </Link>
@@ -247,7 +277,7 @@ export default function Header() {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
+                  <div className="w-7 h-7 rounded-full bg-navy-100 flex items-center justify-center text-navy-700 text-xs font-bold">
                     {session.user.name?.[0] || "U"}
                   </div>
                 )}
@@ -292,7 +322,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-navy-700 rounded-lg hover:bg-navy-600 dark:bg-navy-600 dark:hover:bg-navy-500 transition-colors"
             >
               로그인
             </Link>

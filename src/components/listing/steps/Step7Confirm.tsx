@@ -178,10 +178,10 @@ export default function Step7Confirm({ onPrev }: Props) {
             </p>
 
             {/* 구분선 */}
-            <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-6"></div>
+            <div className="h-px bg-gradient-to-r from-transparent via-navy-500 to-transparent mb-6"></div>
 
             {/* 광고 유도 섹션 */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-5 mb-6">
+            <div className="bg-navy-50 dark:bg-navy-800/20 rounded-xl p-5 mb-6">
               <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
                 더 많은 예비창업자에게 알리고 싶다면?
               </h3>
@@ -192,19 +192,19 @@ export default function Step7Confirm({ onPrev }: Props) {
               {/* 혜택 리스트 */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
                   <span>검색 결과 상위 노출</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                   <span>프리미엄 배지 표시</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                   <span>조회수 리포트 제공</span>
@@ -221,7 +221,7 @@ export default function Step7Confirm({ onPrev }: Props) {
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => { reset(); router.push("/pricing"); }}
-                className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                className="w-full px-6 py-3 bg-navy-700 hover:bg-navy-600 text-white rounded-lg font-medium transition-colors"
               >
                 광고 상품 보기
               </button>
@@ -337,12 +337,12 @@ export default function Step7Confirm({ onPrev }: Props) {
           ))}
         </div>
 
-        <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <div className="mt-4 bg-navy-50 dark:bg-navy-800/20 border border-navy-200 dark:border-navy-700 rounded-lg p-4">
           <div className="flex items-start gap-2">
-            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p className="text-sm text-blue-800 dark:text-blue-300">
+            <p className="text-sm text-navy-800 dark:text-navy-300">
               외부 매출 자료 연동 기능은 현재 개발 중입니다. 빠른 시일 내에 오픈 예정입니다.
             </p>
           </div>
@@ -372,7 +372,7 @@ export default function Step7Confirm({ onPrev }: Props) {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? (uploadProgress || "등록 중...") : "매물 등록하기"}
         </button>
@@ -390,7 +390,7 @@ function Section({ title, children, onEdit }: { title: string; children: React.R
         {onEdit && (
           <button
             onClick={onEdit}
-            className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            className="text-xs text-navy-700 hover:text-navy-800 dark:text-navy-400 dark:hover:text-navy-300"
           >
             수정
           </button>

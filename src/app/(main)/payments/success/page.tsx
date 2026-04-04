@@ -64,7 +64,7 @@ function SuccessContent() {
     return (
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-4" />
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-navy-600 border-t-transparent mb-4" />
           <p className="text-gray-600">결제를 확인하는 중입니다...</p>
         </div>
       </div>
@@ -84,7 +84,7 @@ function SuccessContent() {
           <div className="flex gap-3">
             <Link
               href="/mypage"
-              className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              className="flex-1 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600"
             >
               마이페이지 확인
             </Link>
@@ -136,7 +136,7 @@ function SuccessContent() {
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
                     <span className="text-gray-900 font-bold">총 결제금액</span>
-                    <span className="font-bold text-blue-600">
+                    <span className="font-bold text-navy-700">
                       {orderInfo.amount.toLocaleString()}원
                     </span>
                   </div>
@@ -144,7 +144,7 @@ function SuccessContent() {
               ) : (
                 <div className="flex justify-between">
                   <span className="text-gray-600">결제 금액</span>
-                  <span className="font-bold text-blue-600">
+                  <span className="font-bold text-navy-700">
                     {orderInfo.amount.toLocaleString()}원
                   </span>
                 </div>
@@ -162,7 +162,7 @@ function SuccessContent() {
         <div className="flex gap-3">
           <Link
             href="/mypage"
-            className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+            className="flex-1 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600"
           >
             마이페이지
           </Link>
@@ -184,7 +184,7 @@ export default function PaymentSuccessPage() {
       fallback={
         <div className="max-w-md mx-auto px-4 py-12">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-4" />
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-navy-600 border-t-transparent mb-4" />
             <p className="text-gray-600">로딩 중...</p>
           </div>
         </div>

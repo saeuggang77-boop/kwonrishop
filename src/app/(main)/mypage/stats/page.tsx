@@ -73,7 +73,7 @@ export default function StatsPage() {
           <p className="text-red-600 dark:text-red-400 mb-4">{error || "데이터를 불러올 수 없습니다."}</p>
           <Link
             href="/mypage"
-            className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+            className="inline-block px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-600"
           >
             마이페이지로 돌아가기
           </Link>
@@ -115,7 +115,7 @@ export default function StatsPage() {
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400">총 조회수</span>
-            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-navy-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
@@ -195,7 +195,7 @@ export default function StatsPage() {
         <h2 className="font-bold text-gray-900 dark:text-white mb-4">전환 퍼널</h2>
         <div className="space-y-3">
           {[
-            { label: "조회", value: data.listing.viewCount, color: "bg-blue-500", pct: 100 },
+            { label: "조회", value: data.listing.viewCount, color: "bg-navy-500", pct: 100 },
             { label: "관심 등록", value: data.listing.favoriteCount, color: "bg-amber-500", pct: data.listing.viewCount > 0 ? (data.listing.favoriteCount / data.listing.viewCount) * 100 : 0 },
             { label: "채팅 문의", value: data.chatCount, color: "bg-green-500", pct: data.listing.viewCount > 0 ? (data.chatCount / data.listing.viewCount) * 100 : 0 },
           ].map((item) => (
@@ -225,7 +225,7 @@ export default function StatsPage() {
             {data.recentFavorites.map((fav, idx) => (
               <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-bold">
+                  <div className="w-8 h-8 rounded-full bg-navy-100 dark:bg-blue-950 flex items-center justify-center text-navy-700 dark:text-navy-400 text-sm font-bold">
                     {fav.userName[0]}
                   </div>
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{fav.userName}</span>

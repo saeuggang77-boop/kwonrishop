@@ -133,13 +133,13 @@ export default function IndustryRevenueSection({
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {brandName}
                 </span>
-                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                <span className="text-sm font-bold text-navy-700 dark:text-navy-400">
                   {formatRevenue(brandAvgRevenue)}
                 </span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded h-8 overflow-hidden">
                 <div
-                  className="h-full bg-blue-500 transition-all duration-500 flex items-center justify-end pr-2"
+                  className="h-full bg-navy-500 transition-all duration-500 flex items-center justify-end pr-2"
                   style={{ width: `${(brandAvgRevenue / maxRevenue) * 100}%` }}
                 >
                   {(brandAvgRevenue / maxRevenue) * 100 > 15 && (

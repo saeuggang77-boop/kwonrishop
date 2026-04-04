@@ -127,6 +127,13 @@ function getItemIcon(type: string, item: any): string {
   return "🔹";
 }
 
+function getItemImageUrl(type: string, item: any): string | null {
+  if (type === "franchise") return item.logo || null;
+  if (type === "partner") return item.images?.[0]?.url || null;
+  if (type === "equipment") return item.images?.[0]?.url || null;
+  return null;
+}
+
 function getItemName(type: string, item: any): string {
   if (type === "franchise") return item.brandName;
   if (type === "partner") return item.companyName;
@@ -230,7 +237,7 @@ export default function StartupPartnerSection({
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">{sameType.title}</h3>
-            <Link href={sameType.viewAllLink} className="text-sm text-blue-600 hover:text-blue-700">전체보기 →</Link>
+            <Link href={sameType.viewAllLink} className="text-sm text-navy-700 hover:text-navy-700">전체보기 →</Link>
           </div>
           <div className="grid grid-cols-2 gap-2.5 md:hidden">
             {sameTypeItems.slice(0, 2).map((item) => <SameTypeCard key={item.id} item={item} />)}
@@ -250,7 +257,7 @@ export default function StartupPartnerSection({
         <>
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">창업 파트너</h3>
-            <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-[10px] font-semibold rounded">AD</span>
+            <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-400 text-[10px] font-semibold rounded">AD</span>
           </div>
 
           <div className="flex items-center gap-4 border-b border-gray-200 dark:border-gray-700 mb-4">
@@ -260,7 +267,7 @@ export default function StartupPartnerSection({
                 onClick={() => setActiveTab(i)}
                 className={`pb-2 text-sm transition-colors ${
                   activeTab === i
-                    ? "text-blue-600 font-semibold border-b-2 border-blue-600"
+                    ? "text-navy-700 font-semibold border-b-2 border-navy-600"
                     : "text-gray-400 font-medium border-b-2 border-transparent"
                 }`}
               >
@@ -289,6 +296,7 @@ export default function StartupPartnerSection({
                       key={item.id}
                       href={getItemHref(tab.type, item)}
                       icon={getItemIcon(tab.type, item)}
+                      imageUrl={getItemImageUrl(tab.type, item)}
                       name={getItemName(tab.type, item)}
                       badge={getTierBadge(tab.type, idx)}
                       subtitle={getItemSubtitle(tab.type, item)}
@@ -302,6 +310,7 @@ export default function StartupPartnerSection({
                       key={item.id}
                       href={getItemHref(tab.type, item)}
                       icon={getItemIcon(tab.type, item)}
+                      imageUrl={getItemImageUrl(tab.type, item)}
                       name={getItemName(tab.type, item)}
                       badge={getTierBadge(tab.type, idx)}
                       subtitle={getItemSubtitle(tab.type, item)}
@@ -310,7 +319,7 @@ export default function StartupPartnerSection({
                     />
                   ))}
                 </div>
-                <Link href={VIEW_ALL[tab.type]?.link || "/"} className="block text-center text-sm text-blue-600 font-medium mt-3 hover:underline">
+                <Link href={VIEW_ALL[tab.type]?.link || "/"} className="block text-center text-sm text-navy-700 font-medium mt-3 hover:underline">
                   {VIEW_ALL[tab.type]?.label || "전체보기"} →
                 </Link>
               </div>
@@ -346,57 +355,63 @@ function SameTypeCard({ item }: { item: RecommendItem }) {
 
 const TIER_MOBILE_STYLES = {
   1: {
-    card: "p-4 border-2 border-yellow-400 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20",
-    icon: "w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-200 to-orange-200 text-3xl shadow-sm",
+    card: "p-4 border-2 border-navy-300 bg-white dark:bg-gray-800",
+    icon: "w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 text-3xl",
     name: "text-base",
-    badge: "px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-[9px] font-bold rounded shadow-sm",
-    arrow: "text-yellow-400 w-5 h-5",
+    badge: "px-2 py-0.5 bg-navy-700 text-white text-[9px] font-bold rounded",
+    arrow: "text-navy-300 w-5 h-5",
   },
   2: {
-    card: "p-3 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800",
-    icon: "w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-2xl",
+    card: "p-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
+    icon: "w-12 h-12 rounded-xl bg-gray-50 dark:bg-gray-700 text-2xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-gray-500 text-white text-[9px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 dark:bg-gray-600 dark:text-gray-300 text-[9px] font-bold rounded",
     arrow: "text-gray-300 w-4 h-4",
   },
   3: {
     card: "px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
-    icon: "w-10 h-10 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-lg",
+    icon: "w-10 h-10 rounded-lg bg-gray-50 dark:bg-gray-700 text-lg",
     name: "text-[13px]",
-    badge: "px-1 py-0.5 bg-amber-700 text-white text-[8px] font-bold rounded",
+    badge: "px-1 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400 text-[8px] font-bold rounded",
     arrow: "text-gray-200 w-4 h-4",
   },
 } as const;
 
 const TIER_PC_STYLES = {
   1: {
-    card: "p-5 border-2 border-yellow-400 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20",
-    icon: "w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-200 to-orange-200 text-4xl shadow-sm",
+    card: "p-5 border-2 border-navy-300 bg-white dark:bg-gray-800",
+    icon: "w-20 h-20 rounded-2xl bg-gray-50 dark:bg-gray-700 text-4xl",
     name: "text-base",
-    badge: "px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-[9px] font-bold rounded shadow-sm",
+    badge: "px-2 py-0.5 bg-navy-700 text-white text-[9px] font-bold rounded",
   },
   2: {
-    card: "p-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800",
-    icon: "w-16 h-16 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-3xl",
+    card: "p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
+    icon: "w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 text-3xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-gray-500 text-white text-[9px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 dark:bg-gray-600 dark:text-gray-300 text-[9px] font-bold rounded",
   },
   3: {
     card: "p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
-    icon: "w-12 h-12 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-2xl",
+    icon: "w-12 h-12 rounded-lg bg-gray-50 dark:bg-gray-700 text-2xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-amber-700 text-white text-[8px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400 text-[8px] font-bold rounded",
   },
 } as const;
 
-function TierCardMobile({ href, icon, name, badge, subtitle, tierLevel }: {
-  href: string; icon: string; name: string; badge: string; subtitle: string; tierLevel: 1 | 2 | 3;
+function TierCardMobile({ href, icon, imageUrl, name, badge, subtitle, tierLevel }: {
+  href: string; icon: string; imageUrl?: string | null; name: string; badge: string; subtitle: string; tierLevel: 1 | 2 | 3;
 }) {
   const s = TIER_MOBILE_STYLES[tierLevel];
   return (
     <Link href={href} className={`block rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${s.card}`}>
       <div className="flex items-center gap-3">
-        <div className={`shrink-0 flex items-center justify-center ${s.icon}`}>{icon}</div>
+        <div className={`shrink-0 flex items-center justify-center overflow-hidden ${s.icon}`}>
+          {imageUrl ? (
+            <Image src={imageUrl} alt={name} width={64} height={64} className="w-full h-full object-cover" />
+          ) : (
+            icon
+          )}
+        </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <p className={`font-bold text-gray-900 dark:text-white ${s.name}`}>{name}</p>
@@ -410,13 +425,19 @@ function TierCardMobile({ href, icon, name, badge, subtitle, tierLevel }: {
   );
 }
 
-function TierCardPC({ href, icon, name, badge, subtitle, extra, tierLevel }: {
-  href: string; icon: string; name: string; badge: string; subtitle: string; extra?: string | null; tierLevel: 1 | 2 | 3;
+function TierCardPC({ href, icon, imageUrl, name, badge, subtitle, extra, tierLevel }: {
+  href: string; icon: string; imageUrl?: string | null; name: string; badge: string; subtitle: string; extra?: string | null; tierLevel: 1 | 2 | 3;
 }) {
   const s = TIER_PC_STYLES[tierLevel];
   return (
     <Link href={href} className={`flex flex-col items-center text-center rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${s.card}`}>
-      <div className={`flex items-center justify-center mb-3 ${s.icon}`}>{icon}</div>
+      <div className={`flex items-center justify-center mb-3 overflow-hidden ${s.icon}`}>
+        {imageUrl ? (
+          <Image src={imageUrl} alt={name} width={80} height={80} className="w-full h-full object-cover" />
+        ) : (
+          icon
+        )}
+      </div>
       <div className="flex items-center gap-1.5 mb-1">
         <p className={`font-bold text-gray-900 dark:text-white ${s.name}`}>{name}</p>
         <span className={s.badge}>{badge}</span>

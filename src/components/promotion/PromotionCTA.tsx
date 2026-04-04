@@ -5,24 +5,24 @@ import Link from "next/link";
 // 1-A. 매물 목록 인피드 프로모션 카드 (컴팩트)
 export function ListingInfeedPromo() {
   return (
-    <div className="relative rounded-lg border border-dashed border-blue-300 bg-blue-50/60 px-4 py-3 dark:border-blue-700 dark:bg-blue-950/40">
+    <div className="relative rounded-lg border border-dashed border-gray-300 bg-gray-50/60 px-4 py-3 dark:border-gray-600 dark:bg-gray-800/40">
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
               내 매물, 더 빨리 팔고 싶다면?
             </h3>
-            <span className="shrink-0 rounded bg-blue-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+            <span className="shrink-0 rounded bg-navy-700 px-1.5 py-0.5 text-[10px] font-semibold text-white">
               AD
             </span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            프리미엄 사장님의 평균 문의량 <span className="font-semibold text-amber-600 dark:text-amber-400">3배 ↑</span>
+            프리미엄 사장님의 평균 문의량 <span className="font-semibold text-navy-700 dark:text-navy-300">3배 ↑</span>
           </p>
         </div>
         <Link
           href="/pricing?tab=listing"
-          className="shrink-0 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-500"
+          className="shrink-0 rounded-md bg-navy-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-navy-600 dark:bg-navy-500"
         >
           요금제 보기 →
         </Link>
@@ -40,7 +40,7 @@ export function ListingUpsellBanner({
   categoryName?: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-xl border-2 border-amber-400 bg-gradient-to-r from-amber-50 to-amber-100 p-6 dark:from-amber-950 dark:to-amber-900 md:flex-row">
+    <div className="flex flex-col items-center gap-4 rounded-xl border-2 border-navy-300 bg-navy-50 p-6 dark:border-navy-600 dark:bg-navy-900/50 md:flex-row">
       {/* 이모지 */}
       <div className="text-5xl">🚀</div>
 
@@ -62,7 +62,7 @@ export function ListingUpsellBanner({
       {/* CTA 버튼 */}
       <Link
         href="/pricing?tab=listing"
-        className="whitespace-nowrap rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+        className="whitespace-nowrap rounded-lg bg-navy-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-600 dark:bg-navy-600 dark:hover:bg-navy-500"
       >
         업그레이드
       </Link>
@@ -78,12 +78,12 @@ export function RegisterPromoBanner({
 }) {
   const config = {
     listing: {
-      bg: "from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900",
-      border: "border-blue-400",
+      bg: "from-navy-50 to-navy-100 dark:from-navy-950 dark:to-navy-900",
+      border: "border-navy-300",
       title: "내 매물, 더 빨리 팔고 싶다면?",
       subtitle: "프리미엄 사장님의 평균 문의량 3배, 매각 속도 2배 빠릅니다",
       badges: ["상위노출", "인증배지", "끌어올리기"],
-      badgeColor: "bg-blue-500",
+      badgeColor: "bg-navy-700",
       cta: "월 10만원부터 · 요금제 비교하기 →",
       link: "/pricing?tab=listing",
     },
@@ -98,12 +98,12 @@ export function RegisterPromoBanner({
       link: "/pricing?tab=franchise",
     },
     partner: {
-      bg: "from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900",
-      border: "border-blue-400",
+      bg: "from-navy-50 to-navy-100 dark:from-navy-950 dark:to-navy-900",
+      border: "border-navy-400",
       title: "상가 창업에 필요한 전문 서비스를 제공하시나요?",
       subtitle: "인테리어, 설비, 법무, 세무, 간판 등 사장님들이 찾는 서비스를 직접 연결합니다",
       badges: ["업체프로필", "매물상세연동", "상위노출"],
-      badgeColor: "bg-blue-500",
+      badgeColor: "bg-navy-500",
       cta: "월 10만원부터 · 요금제 비교하기 →",
       link: "/pricing?tab=partner",
     },
@@ -200,14 +200,14 @@ export function DashboardPlanCard({ currentPlan }: { currentPlan?: string }) {
         </div>
 
         {/* 프리미엄 플랜 */}
-        <div className="relative rounded-lg border-2 border-amber-400 bg-white p-4 dark:border-amber-500 dark:bg-gray-800">
-          <div className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">
+        <div className="relative rounded-lg border-2 border-navy-400 bg-white p-4 dark:border-navy-500 dark:bg-gray-800">
+          <div className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-navy-700 px-2 py-0.5 text-xs font-bold text-white">
             추천
           </div>
-          <div className="mb-3 text-center text-sm font-semibold text-amber-600 dark:text-amber-400">
+          <div className="mb-3 text-center text-sm font-semibold text-navy-700 dark:text-navy-300">
             프리미엄
           </div>
-          <ul className="space-y-2 text-xs text-amber-600 dark:text-amber-400">
+          <ul className="space-y-2 text-xs text-navy-700 dark:text-navy-300">
             <li>✓ 사진 20장</li>
             <li>✓ 상위 노출</li>
             <li>✓ 끌어올리기 5회</li>
@@ -219,7 +219,7 @@ export function DashboardPlanCard({ currentPlan }: { currentPlan?: string }) {
       {/* CTA 버튼 */}
       <Link
         href="/pricing?tab=listing"
-        className="block w-full rounded-lg bg-amber-600 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+        className="block w-full rounded-lg bg-navy-700 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-navy-600 dark:bg-navy-600 dark:hover:bg-navy-500"
       >
         프리미엄 시작하기 →
       </Link>
@@ -270,11 +270,11 @@ export function HomeServiceSection() {
   ];
 
   return (
-    <section className="bg-gradient-to-br from-navy-dark to-navy py-10">
+    <section className="bg-navy-700 py-10">
       <div className="mx-auto max-w-5xl px-6">
         {/* 헤더 */}
         <div className="mb-6 text-center">
-          <h2 className="mb-1 text-xl font-extrabold text-white">
+          <h2 className="mb-1 text-xl font-bold text-white">
             권리샵과 함께 성장하세요
           </h2>
           <p className="text-xs text-white/50">
@@ -292,14 +292,14 @@ export function HomeServiceSection() {
             >
               <div className="flex items-center gap-3 mb-2">
                 {/* SVG 아이콘 */}
-                <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-gold-light shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white/80 shrink-0">
                   {service.icon}
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white leading-tight">
                     {service.title}
                   </h3>
-                  <p className="text-xs font-semibold text-gold-light">
+                  <p className="text-xs font-semibold text-white/70">
                     {service.price}
                   </p>
                 </div>
@@ -311,7 +311,7 @@ export function HomeServiceSection() {
               </p>
 
               {/* 화살표 */}
-              <div className="text-xs font-semibold text-gold-light transition group-hover:translate-x-1">
+              <div className="text-xs font-semibold text-white/70 transition group-hover:translate-x-1">
                 자세히 보기 →
               </div>
             </Link>

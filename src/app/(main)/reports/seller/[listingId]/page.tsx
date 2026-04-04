@@ -65,7 +65,7 @@ export default function SellerReportPage() {
         <p className="text-gray-500 mb-6">아직 구매한 리포트가 없습니다</p>
         <Link
           href={`/pricing?listingId=${listingId}&scope=seller-report`}
-          className="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+          className="inline-block px-6 py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors"
         >
           리포트 구매하기 (15,000원)
         </Link>
@@ -79,7 +79,7 @@ export default function SellerReportPage() {
         <p className="text-gray-500 mb-4">{error || "리포트를 불러올 수 없습니다"}</p>
         <button
           onClick={() => router.back()}
-          className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+          className="px-6 py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600"
         >
           돌아가기
         </button>
@@ -94,7 +94,7 @@ export default function SellerReportPage() {
       {/* 헤더 */}
       <div className="mb-6">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-          <Link href={`/listings/${listingId}`} className="hover:text-blue-600">내 매물</Link>
+          <Link href={`/listings/${listingId}`} className="hover:text-navy-700">내 매물</Link>
           <span>/</span>
           <span>시장분석 리포트</span>
         </div>
@@ -113,19 +113,19 @@ export default function SellerReportPage() {
         <div className="space-y-4">
           <p className="text-sm text-gray-700">
             이 지역 <span className="font-medium text-gray-900">{report.listing.category}</span> 매물{" "}
-            <span className="font-bold text-blue-600">{report.positioning.totalCompetitors}개</span> 중{" "}
-            가격 <span className="font-bold text-blue-600">{report.positioning.pricePosition} {report.positioning.percentile}%</span>입니다.
+            <span className="font-bold text-navy-700">{report.positioning.totalCompetitors}개</span> 중{" "}
+            가격 <span className="font-bold text-navy-700">{report.positioning.pricePosition} {report.positioning.percentile}%</span>입니다.
           </p>
 
           {/* 포지셔닝 바 */}
           <div className="relative">
             <div className="h-8 bg-gradient-to-r from-green-100 via-yellow-100 to-red-100 rounded-full overflow-hidden">
               <div
-                className="absolute top-0 bottom-0 w-1 bg-blue-600 rounded z-10"
+                className="absolute top-0 bottom-0 w-1 bg-navy-700 rounded z-10"
                 style={{ left: `${Math.min(Math.max(report.positioning.percentile, 2), 98)}%` }}
               />
               <div
-                className="absolute -top-6 transform -translate-x-1/2 text-xs font-bold text-blue-600 whitespace-nowrap"
+                className="absolute -top-6 transform -translate-x-1/2 text-xs font-bold text-navy-700 whitespace-nowrap"
                 style={{ left: `${Math.min(Math.max(report.positioning.percentile, 5), 95)}%` }}
               >
                 내 매물
@@ -156,7 +156,7 @@ export default function SellerReportPage() {
                 ? "bg-green-100 text-green-700"
                 : report.priceAdequacy.verdictColor === "orange"
                   ? "bg-orange-100 text-orange-700"
-                  : "bg-blue-100 text-blue-700"
+                  : "bg-navy-100 text-navy-700"
             }`}>
               {report.priceAdequacy.verdict}
             </span>
@@ -258,7 +258,7 @@ export default function SellerReportPage() {
         <div className="space-y-3">
           {report.strategies.map((strategy, idx) => (
             <div key={idx} className="flex gap-3 items-start">
-              <span className="shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">
+              <span className="shrink-0 w-6 h-6 bg-navy-100 text-navy-700 rounded-full flex items-center justify-center text-xs font-bold">
                 {idx + 1}
               </span>
               <p className="text-sm text-gray-700 leading-relaxed">{strategy}</p>
@@ -267,11 +267,11 @@ export default function SellerReportPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-6 p-4 bg-blue-50 rounded-xl">
-          <p className="text-sm font-medium text-blue-800 mb-2">노출을 높이고 싶다면?</p>
+        <div className="mt-6 p-4 bg-navy-50 rounded-xl">
+          <p className="text-sm font-medium text-navy-800 mb-2">노출을 높이고 싶다면?</p>
           <Link
             href={`/pricing?listingId=${listingId}`}
-            className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="inline-block px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 transition-colors"
           >
             광고 상품 보기
           </Link>
@@ -337,7 +337,7 @@ function PriceCompareBar({ label, mine, avg, diff }: { label: string; mine: numb
           <span className="text-[10px] text-gray-500 w-10 shrink-0">내 매물</span>
           <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full ${isLower ? "bg-green-400" : diff > 0 ? "bg-red-400" : "bg-blue-400"}`}
+              className={`h-full rounded-full ${isLower ? "bg-green-400" : diff > 0 ? "bg-red-400" : "bg-navy-400"}`}
               style={{ width: `${myWidth}%` }}
             />
           </div>

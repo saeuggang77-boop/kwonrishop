@@ -205,7 +205,7 @@ function PricingContent() {
               onClick={() => setActiveTab(tab.key)}
               className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.key
-                  ? "bg-blue-600 text-white shadow-sm"
+                  ? "bg-navy-700 text-white shadow-sm"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               }`}
             >
@@ -240,14 +240,14 @@ function PricingContent() {
                   onClick={() => setFranchisePeriod(period.key)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
                     franchisePeriod === period.key
-                      ? "bg-blue-600 dark:bg-blue-700 text-white shadow-sm"
+                      ? "bg-navy-700 dark:bg-navy-700 text-white shadow-sm"
                       : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700"
                   }`}
                 >
                   {period.label}
                   {period.discount && (
                     <span className={`block text-xs mt-0.5 ${
-                      franchisePeriod === period.key ? "text-blue-100 dark:text-blue-200" : "text-red-500 dark:text-red-400 font-semibold"
+                      franchisePeriod === period.key ? "text-navy-100 dark:text-navy-200" : "text-red-500 dark:text-red-400 font-semibold"
                     }`}>
                       {period.discount}
                     </span>
@@ -359,12 +359,12 @@ function PackageCard({
       }
     : isMid
     ? {
-        border: "border-blue-400 dark:border-blue-500",
-        bg: "bg-gradient-to-br from-blue-50 to-white dark:from-blue-950 dark:to-gray-800",
+        border: "border-navy-400 dark:border-navy-500",
+        bg: "bg-gradient-to-br from-navy-50 to-white dark:from-blue-950 dark:to-gray-800",
         badge: "추천",
-        badgeBg: "bg-blue-500 text-white",
-        btn: "bg-blue-600 hover:bg-blue-700 active:bg-blue-800",
-        ring: "ring-2 ring-blue-400 dark:ring-blue-500 shadow-md",
+        badgeBg: "bg-navy-500 text-white",
+        btn: "bg-navy-700 hover:bg-navy-600 active:bg-blue-800",
+        ring: "ring-2 ring-navy-400 dark:ring-navy-500 shadow-md",
       }
     : {
         border: "border-gray-200 dark:border-gray-700",
@@ -568,7 +568,7 @@ function SingleCard({
   const features = product.features as Record<string, any>;
 
   return (
-    <div className="rounded-xl p-5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all">
+    <div className="rounded-xl p-5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-navy-300 dark:hover:border-navy-600 hover:shadow-md transition-all">
       <div className="text-center mb-4">
         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{product.name}</h3>
         <div className="flex items-baseline justify-center gap-1">
@@ -591,7 +591,7 @@ function SingleCard({
       <button
         onClick={() => onPurchase(product.id)}
         disabled={purchasing}
-        className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+        className="w-full py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
       >
         {purchasing ? "처리 중..." : "구매하기"}
       </button>
@@ -629,12 +629,12 @@ function SubscriptionCard({
     <div
       className={`relative rounded-xl p-5 border-2 bg-white dark:bg-gray-800 hover:shadow-lg transition-all ${
         isPopular
-          ? "border-blue-400 dark:border-blue-500 ring-2 ring-blue-400 dark:ring-blue-500 shadow-md"
-          : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
+          ? "border-navy-400 dark:border-navy-500 ring-2 ring-navy-400 dark:ring-navy-500 shadow-md"
+          : "border-gray-200 dark:border-gray-700 hover:border-navy-300 dark:hover:border-navy-600"
       }`}
     >
       {isPopular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-navy-500 text-white px-3 py-1 rounded-full text-xs font-bold">
           인기
         </div>
       )}
@@ -654,7 +654,7 @@ function SubscriptionCard({
 
       <div className="space-y-2 mb-4 min-h-[100px]">
         <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-          <span className="text-blue-600 dark:text-blue-400">📅</span>
+          <span className="text-navy-700 dark:text-navy-400">📅</span>
           <span className="font-medium">{frequencyMap[features.frequency] || "자동 끌올"}</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
@@ -688,7 +688,7 @@ function SubscriptionCard({
         disabled={purchasing}
         className={`w-full py-2.5 rounded-lg font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
           isPopular
-            ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
+            ? "bg-navy-700 hover:bg-navy-600 active:bg-blue-800"
             : "bg-gray-800 hover:bg-gray-900 active:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500"
         }`}
       >

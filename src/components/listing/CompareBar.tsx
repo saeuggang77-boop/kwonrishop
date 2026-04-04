@@ -44,7 +44,7 @@ export default function CompareBar() {
   if (compareIds.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-blue-600 shadow-lg z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-navy-600 shadow-lg z-40">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -94,7 +94,7 @@ export default function CompareBar() {
             </button>
             <button
               onClick={() => router.push("/listings/compare")}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-navy-700 rounded-lg hover:bg-navy-600 transition-colors"
               aria-label={`선택한 ${compareIds.length}개 매물 비교하기`}
             >
               비교하기

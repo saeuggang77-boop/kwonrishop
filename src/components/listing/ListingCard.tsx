@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import TierBadge from "@/components/shared/TierBadge";
 
 interface ListingCardProps {
   listing: {
@@ -35,14 +34,14 @@ export default function ListingCard({ listing }: ListingCardProps) {
   const shortAddress = address.split(" ").slice(0, 3).join(" ");
   const tier = listing.featuredTier || "FREE";
   const tierStyles: Record<string, string> = {
-    VIP: "border-2 border-yellow-400 bg-yellow-50/50 dark:bg-yellow-900/10",
-    PREMIUM: "border-2 border-gray-400 bg-gray-50/50 dark:bg-gray-700/10",
-    BASIC: "border-2 border-blue-300 bg-blue-50/50 dark:bg-blue-900/10",
-    FREE: "border border-gray-200 dark:border-gray-700",
+    VIP: "border-2 border-navy-600 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)]",
+    PREMIUM: "border-[1.5px] border-navy-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)]",
+    BASIC: "border border-gray-200 dark:border-gray-700 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]",
+    FREE: "border border-gray-200 dark:border-gray-700 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]",
   };
 
   return (
-    <div className={`relative block bg-white dark:bg-gray-800 rounded-xl ${tierStyles[tier] || tierStyles.FREE} overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300`}>
+    <div className={`relative block bg-white dark:bg-gray-800 rounded-xl ${tierStyles[tier] || tierStyles.FREE} overflow-hidden hover:-translate-y-1 transition-all duration-300`}>
       <Link href={`/listings/${listing.id}`}>
       {/* 이미지 */}
       <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
@@ -63,41 +62,28 @@ export default function ListingCard({ listing }: ListingCardProps) {
           </div>
         )}
 
-        {/* 테마 태그 */}
-        {listing.themes.length > 0 && (
-          <div className="absolute top-2 left-2 flex gap-1">
-            {listing.themes.slice(0, 2).map((theme) => (
-              <span
-                key={theme}
-                className="px-2.5 py-1 bg-blue-600 dark:bg-blue-500 text-white text-xs font-medium rounded-md"
-              >
-                {theme}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* 유료 광고 배지 */}
+        {/* 유료 광고 배지 (좌상단) */}
         {tier !== "FREE" && (
-          <div className="absolute bottom-2 left-2">
-            <TierBadge tier={tier} size="sm" />
-          </div>
-        )}
-
-        {/* 매출 인증 배지 */}
-        {(listing._count?.documents ?? 0) > 0 && (
-          <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 bg-emerald-600/90 text-white text-xs font-semibold rounded backdrop-blur-sm">
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            매출인증
+          <div className="absolute top-2 left-2">
+            <span className={`inline-flex items-center gap-1 font-bold rounded ${
+              tier === "VIP"
+                ? "px-3 py-1.5 text-[11px] bg-navy-700 text-white shadow-[0_2px_8px_rgba(27,73,101,0.3)]"
+                : tier === "PREMIUM"
+                  ? "px-2.5 py-1 text-[10px] bg-navy-700/85 text-white backdrop-blur-sm"
+                  : "px-2 py-0.5 text-[9px] bg-white/85 text-gray-500 backdrop-blur-sm"
+            }`}>
+              {tier === "VIP" && (
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              )}
+              {tier}
+            </span>
           </div>
         )}
 
       </div>
 
       {/* 정보 */}
-      <div className="p-3">
+      <div className="p-4">
         <div className="flex items-center justify-between gap-2 mb-1">
           <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
             {listing.category && (
@@ -126,7 +112,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
           </p>
           <p className="text-sm">
             <span className="text-gray-500 dark:text-gray-400">권리금 </span>
-            <span className="font-bold text-blue-600 dark:text-blue-400">
+            <span className="font-bold text-navy-700 dark:text-navy-300">
               {listing.premiumNone
                 ? "무권리"
                 : `${listing.premium.toLocaleString()}만${listing.premiumNegotiable ? " (협의)" : ""}`}
@@ -145,6 +131,22 @@ export default function ListingCard({ listing }: ListingCardProps) {
             <span>관심 {listing.favoriteCount}</span>
           </div>
         </div>
+
+        {/* 테마 태그 + 매출인증 */}
+        {(listing.themes.length > 0 || (listing._count?.documents ?? 0) > 0) && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {listing.themes.slice(0, 2).map((theme) => (
+              <span key={theme} className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-[10px] rounded">
+                {theme}
+              </span>
+            ))}
+            {(listing._count?.documents ?? 0) > 0 && (
+              <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] rounded">
+                매출인증
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </Link>
     </div>

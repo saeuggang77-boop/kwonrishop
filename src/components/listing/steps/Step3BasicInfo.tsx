@@ -49,7 +49,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                 onClick={() => updateData({ brandType: opt.value })}
                 className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                   data.brandType === opt.value
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    ? "border-navy-500 bg-navy-50 text-navy-700"
                     : "border-gray-200 text-gray-600 hover:border-gray-300"
                 }`}
               >
@@ -69,7 +69,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
             placeholder="미입력 시 주소가 대신 표시됩니다"
             value={data.storeName}
             onChange={(e) => updateData({ storeName: e.target.value })}
-            className="w-full px-4 py-3 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-4 py-3 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
           />
         </div>
 
@@ -98,7 +98,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                   onChange={(e) =>
                     updateData({ currentFloor: e.target.value ? parseInt(e.target.value) : null })
                   }
-                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">층</span>
               </div>
@@ -113,7 +113,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                   onChange={(e) =>
                     updateData({ totalFloor: e.target.value ? parseInt(e.target.value) : null })
                   }
-                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">층</span>
               </div>
@@ -134,7 +134,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                   placeholder="예: 15"
                   value={data.areaPyeong ?? ""}
                   onChange={(e) => handlePyeongChange(e.target.value)}
-                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">평</span>
               </div>
@@ -164,7 +164,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                 onClick={() => toggleTheme(theme)}
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                   data.themes?.includes(theme)
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    ? "border-navy-500 bg-navy-50 text-navy-700"
                     : "border-gray-200 text-gray-600 hover:border-gray-300"
                 }`}
               >
@@ -198,7 +198,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                     onChange={(e) =>
                       updateData({ parkingTotal: e.target.value ? parseInt(e.target.value) : null })
                     }
-                    className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">대</span>
                 </div>
@@ -213,7 +213,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                     onChange={(e) =>
                       updateData({ parkingPerUnit: e.target.value ? parseInt(e.target.value) : null })
                     }
-                    className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    className="w-full px-3 py-3 min-h-[44px] pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">대</span>
                 </div>
@@ -247,7 +247,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
             }
             onNext();
           }}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
         >
           다음
         </button>

@@ -10,6 +10,30 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+
+  /* Primary - Navy 계열 (신뢰/전문성) */
+  --color-navy-900: #0A1628;
+  --color-navy-800: #0F2D3F;
+  --color-navy-700: #1B4965;
+  --color-navy-600: #2D6A8F;
+  --color-navy-500: #3D8AB5;
+  --color-navy-400: #5BA3C9;
+  --color-navy-300: #89BFD9;
+  --color-navy-200: #B4D6E8;
+  --color-navy-100: #E0EEF5;
+  --color-navy-50:  #F2F7FB;
+
+  /* Accent - Gold 계열 (프리미엄/강조) */
+  --color-gold-700: #9A7A14;
+  --color-gold-600: #B8941F;
+  --color-gold-500: #D4A843;
+  --color-gold-400: #E8C76A;
+  --color-gold-300: #F0D98F;
+  --color-gold-200: #F7EBB8;
+  --color-gold-100: #FDF8EC;
+  --color-gold-50:  #FEFCF5;
+
+  /* Legacy aliases */
   --color-navy: #1B4965;
   --color-navy-dark: #0F2D3F;
   --color-navy-light: #2D6A8F;
@@ -32,12 +56,23 @@ body {
   font-family: var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
-/* Accessibility - Focus styles (폼 입력 요소만) */
+/* Accessibility - Focus styles */
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #1B4965;
   outline-offset: 2px;
+}
+
+/* 버튼/링크/탭 포커스 아웃라인 제거 (마우스 클릭 시 네모 방지) */
+button:focus,
+button:focus-visible,
+a:focus,
+a:focus-visible,
+[role="tab"]:focus,
+[role="tab"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Screen reader only utility */

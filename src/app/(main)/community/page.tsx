@@ -45,7 +45,7 @@ function CommunityContent() {
   return (
     <div>
       {/* 네이비 헤더 */}
-      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-10 pt-10 text-center">
+      <div className="bg-navy-700 px-6 pb-10 pt-10 text-center">
         <h1 className="text-2xl font-extrabold text-white mb-2">커뮤니티</h1>
         <p className="text-sm text-white/60">사장님들의 창업 이야기와 노하우를 공유하세요</p>
       </div>
@@ -56,7 +56,7 @@ function CommunityContent() {
           <div className="flex justify-end mb-4">
             <Link
               href={`/community/write${activeTag !== "전체" ? `?tag=${encodeURIComponent(activeTag)}` : ""}`}
-              className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 transition-colors"
             >
               글쓰기
             </Link>
@@ -71,7 +71,7 @@ function CommunityContent() {
             onClick={() => { setActiveTag(tag); setPage(1); }}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               activeTag === tag
-                ? "bg-blue-600 text-white"
+                ? "bg-navy-700 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -97,14 +97,14 @@ function CommunityContent() {
               key={post.id}
               href={`/community/${post.id}`}
               className={`block py-4 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors ${
-                post.tag === "공지" ? "bg-blue-50/60" : ""
+                post.tag === "공지" ? "bg-navy-50/60" : ""
               }`}
             >
               <div className="flex items-start gap-3">
                 {post.tag && (
                   <span className={`px-2 py-0.5 text-xs rounded shrink-0 mt-0.5 font-medium ${
                     post.tag === "공지"
-                      ? "bg-blue-100 text-blue-700"
+                      ? "bg-navy-100 text-navy-700"
                       : post.tag === "사이트이용문의"
                         ? "bg-purple-100 text-purple-700"
                         : post.tag === "양도후기"
@@ -140,7 +140,7 @@ function CommunityContent() {
               key={p}
               onClick={() => setPage(p)}
               className={`w-9 h-9 rounded-lg text-sm ${
-                page === p ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"
+                page === p ? "bg-navy-700 text-white" : "bg-gray-100 text-gray-600"
               }`}
             >
               {p}

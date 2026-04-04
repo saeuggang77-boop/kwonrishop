@@ -413,7 +413,7 @@ export default function ListingDetailClient() {
         ];
       case "EXPIRED":
         return [
-          { value: "ACTIVE", label: "재등록하기", color: "text-blue-700 dark:text-blue-400" },
+          { value: "ACTIVE", label: "재등록하기", color: "text-navy-700 dark:text-navy-400" },
         ];
       default:
         return [];
@@ -475,7 +475,7 @@ export default function ListingDetailClient() {
                 setLoading(false);
               });
           }}
-          className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          className="px-6 py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
         >
           다시 시도
         </button>
@@ -559,7 +559,7 @@ export default function ListingDetailClient() {
           <button
             onClick={() => handleStatusChange("ACTIVE")}
             disabled={statusUpdating}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="mt-2 px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-600 transition-colors disabled:opacity-50"
           >
             {statusUpdating ? "처리 중..." : "재등록하기"}
           </button>
@@ -578,7 +578,7 @@ export default function ListingDetailClient() {
                 onClick={() => setImageTab(tab.key)}
                 className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   imageTab === tab.key
-                    ? "bg-blue-600 text-white"
+                    ? "bg-navy-700 text-white"
                     : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
                 }`}
               >
@@ -643,7 +643,7 @@ export default function ListingDetailClient() {
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center">사진을 등록하면 조회수가 높아집니다</p>
             <Link
               href="/sell/edit"
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+              className="px-6 py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors text-sm"
             >
               사진 추가하기
             </Link>
@@ -663,7 +663,7 @@ export default function ListingDetailClient() {
               key={img.id}
               onClick={() => setCurrentImage(idx)}
               className={`shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-colors ${
-                currentImage === idx ? "border-blue-500" : "border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+                currentImage === idx ? "border-navy-500" : "border-transparent hover:border-gray-300 dark:hover:border-gray-600"
               }`}
             >
               <Image
@@ -682,16 +682,16 @@ export default function ListingDetailClient() {
       <div id="detail-tab-bar" className="md:hidden sticky top-14 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 -mx-4 px-4 mb-4">
         <div className="flex">
           <button onClick={() => handleDetailTabChange("overview")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "overview" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "overview" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>개요</button>
           <button onClick={() => handleDetailTabChange("detail")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "detail" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "detail" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>상세</button>
           <button onClick={() => handleDetailTabChange("location")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "location" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "location" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>위치</button>
           <button onClick={() => handleDetailTabChange("review")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "review" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "review" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>리뷰</button>
         </div>
       </div>
@@ -702,7 +702,7 @@ export default function ListingDetailClient() {
       {listing.themes.length > 0 && (
         <div className="flex gap-2 mb-3">
           {listing.themes.map((t) => (
-            <span key={t} className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full">
+            <span key={t} className="px-3 py-1 bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-300 text-xs font-medium rounded-full">
               {t}
             </span>
           ))}
@@ -766,7 +766,7 @@ export default function ListingDetailClient() {
           </div>
           <div className="flex justify-between sm:block">
             <p className="text-xs text-gray-400 dark:text-gray-500 sm:mb-1">권리금</p>
-            <p className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400">
+            <p className="text-base sm:text-lg font-bold text-navy-700 dark:text-navy-400">
               {listing.premiumNone ? "무권리" : `${fmt(listing.premium)}만`}
               {listing.premiumNegotiable && <span className="text-xs ml-1">(협의)</span>}
             </p>
@@ -783,7 +783,7 @@ export default function ListingDetailClient() {
       {(() => {
         const cards: { icon: string; label: string; value: string; color: string }[] = [];
         if (listing.monthlyRevenue && listing.monthlyRevenue > 0) {
-          cards.push({ icon: "📊", label: "월매출", value: `${fmt(listing.monthlyRevenue)}만`, color: "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" });
+          cards.push({ icon: "📊", label: "월매출", value: `${fmt(listing.monthlyRevenue)}만`, color: "bg-navy-50 dark:bg-navy-950 text-navy-700 dark:text-navy-300" });
         }
         if (listing.monthlyProfit && listing.monthlyRevenue && listing.monthlyRevenue > 0) {
           const profitRate = ((listing.monthlyProfit / listing.monthlyRevenue) * 100).toFixed(0);
@@ -823,7 +823,7 @@ export default function ListingDetailClient() {
             <div className="flex h-3 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700">
               {listing.premiumBusiness != null && listing.premiumBusiness > 0 && premiumTotal > 0 && (
                 <div
-                  className="bg-blue-500 transition-all"
+                  className="bg-navy-500 transition-all"
                   style={{ width: `${(listing.premiumBusiness / premiumTotal) * 100}%` }}
                   title={`영업권리금 ${((listing.premiumBusiness / premiumTotal) * 100).toFixed(1)}%`}
                 />
@@ -847,7 +847,7 @@ export default function ListingDetailClient() {
             {/* 범례 */}
             <div className="space-y-3">
               <PremiumItem
-                color="bg-blue-500"
+                color="bg-navy-500"
                 label="영업권리금"
                 value={listing.premiumBusiness}
                 total={premiumTotal}
@@ -872,7 +872,7 @@ export default function ListingDetailClient() {
             {/* 합계 */}
             <div className="flex justify-between items-center pt-3 border-t border-gray-200 dark:border-gray-700">
               <span className="text-sm font-bold text-gray-900 dark:text-white">합계</span>
-              <span className="text-base font-bold text-blue-600 dark:text-blue-400">{fmt(premiumTotal)}만원</span>
+              <span className="text-base font-bold text-navy-700 dark:text-navy-400">{fmt(premiumTotal)}만원</span>
             </div>
           </div>
         </Section>
@@ -986,9 +986,9 @@ export default function ListingDetailClient() {
               )}
 
               {profit > 0 && (
-                <div className="flex justify-between items-center py-3 border-t-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950 rounded-lg px-4">
-                  <span className="text-sm font-bold text-blue-700 dark:text-blue-300">월 수익</span>
-                  <span className="text-lg font-bold text-blue-600 dark:text-blue-400">+{fmt(profit)}만원 <span className="text-sm">{profitPct}%</span></span>
+                <div className="flex justify-between items-center py-3 border-t-2 border-navy-200 dark:border-navy-700 bg-navy-50 dark:bg-blue-950 rounded-lg px-4">
+                  <span className="text-sm font-bold text-navy-700 dark:text-navy-300">월 수익</span>
+                  <span className="text-lg font-bold text-navy-700 dark:text-navy-400">+{fmt(profit)}만원 <span className="text-sm">{profitPct}%</span></span>
                 </div>
               )}
 
@@ -1094,7 +1094,7 @@ export default function ListingDetailClient() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 같은 지역 <span className="font-medium text-gray-900 dark:text-white">{listing.regionStats.region}</span>{" "}
                 <span className="font-medium text-gray-900 dark:text-white">{listing.category?.name}</span> 매물{" "}
-                <span className="font-medium text-blue-600 dark:text-blue-400">{listing.regionStats.totalCount}건</span> 평균 대비
+                <span className="font-medium text-navy-700 dark:text-navy-400">{listing.regionStats.totalCount}건</span> 평균 대비
               </p>
               <RegionalPerformanceItem
                 label="조회수"
@@ -1128,7 +1128,7 @@ export default function ListingDetailClient() {
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <Link href={`/users/${listing.user.id}`} className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400">{listing.user.name || "판매자"}</Link>
+                <Link href={`/users/${listing.user.id}`} className="font-medium text-gray-900 dark:text-white hover:text-navy-700 dark:hover:text-navy-400">{listing.user.name || "판매자"}</Link>
                 {listing.user.businessVerified && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">
                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -1139,7 +1139,7 @@ export default function ListingDetailClient() {
                 )}
               </div>
               {listing.contactPublic && listing.user.phone && (
-                <a href={`tel:${listing.user.phone}`} className="text-sm text-blue-600 dark:text-blue-400 mt-1 hover:underline">{formatPhone(listing.user.phone)}</a>
+                <a href={`tel:${listing.user.phone}`} className="text-sm text-navy-700 dark:text-navy-400 mt-1 hover:underline">{formatPhone(listing.user.phone)}</a>
               )}
             </div>
           </div>
@@ -1229,7 +1229,7 @@ export default function ListingDetailClient() {
                 <div className="p-2">
                   <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{item.storeName}</p>
                   <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{item.addressRoad}</p>
-                  <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-1">
+                  <p className="text-xs font-bold text-navy-700 dark:text-navy-400 mt-1">
                     {item.premiumNone ? "무권리" : `${item.premium.toLocaleString()}만`}
                   </p>
                 </div>
@@ -1308,7 +1308,7 @@ export default function ListingDetailClient() {
               {/* 광고 업그레이드 */}
               <Link
                 href={`/pricing?listingId=${listing.id}`}
-                className={`min-h-[44px] flex items-center justify-center py-2 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-xs md:text-sm ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+                className={`min-h-[44px] flex items-center justify-center py-2 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-blue-800 transition-colors text-xs md:text-sm ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
               >
                 광고 업그레이드
               </Link>
@@ -1320,7 +1320,7 @@ export default function ListingDetailClient() {
             <div className="px-4 pt-2 pb-1 md:hidden">
               <p className="text-xs text-gray-700 dark:text-gray-300 text-center">
                 <span className="font-medium">권리금 </span>
-                <span className="font-bold text-blue-600 dark:text-blue-400">
+                <span className="font-bold text-navy-700 dark:text-navy-400">
                   {listing.premiumNone ? "무권리" : `${fmt(listing.premium)}만`}
                 </span>
                 <span className="mx-1 text-gray-300 dark:text-gray-600">·</span>
@@ -1345,7 +1345,7 @@ export default function ListingDetailClient() {
                 title={listing.storeName || listing.addressRoad || "매물 상세"}
                 imageUrl={listing.images.length > 0 ? listing.images[0].url : undefined}
               />
-              <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm md:text-base">
+              <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-blue-800 transition-colors text-sm md:text-base">
                 채팅하기
               </Link>
             </div>
@@ -1382,7 +1382,7 @@ function CompareButton({ listingId }: { listingId: string }) {
       aria-label={inCompare ? "비교함에서 제거" : "비교함에 담기"}
       className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${
         inCompare
-          ? "border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950"
+          ? "border-navy-300 dark:border-navy-600 text-navy-700 dark:text-navy-400 bg-navy-50 dark:bg-navy-950"
           : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600"
       }`}
     >

@@ -101,7 +101,7 @@ export default function EquipmentCard({ equipment }: EquipmentCardProps) {
           {/* 가격 */}
           <div className="space-y-0.5">
             <p className="text-sm">
-              <span className={`font-bold ${isFree ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400"}`}>
+              <span className={`font-bold ${isFree ? "text-green-600 dark:text-green-400" : "text-navy-700 dark:text-navy-400"}`}>
                 {formatPrice(equipment.price)}
               </span>
               {equipment.negotiable && !isFree && (

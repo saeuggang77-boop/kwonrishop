@@ -62,7 +62,7 @@ export default function ComparePage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-4 border-navy-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">매물 정보를 불러오는 중...</p>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function ComparePage() {
           <p className="text-gray-600 mb-6">매물 목록에서 비교할 매물을 선택해주세요 (최대 3개)</p>
           <Link
             href="/listings"
-            className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-block px-6 py-3 bg-navy-700 text-white font-medium rounded-lg hover:bg-navy-600 transition-colors"
           >
             매물 검색하러 가기
           </Link>
@@ -118,7 +118,7 @@ export default function ComparePage() {
             </button>
             <Link
               href="/listings"
-              className="px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-navy-700 bg-white border border-navy-600 rounded-lg hover:bg-navy-50 transition-colors"
             >
               매물 더 추가
             </Link>
@@ -156,7 +156,7 @@ export default function ComparePage() {
                         <div className="flex items-start justify-between gap-2">
                           <Link
                             href={`/listings/${listing.id}`}
-                            className="text-sm font-semibold text-gray-900 hover:text-blue-600"
+                            className="text-sm font-semibold text-gray-900 hover:text-navy-700"
                           >
                             {listing.storeName || "상호명 미입력"}
                           </Link>
@@ -373,7 +373,7 @@ export default function ComparePage() {
         <div className="mt-6 flex justify-center">
           <Link
             href="/listings"
-            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-navy-700 text-white font-medium rounded-lg hover:bg-navy-600 transition-colors"
           >
             더 많은 매물 보기
           </Link>

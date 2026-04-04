@@ -103,7 +103,7 @@ export default function CommunityDetailClient() {
         {post.tag && (
           <span className={`px-2 py-0.5 text-xs rounded mb-2 inline-block font-medium ${
             post.tag === "공지"
-              ? "bg-blue-100 text-blue-700"
+              ? "bg-navy-100 text-navy-700"
               : post.tag === "사이트이용문의"
                 ? "bg-purple-100 text-purple-700"
                 : post.tag === "양도후기"
@@ -125,7 +125,7 @@ export default function CommunityDetailClient() {
             <div className="flex gap-2">
               <button
                 onClick={() => router.push(`/community/${params.id}/edit`)}
-                className="text-sm text-gray-500 hover:text-blue-600"
+                className="text-sm text-gray-500 hover:text-navy-700"
               >
                 수정
               </button>
@@ -173,11 +173,11 @@ export default function CommunityDetailClient() {
               onChange={(e) => setComment(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && submitComment()}
               maxLength={500}
-              className="flex-1 px-3 md:px-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 md:px-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-navy-500"
             />
             <button
               onClick={() => submitComment()}
-              className="px-3 md:px-4 py-2.5 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 min-w-[60px]"
+              className="px-3 md:px-4 py-2.5 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 active:bg-blue-800 min-w-[60px]"
             >
               등록
             </button>
@@ -206,7 +206,7 @@ export default function CommunityDetailClient() {
                     <div className="flex gap-3 mt-1">
                       <button
                         onClick={() => setReplyTo(replyTo === c.id ? null : c.id)}
-                        className="text-xs text-gray-400 hover:text-blue-500"
+                        className="text-xs text-gray-400 hover:text-navy-500"
                       >
                         답글
                       </button>
@@ -230,12 +230,12 @@ export default function CommunityDetailClient() {
                         value={replyContent}
                         onChange={(e) => setReplyContent(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && submitComment(c.id)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-navy-500"
                         autoFocus
                       />
                       <button
                         onClick={() => submitComment(c.id)}
-                        className="px-3 py-2 bg-blue-600 text-white text-xs rounded-lg"
+                        className="px-3 py-2 bg-navy-700 text-white text-xs rounded-lg"
                       >
                         등록
                       </button>

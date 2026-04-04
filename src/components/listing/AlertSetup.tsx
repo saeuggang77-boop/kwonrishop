@@ -101,12 +101,12 @@ export default function AlertSetup() {
     <>
       {/* Alert Badge */}
       {newListingsCount > 0 && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+        <div className="mb-4 p-3 bg-navy-50 border border-navy-200 rounded-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-navy-700" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
             </svg>
-            <span className="text-sm font-medium text-blue-900">
+            <span className="text-sm font-medium text-navy-900">
               새 매물 {newListingsCount}건이 등록되었습니다
             </span>
           </div>
@@ -115,7 +115,7 @@ export default function AlertSetup() {
               setNewListingsCount(0);
               localStorage.setItem("alertLastCheck", new Date().toISOString());
             }}
-            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+            className="text-xs text-navy-700 hover:text-navy-700 font-medium"
           >
             확인
           </button>
@@ -132,7 +132,7 @@ export default function AlertSetup() {
         </svg>
         관심 지역 알림 설정
         {savedPreferences && (
-          <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+          <span className="w-2 h-2 bg-navy-700 rounded-full"></span>
         )}
       </button>
 
@@ -172,7 +172,7 @@ export default function AlertSetup() {
                     value={preferences.region}
                     onChange={(e) => setPreferences({ ...preferences, region: e.target.value })}
                     placeholder="예: 강남구, 홍대, 신촌"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                   />
                 </div>
 
@@ -184,7 +184,7 @@ export default function AlertSetup() {
                   <select
                     value={preferences.categoryId}
                     onChange={(e) => setPreferences({ ...preferences, categoryId: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                   >
                     <option value="">전체</option>
                     {categories.map((cat) => (
@@ -205,7 +205,7 @@ export default function AlertSetup() {
                     value={preferences.maxPremium}
                     onChange={(e) => setPreferences({ ...preferences, maxPremium: e.target.value })}
                     placeholder="예: 5000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                   />
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function AlertSetup() {
                 )}
                 <button
                   onClick={handleSave}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-navy-700 rounded-lg hover:bg-navy-600 transition-colors"
                 >
                   저장
                 </button>

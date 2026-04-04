@@ -22,7 +22,7 @@ function FailContent() {
         <div className="flex gap-3 mt-6">
           <Link
             href="/pricing"
-            className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+            className="flex-1 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600"
           >
             다시 시도
           </Link>
@@ -41,7 +41,7 @@ function FailContent() {
         </p>
         <a
           href="mailto:samsungcu@naver.com"
-          className="text-blue-600 text-sm hover:underline"
+          className="text-navy-700 text-sm hover:underline"
         >
           samsungcu@naver.com
         </a>
@@ -56,7 +56,7 @@ export default function PaymentFailPage() {
       fallback={
         <div className="max-w-md mx-auto px-4 py-12">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-4" />
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-navy-600 border-t-transparent mb-4" />
             <p className="text-gray-600">로딩 중...</p>
           </div>
         </div>

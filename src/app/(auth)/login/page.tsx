@@ -76,11 +76,11 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-blue-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-blue-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-[52px] h-[52px] bg-gradient-to-br from-blue-600 to-blue-500 rounded-[14px] mb-3 shadow-lg shadow-blue-600/25">
+          <div className="inline-flex items-center justify-center w-[52px] h-[52px] bg-gradient-to-br from-navy-600 to-blue-500 rounded-[14px] mb-3 shadow-lg shadow-blue-600/25">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
@@ -191,7 +191,7 @@ function LoginContent() {
                     type="button"
                     onClick={handleResendVerification}
                     disabled={resendLoading}
-                    className="mt-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
+                    className="mt-2 text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline disabled:opacity-50"
                   >
                     {resendLoading ? "발송 중..." : "인증 메일 재발송"}
                   </button>
@@ -213,7 +213,7 @@ function LoginContent() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 autoComplete="email"
-                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
               />
             </div>
 
@@ -228,18 +228,18 @@ function LoginContent() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
                 autoComplete="current-password"
-                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white rounded-[10px] focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 focus:bg-white dark:focus:bg-gray-800 outline-none text-sm transition-all"
               />
             </div>
 
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 accent-blue-600 rounded" />
+                <input type="checkbox" className="w-4 h-4 accent-navy-600 rounded" />
                 로그인 유지
               </label>
               <Link
                 href="/forgot-password"
-                className="text-[13px] text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                className="text-[13px] text-navy-700 dark:text-navy-400 font-medium hover:underline"
               >
                 비밀번호 찾기
               </Link>
@@ -248,7 +248,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-[15px] hover:from-blue-700 hover:to-blue-600 active:scale-[0.98] transition-all disabled:from-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:to-gray-600 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
+              className="w-full py-3 bg-gradient-to-r from-navy-600 to-blue-500 text-white rounded-xl font-bold text-[15px] hover:from-blue-700 hover:to-blue-600 active:scale-[0.98] transition-all disabled:from-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:to-gray-600 disabled:cursor-not-allowed shadow-sm shadow-blue-600/20"
             >
               {loading ? "로그인 중..." : "로그인"}
             </button>
@@ -257,7 +257,7 @@ function LoginContent() {
           {/* Signup Link */}
           <p className="mt-5 text-center text-sm text-gray-400 dark:text-gray-500">
             아직 계정이 없으신가요?{" "}
-            <Link href="/signup" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+            <Link href="/signup" className="font-semibold text-navy-700 dark:text-navy-400 hover:underline">
               회원가입
             </Link>
           </p>

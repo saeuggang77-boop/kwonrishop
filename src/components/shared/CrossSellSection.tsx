@@ -109,7 +109,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
               className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm shrink-0">
+                <div className="w-10 h-10 rounded-full bg-navy-100 flex items-center justify-center text-navy-700 font-bold text-sm shrink-0">
                   {f.brandName.charAt(0)}
                 </div>
                 <div className="min-w-0">
@@ -214,7 +214,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
                 <p className="font-medium text-gray-900 text-sm truncate">
                   {l.storeName || l.addressRoad || "매물"}
                 </p>
-                <p className="text-xs text-blue-600 font-medium mt-0.5">
+                <p className="text-xs text-navy-700 font-medium mt-0.5">
                   {l.premiumNone
                     ? "무권리"
                     : `권리금 ${l.premium?.toLocaleString()}만`}
@@ -266,7 +266,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
                 <p className="font-medium text-gray-900 dark:text-white text-sm truncate">
                   {eq.title}
                 </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-0.5">
+                <p className="text-xs text-navy-700 dark:text-navy-400 font-medium mt-0.5">
                   {eq.price === 0
                     ? "무료 나눔"
                     : `${eq.price?.toLocaleString()}원`}
@@ -307,7 +307,7 @@ function ListingCard({ listing }: { listing: ListingRecommendation }) {
         <p className="font-medium text-gray-900 text-sm truncate">
           {listing.storeName || listing.addressRoad || "매물"}
         </p>
-        <p className="text-xs text-blue-600 font-medium mt-0.5">
+        <p className="text-xs text-navy-700 font-medium mt-0.5">
           {listing.premiumNone
             ? "무권리"
             : `권리금 ${listing.premium?.toLocaleString()}만`}
@@ -339,7 +339,7 @@ function RecommendBlock({
         <h3 className="font-bold text-gray-900">{title}</h3>
         <Link
           href={link}
-          className="text-sm text-blue-600 hover:text-blue-700"
+          className="text-sm text-navy-700 hover:text-navy-700"
         >
           {linkLabel} →
         </Link>

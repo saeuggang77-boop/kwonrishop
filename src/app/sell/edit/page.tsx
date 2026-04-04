@@ -257,7 +257,7 @@ export default function ListingEditPage() {
           <p className="text-yellow-800 dark:text-yellow-300">{message || "등록된 매물이 없습니다."}</p>
           <button
             onClick={() => router.push("/sell")}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600"
           >
             매물 등록하기
           </button>
@@ -283,7 +283,7 @@ export default function ListingEditPage() {
               type="text"
               value={formData.storeName}
               onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
             />
           </div>
 
@@ -296,7 +296,7 @@ export default function ListingEditPage() {
                 type="number"
                 value={formData.deposit}
                 onChange={(e) => setFormData({ ...formData, deposit: e.target.value })}
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
               />
             </div>
             <div>
@@ -307,7 +307,7 @@ export default function ListingEditPage() {
                 type="number"
                 value={formData.monthlyRent}
                 onChange={(e) => setFormData({ ...formData, monthlyRent: e.target.value })}
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
               />
             </div>
           </div>
@@ -321,7 +321,7 @@ export default function ListingEditPage() {
               value={formData.premium}
               onChange={(e) => setFormData({ ...formData, premium: e.target.value })}
               disabled={formData.premiumNone}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-600 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 disabled:bg-gray-100 dark:disabled:bg-gray-600 text-base"
             />
             <div className="flex gap-4 mt-2">
               <label className="flex items-center text-sm text-gray-600 dark:text-gray-400 touch-manipulation">
@@ -353,7 +353,7 @@ export default function ListingEditPage() {
               type="number"
               value={formData.maintenanceFee}
               onChange={(e) => setFormData({ ...formData, maintenanceFee: e.target.value })}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
             />
           </div>
 
@@ -368,7 +368,7 @@ export default function ListingEditPage() {
                 value={formData.currentFloor}
                 onChange={(e) => setFormData({ ...formData, currentFloor: e.target.value })}
                 placeholder="예: 1 (지하는 음수)"
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
               />
             </div>
             <div>
@@ -380,7 +380,7 @@ export default function ListingEditPage() {
                 value={formData.totalFloor}
                 onChange={(e) => setFormData({ ...formData, totalFloor: e.target.value })}
                 placeholder="예: 5"
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
               />
             </div>
           </div>
@@ -395,7 +395,7 @@ export default function ListingEditPage() {
               value={formData.areaPyeong}
               onChange={(e) => setFormData({ ...formData, areaPyeong: e.target.value })}
               placeholder="예: 20"
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
             />
             {formData.areaPyeong && (
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -416,7 +416,7 @@ export default function ListingEditPage() {
                       type="number"
                       value={formData.premiumBusiness}
                       onChange={(e) => setFormData({ ...formData, premiumBusiness: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                     />
                   </div>
                   <div>
@@ -426,7 +426,7 @@ export default function ListingEditPage() {
                       placeholder="예: 안정적인 매출, 단골고객 확보"
                       value={formData.premiumBusinessDesc}
                       onChange={(e) => setFormData({ ...formData, premiumBusinessDesc: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                     />
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export default function ListingEditPage() {
                       type="number"
                       value={formData.premiumFacility}
                       onChange={(e) => setFormData({ ...formData, premiumFacility: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                     />
                   </div>
                   <div>
@@ -448,7 +448,7 @@ export default function ListingEditPage() {
                       placeholder="예: 최신 인테리어, 고가 주방기기"
                       value={formData.premiumFacilityDesc}
                       onChange={(e) => setFormData({ ...formData, premiumFacilityDesc: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                     />
                   </div>
                 </div>
@@ -460,7 +460,7 @@ export default function ListingEditPage() {
                       type="number"
                       value={formData.premiumLocation}
                       onChange={(e) => setFormData({ ...formData, premiumLocation: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                     />
                   </div>
                   <div>
@@ -470,7 +470,7 @@ export default function ListingEditPage() {
                       placeholder="예: 역세권, 주요 상권 입지"
                       value={formData.premiumLocationDesc}
                       onChange={(e) => setFormData({ ...formData, premiumLocationDesc: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                     />
                   </div>
                 </div>
@@ -489,7 +489,7 @@ export default function ListingEditPage() {
                   value={formData.monthlyRevenue}
                   onChange={(e) => setFormData({ ...formData, monthlyRevenue: e.target.value })}
                   placeholder="예: 500"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                 />
               </div>
               <div>
@@ -499,7 +499,7 @@ export default function ListingEditPage() {
                   value={formData.monthlyProfit}
                   onChange={(e) => setFormData({ ...formData, monthlyProfit: e.target.value })}
                   placeholder="예: 200"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
                 />
               </div>
             </div>
@@ -513,7 +513,7 @@ export default function ListingEditPage() {
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={6}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base resize-none"
+              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base resize-none"
             />
           </div>
 
@@ -559,7 +559,7 @@ export default function ListingEditPage() {
 
             {/* 사진 추가 버튼 */}
             <div>
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-navy-500 hover:bg-navy-50 dark:hover:bg-blue-950 transition-colors">
                 <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
@@ -611,7 +611,7 @@ export default function ListingEditPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full sm:flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 font-medium disabled:opacity-50 touch-manipulation"
+            className="w-full sm:flex-1 px-4 py-3 bg-navy-700 text-white rounded-lg hover:bg-navy-600 active:bg-blue-800 font-medium disabled:opacity-50 touch-manipulation"
           >
             {saving ? "저장 중..." : "저장"}
           </button>

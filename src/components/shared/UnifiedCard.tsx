@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import TierBadge from "./TierBadge";
 
 export interface UnifiedCardData {
   type: "listing" | "franchise" | "partner";
@@ -31,7 +30,13 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
   return (
     <Link
       href={linkPath}
-      className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      className={`block bg-white dark:bg-gray-800 rounded-xl overflow-hidden hover:-translate-y-1 transition-all duration-300 ${
+        data.tier === "VIP"
+          ? "border-2 border-navy-600 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)]"
+          : data.tier === "PREMIUM"
+            ? "border-[1.5px] border-navy-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)]"
+            : "border border-gray-200 dark:border-gray-700 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+      }`}
     >
       {/* Image area with tier badge */}
       <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
@@ -52,22 +57,21 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
           </div>
         )}
 
-        {/* Tier badge overlay at top-right */}
-        <div className="absolute top-2 right-2">
-          <TierBadge tier={data.tier} size="sm" />
-        </div>
-
-        {/* Tags at top-left */}
-        {data.tags.length > 0 && (
-          <div className="absolute top-2 left-2 flex gap-1">
-            {data.tags.slice(0, 2).map((tag) => (
-              <span
-                key={tag}
-                className="px-2 py-0.5 bg-blue-600 dark:bg-blue-500 text-white text-xs font-medium rounded"
-              >
-                {tag}
-              </span>
-            ))}
+        {/* Tier badge overlay at top-left */}
+        {data.tier && data.tier !== "FREE" && (
+          <div className="absolute top-2 left-2">
+            <span className={`inline-flex items-center gap-1 font-bold rounded ${
+              data.tier === "VIP" || data.tier === "GOLD"
+                ? "px-3 py-1.5 text-[11px] bg-navy-700 text-white shadow-[0_2px_8px_rgba(27,73,101,0.3)]"
+                : data.tier === "PREMIUM" || data.tier === "SILVER"
+                  ? "px-2.5 py-1 text-[10px] bg-navy-700/85 text-white backdrop-blur-sm"
+                  : "px-2 py-0.5 text-[9px] bg-white/85 text-gray-500 dark:bg-gray-800/85 dark:text-gray-400 backdrop-blur-sm"
+            }`}>
+              {(data.tier === "VIP" || data.tier === "GOLD") && (
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              )}
+              {data.tier}
+            </span>
           </div>
         )}
       </div>
@@ -83,6 +87,17 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
         <p className="text-sm text-gray-600 dark:text-gray-400 truncate mb-2">
           {data.subtitle}
         </p>
+
+        {/* Tags */}
+        {data.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {data.tags.slice(0, 2).map((tag) => (
+              <span key={tag} className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-[10px] rounded">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Stats grid (2 key-value pairs) */}
         {data.stats.length > 0 && (

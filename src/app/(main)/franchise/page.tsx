@@ -93,9 +93,9 @@ export default function FranchisePage() {
   const getTierBadge = (tier: FranchiseBrand["tier"]) => {
     if (!tier) return null;
     const colors = {
-      GOLD: "bg-yellow-100 text-yellow-800",
-      SILVER: "bg-gray-100 text-gray-800",
-      BRONZE: "bg-orange-100 text-orange-800",
+      GOLD: "bg-navy-700 text-white",
+      SILVER: "bg-gray-100 text-gray-700",
+      BRONZE: "bg-gray-100 text-gray-500",
     };
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[tier]}`}>
@@ -107,7 +107,7 @@ export default function FranchisePage() {
   return (
     <div>
       {/* 네이비 헤더 */}
-      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-16 pt-10 text-center">
+      <div className="bg-navy-700 px-6 pb-16 pt-10 text-center">
         <h1 className="text-2xl font-extrabold text-white mb-2">프랜차이즈 브랜드</h1>
         <p className="text-sm text-white/60">공정위 등록 {total.toLocaleString()}개 브랜드 · 검증된 창업 정보</p>
       </div>
@@ -120,11 +120,11 @@ export default function FranchisePage() {
             placeholder="브랜드명, 업종 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white"
+            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-navy-500 outline-none dark:bg-gray-800 dark:text-white"
           />
           <button
             type="submit"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shrink-0"
+            className="px-6 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors shrink-0"
           >
             검색
           </button>
@@ -140,7 +140,7 @@ export default function FranchisePage() {
             onClick={() => handleIndustryClick(ind.value)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               industry === ind.value
-                ? "bg-blue-600 text-white"
+                ? "bg-navy-700 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -157,7 +157,7 @@ export default function FranchisePage() {
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">프리미엄 프랜차이즈</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">검증된 유료 브랜드를 먼저 확인하세요</p>
             </div>
-            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{featuredBrands.length}개</span>
+            <span className="text-sm font-medium text-navy-700 dark:text-navy-400">{featuredBrands.length}개</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {featuredBrands.map((brand) => {
@@ -168,13 +168,13 @@ export default function FranchisePage() {
                   <div
                     key={brand.id}
                     onClick={() => router.push(`/franchise/${brand.id}`)}
-                    className="border-2 border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                    className="border-2 border-navy-300 bg-white dark:bg-gray-800 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
                   >
                     {brand.bannerImage ? (
                       <img src={brand.bannerImage} alt={brand.brandName} className="w-full h-20 rounded-lg object-cover mb-3" />
                     ) : (
-                      <div className="w-full h-20 rounded-lg bg-yellow-200/50 dark:bg-yellow-800/30 flex items-center justify-center mb-3">
-                        <span className="text-xs text-yellow-600 dark:text-yellow-400">브랜드 이미지</span>
+                      <div className="w-full h-20 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-3">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">브랜드 이미지</span>
                       </div>
                     )}
                     <div className="flex items-start justify-between mb-2">
@@ -182,7 +182,7 @@ export default function FranchisePage() {
                         <h3 className="text-base font-bold text-gray-900 dark:text-white truncate">{brand.brandName}</h3>
                         <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{brand.companyName}</p>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 ml-2 shrink-0">GOLD</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-navy-700 text-white ml-2 shrink-0">GOLD</span>
                     </div>
                     {brand.totalStores !== null && (
                       <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">매장 {brand.totalStores.toLocaleString()}개</p>
@@ -231,14 +231,14 @@ export default function FranchisePage() {
                 <div
                   key={brand.id}
                   onClick={() => router.push(`/franchise/${brand.id}`)}
-                  className="border-2 border-orange-400 bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                  className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
                       <h3 className="text-base font-bold text-gray-900 dark:text-white truncate">{brand.brandName}</h3>
                       <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{brand.companyName}</p>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 ml-2 shrink-0">BRONZE</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400 ml-2 shrink-0">BRONZE</span>
                   </div>
                   {brand.totalStores !== null && (
                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">매장 {brand.totalStores.toLocaleString()}개</p>
@@ -261,7 +261,7 @@ export default function FranchisePage() {
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
-          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 outline-none dark:bg-gray-800 dark:border-gray-600 dark:text-white"
         >
           <option value="stores">매장수 많은순</option>
           <option value="revenue">평균매출 높은순</option>
@@ -296,7 +296,7 @@ export default function FranchisePage() {
             <div
               key={brand.id}
               onClick={() => router.push(`/franchise/${brand.id}`)}
-              className={`grid grid-cols-12 gap-2 px-4 py-3 cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors items-center ${idx < brands.length - 1 ? 'border-b border-gray-100 dark:border-gray-700' : ''}`}
+              className={`grid grid-cols-12 gap-2 px-4 py-3 cursor-pointer hover:bg-navy-50/50 dark:hover:bg-blue-900/10 transition-colors items-center ${idx < brands.length - 1 ? 'border-b border-gray-100 dark:border-gray-700' : ''}`}
             >
               <div className="col-span-12 sm:col-span-4">
                 <div className="flex items-center gap-2.5">
@@ -341,7 +341,7 @@ export default function FranchisePage() {
                 <button onClick={() => setPage(1)} disabled={page === 1} className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed" aria-label="첫 페이지">&laquo;</button>
                 <button onClick={() => setPage(page - 1)} disabled={page === 1} className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed" aria-label="이전 페이지">&lsaquo;</button>
                 {pages.map((p) => (
-                  <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${page === p ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`} aria-label={`${p}페이지`} aria-current={page === p ? "page" : undefined}>{p}</button>
+                  <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${page === p ? "bg-navy-700 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`} aria-label={`${p}페이지`} aria-current={page === p ? "page" : undefined}>{p}</button>
                 ))}
                 <button onClick={() => setPage(page + 1)} disabled={page === totalPages} className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed" aria-label="다음 페이지">&rsaquo;</button>
                 <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="w-10 h-10 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed" aria-label="마지막 페이지">&raquo;</button>

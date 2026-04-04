@@ -131,12 +131,16 @@ export default function PartnersPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
-      {/* 페이지 타이틀 */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">협력업체</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">점포 창업 및 운영에 필요한 검증된 업체를 만나보세요</p>
+    <div>
+      {/* Navy 배너 */}
+      <div className="bg-navy-700 text-white pt-10 pb-16">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">협력업체</h1>
+          <p className="text-navy-200 text-sm md:text-base">창업부터 운영까지 믿을 수 있는 전문 파트너</p>
+        </div>
       </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-6">
 
       {/* 필터 바 */}
       <form onSubmit={handleSearch} className="flex flex-wrap gap-2 mb-10">
@@ -145,12 +149,12 @@ export default function PartnersPage() {
           placeholder="업체명, 서비스 검색"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="flex-1 min-w-[160px] px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          className="flex-1 min-w-[160px] px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
         />
         <select
           value={serviceType}
           onChange={(e) => handleFilterChange("serviceType", e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-navy-500 outline-none"
         >
           <option value="">서비스 전체</option>
           {Object.entries(SERVICE_TYPE_LABELS).map(([key, label]) => (
@@ -160,7 +164,7 @@ export default function PartnersPage() {
         <select
           value={region}
           onChange={(e) => handleFilterChange("region", e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-navy-500 outline-none"
         >
           <option value="">지역 전체</option>
           {REGION_OPTIONS.map((r) => (
@@ -169,7 +173,7 @@ export default function PartnersPage() {
         </select>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-600 transition-colors"
         >
           검색
         </button>
@@ -252,6 +256,7 @@ export default function PartnersPage() {
       <div className="mt-10">
         <RegisterPromoBanner type="partner" />
       </div>
+      </div>
     </div>
   );
 }
@@ -279,37 +284,40 @@ function TierSection({
     return (
       <div className="mb-12">
         <div className="flex items-center gap-2 mb-5">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-lg">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-navy-700 rounded-lg">
             <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-            <span className="text-white text-sm font-extrabold tracking-wide">VIP</span>
+            <span className="text-white text-sm font-bold tracking-wide">VIP</span>
           </div>
-          <span className="text-sm text-amber-600/80 dark:text-amber-400/80 font-medium">프리미엄 파트너</span>
+          <span className="text-sm text-navy-600 dark:text-navy-400 font-medium">프리미엄 파트너</span>
           {hasMore && (
-            <button onClick={onShowAll} className="ml-auto text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700">더보기 &rarr;</button>
+            <button onClick={onShowAll} className="ml-auto text-sm text-navy-700 dark:text-navy-400 hover:text-navy-700">더보기 &rarr;</button>
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {displayed.map((p) => (
             <div
               key={p.id}
-              className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden cursor-pointer shadow-[0_0_0_1px_rgba(245,158,11,0.3),0_4px_24px_rgba(245,158,11,0.08)] hover:shadow-[0_8px_30px_rgba(245,158,11,0.15)] hover:-translate-y-0.5 transition-all duration-200"
+              className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden cursor-pointer border-2 border-navy-600 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)] hover:-translate-y-0.5 transition-all duration-200"
               onClick={() => onPartnerClick(p.id)}
             >
               <div className="flex">
-                <div className="w-44 h-40 shrink-0 bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-950/30 dark:to-gray-800 relative">
+                <div className="w-44 h-40 shrink-0 bg-gray-100 dark:bg-gray-800 relative">
                   {p.images.length > 0 ? (
                     <Image src={p.images[0].url} alt={p.companyName} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-black text-5xl text-amber-300/60 dark:text-amber-600/40">{p.companyName.charAt(0)}</span>
+                      <span className="font-black text-5xl text-gray-300/60 dark:text-gray-600/40">{p.companyName.charAt(0)}</span>
                     </div>
                   )}
-                  <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-amber-500/90 text-white text-[9px] font-bold rounded">AD</div>
+                  <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 bg-navy-700/90 text-white text-[9px] font-bold rounded">
+                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    VIP
+                  </div>
                 </div>
                 <div className="flex-1 p-5 flex flex-col justify-between min-w-0">
                   <div>
                     <h3 className="font-extrabold text-gray-900 dark:text-white text-lg leading-tight truncate">{p.companyName}</h3>
-                    <p className="text-xs text-amber-600 dark:text-amber-400 font-medium mt-1">
+                    <p className="text-xs text-navy-600 dark:text-navy-400 font-medium mt-1">
                       {SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}
                       {p.serviceArea.length > 0 && ` · ${p.serviceArea.slice(0, 2).join(", ")}`}
                     </p>
@@ -320,7 +328,7 @@ function TierSection({
                   {p.serviceArea.length > 0 && (
                     <div className="flex items-center gap-1.5 mt-3 flex-wrap">
                       {p.serviceArea.slice(0, 3).map((area) => (
-                        <span key={area} className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[10px] font-semibold rounded-full border border-amber-200 dark:border-amber-800">{area}</span>
+                        <span key={area} className="px-2 py-0.5 bg-navy-50 dark:bg-navy-950/30 text-navy-700 dark:text-navy-400 text-[10px] font-semibold rounded-full border border-navy-200 dark:border-navy-800">{area}</span>
                       ))}
                     </div>
                   )}
@@ -338,35 +346,35 @@ function TierSection({
     return (
       <div className="mb-12">
         <div className="flex items-center gap-2 mb-5">
-          <div className="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-500 rounded-lg">
-            <span className="text-white text-sm font-extrabold tracking-wide">PREMIUM</span>
+          <div className="px-3 py-1.5 bg-navy-500 rounded-lg">
+            <span className="text-white text-sm font-bold tracking-wide">PREMIUM</span>
           </div>
-          <span className="text-sm text-indigo-500/80 dark:text-indigo-400/80 font-medium">추천 파트너</span>
+          <span className="text-sm text-navy-500/80 dark:text-navy-400/80 font-medium">추천 파트너</span>
           {hasMore && (
-            <button onClick={onShowAll} className="ml-auto text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700">더보기 &rarr;</button>
+            <button onClick={onShowAll} className="ml-auto text-sm text-navy-700 dark:text-navy-400 hover:text-navy-700">더보기 &rarr;</button>
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {displayed.map((p) => (
             <div
               key={p.id}
-              className="bg-white dark:bg-gray-900 rounded-xl overflow-hidden cursor-pointer shadow-[0_0_0_1px_rgba(99,102,241,0.25),0_4px_20px_rgba(99,102,241,0.06)] hover:shadow-[0_8px_25px_rgba(99,102,241,0.12)] hover:-translate-y-0.5 transition-all duration-200"
+              className="bg-white dark:bg-gray-900 rounded-xl overflow-hidden cursor-pointer border-[1.5px] border-navy-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-200"
               onClick={() => onPartnerClick(p.id)}
             >
               <div className="flex">
-                <div className="w-28 h-28 shrink-0 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-gray-800 relative">
+                <div className="w-28 h-28 shrink-0 bg-gray-100 dark:bg-gray-800 relative">
                   {p.images.length > 0 ? (
                     <Image src={p.images[0].url} alt={p.companyName} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-bold text-3xl text-indigo-300/60 dark:text-indigo-600/40">{p.companyName.charAt(0)}</span>
+                      <span className="font-bold text-3xl text-gray-300/60 dark:text-gray-600/40">{p.companyName.charAt(0)}</span>
                     </div>
                   )}
                 </div>
                 <div className="flex-1 p-3.5 flex flex-col justify-between min-w-0">
                   <div>
                     <h3 className="font-bold text-gray-900 dark:text-white text-sm truncate">{p.companyName}</h3>
-                    <p className="text-[11px] text-indigo-500 dark:text-indigo-400 font-medium mt-0.5">
+                    <p className="text-[11px] text-navy-500 dark:text-navy-400 font-medium mt-0.5">
                       {SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}
                       {p.serviceArea.length > 0 && ` · ${p.serviceArea.slice(0, 2).join(", ")}`}
                     </p>
@@ -387,19 +395,19 @@ function TierSection({
   return (
     <div className="mb-12">
       <div className="flex items-center gap-2 mb-4">
-        <div className="px-3 py-1.5 bg-blue-500 rounded-lg">
+        <div className="px-3 py-1.5 bg-navy-500 rounded-lg">
           <span className="text-white text-sm font-extrabold tracking-wide">BASIC</span>
         </div>
-        <span className="text-sm text-blue-500/80 dark:text-blue-400/80 font-medium">등록 업체</span>
+        <span className="text-sm text-navy-500/80 dark:text-navy-400/80 font-medium">등록 업체</span>
         {hasMore && (
-          <button onClick={onShowAll} className="ml-auto text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700">더보기 &rarr;</button>
+          <button onClick={onShowAll} className="ml-auto text-sm text-navy-700 dark:text-navy-400 hover:text-navy-700">더보기 &rarr;</button>
         )}
       </div>
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
         {displayed.map((p) => (
           <div
             key={p.id}
-            className="flex items-center justify-between px-5 py-3.5 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 cursor-pointer transition-colors group"
+            className="flex items-center justify-between px-5 py-3.5 hover:bg-navy-50/30 dark:hover:bg-blue-950/20 cursor-pointer transition-colors group"
             onClick={() => onPartnerClick(p.id)}
           >
             <div className="min-w-0 flex-1">
@@ -412,7 +420,7 @@ function TierSection({
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{p.serviceArea.slice(0, 2).join(", ")}</p>
               )}
             </div>
-            <span className="text-xs text-blue-500 dark:text-blue-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-3">자세히 &rarr;</span>
+            <span className="text-xs text-navy-500 dark:text-navy-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-3">자세히 &rarr;</span>
           </div>
         ))}
       </div>
@@ -445,7 +453,7 @@ function FreeSection({
           <h2 className="text-base font-bold text-gray-500 dark:text-gray-400">일반 업체</h2>
           <span className="text-sm text-gray-300 dark:text-gray-600">{total}개</span>
         </div>
-        <a href="/pricing" className="text-[11px] text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
+        <a href="/pricing" className="text-[11px] text-gray-400 dark:text-gray-500 hover:text-navy-500 dark:hover:text-navy-400 transition-colors">
           광고 등록으로 상단 노출 &rarr;
         </a>
       </div>
@@ -489,9 +497,9 @@ function SearchResultsView({
   onPartnerClick: (id: string) => void;
 }) {
   const tierBadge = (tier: string) => {
-    if (tier === "VIP") return <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-bold rounded">VIP</span>;
-    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] font-bold rounded">PREMIUM</span>;
-    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-blue-500 text-white text-[9px] font-bold rounded">BASIC</span>;
+    if (tier === "VIP") return <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-navy-700 text-white text-[9px] font-bold rounded"><svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>VIP</span>;
+    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-navy-700/85 text-white text-[9px] font-bold rounded">PREMIUM</span>;
+    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded">BASIC</span>;
     return null;
   };
 
@@ -519,7 +527,7 @@ function SearchResultsView({
                     <Image src={p.images[0].url} alt={p.companyName} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-sm font-bold text-blue-400">{p.companyName.charAt(0)}</span>
+                      <span className="text-sm font-bold text-navy-400">{p.companyName.charAt(0)}</span>
                     </div>
                   )}
                 </div>
@@ -583,7 +591,7 @@ function Pagination({
           onClick={() => onPageChange(p)}
           className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
             page === p
-              ? "bg-blue-600 text-white"
+              ? "bg-navy-700 text-white"
               : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
           }`}
         >

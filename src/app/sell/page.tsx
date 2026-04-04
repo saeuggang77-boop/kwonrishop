@@ -29,8 +29,8 @@ function FairTradeAgreementModal({ onAgree }: { onAgree: () => void }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-lg mx-auto">
       <div className="text-center mb-6">
-        <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="w-16 h-16 bg-navy-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-navy-700 dark:text-navy-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
           </svg>
         </div>
@@ -39,19 +39,19 @@ function FairTradeAgreementModal({ onAgree }: { onAgree: () => void }) {
 
       <div className="space-y-4 mb-6">
         <div className="flex gap-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-          <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">1</div>
+          <div className="w-6 h-6 bg-navy-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">1</div>
           <p className="text-sm text-gray-700 dark:text-gray-300">
             공정한 거래문화 조성을 위해 <strong>정직하고 구체적인 내용</strong>을 입력해주시기 바랍니다.
           </p>
         </div>
         <div className="flex gap-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-          <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">2</div>
+          <div className="w-6 h-6 bg-navy-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">2</div>
           <p className="text-sm text-gray-700 dark:text-gray-300">
             <strong>허위정보</strong>로 시간낭비하는 상황 발생 시 해당 매물은 <strong className="text-red-500">비공개, 영구활동정지</strong> 처리됩니다.
           </p>
         </div>
         <div className="flex gap-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-          <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">3</div>
+          <div className="w-6 h-6 bg-navy-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">3</div>
           <p className="text-sm text-gray-700 dark:text-gray-300">
             매물 및 매출정보가 미흡시 관리자는 <strong>수정안내 또는 비공개, 삭제</strong> 등의 조치를 취할 수 있습니다.
           </p>
@@ -69,7 +69,7 @@ function FairTradeAgreementModal({ onAgree }: { onAgree: () => void }) {
           type="checkbox"
           checked={checked}
           onChange={(e) => setChecked(e.target.checked)}
-          className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="w-5 h-5 rounded border-gray-300 text-navy-700 focus:ring-navy-500"
         />
         <span className="text-sm font-medium text-gray-900 dark:text-white">네, 위 내용에 동의합니다</span>
       </label>
@@ -77,7 +77,7 @@ function FairTradeAgreementModal({ onAgree }: { onAgree: () => void }) {
       <button
         onClick={onAgree}
         disabled={!checked}
-        className="w-full py-3.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors text-sm"
+        className="w-full py-3.5 bg-navy-700 text-white rounded-xl font-semibold hover:bg-navy-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors text-sm"
       >
         매물등록 시작하기
       </button>

@@ -102,8 +102,8 @@ export default function SignupPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
         <div className="w-full max-w-md text-center">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <div className="w-16 h-16 bg-navy-100 dark:bg-navy-900 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-navy-700 dark:text-navy-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
               </svg>
             </div>
@@ -125,7 +125,7 @@ export default function SignupPage() {
               </button>
               <Link
                 href="/login"
-                className="block w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm text-center"
+                className="block w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors text-sm text-center"
               >
                 로그인 페이지로
               </Link>
@@ -204,7 +204,7 @@ export default function SignupPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="이름을 입력하세요"
                 autoComplete="name"
-                className="w-full px-4 py-3.5 min-h-[44px] border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                className="w-full px-4 py-3.5 min-h-[44px] border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
               />
             </div>
 
@@ -219,7 +219,7 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 autoComplete="email"
-                className="w-full px-4 py-3.5 min-h-[44px] border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                className="w-full px-4 py-3.5 min-h-[44px] border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
               />
             </div>
 
@@ -235,7 +235,7 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="비밀번호를 입력하세요"
                   autoComplete="new-password"
-                  className="w-full px-4 py-3.5 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                  className="w-full px-4 py-3.5 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
                 />
                 <button
                   type="button"
@@ -300,7 +300,7 @@ export default function SignupPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="비밀번호를 다시 입력하세요"
                   autoComplete="new-password"
-                  className={`w-full px-4 py-3.5 min-h-[44px] pr-12 border bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm ${
+                  className={`w-full px-4 py-3.5 min-h-[44px] pr-12 border bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm ${
                     confirmPassword.length > 0
                       ? passwordsMatch
                         ? "border-green-400 dark:border-green-600"
@@ -335,7 +335,7 @@ export default function SignupPage() {
                     setAgreeTerms(e.target.checked);
                     setAgreePrivacy(e.target.checked);
                   }}
-                  className="mt-0.5 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 w-5 h-5 rounded border-gray-300 text-navy-700 focus:ring-navy-500"
                 />
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
                   전체 동의합니다
@@ -346,10 +346,10 @@ export default function SignupPage() {
                   type="checkbox"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="mt-0.5 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 w-5 h-5 rounded border-gray-300 text-navy-700 focus:ring-navy-500"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  <Link href="/terms" className="text-blue-600 dark:text-blue-400 underline" target="_blank">이용약관</Link> 동의 <span className="text-red-500">(필수)</span>
+                  <Link href="/terms" className="text-navy-700 dark:text-navy-400 underline" target="_blank">이용약관</Link> 동의 <span className="text-red-500">(필수)</span>
                 </span>
               </label>
               <label className="flex items-start gap-2 cursor-pointer pl-1">
@@ -357,10 +357,10 @@ export default function SignupPage() {
                   type="checkbox"
                   checked={agreePrivacy}
                   onChange={(e) => setAgreePrivacy(e.target.checked)}
-                  className="mt-0.5 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 w-5 h-5 rounded border-gray-300 text-navy-700 focus:ring-navy-500"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  <Link href="/privacy" className="text-blue-600 dark:text-blue-400 underline" target="_blank">개인정보처리방침</Link> 동의 <span className="text-red-500">(필수)</span>
+                  <Link href="/privacy" className="text-navy-700 dark:text-navy-400 underline" target="_blank">개인정보처리방침</Link> 동의 <span className="text-red-500">(필수)</span>
                 </span>
               </label>
             </div>
@@ -368,7 +368,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
+              className="w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "가입 중..." : "회원가입"}
             </button>
@@ -378,7 +378,7 @@ export default function SignupPage() {
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               이미 계정이 있으신가요?{" "}
-              <Link href="/login" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+              <Link href="/login" className="font-medium text-navy-700 dark:text-navy-400 hover:underline">
                 로그인
               </Link>
             </p>

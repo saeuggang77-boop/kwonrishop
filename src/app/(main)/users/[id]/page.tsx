@@ -68,7 +68,7 @@ export default async function UserProfilePage({
                   className="rounded-full"
                 />
               ) : (
-                <div className="w-25 h-25 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold">
+                <div className="w-25 h-25 rounded-full bg-navy-100 flex items-center justify-center text-navy-700 text-3xl font-bold">
                   {user.name?.[0] || "U"}
                 </div>
               )}
@@ -80,7 +80,7 @@ export default async function UserProfilePage({
                 <h1 className="text-2xl font-bold text-gray-900">
                   {user.name || "익명 사용자"}
                 </h1>
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+                <span className="px-3 py-1 bg-navy-100 text-navy-700 text-sm font-medium rounded-full">
                   {roleLabel}
                 </span>
               </div>
@@ -92,7 +92,7 @@ export default async function UserProfilePage({
               {user.listing && (
                 <Link
                   href={`/chat?listingId=${user.listing.id}`}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-navy-700 text-white font-medium rounded-lg hover:bg-navy-600 transition-colors"
                 >
                   <svg
                     className="w-5 h-5"

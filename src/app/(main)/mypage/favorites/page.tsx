@@ -72,7 +72,7 @@ export default function FavoritesPage() {
               : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
-          매물 <span className={activeTab === "listing" ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"}>{listings.length}</span>
+          매물 <span className={activeTab === "listing" ? "text-navy-700 dark:text-navy-400" : "text-gray-400 dark:text-gray-500"}>{listings.length}</span>
         </button>
         <button
           onClick={() => setActiveTab("equipment")}
@@ -82,7 +82,7 @@ export default function FavoritesPage() {
               : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
-          집기 <span className={activeTab === "equipment" ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"}>{equipLoaded ? equipment.length : "·"}</span>
+          집기 <span className={activeTab === "equipment" ? "text-navy-700 dark:text-navy-400" : "text-gray-400 dark:text-gray-500"}>{equipLoaded ? equipment.length : "·"}</span>
         </button>
       </div>
 

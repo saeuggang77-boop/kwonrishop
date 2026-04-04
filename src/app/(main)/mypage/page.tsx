@@ -69,7 +69,7 @@ function RecentlyViewedSection() {
     <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-bold text-gray-900 dark:text-gray-100">최근 본 매물</h3>
-        <Link href="/listings" className="text-sm text-gray-400 hover:text-blue-600">전체보기</Link>
+        <Link href="/listings" className="text-sm text-gray-400 hover:text-navy-700">전체보기</Link>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
         {recentListings.map((item) => (
@@ -80,7 +80,7 @@ function RecentlyViewedSection() {
               )}
             </div>
             <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">{item.storeName || "매물"}</p>
-            <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
+            <p className="text-xs text-navy-700 dark:text-navy-400 font-semibold">
               보 {(item.deposit / 10000).toLocaleString()} / 월 {item.monthlyRent}
             </p>
           </Link>
@@ -240,7 +240,7 @@ export default function MyPage() {
           <h3 className="font-bold text-gray-900 dark:text-gray-100">프로필</h3>
           <Link
             href="/mypage/edit"
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm text-navy-700 hover:text-navy-700 font-medium"
           >
             프로필 수정
           </Link>
@@ -249,7 +249,7 @@ export default function MyPage() {
           {data.user.image ? (
             <Image src={data.user.image} alt={`${data.user.name || '사용자'} 프로필 사진`} width={56} height={56} className="rounded-full" />
           ) : (
-            <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 text-xl font-bold">
+            <div className="w-14 h-14 rounded-full bg-navy-100 dark:bg-navy-900 flex items-center justify-center text-navy-700 text-xl font-bold">
               {data.user.name?.[0] || "U"}
             </div>
           )}
@@ -257,11 +257,11 @@ export default function MyPage() {
             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{data.user.name || "사용자"}</h2>
             <p className="text-sm text-gray-500">{data.user.email}</p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="inline-block px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded font-medium">
+              <span className="inline-block px-2 py-0.5 bg-navy-100 dark:bg-navy-800/30 text-navy-700 dark:text-navy-400 text-xs rounded font-medium">
                 {roleLabel}
               </span>
               {data.user.role === "BUYER" && (
-                <Link href="/verify-business" className="text-xs text-gray-400 hover:text-blue-600 underline underline-offset-2">
+                <Link href="/verify-business" className="text-xs text-gray-400 hover:text-navy-700 underline underline-offset-2">
                   역할 전환
                 </Link>
               )}
@@ -309,7 +309,7 @@ export default function MyPage() {
           <>
             <Link
               href="/verify-business"
-              className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
+              className="inline-block px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600"
             >
               사업자 인증하기
             </Link>
@@ -331,7 +331,7 @@ export default function MyPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </div>
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+          <div className="text-2xl font-bold text-navy-700 dark:text-navy-400 mb-1">
             {data.favoriteCount + data.equipmentFavoriteCount}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">관심매물</div>
@@ -342,18 +342,18 @@ export default function MyPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+          <div className="text-2xl font-bold text-navy-700 dark:text-navy-400 mb-1">
             {data.chatCount}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">채팅</div>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
           <div className="flex justify-center mb-2">
-            <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 text-navy-700 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
           </div>
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+          <div className="text-2xl font-bold text-navy-700 dark:text-navy-400 mb-1">
             {data.unreadChatCount}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">안읽음</div>
@@ -373,14 +373,14 @@ export default function MyPage() {
             <div className="flex items-center gap-3">
               <Link
                 href={`/listings/${data.listing.id}`}
-                className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-navy-700 font-medium"
               >
                 매물 보기
               </Link>
               <span className="text-gray-300 dark:text-gray-600">|</span>
               <Link
                 href="/sell/edit"
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-navy-700 hover:text-navy-700 font-medium"
               >
                 매물 수정
               </Link>
@@ -393,12 +393,12 @@ export default function MyPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
                 <div className="flex justify-center mb-2">
-                  <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-navy-700 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 </div>
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                <div className="text-2xl font-bold text-navy-700 dark:text-navy-400 mb-1">
                   {data.listing.viewCount}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">조회수</div>
@@ -409,7 +409,7 @@ export default function MyPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                 </div>
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                <div className="text-2xl font-bold text-navy-700 dark:text-navy-400 mb-1">
                   {data.listing.favoriteCount}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">관심</div>
@@ -420,7 +420,7 @@ export default function MyPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
                 </div>
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                <div className="text-2xl font-bold text-navy-700 dark:text-navy-400 mb-1">
                   {data.chatCount}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">채팅</div>
@@ -428,7 +428,7 @@ export default function MyPage() {
             </div>
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600">
+                <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 dark:text-gray-100 hover:text-navy-700">
                   {data.listing.storeName || "매물"}
                 </Link>
                 {/* 매물 상태 배지 - quick toggle */}
@@ -483,7 +483,7 @@ export default function MyPage() {
                       만료됨
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs rounded font-medium">
+                    <span className="px-2 py-0.5 bg-navy-100 dark:bg-navy-800/30 text-navy-700 dark:text-navy-400 text-xs rounded font-medium">
                       {data.activeListingAd.name} {data.activeListingAd.daysLeft}일 남음
                     </span>
                   )
@@ -516,7 +516,7 @@ export default function MyPage() {
               {!data.activeListingAd || data.activeListingAd.daysLeft <= 0 ? (
                 <Link
                   href="/pricing"
-                  className="inline-block w-full px-4 py-2.5 bg-blue-600 dark:bg-blue-500 text-white text-sm rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 text-center"
+                  className="inline-block w-full px-4 py-2.5 bg-navy-700 dark:bg-navy-500 text-white text-sm rounded-lg font-medium hover:bg-navy-600 dark:hover:bg-navy-700 text-center"
                 >
                   광고로 노출 올리기
                 </Link>
@@ -540,7 +540,7 @@ export default function MyPage() {
         ) : data.verification?.verified ? (
           <Link
             href="/sell"
-            className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
+            className="inline-block px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600"
           >
             매물 등록하기
           </Link>
@@ -599,7 +599,7 @@ export default function MyPage() {
               </p>
               <Link
                 href={`/pricing?listingId=${data.listing.id}#subscription`}
-                className="inline-block w-full px-4 py-2.5 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 text-center"
+                className="inline-block w-full px-4 py-2.5 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 text-center"
               >
                 구독 상품 보기
               </Link>
@@ -617,14 +617,14 @@ export default function MyPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href={`/partners/${data.partnerService.id}`}
-                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-navy-700 font-medium"
                 >
                   서비스 보기
                 </Link>
                 <span className="text-gray-300 dark:text-gray-600">|</span>
                 <Link
                   href="/partners/register?edit=true"
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-sm text-navy-700 hover:text-navy-700 font-medium"
                 >
                   서비스 수정
                 </Link>
@@ -646,7 +646,7 @@ export default function MyPage() {
           ) : data.verification?.verified ? (
             <Link
               href="/partners/register"
-              className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
+              className="inline-block px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600"
             >
               서비스 등록하기
             </Link>
@@ -664,14 +664,14 @@ export default function MyPage() {
             <div className="flex items-center gap-3">
               <Link
                 href={`/franchise/${data.franchiseBrand.id}`}
-                className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-navy-700 font-medium"
               >
                 브랜드 보기
               </Link>
               <span className="text-gray-300 dark:text-gray-600">|</span>
               <Link
                 href="/franchise/edit"
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-navy-700 hover:text-navy-700 font-medium"
               >
                 브랜드 수정
               </Link>
@@ -698,7 +698,7 @@ export default function MyPage() {
               <>
                 <Link
                   href="/equipment?mine=true"
-                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 font-medium"
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-navy-700 font-medium"
                 >
                   집기 보기
                 </Link>
@@ -707,7 +707,7 @@ export default function MyPage() {
             )}
             <Link
               href="/equipment/register"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="text-sm text-navy-700 hover:text-navy-700 font-medium"
             >
               집기 등록
             </Link>
@@ -744,7 +744,7 @@ export default function MyPage() {
               <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3">광고 현황</h3>
               <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600">
+                  <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 dark:text-gray-100 hover:text-navy-700">
                     {data.listing.storeName || "매물"}
                   </Link>
                   {data.activeListingAd.daysLeft <= 3 && data.activeListingAd.daysLeft > 0 ? (
@@ -756,7 +756,7 @@ export default function MyPage() {
                       만료됨
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs rounded font-medium">
+                    <span className="px-2 py-0.5 bg-navy-100 dark:bg-navy-800/30 text-navy-700 dark:text-navy-400 text-xs rounded font-medium">
                       {data.activeListingAd.name} {data.activeListingAd.daysLeft}일 남음
                     </span>
                   )}
@@ -782,7 +782,7 @@ export default function MyPage() {
                 {!data.activeListingAd || data.activeListingAd.daysLeft <= 0 ? (
                   <Link
                     href="/pricing"
-                    className="inline-block w-full px-4 py-2.5 bg-blue-600 dark:bg-blue-500 text-white text-sm rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 text-center"
+                    className="inline-block w-full px-4 py-2.5 bg-navy-700 dark:bg-navy-500 text-white text-sm rounded-lg font-medium hover:bg-navy-600 dark:hover:bg-navy-700 text-center"
                   >
                     광고로 노출 올리기
                   </Link>
@@ -855,7 +855,7 @@ export default function MyPage() {
                   </p>
                   <Link
                     href={`/pricing?listingId=${data.listing.id}#subscription`}
-                    className="inline-block w-full px-4 py-2.5 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 text-center"
+                    className="inline-block w-full px-4 py-2.5 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 text-center"
                   >
                     구독 상품 보기
                   </Link>
@@ -884,7 +884,7 @@ export default function MyPage() {
                       {new Date(report.createdAt).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
                     </p>
                   </div>
-                  <span className="text-xs text-blue-600 font-medium">보기</span>
+                  <span className="text-xs text-navy-700 font-medium">보기</span>
                 </Link>
               ))}
             </div>
@@ -920,8 +920,8 @@ export default function MyPage() {
             <button
               onClick={handlePushToggle}
               disabled={pushToggling || pushStatus === "denied"}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-                pushStatus === "granted" ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-600"
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-navy-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                pushStatus === "granted" ? "bg-navy-700" : "bg-gray-200 dark:bg-gray-600"
               }`}
             >
               <span

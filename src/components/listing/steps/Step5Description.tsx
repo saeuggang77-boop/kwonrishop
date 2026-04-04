@@ -48,7 +48,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
         value={data.description}
         onChange={(e) => updateData({ description: e.target.value })}
         rows={12}
-        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none"
       />
 
       {/* 글자 수 카운터 */}
@@ -59,7 +59,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
           </p>
         )}
         {charCount > 0 && isValid && charCount < RECOMMENDED_LENGTH && (
-          <p className="text-xs text-blue-500 font-medium">
+          <p className="text-xs text-navy-500 font-medium">
             {RECOMMENDED_LENGTH}자 이상 입력하면 조회수가 높아집니다
           </p>
         )}
@@ -84,7 +84,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
         <button
           onClick={onNext}
           disabled={!isValid || hasContact}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

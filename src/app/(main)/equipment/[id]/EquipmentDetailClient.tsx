@@ -244,7 +244,7 @@ export default function EquipmentDetailClient() {
 
       {/* 가격 */}
       <div className="mb-4">
-        <span className={`text-2xl font-bold ${isFree ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400"}`}>
+        <span className={`text-2xl font-bold ${isFree ? "text-green-600 dark:text-green-400" : "text-navy-700 dark:text-navy-400"}`}>
           {formatPrice(equipment.price)}
         </span>
         {isFree && (
@@ -324,7 +324,7 @@ export default function EquipmentDetailClient() {
             <div className="flex items-center gap-2">
               <p className="font-medium text-gray-900 dark:text-white">{equipment.user.name || "판매자"}</p>
               {equipment.user.businessVerification?.verified && (
-                <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-[10px] font-medium rounded">
+                <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-blue-900 text-navy-700 dark:text-navy-300 text-[10px] font-medium rounded">
                   사업자인증
                 </span>
               )}
@@ -344,7 +344,7 @@ export default function EquipmentDetailClient() {
 
       {/* 목록으로 */}
       <div className="mt-6 text-center">
-        <Link href="/equipment" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+        <Link href="/equipment" className="text-sm text-gray-500 dark:text-gray-400 hover:text-navy-700 dark:hover:text-navy-400">
           목록으로 돌아가기
         </Link>
       </div>
@@ -379,7 +379,7 @@ export default function EquipmentDetailClient() {
           </button>
           <button
             onClick={handleChat}
-            className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium text-center hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm md:text-base"
+            className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-blue-800 transition-colors text-sm md:text-base"
           >
             채팅하기
           </button>
@@ -397,7 +397,7 @@ export default function EquipmentDetailClient() {
               onChange={(e) => setReportReason(e.target.value)}
               placeholder="신고 사유를 입력해주세요"
               rows={4}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none mb-4"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none mb-4"
             />
             <div className="flex gap-2">
               <button

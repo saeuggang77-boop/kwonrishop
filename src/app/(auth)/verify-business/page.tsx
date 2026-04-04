@@ -160,7 +160,7 @@ function VerifyBusinessContent() {
           <div className="space-y-2">
             <Link
               href={successRedirect}
-              className="block w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="block w-full px-4 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
             >
               {buttonText}
             </Link>
@@ -199,13 +199,13 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("SELLER")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "SELLER"
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    ? "border-navy-500 bg-navy-50 dark:bg-blue-950"
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 rounded-full bg-navy-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-navy-700 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
@@ -214,7 +214,7 @@ function VerifyBusinessContent() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">상가/매장을 직접 등록하고 판매할 수 있습니다</p>
                   </div>
                   {selectedRole === "SELLER" && (
-                    <svg className="w-5 h-5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-navy-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   )}
@@ -228,7 +228,7 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("FRANCHISE")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "FRANCHISE"
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    ? "border-navy-500 bg-navy-50 dark:bg-blue-950"
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                 }`}
               >
@@ -243,7 +243,7 @@ function VerifyBusinessContent() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">공정위 등록 브랜드를 관리할 수 있습니다</p>
                   </div>
                   {selectedRole === "FRANCHISE" && (
-                    <svg className="w-5 h-5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-navy-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   )}
@@ -257,7 +257,7 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("PARTNER")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "PARTNER"
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    ? "border-navy-500 bg-navy-50 dark:bg-blue-950"
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                 }`}
               >
@@ -272,7 +272,7 @@ function VerifyBusinessContent() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">인테리어, 설비, 컨설팅 등 서비스를 등록할 수 있습니다</p>
                   </div>
                   {selectedRole === "PARTNER" && (
-                    <svg className="w-5 h-5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-navy-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   )}
@@ -284,7 +284,7 @@ function VerifyBusinessContent() {
 
         {/* 프랜차이즈 안내 (역할 선택 또는 URL param으로 FRANCHISE인 경우) */}
         {effectiveRole === "FRANCHISE" && (
-          <div className="mb-5 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl text-xs text-blue-700 dark:text-blue-300 space-y-1">
+          <div className="mb-5 p-3 bg-navy-50 dark:bg-blue-950 border border-navy-200 dark:border-navy-700 rounded-xl text-xs text-navy-700 dark:text-navy-300 space-y-1">
             <p className="font-medium">프랜차이즈 본사 인증 안내</p>
             <ul className="list-disc list-inside space-y-0.5">
               <li>공정거래위원회 정보공개서에 등록된 브랜드만 가입 가능합니다</li>
@@ -362,7 +362,7 @@ function VerifyBusinessContent() {
                   businessNumber: formatBusinessNumber(e.target.value),
                 })
               }
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
               required
             />
           </div>
@@ -378,7 +378,7 @@ function VerifyBusinessContent() {
               onChange={(e) =>
                 setForm({ ...form, representativeName: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
               required
             />
           </div>
@@ -394,7 +394,7 @@ function VerifyBusinessContent() {
               className={`w-full px-4 py-3 rounded-lg outline-none ${
                 hasFailedOnce
                   ? "border-2 border-red-400 bg-red-50 dark:bg-red-950 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  : "border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  : "border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-navy-500 focus:border-navy-500"
               }`}
               required
             />
@@ -414,14 +414,14 @@ function VerifyBusinessContent() {
                 </div>
               </div>
             ) : (
-              <div className="mt-2 bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-800 rounded-lg px-3 py-2.5">
+              <div className="mt-2 bg-navy-50 dark:bg-blue-950 border border-blue-100 dark:border-navy-700 rounded-lg px-3 py-2.5">
                 <div className="flex items-start gap-2">
-                  <svg className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 text-navy-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd"/>
                   </svg>
                   <div className="text-xs leading-relaxed">
-                    <p className="text-blue-800 dark:text-blue-200 font-medium">사업자등록증 확인 방법</p>
-                    <p className="text-blue-600 dark:text-blue-400 mt-0.5">
+                    <p className="text-navy-800 dark:text-navy-200 font-medium">사업자등록증 확인 방법</p>
+                    <p className="text-navy-700 dark:text-navy-400 mt-0.5">
                       등록증 중간의 <strong>&ldquo;개업연월일&rdquo;</strong> 항목을 확인하세요.<br/>
                       하단의 &ldquo;발급일&rdquo;이나 신청일과 <strong className="text-red-500 dark:text-red-400">다를 수 있습니다.</strong>
                     </p>
@@ -442,7 +442,7 @@ function VerifyBusinessContent() {
               onChange={(e) =>
                 setForm({ ...form, businessName: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
               required
             />
           </div>
@@ -450,7 +450,7 @@ function VerifyBusinessContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "인증 중..." : hasFailedOnce ? "다시 인증하기" : "사업자 인증하기"}
           </button>

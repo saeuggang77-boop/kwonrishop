@@ -227,17 +227,10 @@ export default function HomeClient({
 
       {/* ===== 섹션 1: 히어로 + 가치 제안 통합 ===== */}
       <section className="relative overflow-hidden bg-gradient-to-br from-navy-dark via-navy to-navy-light">
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)",
-            backgroundSize: "32px 32px",
-          }}
-        />
         {/* 메인 히어로 */}
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-center pt-16 pb-10 md:pt-20 md:pb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3">
-            상가직거래, <span className="text-gold-light">권리샵</span>
+          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight mb-3">
+            상가직거래, <span className="text-white/90">권리샵</span>
           </h1>
           <p className="text-base text-white/60 leading-relaxed max-w-md mx-auto mb-8">
             중개수수료 없이 권리금 직거래.<br />
@@ -260,7 +253,7 @@ export default function HomeClient({
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-navy-700 text-white rounded-xl text-sm font-semibold hover:bg-navy-600 transition-colors"
               >
                 검색
               </button>
@@ -270,7 +263,7 @@ export default function HomeClient({
           <div className="flex gap-3 justify-center">
             <Link
               href="/listings"
-              className="px-7 py-3 bg-blue-600 text-white rounded-xl text-[15px] font-bold hover:bg-blue-700 transition-colors"
+              className="px-7 py-3 bg-white text-navy-700 rounded-xl text-[15px] font-bold hover:bg-white/90 transition-colors shadow-lg"
             >
               매물 검색하기
             </Link>
@@ -309,8 +302,8 @@ export default function HomeClient({
               },
             ].map((item) => (
               <div key={item.title} className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4.5 h-4.5 text-gold-light">
+                <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4.5 h-4.5 text-white/80">
                     {item.icon}
                   </svg>
                 </div>
@@ -325,22 +318,24 @@ export default function HomeClient({
       </section>
 
       {/* ===== 섹션 2: 업종별 매물 찾기 ===== */}
-      <section className="py-8 md:py-12 bg-white">
+      <section className="py-8 md:py-12 bg-white dark:bg-navy-950">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl font-extrabold text-gray-900 text-center mb-6">
-            업종별 매물 찾기
-          </h2>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center">
+              업종별 매물 찾기
+            </h2>
+          </div>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-2.5">
             {CATEGORY_ITEMS.map((cat) => (
               <Link
                 key={cat.name}
                 href={cat.link}
-                className="flex flex-col items-center gap-2 py-4 px-2 rounded-2xl bg-white border border-gray-200 hover:border-blue-400 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                className="flex flex-col items-center gap-2 py-4 px-2 rounded-xl bg-white dark:bg-navy-900 border border-gray-200 dark:border-navy-700 hover:border-navy-300 dark:hover:border-navy-500 hover:shadow-md hover:-translate-y-0.5 transition-all"
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-navy-800 flex items-center justify-center text-navy-700 dark:text-navy-300">
                   {cat.icon}
                 </div>
-                <span className="text-xs font-semibold text-gray-600">{cat.name}</span>
+                <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">{cat.name}</span>
               </Link>
             ))}
           </div>
@@ -349,17 +344,17 @@ export default function HomeClient({
 
       {/* ===== 섹션 3: 매물 통합 (VIP + 프리미엄/베이직) ===== */}
       {(vipListings.length > 0 || premBasicListings.length > 0) && (
-        <section className="py-8 md:py-12 bg-gray-50">
+        <section className="py-8 md:py-12 bg-gray-50 dark:bg-navy-900/50">
           <div className="max-w-7xl mx-auto px-6">
             {/* VIP 매물 */}
             {vipListings.length > 0 && (
               <>
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 bg-gradient-to-r from-gold to-amber-700 text-white text-xs font-bold rounded-md">VIP</span>
-                    <h2 className="text-xl font-extrabold text-gray-900">매물</h2>
+                    <span className="px-2.5 py-1 bg-navy-700 text-white text-xs font-bold rounded-md shadow-md">VIP</span>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">매물</h2>
                   </div>
-                  <Link href="/listings" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+                  <Link href="/listings" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                     전체보기 →
                   </Link>
                 </div>
@@ -371,7 +366,7 @@ export default function HomeClient({
                       <Link
                         key={listing.id}
                         href={`/listings/${listing.id}`}
-                        className="flex bg-white rounded-2xl overflow-hidden border-2 border-gold/40 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
+                        className="flex bg-white rounded-xl overflow-hidden border-2 border-navy-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
                       >
                         <div className="relative w-[38%] min-h-[200px] bg-gradient-to-br from-gray-100 to-gray-200">
                           {listing.images[0] ? (
@@ -388,22 +383,10 @@ export default function HomeClient({
                               <svg className="w-11 h-11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
                           )}
-                          {listing.themes.length > 0 && (
-                            <div className="absolute top-2.5 left-2.5 flex gap-1">
-                              {listing.themes.slice(0, 2).map((theme) => (
-                                <span key={theme} className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-md">{theme}</span>
-                              ))}
-                            </div>
-                          )}
-                          <span className="absolute top-2.5 right-2.5 px-2.5 py-1 bg-gradient-to-r from-gold to-amber-700 text-white text-xs font-bold rounded-md">VIP</span>
-                          {((listing as any)._count?.documents ?? 0) > 0 && (
-                            <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 bg-emerald-600/90 text-white text-[10px] font-semibold rounded backdrop-blur-sm">
-                              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                              </svg>
-                              매출인증
-                            </div>
-                          )}
+                          <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-3 py-1.5 bg-navy-700 text-white text-[11px] font-bold rounded shadow-[0_2px_8px_rgba(27,73,101,0.3)]">
+                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            VIP
+                          </span>
                         </div>
                         <div className="w-[62%] p-5 flex flex-col justify-center">
                           <div className="text-[11px] text-gray-500 mb-1.5">
@@ -412,17 +395,17 @@ export default function HomeClient({
                           </div>
                           <h3 className="text-[17px] font-bold text-gray-900 mb-2.5">{shortAddr}</h3>
                           <div className="grid grid-cols-3 gap-2 mb-2.5">
-                            <div className="bg-amber-50 rounded-lg p-2 text-center">
+                            <div className="bg-gray-50 rounded-lg p-2 text-center">
                               <p className="text-[11px] text-gray-500 mb-0.5">보증금</p>
                               <p className="text-sm font-bold text-gray-900">{listing.deposit.toLocaleString()}만</p>
                             </div>
-                            <div className="bg-amber-50 rounded-lg p-2 text-center">
+                            <div className="bg-gray-50 rounded-lg p-2 text-center">
                               <p className="text-[11px] text-gray-500 mb-0.5">월세</p>
                               <p className="text-sm font-bold text-gray-900">{listing.monthlyRent.toLocaleString()}만</p>
                             </div>
-                            <div className="bg-amber-50 rounded-lg p-2 text-center">
+                            <div className="bg-gray-50 rounded-lg p-2 text-center">
                               <p className="text-[11px] text-gray-500 mb-0.5">권리금</p>
-                              <p className="text-sm font-bold text-blue-600">
+                              <p className="text-sm font-bold text-navy-700">
                                 {listing.premiumNone ? "무권리" : `${listing.premium.toLocaleString()}만`}
                               </p>
                             </div>
@@ -435,6 +418,16 @@ export default function HomeClient({
                             <span>·</span>
                             <span>관심 {listing.favoriteCount}</span>
                           </div>
+                          {(listing.themes.length > 0 || ((listing as any)._count?.documents ?? 0) > 0) && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {listing.themes.slice(0, 2).map((theme) => (
+                                <span key={theme} className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] rounded">{theme}</span>
+                              ))}
+                              {((listing as any)._count?.documents ?? 0) > 0 && (
+                                <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] rounded">매출인증</span>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </Link>
                     );
@@ -449,8 +442,8 @@ export default function HomeClient({
                 <div className={`${vipListings.length > 0 ? "border-t border-gray-200 pt-8 mt-10" : ""}`}>
                   <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-indigo-500 text-white text-[10px] font-bold rounded-md">프리미엄</span>
-                      <span className="px-2 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded-md">베이직</span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 text-[10px] font-bold rounded-md">PREMIUM</span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 text-[10px] font-bold rounded-md">BASIC</span>
                       <h3 className="text-lg font-bold text-gray-900 ml-1">매물</h3>
                     </div>
                   </div>
@@ -467,11 +460,13 @@ export default function HomeClient({
       )}
 
       {/* ===== 섹션 4: 프랜차이즈 (가로 스크롤) ===== */}
-      <section className="py-8 md:py-12 bg-white">
+      <section className="py-8 md:py-12 bg-white dark:bg-navy-950">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-end justify-between mb-5">
-            <h2 className="text-xl font-extrabold text-gray-900">프랜차이즈</h2>
-            <Link href="/franchise" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">프랜차이즈</h2>
+            </div>
+            <Link href="/franchise" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
               더보기 →
             </Link>
           </div>
@@ -515,7 +510,7 @@ export default function HomeClient({
               <Link
                 key={brand.id}
                 href={`/franchise/${brand.id}`}
-                className="min-w-[280px] flex-shrink-0 bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                className="min-w-[280px] flex-shrink-0 bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
               >
                 <div className="flex items-center gap-3 mb-3">
                   {brand.logo ? (
@@ -523,8 +518,8 @@ export default function HomeClient({
                       <Image src={brand.logo} alt={brand.brandName} fill className="object-cover" />
                     </div>
                   ) : (
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-extrabold text-lg flex-shrink-0 ${
-                      brand.tier === "GOLD" ? "bg-amber-50 text-amber-800" : "bg-gray-100 text-gray-500"
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${
+                      brand.tier === "GOLD" ? "bg-navy-50 text-navy-700" : "bg-gray-100 text-gray-500"
                     }`}>
                       {brand.brandName.charAt(0)}
                     </div>
@@ -533,10 +528,10 @@ export default function HomeClient({
                     <h3 className="text-[15px] font-bold text-gray-900">{brand.brandName}</h3>
                     <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
                       brand.tier === "GOLD"
-                        ? "bg-gradient-to-r from-gold to-amber-700 text-white"
+                        ? "bg-navy-700 text-white"
                         : brand.tier === "SILVER"
                           ? "bg-gray-200 text-gray-600"
-                          : "bg-amber-100 text-amber-700"
+                          : "bg-gray-100 text-gray-600"
                     }`}>
                       {brand.tier}
                     </span>
@@ -561,7 +556,7 @@ export default function HomeClient({
                   {brand.avgRevenue && (
                     <div>
                       <p className="text-[11px] text-gray-500">매출</p>
-                      <p className="text-sm font-bold text-blue-600">{(brand.avgRevenue / 10000).toLocaleString()}만</p>
+                      <p className="text-sm font-bold text-navy-700">{(brand.avgRevenue / 10000).toLocaleString()}만</p>
                     </div>
                   )}
                 </div>
@@ -573,17 +568,17 @@ export default function HomeClient({
       </section>
 
       {/* ===== 섹션 5: 협력업체 + 집기장터 탭 통합 ===== */}
-      <section className="py-8 md:py-12 bg-gray-50">
+      <section className="py-8 md:py-12 bg-gray-50 dark:bg-navy-900/50">
         <div className="max-w-7xl mx-auto px-6">
           {/* 탭 헤더 */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-1 bg-gray-200 rounded-full p-1">
+            <div className="flex items-center gap-1 bg-gray-200 dark:bg-navy-800 rounded-full p-1">
               <button
                 onClick={() => setActiveTab("partners")}
                 className={`px-5 py-3 text-sm font-semibold rounded-full transition-all ${
                   activeTab === "partners"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white dark:bg-navy-600 text-gray-900 dark:text-white shadow-sm"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 }`}
               >
                 협력업체
@@ -592,8 +587,8 @@ export default function HomeClient({
                 onClick={() => setActiveTab("equipment")}
                 className={`px-5 py-3 text-sm font-semibold rounded-full transition-all ${
                   activeTab === "equipment"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white dark:bg-navy-600 text-gray-900 dark:text-white shadow-sm"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 }`}
               >
                 집기장터
@@ -601,7 +596,7 @@ export default function HomeClient({
             </div>
             <Link
               href={activeTab === "partners" ? "/partners" : "/equipment"}
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+              className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             >
               더보기 →
             </Link>
@@ -623,7 +618,7 @@ export default function HomeClient({
                           <Image src={partner.images[0].url} alt={partner.companyName} fill className="object-cover" />
                         </div>
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-navy-50 text-navy-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
                           {partner.companyName.charAt(0)}
                         </div>
                       )}
@@ -632,7 +627,7 @@ export default function HomeClient({
                         <p className="text-xs text-gray-400">{SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}</p>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 bg-gradient-to-r from-gold to-amber-700 text-white text-[10px] font-bold rounded-md">VIP</span>
+                    <span className="px-2 py-0.5 bg-navy-700 text-white text-[10px] font-bold rounded-md">VIP</span>
                   </div>
                   {partner.description && (
                     <p className="text-xs text-gray-500 line-clamp-1">{partner.description}</p>
@@ -667,9 +662,16 @@ export default function HomeClient({
                         <p className="text-xs text-gray-400">{SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}</p>
                       </div>
                     </div>
-                    <span className={`px-2 py-0.5 text-white text-[10px] font-bold rounded-md ${
-                      partner.tier === "PREMIUM" ? "bg-gray-500" : "bg-blue-500"
+                    <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold rounded-md ${
+                      partner.tier === "VIP"
+                        ? "bg-navy-700 text-white"
+                        : partner.tier === "PREMIUM"
+                          ? "bg-navy-700/85 text-white"
+                          : "bg-gray-200 text-gray-600"
                     }`}>
+                      {partner.tier === "VIP" && (
+                        <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                      )}
                       {partner.tier}
                     </span>
                   </div>
@@ -700,16 +702,16 @@ export default function HomeClient({
                           <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
                         </div>
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-navy-50 text-navy-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
                           🛠️
                         </div>
                       )}
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
-                        <p className="text-sm font-bold text-blue-600">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
+                        <p className="text-sm font-bold text-navy-700">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 bg-gradient-to-r from-gold to-amber-700 text-white text-[10px] font-bold rounded-md">VIP</span>
+                    <span className="px-2 py-0.5 bg-navy-700 text-white text-[10px] font-bold rounded-md">VIP</span>
                   </div>
                   <p className="text-xs text-gray-400">
                     {item.condition === "NEW" ? "신품" : item.condition === "USED_LIKE_NEW" ? "거의새것" : "중고"}
@@ -735,12 +737,19 @@ export default function HomeClient({
                       )}
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
-                        <p className="text-sm font-bold text-blue-600">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
+                        <p className="text-sm font-bold text-navy-700">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
                       </div>
                     </div>
-                    <span className={`px-2 py-0.5 text-white text-[10px] font-bold rounded-md ${
-                      item.tier === "PREMIUM" ? "bg-gray-500" : "bg-blue-500"
+                    <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold rounded-md ${
+                      item.tier === "VIP"
+                        ? "bg-navy-700 text-white"
+                        : item.tier === "PREMIUM"
+                          ? "bg-navy-700/85 text-white"
+                          : "bg-gray-200 text-gray-600"
                     }`}>
+                      {item.tier === "VIP" && (
+                        <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                      )}
                       {item.tier}
                     </span>
                   </div>

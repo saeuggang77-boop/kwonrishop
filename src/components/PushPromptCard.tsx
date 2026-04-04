@@ -135,11 +135,11 @@ export default function PushPromptCard({
 
   const colors = {
     blue: {
-      bg: "bg-blue-50 dark:bg-blue-900/20",
-      border: "border-blue-200 dark:border-blue-800",
-      iconBg: "bg-blue-100 dark:bg-blue-900/50",
-      iconText: "text-blue-600 dark:text-blue-400",
-      button: "bg-blue-600 hover:bg-blue-700",
+      bg: "bg-navy-50 dark:bg-navy-800/20",
+      border: "border-navy-200 dark:border-navy-700",
+      iconBg: "bg-navy-100 dark:bg-blue-900/50",
+      iconText: "text-navy-700 dark:text-navy-400",
+      button: "bg-navy-700 hover:bg-navy-600",
     },
     purple: {
       bg: "bg-purple-50 dark:bg-purple-900/20",

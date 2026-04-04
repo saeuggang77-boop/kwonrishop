@@ -108,8 +108,8 @@ export default function NotificationsPage() {
     switch (type) {
       case "CHAT":
         return (
-          <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-full bg-navy-100 dark:bg-navy-800/30 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-navy-700 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
@@ -204,7 +204,7 @@ export default function NotificationsPage() {
         {data.unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-navy-700 dark:text-navy-400 hover:text-navy-700 dark:hover:text-blue-300 transition-colors"
           >
             모두 읽음
           </button>
@@ -240,8 +240,8 @@ export default function NotificationsPage() {
               <div
                 key={notif.id}
                 onClick={() => handleNotificationClick(notif)}
-                className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 ${
-                  !notif.read ? "bg-blue-50/50 dark:bg-blue-900/10" : ""
+                className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors cursor-pointer hover:border-navy-300 dark:hover:border-navy-700 ${
+                  !notif.read ? "bg-navy-50/50 dark:bg-blue-900/10" : ""
                 }`}
               >
                 <div className="flex gap-4">
@@ -252,7 +252,7 @@ export default function NotificationsPage() {
                         {notif.title}
                       </h3>
                       {!notif.read && (
-                        <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full flex-shrink-0 mt-1.5" />
+                        <span className="w-2 h-2 bg-navy-700 dark:bg-navy-400 rounded-full flex-shrink-0 mt-1.5" />
                       )}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">

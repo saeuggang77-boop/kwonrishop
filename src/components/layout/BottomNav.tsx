@@ -22,15 +22,15 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 h-16 pb-safe"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-navy-900 border-t border-gray-200 dark:border-navy-700 h-16 pb-safe"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex items-center justify-around h-full px-2">
         {/* 홈 */}
         <Link
           href="/"
-          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] ${
-            isActive("/") && pathname === "/" ? "text-blue-600" : "text-gray-400"
+          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] transition-colors ${
+            isActive("/") && pathname === "/" ? "text-navy-700 dark:text-white" : "text-gray-400 dark:text-gray-500"
           }`}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,8 +47,8 @@ export default function BottomNav() {
         {/* 매물 */}
         <Link
           href="/listings"
-          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] ${
-            isActive("/listings") ? "text-blue-600" : "text-gray-400"
+          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] transition-colors ${
+            isActive("/listings") ? "text-navy-700 dark:text-white" : "text-gray-400 dark:text-gray-500"
           }`}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,7 +67,7 @@ export default function BottomNav() {
           href="/sell"
           className="flex flex-col items-center justify-center -mt-6"
         >
-          <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg">
+          <div className="w-14 h-14 rounded-full bg-navy-700 dark:bg-navy-700 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -83,8 +83,8 @@ export default function BottomNav() {
         {/* 채팅 */}
         <Link
           href="/chat"
-          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] relative ${
-            isActive("/chat") ? "text-blue-600" : "text-gray-400"
+          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] relative transition-colors ${
+            isActive("/chat") ? "text-navy-700 dark:text-white" : "text-gray-400 dark:text-gray-500"
           }`}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,8 +103,8 @@ export default function BottomNav() {
         {/* MY */}
         <Link
           href="/mypage"
-          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] ${
-            isActive("/mypage") ? "text-blue-600" : "text-gray-400"
+          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] transition-colors ${
+            isActive("/mypage") ? "text-navy-700 dark:text-white" : "text-gray-400 dark:text-gray-500"
           }`}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

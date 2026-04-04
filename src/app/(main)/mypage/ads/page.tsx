@@ -81,13 +81,13 @@ export default function MyAdsPage() {
       </div>
 
       {/* 새 광고 구매 */}
-      <div className="bg-blue-50 dark:bg-blue-950 rounded-xl p-4 mb-6">
+      <div className="bg-navy-50 dark:bg-blue-950 rounded-xl p-4 mb-6">
         <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
           광고 상품으로 매물의 노출을 높이고 빠른 거래를 경험하세요
         </p>
         <Link
           href="/pricing"
-          className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700"
+          className="inline-block px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600"
         >
           광고 상품 보기
         </Link>
@@ -96,7 +96,7 @@ export default function MyAdsPage() {
       {/* 활성 광고 */}
       <section className="mb-8">
         <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-          활성 광고 <span className="text-blue-600 dark:text-blue-400">{active.length}</span>
+          활성 광고 <span className="text-navy-700 dark:text-navy-400">{active.length}</span>
         </h2>
         {active.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-center">
@@ -144,7 +144,7 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
   if (ad.partnerService) renewParams.set("partnerServiceId", ad.partnerService.id);
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl border p-4 ${isActive ? "border-blue-200 dark:border-blue-900" : "border-gray-200 dark:border-gray-700 opacity-70"}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl border p-4 ${isActive ? "border-navy-200 dark:border-blue-900" : "border-gray-200 dark:border-gray-700 opacity-70"}`}>
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -180,7 +180,7 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
         {!isActive && (
           <Link
             href={`/pricing?${renewParams.toString()}`}
-            className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700"
+            className="px-3 py-1 bg-navy-700 text-white rounded text-xs font-medium hover:bg-navy-600"
           >
             재구매
           </Link>

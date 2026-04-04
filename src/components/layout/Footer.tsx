@@ -8,13 +8,15 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         {/* 상단: 로고 + 핵심 링크 */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-          <span className="text-lg font-extrabold text-blue-600">권리샵</span>
+          <span className="text-lg font-extrabold text-navy-700 dark:text-white">
+            권리샵
+          </span>
           <div className="flex flex-wrap gap-5">
-            <Link href="/terms" className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 transition-colors py-2 px-1">이용약관</Link>
-            <Link href="/privacy" className="text-xs font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 transition-colors py-2 px-1">개인정보처리방침</Link>
-            <Link href="/guide" className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 transition-colors py-2 px-1">이용가이드</Link>
-            <Link href="/pricing" className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 transition-colors py-2 px-1">요금안내</Link>
-            <Link href="/about" className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 transition-colors py-2 px-1">회사소개</Link>
+            <Link href="/terms" className="text-xs text-gray-500 dark:text-gray-400 hover:text-navy-700 dark:hover:text-gray-200 transition-colors py-2 px-1">이용약관</Link>
+            <Link href="/privacy" className="text-xs font-bold text-gray-900 dark:text-white hover:text-navy-700 dark:hover:text-gray-200 transition-colors py-2 px-1">개인정보처리방침</Link>
+            <Link href="/guide" className="text-xs text-gray-500 dark:text-gray-400 hover:text-navy-700 dark:hover:text-gray-200 transition-colors py-2 px-1">이용가이드</Link>
+            <Link href="/pricing" className="text-xs text-gray-500 dark:text-gray-400 hover:text-navy-700 dark:hover:text-gray-200 transition-colors py-2 px-1">요금안내</Link>
+            <Link href="/about" className="text-xs text-gray-500 dark:text-gray-400 hover:text-navy-700 dark:hover:text-gray-200 transition-colors py-2 px-1">회사소개</Link>
           </div>
         </div>
 
@@ -35,7 +37,7 @@ export default function Footer() {
             © {new Date().getFullYear()} 권리샵. All rights reserved.
           </span>
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            고객센터 <strong className="text-blue-600 text-sm">1588-7928</strong>
+            고객센터 <strong className="text-navy-700 dark:text-white text-sm">1588-7928</strong>
             <span className="mx-1">|</span>
             samsungcu@naver.com
           </div>

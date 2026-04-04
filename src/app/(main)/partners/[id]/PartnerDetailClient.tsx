@@ -81,7 +81,7 @@ export default function PartnerDetailClient() {
         <p className="text-gray-400 mb-4">{error}</p>
         <button
           onClick={loadPartner}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-6 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600 transition-colors"
         >
           재시도
         </button>
@@ -100,7 +100,7 @@ export default function PartnerDetailClient() {
   const getTierBadge = (tier: Partner["tier"]) => {
     if (tier === "FREE") return null;
     const colors = {
-      BASIC: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+      BASIC: "bg-navy-100 text-navy-800 dark:bg-blue-900 dark:text-navy-200",
       PREMIUM: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
       VIP: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
     };
@@ -134,7 +134,7 @@ export default function PartnerDetailClient() {
                   onClick={() => setCurrentImageIndex(idx)}
                   className={`relative w-20 h-20 rounded-lg overflow-hidden shrink-0 ${
                     idx === currentImageIndex
-                      ? "ring-2 ring-blue-600"
+                      ? "ring-2 ring-navy-600"
                       : "opacity-50 hover:opacity-100"
                   }`}
                 >
@@ -154,7 +154,7 @@ export default function PartnerDetailClient() {
               {partner.companyName}
             </h1>
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
+              <span className="px-3 py-1 bg-navy-100 dark:bg-blue-900 text-navy-800 dark:text-navy-200 rounded-full text-sm font-medium">
                 {SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}
               </span>
               {getTierBadge(partner.tier)}
@@ -194,7 +194,7 @@ export default function PartnerDetailClient() {
               <span className="text-sm text-gray-600 dark:text-gray-400 w-20">전화번호:</span>
               <a
                 href={`tel:${partner.contactPhone}`}
-                className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline"
               >
                 {partner.contactPhone}
               </a>
@@ -205,7 +205,7 @@ export default function PartnerDetailClient() {
               <span className="text-sm text-gray-600 dark:text-gray-400 w-20">이메일:</span>
               <a
                 href={`mailto:${partner.contactEmail}`}
-                className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline"
               >
                 {partner.contactEmail}
               </a>
@@ -218,7 +218,7 @@ export default function PartnerDetailClient() {
                 href={partner.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline"
               >
                 {partner.website}
               </a>
@@ -273,7 +273,7 @@ export default function PartnerDetailClient() {
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 md:hidden">
         <button
           onClick={() => toast.info("채팅 기능은 곧 지원됩니다")}
-          className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+          className="w-full py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors"
         >
           문의하기
         </button>

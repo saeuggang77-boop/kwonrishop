@@ -95,7 +95,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
             ) : error && categories.length === 0 ? (
               <div className="text-center py-6">
                 <p className="text-sm text-red-500 mb-3">{error}</p>
-                <button type="button" onClick={fetchCategories} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button type="button" onClick={fetchCategories} className="px-4 py-2 text-sm bg-navy-700 text-white rounded-lg hover:bg-navy-600 transition-colors">
                   다시 시도
                 </button>
               </div>
@@ -114,7 +114,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     });
                     setError("");
                   }}
-                  className="flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 text-sm transition-all hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 border-gray-200 dark:border-gray-600"
+                  className="flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 text-sm transition-all hover:border-navy-400 hover:bg-navy-50/50 dark:hover:bg-navy-900/20 border-gray-200 dark:border-gray-600"
                 >
                   <span className="text-2xl">{cat.icon}</span>
                   <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{cat.name}</span>
@@ -137,11 +137,11 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   subCategoryName: "",
                 });
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-full text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-navy-50 dark:bg-navy-800/30 border border-navy-200 dark:border-navy-600 rounded-full text-sm text-navy-700 dark:text-navy-300 hover:bg-navy-100 dark:hover:bg-navy-900/50 transition-colors"
             >
               <span className="text-lg">{selectedCategory.icon}</span>
               <span className="font-medium">{selectedCategory.name}</span>
-              <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg className="w-4 h-4 text-navy-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
             </button>
@@ -168,7 +168,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   }}
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-sm transition-all ${
                     data.subCategoryId === sub.id
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 shadow-sm"
+                      ? "border-navy-500 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300 shadow-sm"
                       : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                   }`}
                 >
@@ -195,7 +195,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.deposit)}
                     onChange={(e) => handleNumberInput("deposit", e.target.value)}
-                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -209,7 +209,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.monthlyRent)}
                     onChange={(e) => handleNumberInput("monthlyRent", e.target.value)}
-                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -253,7 +253,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.premium)}
                     onChange={(e) => handleNumberInput("premium", e.target.value)}
-                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -271,7 +271,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   placeholder="0"
                   value={data.maintenanceFee !== null ? formatNumber(data.maintenanceFee) : ""}
                   onChange={(e) => handleNumberInput("maintenanceFee", e.target.value)}
-                  className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right"
+                  className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
               </div>
@@ -295,7 +295,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                           placeholder="0"
                           value={data.premiumBusiness !== null ? formatNumber(data.premiumBusiness) : ""}
                           onChange={(e) => handleNumberInput("premiumBusiness", e.target.value)}
-                          className="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right text-sm"
+                          className="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right text-sm"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                       </div>
@@ -307,7 +307,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                         placeholder="예: 안정적인 매출, 단골고객 확보"
                         value={data.premiumBusinessDesc}
                         onChange={(e) => updateData({ premiumBusinessDesc: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
                       />
                     </div>
                   </div>
@@ -323,7 +323,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                           placeholder="0"
                           value={data.premiumFacility !== null ? formatNumber(data.premiumFacility) : ""}
                           onChange={(e) => handleNumberInput("premiumFacility", e.target.value)}
-                          className="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right text-sm"
+                          className="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right text-sm"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                       </div>
@@ -335,7 +335,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                         placeholder="예: 최신 인테리어, 고가 주방기기"
                         value={data.premiumFacilityDesc}
                         onChange={(e) => updateData({ premiumFacilityDesc: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
                       />
                     </div>
                   </div>
@@ -346,7 +346,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                       <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
                         바닥권리금
                         {!manualLocationEdit && (data.premiumBusiness || data.premiumFacility) ? (
-                          <span className="text-blue-500 ml-1">자동</span>
+                          <span className="text-navy-500 ml-1">자동</span>
                         ) : null}
                       </label>
                       <div className="relative">
@@ -359,9 +359,9 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                             setManualLocationEdit(true);
                             handleNumberInput("premiumLocation", e.target.value);
                           }}
-                          className={`w-full px-3 py-2 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-right text-sm ${
+                          className={`w-full px-3 py-2 pr-12 border rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right text-sm ${
                             !manualLocationEdit && (data.premiumBusiness || data.premiumFacility)
-                              ? "border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/20 text-gray-900 dark:text-white"
+                              ? "border-navy-200 dark:border-navy-600 bg-navy-50/50 dark:bg-navy-800/20 text-gray-900 dark:text-white"
                               : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                           }`}
                         />
@@ -375,7 +375,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                         placeholder="예: 역세권, 주요 상권 입지"
                         value={data.premiumLocationDesc}
                         onChange={(e) => updateData({ premiumLocationDesc: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
                       />
                     </div>
                   </div>
@@ -388,12 +388,12 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                       <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
                         <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
                           <span>산정 합계</span>
-                          <span className={`font-medium ${diff === 0 ? "text-blue-600 dark:text-blue-400" : diff > 0 ? "text-red-500" : "text-gray-900 dark:text-white"}`}>
+                          <span className={`font-medium ${diff === 0 ? "text-navy-700 dark:text-navy-400" : diff > 0 ? "text-red-500" : "text-gray-900 dark:text-white"}`}>
                             {formatNumber(total)} 만원
                           </span>
                         </div>
                         {diff === 0 && (
-                          <p className="text-xs text-blue-500 mt-1 flex items-center gap-1">
+                          <p className="text-xs text-navy-500 mt-1 flex items-center gap-1">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
                             총 권리금과 일치
                           </p>
@@ -430,7 +430,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
         </button>
         <button
           onClick={handleSubmit}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
         >
           다음
         </button>

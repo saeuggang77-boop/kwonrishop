@@ -77,7 +77,7 @@ function CommunityWriteContent() {
               onClick={() => setTag(t)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 tag === t
-                  ? "bg-blue-600 text-white"
+                  ? "bg-navy-700 text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
@@ -92,7 +92,7 @@ function CommunityWriteContent() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={200}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg outline-none focus:ring-2 focus:ring-navy-500"
         />
 
         <textarea
@@ -101,7 +101,7 @@ function CommunityWriteContent() {
           onChange={(e) => setContent(e.target.value)}
           maxLength={5000}
           rows={15}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-navy-500 resize-none"
         />
 
         {error && (
@@ -119,7 +119,7 @@ function CommunityWriteContent() {
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50"
           >
             {loading ? "등록 중..." : "등록"}
           </button>

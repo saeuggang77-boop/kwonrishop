@@ -92,9 +92,9 @@ export default function ContactPage() {
             {/* Operating Hours */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-navy-100 dark:bg-navy-800/30 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                    className="w-6 h-6 text-navy-700 dark:text-navy-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -142,7 +142,7 @@ export default function ContactPage() {
                   <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">전화 문의</h3>
                   <a
                     href="tel:1588-7928"
-                    className="text-blue-600 dark:text-blue-400 hover:underline text-lg font-semibold"
+                    className="text-navy-700 dark:text-navy-400 hover:underline text-lg font-semibold"
                   >
                     1588-7928
                   </a>
@@ -175,7 +175,7 @@ export default function ContactPage() {
                   <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">이메일 문의</h3>
                   <a
                     href="mailto:samsungcu@naver.com"
-                    className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                    className="text-navy-700 dark:text-navy-400 hover:underline font-medium"
                   >
                     samsungcu@naver.com
                   </a>
@@ -206,7 +206,7 @@ export default function ContactPage() {
                     href="https://pf.kakao.com/_권리샵"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                    className="text-navy-700 dark:text-navy-400 hover:underline font-medium"
                   >
                     @권리샵
                   </a>
@@ -218,10 +218,10 @@ export default function ContactPage() {
             </div>
 
             {/* FAQ Link */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+            <div className="bg-navy-50 dark:bg-navy-800/20 rounded-xl p-6 border border-navy-200 dark:border-navy-700">
               <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                  className="w-5 h-5 text-navy-700 dark:text-navy-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -240,7 +240,7 @@ export default function ContactPage() {
               </p>
               <a
                 href="/faq"
-                className="inline-block px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-block px-4 py-2 bg-navy-700 text-white text-sm font-medium rounded-lg hover:bg-navy-600 transition-colors"
               >
                 FAQ 보러가기
               </a>
@@ -267,7 +267,7 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 dark:bg-gray-700 dark:text-gray-100"
                   placeholder="홍길동"
                 />
               </div>
@@ -286,7 +286,7 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 dark:bg-gray-700 dark:text-gray-100"
                   placeholder="example@email.com"
                 />
               </div>
@@ -305,7 +305,7 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 dark:bg-gray-700 dark:text-gray-100"
                   placeholder="문의 제목을 입력하세요"
                 />
               </div>
@@ -324,7 +324,7 @@ export default function ContactPage() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 resize-none dark:bg-gray-700 dark:text-gray-100"
                   placeholder="문의 내용을 자세히 작성해주세요"
                 />
               </div>
@@ -332,7 +332,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-navy-700 text-white py-3 rounded-lg font-semibold hover:bg-navy-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "제출 중..." : "문의 제출하기"}
               </button>

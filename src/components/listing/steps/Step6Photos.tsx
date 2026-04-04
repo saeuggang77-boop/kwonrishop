@@ -20,7 +20,7 @@ const UPLOAD_SLOTS = [
 
 const TYPE_COLORS: Record<string, { bg: string; border: string; lightBg: string; text: string; hoverBorder: string }> = {
   EXTERIOR: { bg: "bg-orange-500", border: "border-orange-300 dark:border-orange-700", lightBg: "bg-orange-50 dark:bg-orange-950/30", text: "text-orange-500 dark:text-orange-400", hoverBorder: "hover:border-orange-400" },
-  INTERIOR: { bg: "bg-blue-500", border: "border-blue-300 dark:border-blue-700", lightBg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-500 dark:text-blue-400", hoverBorder: "hover:border-blue-400" },
+  INTERIOR: { bg: "bg-navy-500", border: "border-navy-300 dark:border-navy-600", lightBg: "bg-navy-50 dark:bg-navy-950/30", text: "text-navy-500 dark:text-navy-400", hoverBorder: "hover:border-navy-400" },
   KITCHEN: { bg: "bg-purple-500", border: "border-purple-300 dark:border-purple-700", lightBg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-500 dark:text-purple-400", hoverBorder: "hover:border-purple-400" },
   OTHER: { bg: "bg-gray-500", border: "border-gray-300 dark:border-gray-600", lightBg: "", text: "text-gray-400 dark:text-gray-500", hoverBorder: "hover:border-gray-400" },
 };
@@ -295,7 +295,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               <button
                 type="button"
                 onClick={() => handleSlotClick("OTHER")}
-                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-blue-400 hover:text-blue-400 transition-colors"
+                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-navy-400 hover:text-navy-400 transition-colors"
               >
                 <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
@@ -365,7 +365,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               <button
                 type="button"
                 onClick={() => docInputRef.current?.click()}
-                className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-blue-400 hover:text-blue-400 transition-colors"
+                className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-navy-400 hover:text-navy-400 transition-colors"
               >
                 <svg className="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
@@ -386,7 +386,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               onClick={() => updateData({ contactPublic: true })}
               className={`flex-1 py-3 rounded-lg border text-sm font-medium transition-colors ${
                 data.contactPublic
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                  ? "border-navy-500 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
                   : "border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
               }`}
             >
@@ -397,7 +397,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               onClick={() => updateData({ contactPublic: false })}
               className={`flex-1 py-3 rounded-lg border text-sm font-medium transition-colors ${
                 !data.contactPublic
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                  ? "border-navy-500 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
                   : "border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
               }`}
             >
@@ -416,7 +416,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                   value={data.contactPhone}
                   onChange={(e) => updateData({ contactPhone: formatPhoneInput(e.target.value) })}
                   placeholder="010-1234-5678"
-                  className="w-full px-3 py-3 min-h-[44px] border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-3 min-h-[44px] border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-navy-500"
                 />
               )}
             </div>
@@ -447,7 +447,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
         <button
           onClick={onNext}
           disabled={data.images.length === 0 || !photoRequirementMet}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

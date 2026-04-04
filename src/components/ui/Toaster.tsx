@@ -12,7 +12,7 @@ interface ToastMessage {
 const COLORS = {
   success: "bg-green-600",
   error: "bg-red-600",
-  info: "bg-blue-600",
+  info: "bg-navy-700",
 };
 
 const ICONS = {

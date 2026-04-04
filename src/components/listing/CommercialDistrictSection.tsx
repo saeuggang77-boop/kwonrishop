@@ -95,7 +95,7 @@ export default function CommercialDistrictSection({
 
   const getBarColor = (index: number) => {
     const colors = [
-      'bg-blue-400',
+      'bg-navy-400',
       'bg-purple-400',
       'bg-green-400',
       'bg-orange-400',
@@ -158,9 +158,9 @@ export default function CommercialDistrictSection({
         {/* 핵심 지표 4개 카드 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* 일평균 유동인구 */}
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 rounded-xl p-4 text-center">
-            <div className="text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">일평균 유동인구</div>
-            <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+          <div className="bg-gradient-to-br from-navy-50 to-blue-100/50 dark:from-blue-900/20 dark:to-navy-800/10 rounded-xl p-4 text-center">
+            <div className="text-xs font-medium text-navy-700 dark:text-navy-400 mb-1">일평균 유동인구</div>
+            <div className="text-2xl font-bold text-navy-900 dark:text-navy-100">
               {(data.populationByTime.reduce((a, b) => a + b, 0) / data.populationByTime.length).toFixed(0)}
               <span className="text-sm font-normal">명</span>
             </div>
@@ -240,7 +240,7 @@ export default function CommercialDistrictSection({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600 dark:text-gray-400">주요 연령대</span>
-                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{data.mainAgeGroup} ({data.mainAgeGroupPercentage}%)</span>
+                <span className="text-sm font-bold text-navy-700 dark:text-navy-400">{data.mainAgeGroup} ({data.mainAgeGroupPercentage}%)</span>
               </div>
             </div>
           </div>
@@ -250,7 +250,7 @@ export default function CommercialDistrictSection({
               {data.populationByTime.map((pop, i) => {
                 const maxPop = Math.max(...data.populationByTime);
                 const height = (pop / maxPop) * 100;
-                return <div key={i} className="flex-1 bg-blue-400 dark:bg-blue-500 rounded-t" style={{ height: `${height}%` }} title={`${6 + i * 2}시: ${pop}명`}></div>;
+                return <div key={i} className="flex-1 bg-navy-400 dark:bg-navy-500 rounded-t" style={{ height: `${height}%` }} title={`${6 + i * 2}시: ${pop}명`}></div>;
               })}
             </div>
             <div className="flex justify-between mt-1">
@@ -260,7 +260,7 @@ export default function CommercialDistrictSection({
               <span className="text-xs text-gray-400">24시</span>
             </div>
             <div className="mt-2 text-center">
-              <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+              <span className="text-xs text-navy-700 dark:text-navy-400 font-medium">
                 피크타임: {data.peakTimes.join(', ')}
               </span>
             </div>
