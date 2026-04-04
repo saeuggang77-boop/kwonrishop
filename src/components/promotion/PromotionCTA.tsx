@@ -74,17 +74,27 @@ export function ListingUpsellBanner({
 export function RegisterPromoBanner({
   type,
 }: {
-  type: "franchise" | "partner" | "equipment";
+  type: "listing" | "franchise" | "partner" | "equipment";
 }) {
   const config = {
+    listing: {
+      bg: "from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900",
+      border: "border-blue-400",
+      title: "내 매물, 더 빨리 팔고 싶다면?",
+      subtitle: "프리미엄 사장님의 평균 문의량 3배, 매각 속도 2배 빠릅니다",
+      badges: ["상위노출", "인증배지", "끌어올리기"],
+      badgeColor: "bg-blue-500",
+      cta: "월 10만원부터 · 요금제 비교하기 →",
+      link: "/pricing?tab=listing",
+    },
     franchise: {
       bg: "from-green-50 to-green-100 dark:from-green-950 dark:to-green-900",
       border: "border-green-400",
       title: "내 프랜차이즈 브랜드를 권리샵에 등록하세요",
-      subtitle: "예비 창업자 월 12,000명이 검색",
+      subtitle: "예비 창업자 월 12,000명이 검색합니다",
       badges: ["브랜드 상세", "가맹문의", "상위노출"],
       badgeColor: "bg-green-500",
-      cta: "월 30만원부터 →",
+      cta: "월 30만원부터 · 요금제 비교하기 →",
       link: "/pricing?tab=franchise",
     },
     partner: {
@@ -92,9 +102,9 @@ export function RegisterPromoBanner({
       border: "border-blue-400",
       title: "상가 창업에 필요한 전문 서비스를 제공하시나요?",
       subtitle: "인테리어, 설비, 법무, 세무, 간판 등 사장님들이 찾는 서비스를 직접 연결합니다",
-      badges: ["업체프로필", "매물상세연동"],
+      badges: ["업체프로필", "매물상세연동", "상위노출"],
       badgeColor: "bg-blue-500",
-      cta: "월 10만원부터 →",
+      cta: "월 10만원부터 · 요금제 비교하기 →",
       link: "/pricing?tab=partner",
     },
     equipment: {
@@ -104,8 +114,8 @@ export function RegisterPromoBanner({
       subtitle: "프리미엄 등록 시 상위 노출 + VIP 배지로 판매 확률 3배 증가",
       badges: ["상단노출", "VIP배지", "우선검색"],
       badgeColor: "bg-purple-500",
-      cta: "광고 등록하기 →",
-      link: "/equipment/register",
+      cta: "월 1만원부터 · 요금제 비교하기 →",
+      link: "/pricing?tab=equipment",
     },
   };
 

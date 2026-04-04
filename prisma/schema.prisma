@@ -736,6 +736,25 @@ enum ReportStatus {
 }
 
 // ==========================================
+// 사업자번호 블랙리스트
+// ==========================================
+
+enum BlacklistType {
+  COOLDOWN // 자발적 탈퇴 - 30일 자동 만료
+  BANNED   // 관리자 제재 - 영구 차단
+}
+
+model BlacklistedBusiness {
+  id             String        @id @default(cuid())
+  businessNumber String        @unique
+  type           BlacklistType
+  reason         String?
+  expiresAt      DateTime?     // COOLDOWN: 탈퇴일+30일, BANNED: null (영구)
+  blockedBy      String?       // 관리자 userId
+  createdAt      DateTime      @default(now())
+}
+
+// ==========================================
 // 고객센터 문의
 // ==========================================
 

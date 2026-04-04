@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { toast } from "@/lib/toast";
 
 interface AdminUser {
   id: string;
@@ -30,6 +31,40 @@ export default function AdminUsersPage() {
 
   const [roleFilter, setRoleFilter] = useState("");
   const [keyword, setKeyword] = useState("");
+
+  // 제재 모달
+  const [banTarget, setBanTarget] = useState<AdminUser | null>(null);
+  const [banReason, setBanReason] = useState("");
+  const [banning, setBanning] = useState(false);
+
+  async function handleBan() {
+    if (!banTarget) return;
+    setBanning(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetUserId: banTarget.id,
+          action: "ban",
+          reason: banReason || "관리자 제재",
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message || "제재 완료");
+        setBanTarget(null);
+        setBanReason("");
+        fetchUsers();
+      } else {
+        toast.error(data.error || "제재 실패");
+      }
+    } catch {
+      toast.error("제재 처리 중 오류가 발생했습니다.");
+    } finally {
+      setBanning(false);
+    }
+  }
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -118,6 +153,7 @@ export default function AdminUsersPage() {
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">인증</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">매물수</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">가입일</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -161,6 +197,22 @@ export default function AdminUsersPage() {
                   <td className="px-6 py-4 text-sm text-gray-600">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </td>
+                  <td className="px-6 py-4">
+                    {user.role !== "ADMIN" && !user.email.includes("@banned.local") && !user.email.includes("@withdrawn.local") && (
+                      <button
+                        onClick={() => setBanTarget(user)}
+                        className="px-3 py-1 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        제재
+                      </button>
+                    )}
+                    {user.email.includes("@banned.local") && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">제재됨</span>
+                    )}
+                    {user.email.includes("@withdrawn.local") && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">탈퇴</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -189,6 +241,52 @@ export default function AdminUsersPage() {
               </>
             );
           })()}
+        </div>
+      )}
+      {/* 제재 모달 */}
+      {banTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">회원 제재</h2>
+            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-900 font-medium">{banTarget.name}</p>
+              <p className="text-xs text-gray-500">{banTarget.email}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                역할: {({ BUYER: "예비창업자", SELLER: "사장님", FRANCHISE: "프랜차이즈 본사", PARTNER: "협력업체" } as Record<string, string>)[banTarget.role] || banTarget.role}
+              </p>
+            </div>
+            <div className="mb-4 p-3 bg-red-50 rounded-lg">
+              <p className="text-xs text-red-700 font-medium mb-1">제재 시 처리 내용:</p>
+              <ul className="text-xs text-red-600 space-y-0.5">
+                <li>- 매물/집기/협력업체 전체 비활성화</li>
+                <li>- 사업자번호 영구 블랙리스트 등록</li>
+                <li>- 계정 비활성화 및 세션 무효화</li>
+                <li>- 동일 사업자번호로 재가입 차단</li>
+              </ul>
+            </div>
+            <textarea
+              value={banReason}
+              onChange={(e) => setBanReason(e.target.value)}
+              placeholder="제재 사유 (선택)"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none resize-none mb-4"
+              rows={2}
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setBanTarget(null); setBanReason(""); }}
+                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleBan}
+                disabled={banning}
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {banning ? "처리 중..." : "제재 확정"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

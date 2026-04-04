@@ -69,6 +69,35 @@ export async function DELETE(req: NextRequest) {
         data: { status: "DELETED" },
       });
 
+      // 사업자인증 → 쿨다운 등록 후 삭제
+      const bv = await tx.businessVerification.findUnique({
+        where: { userId },
+        select: { businessNumber: true },
+      });
+      if (bv) {
+        // 기존 블랙리스트 레코드가 있으면 (이미 BANNED 등) 건드리지 않음
+        const existing = await tx.blacklistedBusiness.findUnique({
+          where: { businessNumber: bv.businessNumber },
+        });
+        if (!existing) {
+          await tx.blacklistedBusiness.create({
+            data: {
+              businessNumber: bv.businessNumber,
+              type: "COOLDOWN",
+              reason: "자발적 회원탈퇴",
+              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30일
+            },
+          });
+        }
+      }
+      await tx.businessVerification.deleteMany({ where: { userId } });
+
+      // 프랜차이즈 브랜드 관리자 해제 (새 관리자 등록 허용)
+      await tx.franchiseBrand.updateMany({
+        where: { managerId: userId },
+        data: { managerId: null },
+      });
+
       // 세션/인증/토큰 삭제
       await tx.session.deleteMany({ where: { userId } });
       await tx.account.deleteMany({ where: { userId } });

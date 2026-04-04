@@ -7,7 +7,7 @@ import ListingMapView from "@/components/map/ListingMapView";
 import PremiumCarousel from "@/components/shared/PremiumCarousel";
 import { useDebounce } from "@/hooks/useDebounce";
 import Image from "next/image";
-import { ListingInfeedPromo } from "@/components/promotion/PromotionCTA";
+import { ListingInfeedPromo, RegisterPromoBanner } from "@/components/promotion/PromotionCTA";
 
 interface Category {
   id: string;
@@ -682,6 +682,11 @@ function ListingsContent() {
           </div>
         );
       })()}
+
+      {/* 하단 등록 유도 배너 */}
+      <div className="mt-10">
+        <RegisterPromoBanner type="listing" />
+      </div>
       </div>
     </div>
   );

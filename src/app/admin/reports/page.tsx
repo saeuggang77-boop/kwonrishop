@@ -168,6 +168,32 @@ export default function AdminReportsPage() {
                           >
                             처리완료
                           </button>
+                          {report.targetType === "USER" && (
+                            <button
+                              onClick={async () => {
+                                if (!confirm(`대상 ID ${report.targetId}를 제재하시겠습니까?\n\n매물/서비스 비활성화 + 사업자번호 블랙리스트 등록됩니다.`)) return;
+                                const res = await fetch("/api/admin/users", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({
+                                    targetUserId: report.targetId,
+                                    action: "ban",
+                                    reason: `신고 처리: ${report.reason}`,
+                                  }),
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                  toast.success(data.message || "제재 완료");
+                                  handleStatusChange(report.id, "RESOLVED");
+                                } else {
+                                  toast.error(data.error || "제재 실패");
+                                }
+                              }}
+                              className="px-3 py-1 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors"
+                            >
+                              제재
+                            </button>
+                          )}
                           <button
                             onClick={() => handleStatusChange(report.id, "REJECTED")}
                             className="px-3 py-1 bg-gray-600 text-white text-xs rounded-lg hover:bg-gray-700 transition-colors"

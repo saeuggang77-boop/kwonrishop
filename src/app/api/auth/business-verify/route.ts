@@ -56,6 +56,31 @@ export async function POST(req: NextRequest) {
 
   // 같은 사업자번호로 이미 인증된 건이 있는지 확인
   const cleanNumber = businessNumber.replace(/-/g, "");
+
+  // 블랙리스트/쿨다운 체크
+  const blacklisted = await prisma.blacklistedBusiness.findUnique({
+    where: { businessNumber: cleanNumber },
+  });
+  if (blacklisted) {
+    if (blacklisted.type === "BANNED") {
+      return NextResponse.json(
+        { error: "제재된 사업자등록번호입니다. 고객센터에 문의해주세요." },
+        { status: 403 },
+      );
+    }
+    if (blacklisted.type === "COOLDOWN" && blacklisted.expiresAt && blacklisted.expiresAt > new Date()) {
+      const remainDays = Math.ceil((blacklisted.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      return NextResponse.json(
+        { error: `탈퇴 후 30일간 재인증이 제한됩니다. (${remainDays}일 남음)` },
+        { status: 400 },
+      );
+    }
+    // 쿨다운 만료 → 레코드 삭제 후 진행 허용
+    if (blacklisted.type === "COOLDOWN" && blacklisted.expiresAt && blacklisted.expiresAt <= new Date()) {
+      await prisma.blacklistedBusiness.delete({ where: { businessNumber: cleanNumber } });
+    }
+  }
+
   const duplicateCheck = await prisma.businessVerification.findUnique({
     where: { businessNumber: cleanNumber },
   });

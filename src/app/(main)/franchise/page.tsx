@@ -5,20 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 import { RegisterPromoBanner } from "@/components/promotion/PromotionCTA";
 
-function PlanFeature({ enabled, text, highlight, bold }: { enabled?: boolean; text: string; highlight?: "orange" | "gray" | "yellow"; bold?: boolean }) {
-  const highlightColor = highlight === "orange" ? "text-orange-600 dark:text-orange-400" : highlight === "gray" ? "text-gray-600 dark:text-gray-300" : highlight === "yellow" ? "text-yellow-600 dark:text-yellow-400" : "";
-  return (
-    <div className="flex items-center gap-2">
-      {enabled ? (
-        <svg className="w-4.5 h-4.5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7"/></svg>
-      ) : (
-        <svg className="w-4.5 h-4.5 text-gray-300 dark:text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6"/></svg>
-      )}
-      <span className={`text-sm ${enabled ? (highlightColor || "text-gray-700 dark:text-gray-300") : "text-gray-400 dark:text-gray-500"} ${bold ? "font-semibold" : ""}`}>{text}</span>
-    </div>
-  );
-}
-
 interface FranchiseBrand {
   id: string;
   brandName: string;
@@ -161,11 +147,6 @@ export default function FranchisePage() {
             {ind.label}
           </button>
         ))}
-      </div>
-
-      {/* 프랜차이즈 등록 유도 배너 */}
-      <div className="mb-6">
-        <RegisterPromoBanner type="franchise" />
       </div>
 
       {/* 프리미엄 프랜차이즈 - 2열 그리드 */}
@@ -370,89 +351,9 @@ export default function FranchisePage() {
         </div>
       )}
 
-      {/* 기능 비교표 - 카드형 */}
-      <div className="mt-12 mb-8">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">프랜차이즈 등록 플랜</h2>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">우리 브랜드에 맞는 최적의 플랜을 선택하세요</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
-          {/* 브론즈 */}
-          <div className="rounded-2xl border border-orange-200 dark:border-orange-800 p-6 bg-white dark:bg-gray-800 hover:shadow-lg transition-all">
-            <div className="text-center mb-5">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 mb-3">BRONZE</span>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">브론즈</h3>
-              <p className="text-xs text-gray-400 mt-1 mb-3">브랜드 노출의 시작</p>
-              <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
-                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">30</span>
-                <span className="text-gray-500 text-sm">만원/월</span>
-              </div>
-            </div>
-            <div className="space-y-3 mb-6">
-              <PlanFeature enabled text="프랜차이즈 목록 노출" />
-              <PlanFeature enabled text="BRONZE 배지" highlight="orange" />
-              <PlanFeature enabled text="하단 프리미엄 영역" />
-              <PlanFeature enabled text="텍스트 브랜드 소개" />
-              <PlanFeature enabled text="문의 상담 기능" />
-              <PlanFeature enabled text="검색 우선 노출" highlight="orange" />
-            </div>
-            <button onClick={() => router.push("/pricing?tab=franchise")} className="w-full py-3 rounded-xl text-sm font-semibold border-2 border-orange-400 dark:border-orange-600 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors">등록하기</button>
-          </div>
-
-          {/* 실버 (인기) */}
-          <div className="rounded-2xl border-2 border-blue-500 dark:border-blue-400 p-6 bg-white dark:bg-gray-800 shadow-xl relative md:scale-[1.03]">
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="inline-block px-4 py-1 rounded-full text-xs font-bold bg-blue-600 text-white shadow-md">인기</span>
-            </div>
-            <div className="text-center mb-5">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 mb-3">SILVER</span>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">실버</h3>
-              <p className="text-xs text-gray-400 mt-1 mb-3">이미지로 브랜드 차별화</p>
-              <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
-                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">60</span>
-                <span className="text-gray-500 text-sm">만원/월</span>
-              </div>
-            </div>
-            <div className="space-y-3 mb-6">
-              <PlanFeature enabled text="프랜차이즈 목록 노출" />
-              <PlanFeature enabled text="SILVER 배지" highlight="gray" />
-              <PlanFeature enabled text="중단 프리미엄 영역" />
-              <PlanFeature enabled text="텍스트 + 이미지 3장" bold />
-              <PlanFeature enabled text="문의 상담 기능" />
-              <PlanFeature enabled text="비용 계산기" bold />
-              <PlanFeature enabled text="검색 상위 노출" highlight="gray" />
-            </div>
-            <button onClick={() => router.push("/pricing?tab=franchise")} className="w-full py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-md">등록하기</button>
-          </div>
-
-          {/* 골드 */}
-          <div className="rounded-2xl border-2 border-yellow-400 dark:border-yellow-600 p-6 bg-gradient-to-b from-yellow-50/80 to-white dark:from-yellow-950/30 dark:to-gray-800 relative hover:shadow-lg transition-all">
-            <div className="absolute top-3 right-3"><span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-500 text-white">BEST</span></div>
-            <div className="text-center mb-5">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 mb-3">GOLD</span>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">골드</h3>
-              <p className="text-xs text-gray-400 mt-1 mb-3">모든 기능 + 최상위 노출</p>
-              <div className="border-t border-yellow-100 dark:border-yellow-800 pt-3">
-                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">100</span>
-                <span className="text-gray-500 text-sm">만원/월</span>
-              </div>
-            </div>
-            <div className="space-y-3 mb-6">
-              <PlanFeature enabled text="프랜차이즈 목록 노출" />
-              <PlanFeature enabled text="GOLD 배지" highlight="yellow" />
-              <PlanFeature enabled text="최상단 프리미엄 영역" bold />
-              <PlanFeature enabled text="이미지 무제한 + 영상" bold />
-              <PlanFeature enabled text="문의 상담 기능" />
-              <PlanFeature enabled text="비용 계산기" />
-              <PlanFeature enabled text="메인페이지 노출" bold />
-              <PlanFeature enabled text="가맹점 지도" bold />
-              <PlanFeature enabled text="검색 최상위 노출" highlight="yellow" />
-            </div>
-            <button onClick={() => router.push("/pricing?tab=franchise")} className="w-full py-3 rounded-xl text-sm font-semibold bg-yellow-500 hover:bg-yellow-600 text-white transition-colors">등록하기</button>
-          </div>
-        </div>
-        <p className="text-center text-sm text-gray-400 dark:text-gray-500 mt-5">공정위 등록 브랜드는 자동으로 무료 목록에 노출됩니다</p>
+      {/* 하단 등록 유도 배너 */}
+      <div className="mt-10">
+        <RegisterPromoBanner type="franchise" />
       </div>
       </div>
     </div>
