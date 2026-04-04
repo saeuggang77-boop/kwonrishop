@@ -192,6 +192,22 @@ export async function GET(request: NextRequest) {
     }
 
     // Downgrade franchise brand tiers
+    // 다운그레이드 전 프랜차이즈 정보 조회 (알림용)
+    const franchiseBrands = await prisma.franchiseBrand.findMany({
+      where: {
+        tierExpiresAt: { lt: now },
+        tier: { not: "FREE" },
+        managerId: { not: null },
+      },
+      select: {
+        id: true,
+        managerId: true,
+        brandName: true,
+        tier: true,
+        manager: { select: { phone: true, name: true } },
+      },
+    });
+
     const franchiseTierDowngrade = await prisma.franchiseBrand.updateMany({
       where: {
         tierExpiresAt: {
@@ -207,7 +223,54 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // 프랜차이즈 다운그레이드 알림 생성
+    if (franchiseBrands.length > 0) {
+      const franchiseNotifications = franchiseBrands
+        .filter((fb) => fb.managerId)
+        .map((fb) => ({
+          userId: fb.managerId!,
+          type: "FRANCHISE_TIER_DOWNGRADE",
+          title: "프랜차이즈 구독이 만료되었습니다",
+          message: `${fb.brandName}의 ${fb.tier} 등급 혜택이 종료되어 FREE 등급으로 전환되었습니다. 구독을 연장하시려면 결제 페이지를 확인해주세요.`,
+          link: `/mypage`,
+        }));
+
+      if (franchiseNotifications.length > 0) {
+        await prisma.notification.createMany({
+          data: franchiseNotifications,
+        });
+
+        franchiseBrands.filter((fb) => fb.managerId).forEach((fb) => {
+          sendPushToUser(
+            fb.managerId!,
+            "프랜차이즈 구독이 만료되었습니다",
+            `${fb.brandName}의 ${fb.tier} 등급 혜택이 종료되었습니다.`,
+            `/mypage`
+          ).catch(() => {});
+
+          if (fb.manager?.phone) {
+            notifyPaymentExpiring(fb.manager.phone, `${fb.tier} 프랜차이즈 구독`, 0).catch(() => {});
+          }
+        });
+      }
+    }
+
     // Downgrade equipment tiers
+    // 다운그레이드 전 집기 정보 조회 (알림용)
+    const equipmentItems = await prisma.equipment.findMany({
+      where: {
+        tierExpiresAt: { lt: now },
+        tier: { not: "FREE" },
+      },
+      select: {
+        id: true,
+        userId: true,
+        title: true,
+        tier: true,
+        user: { select: { phone: true, name: true } },
+      },
+    });
+
     const equipmentTierDowngrade = await prisma.equipment.updateMany({
       where: {
         tierExpiresAt: {
@@ -222,6 +285,34 @@ export async function GET(request: NextRequest) {
         tierExpiresAt: null,
       },
     });
+
+    // 집기 다운그레이드 알림 생성
+    if (equipmentItems.length > 0) {
+      const equipmentNotifications = equipmentItems.map((eq) => ({
+        userId: eq.userId,
+        type: "EQUIPMENT_TIER_DOWNGRADE",
+        title: "집기장터 광고가 만료되었습니다",
+        message: `${eq.title}의 ${eq.tier} 등급 혜택이 종료되어 FREE 등급으로 전환되었습니다. 광고를 연장하시려면 결제 페이지를 확인해주세요.`,
+        link: `/equipment/${eq.id}`,
+      }));
+
+      await prisma.notification.createMany({
+        data: equipmentNotifications,
+      });
+
+      equipmentItems.forEach((eq) => {
+        sendPushToUser(
+          eq.userId,
+          "집기장터 광고가 만료되었습니다",
+          `${eq.title}의 ${eq.tier} 등급 혜택이 종료되었습니다.`,
+          `/equipment/${eq.id}`
+        ).catch(() => {});
+
+        if (eq.user?.phone) {
+          notifyPaymentExpiring(eq.user.phone, `${eq.tier} 집기장터 광고`, 0).catch(() => {});
+        }
+      });
+    }
 
     // Create notifications for each expired ad
     const notifications = expiredAds.map((ad: any) => {

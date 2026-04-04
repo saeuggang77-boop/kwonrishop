@@ -122,3 +122,50 @@ export async function PUT(
 
   return NextResponse.json(updated);
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  const post = await prisma.post.findUnique({
+    where: { id },
+    select: { authorId: true },
+  });
+
+  if (!post) {
+    return NextResponse.json({ error: "게시글을 찾을 수 없습니다." }, { status: 404 });
+  }
+
+  // 작성자 또는 관리자만 삭제 가능
+  if (post.authorId !== session.user.id) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    });
+    if (user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "삭제 권한이 없습니다." }, { status: 403 });
+    }
+  }
+
+  // 댓글 먼저 삭제 (대댓글 → 댓글 순)
+  await prisma.comment.deleteMany({
+    where: { post: { id }, parentId: { not: null } },
+  });
+  await prisma.comment.deleteMany({
+    where: { postId: id },
+  });
+  await prisma.post.delete({ where: { id } });
+
+  return NextResponse.json({ success: true });
+}

@@ -121,89 +121,49 @@ export default function AboutPage() {
                   <dt className="text-sm font-semibold text-gray-600 mb-1">
                     회사명
                   </dt>
-                  <dd className="text-lg text-gray-900">주식회사 권리샵</dd>
+                  <dd className="text-lg text-gray-900">씨이오</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-semibold text-gray-600 mb-1">
                     대표이사
                   </dt>
-                  <dd className="text-lg text-gray-900">[대표자명]</dd>
+                  <dd className="text-lg text-gray-900">박상만</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-semibold text-gray-600 mb-1">
                     사업자등록번호
                   </dt>
-                  <dd className="text-lg text-gray-900">[000-00-00000]</dd>
+                  <dd className="text-lg text-gray-900">408-70-43230</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-semibold text-gray-600 mb-1">
-                    설립일
+                    통신판매업
                   </dt>
-                  <dd className="text-lg text-gray-900">2024년</dd>
+                  <dd className="text-lg text-gray-900">제2023-서울동작-1252호</dd>
                 </div>
                 <div className="md:col-span-2">
                   <dt className="text-sm font-semibold text-gray-600 mb-1">
                     주소
                   </dt>
                   <dd className="text-lg text-gray-900">
-                    서울특별시 강남구 [상세주소]
+                    서울특별시 동작구 장승배기로4길 9
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-semibold text-gray-600 mb-1">
                     고객센터
                   </dt>
-                  <dd className="text-lg text-gray-900">1234-5678</dd>
+                  <dd className="text-lg text-gray-900">1588-7928</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-semibold text-gray-600 mb-1">
                     이메일
                   </dt>
                   <dd className="text-lg text-gray-900">
-                    support@kwonrishop.com
+                    samsungcu@naver.com
                   </dd>
                 </div>
               </dl>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-              함께하는 팀
-            </h2>
-            <p className="text-center text-gray-600 mb-12">
-              상가 거래 전문가들이 모여 최고의 서비스를 제공하기 위해 노력하고
-              있습니다.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Team member placeholders */}
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="text-center">
-                  <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <svg
-                      className="w-16 h-16 text-gray-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    [팀원 {i}]
-                  </h3>
-                  <p className="text-sm text-gray-600">[직책]</p>
-                </div>
-              ))}
             </div>
           </div>
         </div>

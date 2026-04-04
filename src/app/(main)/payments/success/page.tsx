@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -10,8 +10,13 @@ function SuccessContent() {
   const [confirming, setConfirming] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderInfo, setOrderInfo] = useState<any>(null);
+  const confirmedRef = useRef(false);
 
   useEffect(() => {
+    // 중복 실행 방지 (StrictMode, 새로고침 등)
+    if (confirmedRef.current) return;
+    confirmedRef.current = true;
+
     const paymentKey = searchParams.get("paymentKey");
     const orderId = searchParams.get("orderId");
     const amount = searchParams.get("amount");

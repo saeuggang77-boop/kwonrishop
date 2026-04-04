@@ -55,7 +55,7 @@ function CommunityContent() {
         {session && (
           <div className="flex justify-end mb-4">
             <Link
-              href="/community/write"
+              href={`/community/write${activeTag !== "전체" ? `?tag=${encodeURIComponent(activeTag)}` : ""}`}
               className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 transition-colors"
             >
               글쓰기

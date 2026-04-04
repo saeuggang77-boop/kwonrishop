@@ -252,13 +252,13 @@ export default function FAQPage() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <a
-              href="tel:1234-5678"
+              href="tel:1588-7928"
               className="px-5 py-2.5 bg-white text-blue-600 font-medium rounded-lg border border-blue-600 hover:bg-blue-50 transition-colors"
             >
-              전화 문의: 1234-5678
+              전화 문의: 1588-7928
             </a>
             <a
-              href="mailto:support@kwonrishop.com"
+              href="mailto:samsungcu@naver.com"
               className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               이메일 문의

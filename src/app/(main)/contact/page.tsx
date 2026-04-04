@@ -141,10 +141,10 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">전화 문의</h3>
                   <a
-                    href="tel:1234-5678"
+                    href="tel:1588-7928"
                     className="text-blue-600 dark:text-blue-400 hover:underline text-lg font-semibold"
                   >
-                    1234-5678
+                    1588-7928
                   </a>
                   <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
                     운영시간 내 연결 가능합니다
@@ -174,10 +174,10 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">이메일 문의</h3>
                   <a
-                    href="mailto:support@kwonrishop.com"
+                    href="mailto:samsungcu@naver.com"
                     className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                   >
-                    support@kwonrishop.com
+                    samsungcu@naver.com
                   </a>
                   <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
                     영업일 기준 24시간 내 답변
@@ -354,32 +354,32 @@ export default function ContactPage() {
               <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
                 회사명
               </span>
-              <span className="text-gray-600 dark:text-gray-400">주식회사 권리샵</span>
+              <span className="text-gray-600 dark:text-gray-400">씨이오</span>
             </div>
             <div className="flex">
               <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
                 대표이사
               </span>
-              <span className="text-gray-600 dark:text-gray-400">[대표자명]</span>
+              <span className="text-gray-600 dark:text-gray-400">박상만</span>
             </div>
             <div className="flex">
               <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
                 사업자등록번호
               </span>
-              <span className="text-gray-600 dark:text-gray-400">[000-00-00000]</span>
+              <span className="text-gray-600 dark:text-gray-400">408-70-43230</span>
             </div>
             <div className="flex">
               <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
                 통신판매업
               </span>
               <span className="text-gray-600 dark:text-gray-400">
-                제0000-서울강남-00000호
+                제2023-서울동작-1252호
               </span>
             </div>
             <div className="flex md:col-span-2">
               <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">주소</span>
               <span className="text-gray-600 dark:text-gray-400">
-                서울특별시 강남구 [상세주소]
+                서울특별시 동작구 장승배기로4길 9
               </span>
             </div>
           </div>

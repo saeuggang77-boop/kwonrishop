@@ -42,6 +42,7 @@ function PricingContent() {
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("LISTING");
   const [franchisePeriod, setFranchisePeriod] = useState<PeriodKey>("1m");
+  const [existingAd, setExistingAd] = useState<{ name: string; expiresAt: string | null } | null>(null);
 
   // URL 파라미터 또는 사용자 역할에 따라 기본 탭 선택
   useEffect(() => {
@@ -65,6 +66,34 @@ function PricingContent() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  // 기존 활성 광고 확인 (업그레이드 안내용)
+  useEffect(() => {
+    const listingId = searchParams.get("listingId");
+    const equipmentId = searchParams.get("equipmentId");
+    if (!session?.user || (!listingId && !equipmentId)) return;
+
+    fetch("/api/payments?limit=100")
+      .then((r) => r.json())
+      .then((data) => {
+        const targetId = listingId || equipmentId;
+        const targetKey = listingId ? "listing" : "equipment";
+        const active = data.payments?.find(
+          (p: any) =>
+            p.status === "PAID" &&
+            p[targetKey]?.id === targetId &&
+            p.product?.type === "PACKAGE" &&
+            (!p.expiresAt || new Date(p.expiresAt) > new Date())
+        );
+        if (active) {
+          setExistingAd({
+            name: active.product.name,
+            expiresAt: active.expiresAt,
+          });
+        }
+      })
+      .catch(() => {});
+  }, [session, searchParams]);
 
   const packageProducts = useMemo(
     () => products.filter((p) => {
@@ -187,6 +216,19 @@ function PricingContent() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-12">
+        {/* 기존 활성 광고 안내 */}
+        {existingAd && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+            <p className="text-amber-800 font-medium">
+              현재 &quot;{existingAd.name}&quot; 광고가 활성 중입니다
+              {existingAd.expiresAt && ` (${new Date(existingAd.expiresAt).toLocaleDateString("ko-KR")} 만료)`}
+            </p>
+            <p className="text-amber-700 text-sm mt-1">
+              다른 상품 구매 시 기존 광고는 즉시 종료되며 환불되지 않습니다.
+            </p>
+          </div>
+        )}
+
         {/* 프랜차이즈 기간 선택 */}
       {(activeTab === "FRANCHISE" || activeTab === "PARTNER") && (
         <div className="mb-8">

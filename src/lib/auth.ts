@@ -153,6 +153,15 @@ export const authOptions: NextAuthOptions = {
           token.roleSelected = !!dbUser.roleSelectedAt;
           token.verified = dbUser.businessVerification?.verified ?? false;
         }
+      } else if (token.id && !token.withdrawn) {
+        // 기존 토큰: 탈퇴 여부만 경량 체크 (매 요청)
+        const check = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { email: true, name: true },
+        });
+        if (!check || check.email?.includes("@withdrawn.local") || check.name === "탈퇴회원") {
+          return { ...token, id: null, role: null, withdrawn: true };
+        }
       }
       return token;
     },

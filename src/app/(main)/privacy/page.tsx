@@ -19,7 +19,7 @@ export default function PrivacyPage() {
       <div className="prose prose-sm max-w-none space-y-8 text-gray-700">
         <section>
           <p className="mb-4">
-            주식회사 권리샵(이하 "회사")은 개인정보보호법 제30조에 따라
+            씨이오(이하 "회사")는 개인정보보호법 제30조에 따라
             정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게
             처리할 수 있도록 하기 위하여 다음과 같이 개인정보처리방침을
             수립·공개합니다.
@@ -290,10 +290,10 @@ export default function PrivacyPage() {
           <div className="ml-4 mt-3 p-4 bg-gray-50 rounded-lg">
             <p className="font-semibold text-gray-900">개인정보 보호책임자</p>
             <ul className="mt-2 space-y-1 text-sm">
-              <li>성명: [책임자명]</li>
-              <li>직책: [직책]</li>
-              <li>연락처: privacy@kwonrishop.com</li>
-              <li>전화: 1234-5678</li>
+              <li>성명: 박상만</li>
+              <li>직책: 대표</li>
+              <li>연락처: samsungcu@naver.com</li>
+              <li>전화: 1588-7928</li>
             </ul>
           </div>
         </section>
@@ -311,7 +311,7 @@ export default function PrivacyPage() {
             <p className="font-semibold">개인정보 열람청구 접수·처리 부서</p>
             <ul className="mt-2 space-y-1 text-sm">
               <li>부서명: 고객지원팀</li>
-              <li>이메일: privacy@kwonrishop.com</li>
+              <li>이메일: samsungcu@naver.com</li>
             </ul>
           </div>
         </section>

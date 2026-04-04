@@ -40,10 +40,10 @@ function FailContent() {
           문제가 계속되면 고객센터로 문의해주세요
         </p>
         <a
-          href="mailto:support@kwonrishop.com"
+          href="mailto:samsungcu@naver.com"
           className="text-blue-600 text-sm hover:underline"
         >
-          support@kwonrishop.com
+          samsungcu@naver.com
         </a>
       </div>
     </div>

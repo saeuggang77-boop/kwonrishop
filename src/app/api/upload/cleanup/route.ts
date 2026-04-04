@@ -40,9 +40,8 @@ async function cleanupImages(urls: string[]): Promise<number> {
   for (const url of urls) {
     try {
       if (isS3Configured()) {
-        // S3에서 삭제
-        const key = url.replace(/^https?:\/\/[^/]+\//, ""); // URL에서 키 추출
-        await deleteFromS3(key);
+        // Vercel Blob에서 삭제 (전체 URL 전달)
+        await deleteFromS3(url);
         deletedCount++;
       } else {
         // 로컬 파일시스템에서 삭제

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         where: { id: session.user.id },
         data: { role: "BUYER", roleSelectedAt: new Date(), pendingRole: null },
       });
-      return NextResponse.json({ success: true, redirect: "/" });
+      return NextResponse.json({ success: true, redirect: "/listings" });
     }
 
     // SELLER, FRANCHISE, PARTNER는 pendingRole에 저장하고 사업자인증으로 이동

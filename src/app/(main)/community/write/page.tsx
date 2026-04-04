@@ -1,17 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 const BASE_TAGS = ["자유게시판", "양도후기", "사이트이용문의"];
 
-export default function CommunityWritePage() {
+function CommunityWriteContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [tag, setTag] = useState("자유게시판");
+  const initialTag = searchParams.get("tag");
+  const [tag, setTag] = useState(
+    initialTag && BASE_TAGS.includes(initialTag) ? initialTag : "자유게시판"
+  );
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
   const TAGS = isAdmin ? ["공지", ...BASE_TAGS] : BASE_TAGS;
   const [loading, setLoading] = useState(false);
@@ -122,5 +126,13 @@ export default function CommunityWritePage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function CommunityWritePage() {
+  return (
+    <Suspense>
+      <CommunityWriteContent />
+    </Suspense>
   );
 }

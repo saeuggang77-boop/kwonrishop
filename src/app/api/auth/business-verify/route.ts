@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
             brandName: cleanBusinessName || "미등록 브랜드",
             companyName: cleanBusinessName || "",
             businessNumber: cleanNumber,
-            industry: "",
+            industry: "기타",
           },
           select: { id: true, managerId: true, brandName: true },
         });

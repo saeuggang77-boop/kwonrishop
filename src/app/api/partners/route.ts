@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
     select: { role: true },
   });
 
-  if (user?.role !== "PARTNER") {
+  if (user?.role !== "PARTNER" && user?.role !== "ADMIN") {
     return NextResponse.json(
       { error: "협력업체 회원만 등록할 수 있습니다." },
       { status: 403 }

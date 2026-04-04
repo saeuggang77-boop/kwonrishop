@@ -32,8 +32,10 @@ body {
   font-family: var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
-/* Accessibility - Focus styles */
-*:focus-visible {
+/* Accessibility - Focus styles (폼 입력 요소만) */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }

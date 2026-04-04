@@ -271,6 +271,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 동일 상품 중복 결제 방어: 같은 상품에 이미 활성(PAID) 결제가 있으면 차단
+    const existingActive = await prisma.adPurchase.findFirst({
+      where: {
+        userId: session.user.id,
+        productId,
+        status: "PAID",
+        OR: [
+          { expiresAt: { gt: new Date() } },
+          { expiresAt: null },
+        ],
+      },
+    });
+    if (existingActive) {
+      return NextResponse.json(
+        { error: "이미 동일한 상품이 활성 상태입니다. 만료 후 다시 구매해주세요." },
+        { status: 409 }
+      );
+    }
+
+    // 처리 중인(PENDING) 동일 상품 주문 정리
+    await prisma.adPurchase.deleteMany({
+      where: {
+        userId: session.user.id,
+        productId,
+        status: "PENDING",
+      },
+    });
+
     // VAT 10% 적용 (10원 단위 반올림)
     const supplyPrice = product.price;
     const vatAmount = Math.round(supplyPrice * 0.1 / 10) * 10;

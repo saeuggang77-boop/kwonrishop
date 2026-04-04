@@ -113,10 +113,42 @@ export async function POST(request: NextRequest) {
 
     if (!tossResponse.ok) {
       console.error("Toss payment confirmation failed:", tossData);
+
+      // ALREADY_PROCESSED_PAYMENT: Toss에서 이미 승인된 결제 → 성공으로 처리
+      if (tossData.code === "ALREADY_PROCESSED_PAYMENT") {
+        // 우리 DB에서 주문 상태 확인
+        const recheckOrder = await prisma.adPurchase.findUnique({
+          where: { id: orderId },
+          include: { product: true },
+        });
+        if (recheckOrder?.status === "PAID") {
+          return NextResponse.json(
+            { alreadyProcessed: true },
+            { status: 409 }
+          );
+        }
+        // 아직 PAID가 아니면 (다른 요청이 처리 중) → 잠시 대기 후 재확인
+        await new Promise((r) => setTimeout(r, 2000));
+        const finalCheck = await prisma.adPurchase.findUnique({
+          where: { id: orderId },
+          select: { status: true },
+        });
+        if (finalCheck?.status === "PAID") {
+          return NextResponse.json(
+            { alreadyProcessed: true },
+            { status: 409 }
+          );
+        }
+        // 그래도 PENDING이면 에러
+        return NextResponse.json(
+          { error: "결제 처리 중입니다. 잠시 후 마이페이지에서 확인해주세요." },
+          { status: 400 }
+        );
+      }
+
       // Toss 내부 에러 메시지를 사용자에게 직접 노출하지 않음
       const userMessage = (() => {
         switch (tossData.code) {
-          case "ALREADY_PROCESSED_PAYMENT": return "이미 처리된 결제입니다.";
           case "PROVIDER_ERROR": return "결제 서비스에 일시적 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
           case "EXCEED_MAX_CARD_INSTALLMENT_PLAN": return "할부 개월 수가 초과되었습니다.";
           case "NOT_ALLOWED_POINT_USE": return "포인트 사용이 불가한 결제입니다.";
@@ -173,6 +205,36 @@ export async function POST(request: NextRequest) {
     // Tier activation based on categoryScope
     const categoryScope = order.product.categoryScope;
     const features = order.product.features as Record<string, any>;
+
+    // 업그레이드: 같은 대상에 기존 활성 PACKAGE 광고가 있으면 만료 처리 (환불 없음)
+    if (order.product.type === "PACKAGE") {
+      const expireWhere: any = {
+        userId: session.user.id,
+        status: "PAID",
+        id: { not: order.id },
+        product: { type: "PACKAGE" },
+      };
+
+      if (order.listingId) {
+        expireWhere.listingId = order.listingId;
+      } else if (order.equipmentId) {
+        expireWhere.equipmentId = order.equipmentId;
+      } else if (categoryScope === "FRANCHISE" || categoryScope === "PARTNER") {
+        expireWhere.product = { type: "PACKAGE", categoryScope };
+      }
+
+      const oldAds = await prisma.adPurchase.findMany({
+        where: expireWhere,
+        select: { id: true },
+      });
+
+      if (oldAds.length > 0) {
+        await prisma.adPurchase.updateMany({
+          where: { id: { in: oldAds.map((a) => a.id) } },
+          data: { status: "EXPIRED" },
+        });
+      }
+    }
     const badge = features?.badge as string | undefined;
 
     if (categoryScope === "FRANCHISE") {

@@ -46,6 +46,17 @@ export default function CommunityDetailClient() {
       });
   }, [params.id, router]);
 
+  async function deleteComment(commentId: string) {
+    if (!confirm("댓글을 삭제하시겠습니까?")) return;
+    const res = await fetch(`/api/community/${params.id}/comments?commentId=${commentId}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
+      const data = await fetch(`/api/community/${params.id}`).then((r) => r.json());
+      setPost(data);
+    }
+  }
+
   async function submitComment(parentId?: string) {
     const content = parentId ? replyContent : comment;
     if (!content.trim()) return;
@@ -192,12 +203,22 @@ export default function CommunityDetailClient() {
                   </div>
                   <p className="text-sm text-gray-700 mt-1">{c.content}</p>
                   {session && (
-                    <button
-                      onClick={() => setReplyTo(replyTo === c.id ? null : c.id)}
-                      className="text-xs text-gray-400 mt-1 hover:text-blue-500"
-                    >
-                      답글
-                    </button>
+                    <div className="flex gap-3 mt-1">
+                      <button
+                        onClick={() => setReplyTo(replyTo === c.id ? null : c.id)}
+                        className="text-xs text-gray-400 hover:text-blue-500"
+                      >
+                        답글
+                      </button>
+                      {session.user?.id === c.author.id && (
+                        <button
+                          onClick={() => deleteComment(c.id)}
+                          className="text-xs text-gray-400 hover:text-red-500"
+                        >
+                          삭제
+                        </button>
+                      )}
+                    </div>
                   )}
 
                   {/* 답글 입력 */}
@@ -235,6 +256,14 @@ export default function CommunityDetailClient() {
                           </span>
                         </div>
                         <p className="text-sm text-gray-700 mt-0.5 break-words">{r.content}</p>
+                        {session?.user?.id === r.author.id && (
+                          <button
+                            onClick={() => deleteComment(r.id)}
+                            className="text-xs text-gray-400 mt-1 hover:text-red-500"
+                          >
+                            삭제
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}

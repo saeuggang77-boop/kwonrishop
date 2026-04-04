@@ -124,7 +124,7 @@ export default function Header() {
           {session && (
             <Link
               href="/chat"
-              className="hover:text-gray-900 dark:hover:text-gray-100 relative"
+              className="hover:text-gray-900 dark:hover:text-gray-100 outline-none relative"
               aria-current={pathname === "/chat" ? "page" : undefined}
             >
               채팅
