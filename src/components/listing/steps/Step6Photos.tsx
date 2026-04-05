@@ -339,6 +339,20 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
             <span className="text-sm text-gray-400 dark:text-gray-500">{data.documents.length}/20</span>
           </div>
 
+          <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <div className="flex gap-2">
+              <svg className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+              </svg>
+              <div>
+                <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">개인정보 보호 안내</p>
+                <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                  업로드 전 사업자번호, 대표자 이름, 주민등록번호 등 <strong>개인정보를 가리고</strong> 올려주세요. 증빙자료는 매물상세 페이지에서 가입된 회원만 열람할 수 있습니다.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <input
             ref={docInputRef}
             type="file"

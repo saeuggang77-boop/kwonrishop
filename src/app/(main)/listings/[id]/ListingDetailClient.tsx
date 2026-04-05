@@ -13,6 +13,7 @@ import { toast } from "@/lib/toast";
 import { formatPhone } from "@/lib/utils";
 import { useCompareStore } from "@/store/compareStore";
 import { ListingUpsellBanner } from "@/components/promotion/PromotionCTA";
+import LockedSection from "@/components/listing/LockedSection";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
   loading: () => <div className="py-4 border-b border-gray-100 dark:border-gray-700"><div className="h-20 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" /></div>,
@@ -95,6 +96,7 @@ interface ListingDetail {
   category: { id?: string; name: string; icon: string } | null;
   subCategory: { name: string } | null;
   images: { id: string; url: string; type: string }[];
+  documents: { id: string; url: string; type: string }[];
   user: { id: string; name: string | null; image: string | null; phone: string | null; createdAt: string; businessVerified?: boolean };
   _count: { favorites: number; chatRooms: number };
   featuredTier?: string;
@@ -918,6 +920,7 @@ export default function ListingDetailClient() {
         let cumulativePct = 0;
 
         return (
+          <LockedSection isLocked={!session} message="회원가입하고 매출·수익 정보를 확인하세요">
           <Section title="평균 매출정보">
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">허위 기재 시 원아웃 제도로 영구 정지 당할 수 있습니다.</p>
             <div className="flex flex-col md:flex-row items-center gap-6">
@@ -1015,7 +1018,31 @@ export default function ListingDetailClient() {
                 </p>
               </div>
             )}
+
+            {/* 매출 증빙자료 */}
+            {listing.documents && listing.documents.length > 0 && (
+              <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">매출 증빙자료</h4>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold rounded">
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    매출인증
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                  {listing.documents.map((doc, i) => (
+                    <div key={doc.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 cursor-pointer hover:border-navy-400 transition-colors" onClick={() => window.open(doc.url, '_blank')}>
+                      <Image src={doc.url} alt={`매출 증빙 ${i + 1}`} fill className="object-cover" sizes="(max-width:640px) 25vw, 20vw" />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">클릭하면 원본 크기로 볼 수 있습니다</p>
+              </div>
+            )}
           </Section>
+          </LockedSection>
         );
       })()}
 

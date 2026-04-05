@@ -12,6 +12,10 @@ const StartupPartnerSection = dynamic(() => import("@/components/listing/Startup
   ssr: false,
 });
 
+const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
+  loading: () => <div className="h-80 bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
+});
+
 interface Partner {
   id: string;
   companyName: string;
@@ -251,12 +255,7 @@ export default function PartnerDetailClient() {
       {partner.latitude && partner.longitude && (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">위치</h3>
-          <div id="map" className="w-full h-80 rounded-xl bg-gray-100 dark:bg-gray-700">
-            {/* KakaoMap component can be integrated here later */}
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              지도 표시 영역 (위도: {partner.latitude}, 경도: {partner.longitude})
-            </div>
-          </div>
+          <KakaoMap latitude={partner.latitude} longitude={partner.longitude} level={3} className="h-80" showInfoWindow={true} address={partner.addressRoad || ""} />
         </div>
       )}
 
