@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import { RegisterPromoBanner } from "@/components/promotion/PromotionCTA";
+import { SafeTradeBanner } from "@/components/equipment/SafeTradeGuide";
 
 interface Equipment {
   id: string;
@@ -223,6 +224,9 @@ function EquipmentListContent() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
+
+      {/* 안전거래 가이드 배너 */}
+      <SafeTradeBanner />
 
       {/* 필터 바 */}
       <form onSubmit={handleSearch} className="flex flex-wrap gap-2 mb-10">
