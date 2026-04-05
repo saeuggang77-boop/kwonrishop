@@ -18,7 +18,8 @@ interface AdminListing {
 const STATUS_OPTIONS = [
   { value: "", label: "전체" },
   { value: "ACTIVE", label: "활성" },
-  { value: "PENDING", label: "대기" },
+  { value: "DRAFT", label: "임시저장" },
+  { value: "EXPIRED", label: "만료" },
   { value: "SOLD", label: "판매완료" },
   { value: "DELETED", label: "삭제됨" },
 ];

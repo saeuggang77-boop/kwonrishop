@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { validateOrigin } from "@/lib/csrf";
+import { sanitizeInput, sanitizeHtml } from "@/lib/sanitize";
 
 export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
@@ -37,10 +38,10 @@ export async function POST(req: NextRequest) {
     // 문의 생성
     const inquiry = await prisma.contactInquiry.create({
       data: {
-        name: name.trim(),
+        name: sanitizeInput(name),
         email: email.trim().toLowerCase(),
-        subject: subject.trim(),
-        message: message.trim(),
+        subject: sanitizeInput(subject),
+        message: sanitizeHtml(message),
       },
     });
 

@@ -91,7 +91,7 @@ export async function middleware(req: NextRequest) {
       "Content-Security-Policy",
       [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daumcdn.net https://cdn.vercel-insights.com https://*.kakao.com https://js.tosspayments.com https://www.googletagmanager.com https://www.gstatic.com",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.daumcdn.net https://*.kakaocdn.net https://cdn.vercel-insights.com https://*.kakao.com https://js.tosspayments.com https://www.googletagmanager.com https://www.gstatic.com",
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
         "img-src 'self' data: blob: https: http:",
         "font-src 'self' data: https://cdn.jsdelivr.net",

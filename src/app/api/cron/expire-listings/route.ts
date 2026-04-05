@@ -39,6 +39,15 @@ export async function GET(request: NextRequest) {
           { expiresAt: null },
           { expiresAt: { lt: new Date() } },
         ],
+        // 활성 유료 광고가 있는 매물은 만료시키지 않음
+        NOT: {
+          adPurchases: {
+            some: {
+              status: "PAID",
+              expiresAt: { gt: new Date() },
+            },
+          },
+        },
       },
       select: {
         id: true,

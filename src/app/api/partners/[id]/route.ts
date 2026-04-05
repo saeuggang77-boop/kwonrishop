@@ -86,7 +86,13 @@ export async function PUT(
     return NextResponse.json({ error: "협력업체를 찾을 수 없습니다." }, { status: 404 });
   }
 
-  if (partner.userId !== session.user.id) {
+  // 소유자 또는 관리자 확인
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
+
+  if (partner.userId !== session.user.id && user?.role !== "ADMIN") {
     return NextResponse.json(
       { error: "본인의 업체만 수정할 수 있습니다." },
       { status: 403 }

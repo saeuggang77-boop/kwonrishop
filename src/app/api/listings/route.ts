@@ -151,11 +151,12 @@ export async function GET(req: NextRequest) {
   if (brandType) where.brandType = brandType;
   if (premiumNone === "true") where.premiumNone = true;
 
-  // Build OR conditions array for keyword and region filters
-  const orConditions: any[] = [];
+  // Build keyword and region filters (AND relationship between them)
+  const keywordConditions: any[] = [];
+  const regionConditions: any[] = [];
 
   if (keyword) {
-    orConditions.push(
+    keywordConditions.push(
       { storeName: { contains: keyword, mode: "insensitive" } },
       { description: { contains: keyword, mode: "insensitive" } },
       { addressRoad: { contains: keyword, mode: "insensitive" } },
@@ -163,16 +164,26 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Region filter (new) - search both road and jibun addresses
+  // Region filter - search both road and jibun addresses
   if (region) {
-    orConditions.push(
+    regionConditions.push(
       { addressRoad: { contains: region, mode: "insensitive" } },
       { addressJibun: { contains: region, mode: "insensitive" } }
     );
   }
 
-  if (orConditions.length > 0) {
-    where.OR = orConditions;
+  // keyword AND region (not OR)
+  if (keywordConditions.length > 0 && regionConditions.length > 0) {
+    const existingAnd = Array.isArray(where.AND) ? where.AND : [];
+    where.AND = [
+      ...existingAnd,
+      { OR: keywordConditions },
+      { OR: regionConditions },
+    ];
+  } else if (keywordConditions.length > 0) {
+    where.OR = keywordConditions;
+  } else if (regionConditions.length > 0) {
+    where.OR = regionConditions;
   }
 
   // New advanced filters for premium range (DB stores in 만원 units, no conversion needed)

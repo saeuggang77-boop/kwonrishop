@@ -19,9 +19,9 @@ interface AdminReport {
 const STATUS_OPTIONS = [
   { value: "", label: "전체" },
   { value: "PENDING", label: "대기중" },
-  { value: "REVIEWING", label: "검토중" },
+  { value: "REVIEWED", label: "검토중" },
   { value: "RESOLVED", label: "처리완료" },
-  { value: "REJECTED", label: "기각" },
+  { value: "DISMISSED", label: "기각" },
 ];
 
 export default function AdminReportsPage() {
@@ -137,11 +137,13 @@ export default function AdminReportsPage() {
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         report.status === "PENDING"
                           ? "bg-yellow-100 text-yellow-800"
-                          : report.status === "REVIEWING"
+                          : report.status === "REVIEWED"
                             ? "bg-blue-100 text-blue-800"
                             : report.status === "RESOLVED"
                               ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
+                              : report.status === "DISMISSED"
+                                ? "bg-gray-100 text-gray-800"
+                                : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {report.status}
@@ -154,13 +156,13 @@ export default function AdminReportsPage() {
                     <div className="flex gap-2">
                       {report.status === "PENDING" && (
                         <button
-                          onClick={() => handleStatusChange(report.id, "REVIEWING")}
+                          onClick={() => handleStatusChange(report.id, "REVIEWED")}
                           className="px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors"
                         >
                           검토중
                         </button>
                       )}
-                      {report.status === "REVIEWING" && (
+                      {report.status === "REVIEWED" && (
                         <>
                           <button
                             onClick={() => handleStatusChange(report.id, "RESOLVED")}
@@ -195,7 +197,7 @@ export default function AdminReportsPage() {
                             </button>
                           )}
                           <button
-                            onClick={() => handleStatusChange(report.id, "REJECTED")}
+                            onClick={() => handleStatusChange(report.id, "DISMISSED")}
                             className="px-3 py-1 bg-gray-600 text-white text-xs rounded-lg hover:bg-gray-700 transition-colors"
                           >
                             기각

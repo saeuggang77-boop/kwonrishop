@@ -51,7 +51,7 @@ function tierLabel(tier: string | null | undefined): string {
 }
 
 function RecentlyViewedSection() {
-  const [recentListings, setRecentListings] = useState<Array<{id: string; storeName: string; deposit: number; monthlyRent: number; image?: string}>>([]);
+  const [recentListings, setRecentListings] = useState<Array<{id: string; storeName: string; deposit: number; monthlyRent: number; image?: string; imageUrl?: string}>>([]);
 
   useEffect(() => {
     try {
@@ -75,13 +75,13 @@ function RecentlyViewedSection() {
         {recentListings.map((item) => (
           <Link key={item.id} href={`/listings/${item.id}`} className="flex-shrink-0 w-32">
             <div className="w-32 h-24 bg-gray-100 dark:bg-gray-800 rounded-lg mb-1.5 overflow-hidden">
-              {item.image && (
-                <Image src={item.image} alt={item.storeName || "매물"} width={128} height={96} className="w-full h-full object-cover" />
+              {(item.image || item.imageUrl) && (
+                <Image src={item.image || item.imageUrl || ""} alt={item.storeName || "매물"} width={128} height={96} className="w-full h-full object-cover" />
               )}
             </div>
             <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">{item.storeName || "매물"}</p>
             <p className="text-xs text-navy-700 dark:text-navy-400 font-semibold">
-              보 {(item.deposit / 10000).toLocaleString()} / 월 {item.monthlyRent}
+              보 {item.deposit?.toLocaleString()}만 / 월 {item.monthlyRent?.toLocaleString()}만
             </p>
           </Link>
         ))}
