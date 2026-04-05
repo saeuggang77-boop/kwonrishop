@@ -47,6 +47,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       posts: [...notices, ...posts],
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    }, {
+      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
     });
   }
 
@@ -66,6 +68,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     posts,
     pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+  }, {
+    headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
   });
 }
 

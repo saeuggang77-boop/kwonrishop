@@ -122,7 +122,9 @@ export async function GET(req: NextRequest) {
       return aOrder - bOrder;
     });
 
-    return NextResponse.json({ listings: withTier, featured: true });
+    return NextResponse.json({ listings: withTier, featured: true }, {
+      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
+    });
   }
 
   // 지도 bounds 필터
