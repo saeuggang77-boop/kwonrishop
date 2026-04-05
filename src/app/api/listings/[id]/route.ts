@@ -141,7 +141,11 @@ export async function GET(
     user: safeUser,
   };
 
-  return NextResponse.json(result);
+  return NextResponse.json(result, {
+    headers: {
+      'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+    },
+  });
 }
 
 // 매물 수정 (소유자만)

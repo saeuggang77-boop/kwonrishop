@@ -13,30 +13,31 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const equipment = await prisma.equipment.findUnique({
-    where: { id },
-    include: {
-      images: { orderBy: { sortOrder: "asc" } },
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          role: true,
-          businessVerification: {
-            select: { verified: true },
+  // equipment + session 병렬 조회
+  const [equipment, session] = await Promise.all([
+    prisma.equipment.findUnique({
+      where: { id },
+      include: {
+        images: { orderBy: { sortOrder: "asc" } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            role: true,
+            businessVerification: {
+              select: { verified: true },
+            },
           },
         },
       },
-    },
-  });
+    }),
+    getServerSession(authOptions),
+  ]);
 
   if (!equipment || equipment.status === "DELETED") {
     return NextResponse.json({ error: "집기를 찾을 수 없습니다." }, { status: 404 });
   }
-
-  // 세션 확인 (선택적 - 조회수 스킵 및 비활성 집기 접근 제어용)
-  const session = await getServerSession(authOptions);
 
   // 비활성 집기는 소유자만 조회 가능
   if (equipment.status !== "ACTIVE" && equipment.status !== "SOLD") {
@@ -45,15 +46,13 @@ export async function GET(
     }
   }
 
-  // 조회수 증가 (소유자 본인 조회 제외)
-  let viewCount = equipment.viewCount;
-  if (!session?.user?.id || session.user.id !== equipment.userId) {
-    const updated = await prisma.equipment.update({
+  // 조회수 증가 (소유자 본인 조회 제외, fire-and-forget)
+  const isOwner = session?.user?.id === equipment.userId;
+  if (!isOwner) {
+    prisma.equipment.update({
       where: { id },
       data: { viewCount: { increment: 1 } },
-      select: { viewCount: true },
-    });
-    viewCount = updated.viewCount;
+    }).catch(() => {});
   }
 
   // Check if current user has favorited
@@ -72,8 +71,12 @@ export async function GET(
 
   return NextResponse.json({
     ...equipment,
-    viewCount,
+    viewCount: isOwner ? equipment.viewCount : equipment.viewCount + 1,
     favorited,
+  }, {
+    headers: {
+      'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+    },
   });
 }
 

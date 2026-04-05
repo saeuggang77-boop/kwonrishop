@@ -39,16 +39,19 @@ export async function GET(
     }
   }
 
-  // 조회수 증가 (atomic)
-  const updated = await prisma.partnerService.update({
+  // 조회수 증가 (fire-and-forget, 응답 차단하지 않음)
+  prisma.partnerService.update({
     where: { id },
     data: { viewCount: { increment: 1 } },
-    select: { viewCount: true },
-  });
+  }).catch(() => {});
 
   return NextResponse.json({
     ...partner,
-    viewCount: updated.viewCount,
+    viewCount: partner.viewCount + 1,
+  }, {
+    headers: {
+      'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+    },
   });
 }
 
