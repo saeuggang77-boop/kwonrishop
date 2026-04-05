@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { toast } from "@/lib/toast";
 
@@ -224,7 +225,7 @@ function PricingContent() {
               {existingAd.expiresAt && ` (${new Date(existingAd.expiresAt).toLocaleDateString("ko-KR")} 만료)`}
             </p>
             <p className="text-amber-700 text-sm mt-1">
-              다른 상품 구매 시 기존 광고는 즉시 종료되며 환불되지 않습니다.
+              다른 상품 구매 시 기존 광고는 즉시 종료되며 환불되지 않습니다. 자세한 내용은 <Link href="/terms" target="_blank" className="text-amber-900 underline">이용약관</Link>을 확인해주세요.
             </p>
           </div>
         )}

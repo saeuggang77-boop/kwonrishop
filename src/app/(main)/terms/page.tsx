@@ -177,7 +177,88 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            제9조 (면책조항)
+            제9조 (유료 서비스)
+          </h2>
+          <ol className="list-decimal list-inside space-y-2">
+            <li>
+              회사는 매물 광고 상품(VIP, 프리미엄, 베이직), 프랜차이즈 광고,
+              협력업체 광고, 집기 광고, 끌어올리기 등 유료 서비스(이하
+              &quot;유료 서비스&quot;)를 제공합니다.
+            </li>
+            <li>
+              유료 서비스의 종류, 이용 요금, 이용 기간 등은 해당 서비스
+              페이지에 별도로 게시합니다.
+            </li>
+            <li>
+              회원은 회사가 정한 결제 수단(신용카드, 계좌이체 등)을 통해
+              유료 서비스를 구매할 수 있습니다.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            제10조 (청약철회 및 환불)
+          </h2>
+          <ol className="list-decimal list-inside space-y-2">
+            <li>
+              회원은 유료 서비스를 구매한 날로부터 7일 이내에 청약철회를
+              요청할 수 있습니다. 단, 서비스 이용이 개시된 경우(광고 노출이
+              시작된 경우) 아래 기준에 따릅니다.
+            </li>
+            <li>
+              환불 기준은 다음과 같습니다.
+              <ul className="list-disc list-inside ml-6 mt-2 space-y-1">
+                <li>구매 후 광고 노출 시작 전: 전액 환불</li>
+                <li>광고 노출이 시작된 후: 환불 불가</li>
+                <li>
+                  끌어올리기 등 즉시 소모되는 서비스: 사용 후 환불 불가
+                </li>
+              </ul>
+            </li>
+            <li>
+              환불 요청은 고객센터(문의하기 페이지) 또는 이메일을 통해
+              접수할 수 있으며, 접수일로부터 영업일 기준 3일 이내에
+              처리됩니다.
+            </li>
+            <li>
+              환불은 원래 결제 수단으로 진행되며, 결제 수단에 따라 환불
+              소요 기간이 상이할 수 있습니다.
+            </li>
+            <li>
+              회원의 귀책사유(약관 위반, 허위 매물 등록 등)로 서비스가
+              중단된 경우에는 환불되지 않습니다.
+            </li>
+            <li>
+              다른 상품으로 업그레이드 시 기존 광고는 즉시 종료되며, 기존
+              상품에 대한 환불은 이루어지지 않습니다.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            제11조 (결제 및 과오납금)
+          </h2>
+          <ol className="list-decimal list-inside space-y-2">
+            <li>
+              유료 서비스 결제 시 회원은 본인 명의의 결제 수단을 사용하여야
+              합니다.
+            </li>
+            <li>
+              과오납금이 발생한 경우 회사는 확인 후 전액 환불합니다.
+            </li>
+            <li>
+              회사의 귀책사유로 과오납금이 발생한 경우 전액을 환불하며,
+              회원의 귀책사유인 경우 환불에 소요되는 비용은 회원이
+              부담합니다.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            제12조 (면책조항)
           </h2>
           <ol className="list-decimal list-inside space-y-2">
             <li>
@@ -197,7 +278,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            제10조 (개인정보보호)
+            제13조 (개인정보보호)
           </h2>
           <p>
             회사는 관계법령이 정하는 바에 따라 회원의 개인정보를 보호하기 위해
@@ -208,7 +289,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            제11조 (분쟁해결)
+            제14조 (분쟁해결)
           </h2>
           <ol className="list-decimal list-inside space-y-2">
             <li>
@@ -228,7 +309,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            제12조 (준거법 및 재판관할)
+            제15조 (준거법 및 재판관할)
           </h2>
           <p>
             본 약관의 해석 및 회사와 회원 간의 분쟁에 대하여는 대한민국 법을

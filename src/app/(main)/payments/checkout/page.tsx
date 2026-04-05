@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import TossPayment from "@/components/payments/TossPayment";
 
 function CheckoutContent() {
@@ -29,6 +30,14 @@ function CheckoutContent() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
         결제하기
       </h1>
+
+      <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          결제 시{" "}
+          <Link href="/terms" target="_blank" className="text-navy-600 dark:text-navy-400 underline">이용약관</Link>
+          에 동의하는 것으로 간주됩니다. 광고 노출이 시작된 후에는 환불이 불가합니다.
+        </p>
+      </div>
 
       <TossPayment
         orderId={orderId}
