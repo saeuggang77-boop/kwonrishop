@@ -13,7 +13,7 @@ export async function POST(
 ) {
   try {
     // Rate limiting: 5 inquiries per minute
-    const limiter = rateLimitRequest(request, 5, 60000);
+    const limiter = rateLimitRequest(request, 10, 60000);
     if (!limiter.success) {
       return NextResponse.json(
         { error: "문의 요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },
