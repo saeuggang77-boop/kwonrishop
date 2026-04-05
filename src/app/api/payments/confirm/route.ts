@@ -307,6 +307,21 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // SINGLE bump: 즉시 bumpedAt 업데이트 (단건 끌어올리기)
+    if (order.product.type === "SINGLE" && features?.bumpCount) {
+      if (order.listingId) {
+        await prisma.listing.update({
+          where: { id: order.listingId },
+          data: { bumpedAt: now },
+        });
+      } else if (order.equipmentId) {
+        await prisma.equipment.update({
+          where: { id: order.equipmentId },
+          data: { bumpedAt: now },
+        });
+      }
+    }
+
     // SUBSCRIPTION type: Create BumpSubscription
     if (order.product.type === "SUBSCRIPTION") {
       const frequency = features.frequency as any;
