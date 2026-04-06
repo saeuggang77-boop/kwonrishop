@@ -207,6 +207,10 @@ model Listing {
   // Step 6: 연락처
   contactPublic Boolean @default(false)
 
+  // 광고 등급 (결제 시 설정, 만료 시 FREE로 복원)
+  tier          PartnerTier @default(FREE)
+  tierExpiresAt DateTime?
+
   // 메타
   viewCount     Int       @default(0)
   favoriteCount Int       @default(0)
@@ -233,6 +237,7 @@ model Listing {
   @@index([categoryId, subCategoryId])
   @@index([status, bumpedAt])
   @@index([status, createdAt])
+  @@index([status, tier])
   @@index([latitude, longitude])
 }
 

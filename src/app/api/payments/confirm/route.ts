@@ -305,6 +305,28 @@ export async function POST(request: NextRequest) {
           tierExpiresAt: order.product.duration ? expiresAt : null,
         },
       });
+    } else if (categoryScope === "LISTING" && order.listingId) {
+      const listingBadge = features?.badge as string | undefined;
+      const listingTierMap: Record<string, string> = {
+        "베이직": "BASIC",
+        "프리미엄": "PREMIUM",
+        "VIP": "VIP",
+      };
+      let newTier = listingBadge ? listingTierMap[listingBadge] : undefined;
+      if (!newTier) {
+        const productName = order.product.name;
+        if (productName.includes("VIP")) newTier = "VIP";
+        else if (productName.includes("프리미엄")) newTier = "PREMIUM";
+        else newTier = "BASIC";
+      }
+
+      await prisma.listing.update({
+        where: { id: order.listingId },
+        data: {
+          tier: newTier as any,
+          tierExpiresAt: order.product.duration ? expiresAt : null,
+        },
+      });
     }
 
     // SINGLE bump: 즉시 bumpedAt 업데이트 (단건 끌어올리기)

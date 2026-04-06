@@ -41,18 +41,15 @@ export async function GET(req: NextRequest) {
     const featuredListings = await prisma.listing.findMany({
       where: {
         status: "ACTIVE",
-        adPurchases: {
-          some: {
-            status: "PAID",
-            expiresAt: { gt: new Date() },
-          },
-        },
+        tier: { not: "FREE" },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [
+        { tier: "desc" },
+        { createdAt: "desc" },
+      ],
       take: 10,
       select: {
         id: true,
-        userId: true,
         status: true,
         addressRoad: true,
         addressJibun: true,
@@ -74,6 +71,7 @@ export async function GET(req: NextRequest) {
         favoriteCount: true,
         createdAt: true,
         bumpedAt: true,
+        tier: true,
         category: { select: { name: true, icon: true } },
         subCategory: { select: { name: true } },
         images: {
@@ -81,46 +79,14 @@ export async function GET(req: NextRequest) {
           orderBy: { sortOrder: "asc" },
           select: { url: true },
         },
-        adPurchases: {
-          where: {
-            status: "PAID",
-            expiresAt: { gt: new Date() },
-          },
-          select: { product: { select: { name: true, features: true } } },
-          take: 1,
-          orderBy: { createdAt: "desc" },
-        },
         _count: { select: { documents: true } },
       },
     });
 
-    // Add featuredTier and sort by tier level (reviewStats 제거)
-    const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2 };
-    const withTier = featuredListings.map((l) => {
-      const purchase = l.adPurchases[0];
-      const productFeatures = purchase?.product?.features as Record<string, any> | undefined;
-      const productName = purchase?.product?.name || "";
-      const badge = productFeatures?.badge as string | undefined;
-      let tier = "BASIC";
-      if (badge) {
-        const badgeMap: Record<string, string> = { "VIP": "VIP", "프리미엄": "PREMIUM", "베이직": "BASIC" };
-        tier = badgeMap[badge] || "BASIC";
-      } else if (productName) {
-        if (productName.includes("VIP")) tier = "VIP";
-        else if (productName.includes("프리미엄")) tier = "PREMIUM";
-        else tier = "BASIC";
-      }
-      return {
-        ...l,
-        featuredTier: tier,
-        adPurchases: undefined,
-        userId: undefined,
-      };
-    }).sort((a, b) => {
-      const aOrder = tierOrder[a.featuredTier] ?? 99;
-      const bOrder = tierOrder[b.featuredTier] ?? 99;
-      return aOrder - bOrder;
-    });
+    const withTier = featuredListings.map((l) => ({
+      ...l,
+      featuredTier: l.tier,
+    }));
 
     return NextResponse.json({ listings: withTier, featured: true }, {
       headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
@@ -231,8 +197,9 @@ export async function GET(req: NextRequest) {
   } else if (sort === "popular") {
     orderBy = { viewCount: "desc" };
   } else {
-    // latest: bumpedAt DESC NULLS LAST, then createdAt DESC
+    // latest: tier DESC (VIP→PREMIUM→BASIC→FREE), bumpedAt DESC NULLS LAST, then createdAt DESC
     orderBy = [
+      { tier: "desc" },
       { bumpedAt: { sort: "desc", nulls: "last" } },
       { createdAt: "desc" },
     ];
@@ -270,19 +237,11 @@ export async function GET(req: NextRequest) {
         bumpedAt: true,
         category: { select: { name: true, icon: true } },
         subCategory: { select: { name: true } },
+        tier: true,
         images: {
           take: 1,
           orderBy: { sortOrder: "asc" },
           select: { url: true },
-        },
-        adPurchases: {
-          where: {
-            status: "PAID",
-            expiresAt: { gt: new Date() },
-          },
-          select: { product: { select: { name: true, features: true } } },
-          take: 1,
-          orderBy: { createdAt: "desc" as const },
         },
         _count: { select: { documents: true } },
       },
@@ -290,38 +249,11 @@ export async function GET(req: NextRequest) {
     prisma.listing.count({ where }),
   ]);
 
-  // reviewStats 제거
-  const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2, FREE: 3 };
-  const listingsWithTier = listings.map((l: any) => {
-    const purchase = l.adPurchases?.[0];
-    const productFeatures = purchase?.product?.features as Record<string, any> | undefined;
-    const productName = purchase?.product?.name || "";
-    const badge = productFeatures?.badge as string | undefined;
-    let tier = "FREE";
-    if (purchase) {
-      if (badge) {
-        const badgeMap: Record<string, string> = { "VIP": "VIP", "프리미엄": "PREMIUM", "베이직": "BASIC" };
-        tier = badgeMap[badge] || "BASIC";
-      } else if (productName) {
-        if (productName.includes("VIP")) tier = "VIP";
-        else if (productName.includes("프리미엄")) tier = "PREMIUM";
-        else tier = "BASIC";
-      } else {
-        tier = "BASIC";
-      }
-    }
-    return {
-      ...l,
-      featuredTier: tier,
-      adPurchases: undefined,
-      userId: undefined, // 보안상 userId 제거
-    };
-  });
-
-  // Apply tier sorting only for default "latest" sort, not for explicit user-selected sorts
-  const finalListings = sort === "latest"
-    ? listingsWithTier.sort((a: any, b: any) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3))
-    : listingsWithTier;
+  const finalListings = listings.map((l: any) => ({
+    ...l,
+    featuredTier: l.tier,
+    userId: undefined,
+  }));
 
   return NextResponse.json({
     listings: finalListings,

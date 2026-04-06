@@ -37,15 +37,6 @@ export async function GET(
         _count: {
           select: { favorites: true, chatRooms: true, reviews: true },
         },
-        adPurchases: {
-          where: {
-            status: "PAID",
-            expiresAt: { gt: new Date() },
-          },
-          select: { product: { select: { id: true, features: true } } },
-          take: 1,
-          orderBy: { createdAt: "desc" as const },
-        },
         priceHistory: {
           orderBy: { createdAt: "desc" },
           take: 10,
@@ -96,17 +87,7 @@ export async function GET(
   ]);
   const favorited = !!fav;
 
-  // featuredTier 계산 (features.badge 기반, 없으면 productId/productName 폴백)
-  const adProduct = listing.adPurchases?.[0]?.product;
-  const productFeatures = adProduct?.features as Record<string, any> | null;
-  const badge = productFeatures?.badge as string | undefined;
-  let featuredTier = "FREE";
-  if (badge) {
-    featuredTier = badge.toUpperCase().includes("VIP") ? "VIP" : badge.toUpperCase().includes("PREMIUM") || badge.includes("프리미엄") ? "PREMIUM" : "BASIC";
-  } else if (adProduct) {
-    const productId = adProduct.id || "";
-    featuredTier = productId.includes("vip") ? "VIP" : productId.includes("premium") ? "PREMIUM" : productId ? "BASIC" : "FREE";
-  }
+  const featuredTier = listing.tier;
 
   // sellerTrust 제거 (Q&A로 전환)
 
@@ -137,7 +118,6 @@ export async function GET(
     featuredTier,
     favorited,
     regionStats,
-    adPurchases: undefined,
     user: safeUser,
   };
 

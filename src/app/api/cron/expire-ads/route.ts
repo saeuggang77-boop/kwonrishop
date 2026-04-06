@@ -80,6 +80,7 @@ export async function GET(request: NextRequest) {
         tierDowngradeCount: 0,
         franchiseTierDowngradeCount: 0,
         equipmentTierDowngradeCount: 0,
+        listingTierDowngradeCount: 0,
         timestamp: now.toISOString(),
       });
     }
@@ -314,6 +315,61 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Downgrade listing tiers
+    const listingItems = await prisma.listing.findMany({
+      where: {
+        tierExpiresAt: { lt: now },
+        tier: { not: "FREE" },
+      },
+      select: {
+        id: true,
+        userId: true,
+        storeName: true,
+        addressRoad: true,
+        tier: true,
+        user: { select: { phone: true, name: true } },
+      },
+    });
+
+    const listingTierDowngrade = await prisma.listing.updateMany({
+      where: {
+        tierExpiresAt: { lt: now },
+        tier: { not: "FREE" },
+      },
+      data: {
+        tier: "FREE",
+        tierExpiresAt: null,
+      },
+    });
+
+    // 매물 다운그레이드 알림 생성
+    if (listingItems.length > 0) {
+      const listingNotifications = listingItems.map((l) => ({
+        userId: l.userId,
+        type: "LISTING_TIER_DOWNGRADE",
+        title: "매물 광고가 만료되었습니다",
+        message: `${l.storeName || l.addressRoad || "매물"}의 ${l.tier} 등급 혜택이 종료되어 FREE 등급으로 전환되었습니다. 광고를 연장하시려면 결제 페이지를 확인해주세요.`,
+        link: `/mypage`,
+      }));
+
+      await prisma.notification.createMany({
+        data: listingNotifications,
+      });
+
+      listingItems.forEach((l) => {
+        sendPushToUser(
+          l.userId,
+          "매물 광고가 만료되었습니다",
+          `${l.storeName || l.addressRoad || "매물"}의 ${l.tier} 등급 혜택이 종료되었습니다.`,
+          `/mypage`
+        ).catch(() => {});
+
+        if (l.user?.phone) {
+          notifyPaymentExpiring(l.user.phone, `${l.tier} 매물 광고`, 0).catch(() => {});
+        }
+      });
+    }
+
     // Create notifications for each expired ad
     const notifications = expiredAds.map((ad: any) => {
       const targetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "서비스";
@@ -346,6 +402,7 @@ export async function GET(request: NextRequest) {
     console.log(`Downgraded ${partnerTierDowngradeCount} partner services to FREE tier`);
     console.log(`Downgraded ${franchiseTierDowngrade.count} franchise brands to FREE tier`);
     console.log(`Downgraded ${equipmentTierDowngrade.count} equipment to FREE tier`);
+    console.log(`Downgraded ${listingTierDowngrade.count} listings to FREE tier`);
 
     // --- 만료 3일 전 사전 알림 ---
     const threeDaysLater = new Date();
@@ -422,6 +479,7 @@ export async function GET(request: NextRequest) {
       partnerTierDowngradeCount,
       franchiseTierDowngradeCount: franchiseTierDowngrade.count,
       equipmentTierDowngradeCount: equipmentTierDowngrade.count,
+      listingTierDowngradeCount: listingTierDowngrade.count,
       expiringAlertCount,
       timestamp: now.toISOString(),
     });
