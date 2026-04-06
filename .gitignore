@@ -55,3 +55,9 @@ test-results
 
 # OMC state
 .omc/
+
+# Preview/QA/test artifacts (local only)
+preview-*.html
+qa-*.md
+test-*.png
+test-*.mjs
