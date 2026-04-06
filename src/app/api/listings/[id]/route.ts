@@ -252,6 +252,12 @@ export async function PUT(
       contactPublic: "contactPublic" in body ? (body.contactPublic ?? false) : listing.contactPublic,
     };
 
+    // SOLD 전환 시: 광고 자동 종료 (환불 없음 — 약관 제10조)
+    if (body.status === "SOLD" && listing.status !== "SOLD") {
+      updateData.tier = "FREE";
+      updateData.tierExpiresAt = null;
+    }
+
     // 이미지가 제공된 경우 기존 이미지 삭제 후 새로 생성
     if (body.images && Array.isArray(body.images)) {
       updateData.images = {
@@ -415,10 +421,14 @@ export async function DELETE(
   }
 
   try {
-    // 소프트 삭제 (status를 DELETED로 변경)
+    // 소프트 삭제 (status를 DELETED로 변경) + 광고 자동 종료 (환불 없음 — 약관 제10조)
     await prisma.listing.update({
       where: { id },
-      data: { status: "DELETED" },
+      data: {
+        status: "DELETED",
+        tier: "FREE",
+        tierExpiresAt: null,
+      },
     });
 
     return NextResponse.json({ success: true, message: "매물이 삭제되었습니다." });
