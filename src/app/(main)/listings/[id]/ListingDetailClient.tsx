@@ -97,7 +97,7 @@ interface ListingDetail {
   subCategory: { name: string } | null;
   images: { id: string; url: string; type: string }[];
   documents: { id: string; url: string; type: string }[];
-  user: { id: string; name: string | null; image: string | null; phone: string | null; createdAt: string; businessVerified?: boolean };
+  user: { id: string; name: string | null; image: string | null; phone: string | null; phoneLocked?: boolean; createdAt: string; businessVerified?: boolean };
   _count: { favorites: number; chatRooms: number };
   featuredTier?: string;
   priceHistory?: { id: string; field: string; oldValue: number; newValue: number; createdAt: string }[];
@@ -1166,7 +1166,19 @@ export default function ListingDetailClient() {
                 )}
               </div>
               {listing.contactPublic && listing.user.phone && (
-                <a href={`tel:${listing.user.phone}`} className="text-sm text-navy-700 dark:text-navy-400 mt-1 hover:underline">{formatPhone(listing.user.phone)}</a>
+                listing.user.phoneLocked ? (
+                  <div className="mt-1 flex items-center gap-2 flex-wrap">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-mono">{listing.user.phone}</span>
+                    <Link href="/login" className="inline-flex items-center gap-1 px-2 py-1 bg-navy-50 dark:bg-navy-900/40 border border-navy-200 dark:border-navy-700 text-navy-700 dark:text-navy-300 text-xs font-medium rounded hover:bg-navy-100 dark:hover:bg-navy-900/60 transition-colors">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0-1.104.896-2 2-2s2 .896 2 2-.896 2-2 2-2-.896-2-2zM17 11a5 5 0 10-10 0v4a1 1 0 001 1h8a1 1 0 001-1v-4z" />
+                      </svg>
+                      로그인 후 전체 번호 보기
+                    </Link>
+                  </div>
+                ) : (
+                  <a href={`tel:${listing.user.phone}`} className="text-sm text-navy-700 dark:text-navy-400 mt-1 hover:underline">{formatPhone(listing.user.phone)}</a>
+                )
               )}
             </div>
           </div>

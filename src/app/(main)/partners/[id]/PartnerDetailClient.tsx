@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { SERVICE_TYPE_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -22,6 +23,7 @@ interface Partner {
   serviceType: string;
   description: string | null;
   contactPhone: string | null;
+  contactPhoneLocked?: boolean;
   contactEmail: string | null;
   website: string | null;
   addressRoad: string | null;
@@ -194,14 +196,31 @@ export default function PartnerDetailClient() {
         {/* Contact Info */}
         <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
           {partner.contactPhone && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm text-gray-600 dark:text-gray-400 w-20">전화번호:</span>
-              <a
-                href={`tel:${partner.contactPhone}`}
-                className="text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline"
-              >
-                {partner.contactPhone}
-              </a>
+              {partner.contactPhoneLocked ? (
+                <>
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400 font-mono">
+                    {partner.contactPhone}
+                  </span>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-navy-50 dark:bg-navy-900/40 border border-navy-200 dark:border-navy-700 text-navy-700 dark:text-navy-300 text-xs font-medium rounded hover:bg-navy-100 dark:hover:bg-navy-900/60 transition-colors"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0-1.104.896-2 2-2s2 .896 2 2-.896 2-2 2-2-.896-2-2zM17 11a5 5 0 10-10 0v4a1 1 0 001 1h8a1 1 0 001-1v-4z" />
+                    </svg>
+                    로그인 후 전체 번호 보기
+                  </Link>
+                </>
+              ) : (
+                <a
+                  href={`tel:${partner.contactPhone}`}
+                  className="text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline"
+                >
+                  {partner.contactPhone}
+                </a>
+              )}
             </div>
           )}
           {partner.contactEmail && (

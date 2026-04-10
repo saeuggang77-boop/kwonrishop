@@ -6,6 +6,7 @@ import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { sendPushToUser } from "@/lib/push";
+import { maskPhone } from "@/lib/mask";
 
 export async function GET(
   _req: NextRequest,
@@ -102,12 +103,19 @@ export async function GET(
     };
   }
 
-  // 연락처 비공개인 경우 전화번호 제거 (spread 오버라이드 방지를 위해 명시적 재구성)
+  // 연락처 공개 시: 로그인 회원은 전체 번호, 비로그인 방문자는 마스킹된 번호
+  // (spread 오버라이드 방지를 위해 명시적 재구성)
+  const isLoggedIn = !!session?.user?.id;
+  const rawPhone = listing.contactPublic ? listing.user.phone : null;
+  const displayPhone = maskPhone(rawPhone, isLoggedIn);
+  const phoneLocked = !!rawPhone && !isLoggedIn;
+
   const safeUser = {
     id: listing.user.id,
     name: listing.user.name,
     image: listing.user.image,
-    phone: listing.contactPublic ? listing.user.phone : null,
+    phone: displayPhone,
+    phoneLocked,
     createdAt: listing.user.createdAt,
     businessVerified: listing.user.businessVerification?.verified ?? false,
   };
@@ -123,7 +131,8 @@ export async function GET(
 
   return NextResponse.json(result, {
     headers: {
-      'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+      // 응답이 세션에 따라 달라지므로 CDN 공유 캐시 사용 불가 (private)
+      'Cache-Control': 'private, max-age=10',
     },
   });
 }

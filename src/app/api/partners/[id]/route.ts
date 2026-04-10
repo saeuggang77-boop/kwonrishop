@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
+import { maskPhone } from "@/lib/mask";
 
 // 협력업체 단일 조회
 export async function GET(
@@ -13,19 +14,23 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const partner = await prisma.partnerService.findUnique({
-    where: { id },
-    include: {
-      images: { orderBy: { sortOrder: "asc" } },
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
+  // partner + session 병렬 조회 (응답이 세션 따라 달라지므로 항상 세션 확인)
+  const [partner, session] = await Promise.all([
+    prisma.partnerService.findUnique({
+      where: { id },
+      include: {
+        images: { orderBy: { sortOrder: "asc" } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
         },
       },
-    },
-  });
+    }),
+    getServerSession(authOptions),
+  ]);
 
   if (!partner || partner.status === "DELETED") {
     return NextResponse.json({ error: "협력업체를 찾을 수 없습니다." }, { status: 404 });
@@ -33,7 +38,6 @@ export async function GET(
 
   // 비활성 업체는 소유자만 조회 가능
   if (partner.status !== "ACTIVE") {
-    const session = await getServerSession(authOptions);
     if (!session?.user?.id || session.user.id !== partner.userId) {
       return NextResponse.json({ error: "협력업체를 찾을 수 없습니다." }, { status: 404 });
     }
@@ -45,12 +49,21 @@ export async function GET(
     data: { viewCount: { increment: 1 } },
   }).catch(() => {});
 
+  // 전화번호 마스킹: 로그인 회원에게만 전체 번호, 비로그인은 마스킹
+  const isLoggedIn = !!session?.user?.id;
+  const rawPhone = partner.contactPhone;
+  const displayPhone = maskPhone(rawPhone, isLoggedIn);
+  const phoneLocked = !!rawPhone && !isLoggedIn;
+
   return NextResponse.json({
     ...partner,
+    contactPhone: displayPhone,
+    contactPhoneLocked: phoneLocked,
     viewCount: partner.viewCount + 1,
   }, {
     headers: {
-      'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+      // 응답이 세션에 따라 달라지므로 CDN 공유 캐시 사용 불가 (private)
+      'Cache-Control': 'private, max-age=10',
     },
   });
 }

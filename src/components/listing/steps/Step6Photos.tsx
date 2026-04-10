@@ -393,7 +393,12 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
 
         {/* 연락처 공개 */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">연락처 공개 여부</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+            연락처 공개 여부
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold rounded">
+              공개 추천
+            </span>
+          </label>
           <div className="flex gap-2">
             <button
               type="button"
@@ -443,11 +448,17 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
             </p>
           )}
 
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-            {data.contactPublic
-              ? "매물 상세에 전화번호가 표시되어 바로 연락받을 수 있습니다"
-              : "전화번호 없이 채팅으로 연락받습니다. 새 메시지는 이메일과 알림으로 알려드립니다"}
-          </p>
+          {data.contactPublic ? (
+            <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+              <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium leading-relaxed">
+                📞 <strong>로그인 회원</strong>에게만 전체 번호가 표시되고, 비로그인 방문자에게는 <code className="px-1 bg-emerald-100 dark:bg-emerald-900/40 rounded">010-****-5678</code> 형태로 마스킹됩니다. 스팸·크롤러를 차단하면서 진성 구매자의 즉시 연락을 받을 수 있습니다.
+              </p>
+            </div>
+          ) : (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              전화번호 없이 <strong>채팅으로만</strong> 연락받습니다. 판매자가 사이트에 접속해 있을 때만 알림을 받을 수 있어, 문의를 놓칠 수 있습니다.
+            </p>
+          )}
         </div>
       </div>
 

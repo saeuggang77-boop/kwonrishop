@@ -141,7 +141,7 @@ const initialData: ListingFormData = {
 
   images: [],
   documents: [],
-  contactPublic: false,
+  contactPublic: true,
   contactPhone: "",
 };
 

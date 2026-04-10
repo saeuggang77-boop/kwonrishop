@@ -377,7 +377,7 @@ export async function POST(req: NextRequest) {
         monthlyProfit: body.monthlyProfit ?? null,
         profitDescription: body.profitDescription ? sanitizeInput(body.profitDescription) : null,
         description: body.description ? sanitizeHtml(body.description) : null,
-        contactPublic: body.contactPublic ?? false,
+        contactPublic: body.contactPublic ?? true,
         images: {
           create: (body.images || []).map(
             (img: { url: string; type: string; sortOrder: number }) => ({
