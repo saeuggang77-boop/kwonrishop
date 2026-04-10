@@ -1371,6 +1371,28 @@ export default function ListingDetailClient() {
                 광고 업그레이드
               </Link>
             </div>
+            <div className="mt-2 text-center">
+              <button
+                onClick={async () => {
+                  if (!confirm("매물을 삭제하시겠습니까?\n삭제 후 복원할 수 없으며, 진행 중인 광고도 종료됩니다.")) return;
+                  try {
+                    const res = await fetch(`/api/listings/${listing.id}`, { method: "DELETE" });
+                    if (res.ok) {
+                      alert("매물이 삭제되었습니다");
+                      router.push("/mypage");
+                    } else {
+                      const err = await res.json();
+                      alert(err.error || "삭제 실패");
+                    }
+                  } catch {
+                    alert("삭제 중 오류가 발생했습니다");
+                  }
+                }}
+                className="text-xs text-red-400 dark:text-red-500 hover:text-red-600 dark:hover:text-red-400 transition-colors py-1"
+              >
+                매물 삭제
+              </button>
+            </div>
           </div>
         ) : (
           /* 일반 유저일 때: 채팅/관심 바 */

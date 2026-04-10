@@ -512,7 +512,7 @@ export default function MyPage() {
                 )}
               </div>
             </div>
-            <div className="mt-3">
+            <div className="mt-3 space-y-2">
               {!data.activeListingAd || data.activeListingAd.daysLeft <= 0 ? (
                 <Link
                   href="/pricing"
@@ -535,6 +535,26 @@ export default function MyPage() {
                   광고 관리
                 </Link>
               )}
+              <button
+                onClick={async () => {
+                  if (!confirm("매물을 삭제하시겠습니까?\n삭제 후 복원할 수 없으며, 진행 중인 광고도 종료됩니다.")) return;
+                  try {
+                    const res = await fetch(`/api/listings/${data.listing!.id}`, { method: "DELETE" });
+                    if (res.ok) {
+                      toast.success("매물이 삭제되었습니다");
+                      setData(prev => prev ? { ...prev, listing: null, activeListingAd: null } : null);
+                    } else {
+                      const err = await res.json();
+                      toast.error(err.error || "삭제 실패");
+                    }
+                  } catch {
+                    toast.error("삭제 중 오류가 발생했습니다");
+                  }
+                }}
+                className="w-full px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+              >
+                매물 삭제
+              </button>
             </div>
           </div>
         ) : data.verification?.verified ? (
