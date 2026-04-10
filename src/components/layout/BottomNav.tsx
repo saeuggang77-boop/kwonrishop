@@ -13,7 +13,7 @@ export default function BottomNav() {
 
   // 상세 페이지 및 특정 페이지에서 BottomNav 숨기기
   const hideOnPaths = ['/chat', '/payments', '/sell'];
-  const hideOnDetailPaths = ['/listings/', '/equipment/', '/partners/'];
+  const hideOnDetailPaths = ['/listings/', '/equipment/', '/partners/', '/franchise/', '/community/'];
 
   const shouldHide = hideOnPaths.some(p => pathname.startsWith(p)) ||
     hideOnDetailPaths.some(p => pathname.startsWith(p) && pathname !== p.slice(0, -1));

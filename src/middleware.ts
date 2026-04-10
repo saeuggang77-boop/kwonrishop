@@ -2,6 +2,8 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedPaths = ["/sell", "/mypage", "/verify-business", "/admin", "/partners/register", "/equipment/register", "/franchise/edit"];
+// /equipment/[id]/edit 동적 라우트 보호용 정규식
+const equipmentEditRegex = /^\/equipment\/[^/]+\/edit$/;
 const roleExemptPaths = ["/select-role", "/api/", "/login", "/signup", "/forgot-password", "/reset-password", "/_next/", "/favicon"];
 
 export async function middleware(req: NextRequest) {
@@ -9,7 +11,8 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 보호된 경로에 비로그인 접근 시 로그인 페이지로 리다이렉트
-  if (protectedPaths.some((p) => pathname.startsWith(p))) {
+  const isProtectedPath = protectedPaths.some((p) => pathname.startsWith(p)) || equipmentEditRegex.test(pathname);
+  if (isProtectedPath) {
     if (!token) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
@@ -47,6 +50,16 @@ export async function middleware(req: NextRequest) {
 
     if (pathname.startsWith("/equipment/register") && ["SELLER", "FRANCHISE", "PARTNER"].includes(userRole || "") && !verified) {
       return NextResponse.redirect(new URL(`/verify-business?role=${userRole}`, req.url));
+    }
+
+    // /equipment/[id]/edit - 소유자 확인은 API에서 처리, 여기선 역할+인증만 확인
+    if (equipmentEditRegex.test(pathname)) {
+      if (!["SELLER", "FRANCHISE", "PARTNER", "ADMIN"].includes(userRole || "")) {
+        return NextResponse.redirect(new URL("/", req.url));
+      }
+      if (["SELLER", "FRANCHISE", "PARTNER"].includes(userRole || "") && !verified) {
+        return NextResponse.redirect(new URL(`/verify-business?role=${userRole}`, req.url));
+      }
     }
 
     if (pathname.startsWith("/franchise/edit") && userRole !== "FRANCHISE" && userRole !== "ADMIN") {
@@ -110,5 +123,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login", "/signup", "/forgot-password", "/admin/:path*", "/partners/register", "/equipment/register", "/franchise/edit", "/select-role", "/"],
+  matcher: ["/sell/:path*", "/mypage/:path*", "/verify-business", "/login", "/signup", "/forgot-password", "/admin/:path*", "/partners/register", "/equipment/register", "/equipment/:id/edit", "/franchise/edit", "/select-role", "/"],
 };

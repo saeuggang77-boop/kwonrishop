@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import NoticeBanner from "@/components/NoticeBanner";
 import ListingCard from "@/components/listing/ListingCard";
 import Image from "next/image";
@@ -177,6 +178,7 @@ export default function HomeClient({
   initialPartnerServices,
   initialEquipment,
 }: HomeClientProps) {
+  const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState("");
   const [activeTab, setActiveTab] = useState<"partners" | "equipment">("partners");
   const franchiseScrollRef = useRef<HTMLDivElement>(null);
@@ -191,7 +193,7 @@ export default function HomeClient({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchKeyword.trim()) {
-      window.location.href = `/listings?keyword=${encodeURIComponent(searchKeyword)}`;
+      router.push(`/listings?keyword=${encodeURIComponent(searchKeyword)}`);
     }
   };
 

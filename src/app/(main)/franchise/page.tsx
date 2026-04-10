@@ -82,7 +82,8 @@ export default function FranchisePage() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setPage(1);
-    fetchBrands();
+    // fetchBrands() 직접 호출 제거 - setPage(1)이 useCallback dep 변경 → useEffect 자동 트리거
+    // keyword 변경만 있고 page가 이미 1이면 fetchBrands의 keyword dep가 이미 트리거함
   }
 
   function handleIndustryClick(value: string) {

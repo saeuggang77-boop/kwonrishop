@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimitRequest } from "@/lib/rate-limit";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 공개 프로필 API - 크롤링 방지를 위한 rate limiting
+  const rl = rateLimitRequest(req, 30, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
+  }
+
   try {
     const { id: userId } = await params;
 

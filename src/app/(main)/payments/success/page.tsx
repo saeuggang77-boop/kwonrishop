@@ -21,6 +21,13 @@ function SuccessContent() {
     const orderId = searchParams.get("orderId");
     const amount = searchParams.get("amount");
 
+    // F5 새로고침 시 sessionStorage로 이미 확인된 주문 감지
+    if (orderId && sessionStorage.getItem(`payment_confirmed_${orderId}`)) {
+      setOrderInfo({ alreadyProcessed: true });
+      setConfirming(false);
+      return;
+    }
+
     if (!paymentKey || !orderId || !amount) {
       setError("결제 정보가 올바르지 않습니다.");
       setConfirming(false);
@@ -42,8 +49,12 @@ function SuccessContent() {
         const data = await res.json();
 
         if (res.ok) {
+          // 성공 시 sessionStorage에 기록 (F5 새로고침 방어)
+          if (orderId) sessionStorage.setItem(`payment_confirmed_${orderId}`, "1");
           setOrderInfo(data);
         } else if (res.status === 409) {
+          // 이미 처리된 주문도 기록
+          if (orderId) sessionStorage.setItem(`payment_confirmed_${orderId}`, "1");
           // 이미 처리된 주문 (새로고침 등) → 성공으로 처리
           setOrderInfo({ alreadyProcessed: true });
         } else {

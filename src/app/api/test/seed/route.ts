@@ -4,7 +4,7 @@ import { hashPassword } from "@/lib/password";
 
 // 테스트 전용 시드 API - 개발 환경에서만 동작, CRON_SECRET 인증 필요
 export async function POST(request: NextRequest) {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV) {
     return NextResponse.json({ error: "Not available in production" }, { status: 403 });
   }
 

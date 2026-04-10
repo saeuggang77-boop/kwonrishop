@@ -251,13 +251,22 @@ export async function POST(request: NextRequest) {
         else if (pn.includes("실버")) newTier = "SILVER";
         else newTier = "BRONZE";
       }
-      await prisma.franchiseBrand.updateMany({
+      // 해당 유저의 브랜드 중 1개만 업데이트 (updateMany는 모든 브랜드 tier를 일괄 변경하는 버그)
+      // TODO: adPurchase에 franchiseBrandId FK 추가 후 특정 브랜드 지정 필요
+      const targetBrand = await prisma.franchiseBrand.findFirst({
         where: { managerId: session.user.id },
-        data: {
-          tier: newTier as any,
-          tierExpiresAt: order.product.duration ? expiresAt : null,
-        },
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
       });
+      if (targetBrand) {
+        await prisma.franchiseBrand.update({
+          where: { id: targetBrand.id },
+          data: {
+            tier: newTier as any,
+            tierExpiresAt: order.product.duration ? expiresAt : null,
+          },
+        });
+      }
     } else if (categoryScope === "PARTNER") {
       const tierMap: Record<string, string> = {
         "베이직": "BASIC",
@@ -272,16 +281,22 @@ export async function POST(request: NextRequest) {
         else if (pn.includes("프리미엄")) newTier = "PREMIUM";
         else newTier = "BASIC";
       }
-      await prisma.partnerService.updateMany({
-        where: {
-          userId: session.user.id,
-          status: "ACTIVE",
-        },
-        data: {
-          tier: newTier as any,
-          tierExpiresAt: order.product.duration ? expiresAt : null,
-        },
+      // 해당 유저의 서비스 중 1개만 업데이트 (updateMany는 모든 서비스 tier를 일괄 변경하는 버그)
+      // TODO: adPurchase에 partnerServiceId FK 추가 후 특정 서비스 지정 필요
+      const targetService = await prisma.partnerService.findFirst({
+        where: { userId: session.user.id, status: "ACTIVE" },
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
       });
+      if (targetService) {
+        await prisma.partnerService.update({
+          where: { id: targetService.id },
+          data: {
+            tier: newTier as any,
+            tierExpiresAt: order.product.duration ? expiresAt : null,
+          },
+        });
+      }
     } else if (categoryScope === "EQUIPMENT" && order.equipmentId) {
       const eqBadge = features?.badge as string | undefined;
       const eqTierMap: Record<string, string> = {

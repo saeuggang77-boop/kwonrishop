@@ -132,15 +132,13 @@ function EquipmentListContent() {
 
   function handleFilterChange(value: string) {
     setCategory(value);
-    // 필터 변경 시 자동 검색
-    setTimeout(() => {
-      if (value || keyword) {
-        setIsSearchMode(true);
-        setSearchPage(1);
-      } else {
-        setIsSearchMode(false);
-      }
-    }, 0);
+    // setTimeout 제거 - 변경된 값을 직접 사용하여 stale closure 방지
+    if (value || keyword) {
+      setIsSearchMode(true);
+      setSearchPage(1);
+    } else {
+      setIsSearchMode(false);
+    }
   }
 
   function clearSearch() {

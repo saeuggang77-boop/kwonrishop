@@ -112,15 +112,15 @@ export default function PartnersPage() {
   function handleFilterChange(type: "serviceType" | "region", value: string) {
     if (type === "serviceType") setServiceType(value);
     else setRegion(value);
-    // 필터 변경 시 자동 검색
-    setTimeout(() => {
-      if (value || keyword || (type === "serviceType" ? region : serviceType)) {
-        setIsSearchMode(true);
-        setSearchPage(1);
-      } else {
-        setIsSearchMode(false);
-      }
-    }, 0);
+    // setTimeout 제거 - 변경된 값을 직접 사용하여 stale closure 방지
+    const newServiceType = type === "serviceType" ? value : serviceType;
+    const newRegion = type === "region" ? value : region;
+    if (newServiceType || newRegion || keyword) {
+      setIsSearchMode(true);
+      setSearchPage(1);
+    } else {
+      setIsSearchMode(false);
+    }
   }
 
   function clearSearch() {
