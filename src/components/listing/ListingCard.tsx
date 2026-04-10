@@ -41,7 +41,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
   };
 
   return (
-    <div className={`relative block bg-white dark:bg-gray-800 rounded-xl ${tierStyles[tier] || tierStyles.FREE} overflow-hidden hover:-translate-y-1 transition-all duration-300`}>
+    <div className={`relative block bg-white dark:bg-gray-800 rounded-xl ${tierStyles[tier] || tierStyles.FREE} overflow-hidden hover:-translate-y-1 active:scale-[0.98] transition-all duration-300`}>
       <Link href={`/listings/${listing.id}`}>
       {/* 이미지 */}
       <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
@@ -85,7 +85,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
       {/* 정보 */}
       <div className="p-4">
         <div className="flex items-center justify-between gap-2 mb-1">
-          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
+          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
             {listing.category && (
               <span>
                 {listing.category.icon} {listing.category.name}
@@ -121,7 +121,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
         </div>
 
         {/* 면적 & 메타 */}
-        <div className="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-500">
+        <div className="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
           <div className="flex gap-2">
             {listing.areaPyeong && <span>{listing.areaPyeong}평</span>}
             {listing.currentFloor && <span>{listing.currentFloor}층</span>}

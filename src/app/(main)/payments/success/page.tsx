@@ -133,21 +133,21 @@ function SuccessContent() {
               </div>
               {orderInfo.supplyPrice && orderInfo.vatAmount ? (
                 <>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-gray-600">공급가액</span>
                     <span className="text-gray-900">
                       {orderInfo.supplyPrice.toLocaleString()}원
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-gray-600">부가세(10%)</span>
                     <span className="text-gray-900">
                       {orderInfo.vatAmount.toLocaleString()}원
                     </span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
-                    <span className="text-gray-900 font-bold">총 결제금액</span>
-                    <span className="font-bold text-navy-700">
+                    <span className="text-lg font-bold text-navy-700 dark:text-navy-400">총 결제금액</span>
+                    <span className="text-lg font-bold text-navy-700 dark:text-navy-400">
                       {orderInfo.amount.toLocaleString()}원
                     </span>
                   </div>

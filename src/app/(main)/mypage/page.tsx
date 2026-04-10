@@ -457,11 +457,12 @@ export default function MyPage() {
                         toast.error("상태 변경 중 오류가 발생했습니다");
                       }
                     }}
-                    className={`appearance-none cursor-pointer px-2.5 py-0.5 min-h-[36px] text-xs rounded font-medium border-0 pr-6 focus:ring-2 ${
+                    className={`appearance-none cursor-pointer px-2.5 py-0.5 min-h-[36px] text-xs rounded font-medium border-0 pr-7 focus:ring-2 bg-[length:12px] bg-[right_6px_center] bg-no-repeat ${
                       data.listing.status === "ACTIVE"
                         ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 focus:ring-green-300"
                         : "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 focus:ring-orange-300"
                     }`}
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E")` }}
                   >
                     <option value="ACTIVE">판매중</option>
                     <option value="RESERVED">예약중</option>

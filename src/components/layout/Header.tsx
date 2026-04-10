@@ -180,7 +180,7 @@ export default function Header() {
                 <button
                   onClick={() => setNotifOpen(!notifOpen)}
                   className="relative p-3 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"
-                  aria-label="알림"
+                  aria-label={unreadCount > 0 ? `읽지 않은 알림 ${unreadCount}건` : "알림"}
                   aria-expanded={notifOpen}
                 >
                   <svg

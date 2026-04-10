@@ -2,14 +2,36 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/";
     return pathname.startsWith(path);
   };
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchUnreadCount();
+      const interval = setInterval(fetchUnreadCount, 30000); // 30초마다 갱신
+      return () => clearInterval(interval);
+    }
+  }, [status]);
+
+  async function fetchUnreadCount() {
+    try {
+      const res = await fetch("/api/chat/unread");
+      const data = await res.json();
+      setUnreadCount(data.unreadCount || 0);
+    } catch (err) {
+      console.error("Failed to fetch chat unread count", err);
+    }
+  }
 
   // 상세 페이지 및 특정 페이지에서 BottomNav 숨기기
   const hideOnPaths = ['/chat', '/payments', '/sell'];
@@ -95,8 +117,10 @@ export default function BottomNav() {
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          {/* 미읽음 뱃지 (UI만) */}
-          <span className="absolute top-0 right-2 w-2 h-2 bg-red-500 rounded-full hidden" />
+          {/* 미읽음 뱃지 */}
+          {unreadCount > 0 && (
+            <span className="absolute top-0 right-2 w-2 h-2 bg-red-500 rounded-full" />
+          )}
           <span className="text-[10px] mt-0.5 font-medium">채팅</span>
         </Link>
 

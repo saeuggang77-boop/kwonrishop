@@ -249,7 +249,7 @@ export default function HomeClient({
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="원하는 지역이나 업종을 검색하세요"
+                placeholder="지역, 업종 검색"
                 className="flex-1 text-[15px] bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
                 aria-label="매물 검색"
               />

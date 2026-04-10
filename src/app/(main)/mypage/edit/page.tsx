@@ -190,9 +190,9 @@ export default function ProfileEditPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="absolute -bottom-1 -right-1 w-7 h-7 bg-navy-700 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-navy-600 disabled:opacity-50"
+                className="absolute -bottom-1 -right-1 w-9 h-9 bg-navy-700 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-navy-600 disabled:opacity-50"
               >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <circle cx="12" cy="13" r="3" />
                 </svg>

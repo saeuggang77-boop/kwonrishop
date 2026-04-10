@@ -234,7 +234,7 @@ function LoginContent() {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 accent-navy-600 rounded" />
+                <input type="checkbox" className="w-5 h-5 accent-navy-600 rounded" />
                 로그인 유지
               </label>
               <Link

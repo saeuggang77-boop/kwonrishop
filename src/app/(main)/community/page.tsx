@@ -72,7 +72,7 @@ function CommunityContent() {
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               activeTag === tag
                 ? "bg-navy-700 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             {tag}
@@ -83,21 +83,21 @@ function CommunityContent() {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+            <div key={i} className="h-16 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-gray-400 dark:text-gray-500">
           게시글이 없습니다
         </div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
           {posts.map((post) => (
             <Link
               key={post.id}
               href={`/community/${post.id}`}
-              className={`block py-4 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors ${
-                post.tag === "공지" ? "bg-navy-50/60" : ""
+              className={`block py-4 hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 rounded-lg transition-colors ${
+                post.tag === "공지" ? "bg-navy-50/60 dark:bg-navy-900/30" : ""
               }`}
             >
               <div className="flex items-start gap-3">
@@ -108,19 +108,19 @@ function CommunityContent() {
                       : post.tag === "사이트이용문의"
                         ? "bg-navy-100 text-navy-700"
                         : post.tag === "양도후기"
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-gray-100 text-gray-600"
+                          ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                          : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
                   }`}>
                     {post.tag}
                   </span>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-900 truncate">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                     {post.tag === "공지" && <span className="mr-1">&#128204;</span>}
                     {post.title}
-                    {post.tag === "사이트이용문의" && <span className="ml-1 text-gray-400">&#128274;</span>}
+                    {post.tag === "사이트이용문의" && <span className="ml-1 text-gray-400 dark:text-gray-500">&#128274;</span>}
                   </h3>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500">
                     <span>{post.author.name || "익명"}</span>
                     <span>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
                     <span>조회 {post.viewCount}</span>
@@ -140,7 +140,7 @@ function CommunityContent() {
               key={p}
               onClick={() => setPage(p)}
               className={`w-9 h-9 rounded-lg text-sm ${
-                page === p ? "bg-navy-700 text-white" : "bg-gray-100 text-gray-600"
+                page === p ? "bg-navy-700 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
               }`}
             >
               {p}

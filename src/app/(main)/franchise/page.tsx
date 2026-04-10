@@ -134,7 +134,7 @@ export default function FranchisePage() {
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Industry Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-3 mb-6">
+      <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch', maskImage: 'linear-gradient(to right, black 92%, transparent 100%)' }}>
         {industries.map((ind) => (
           <button
             key={ind.value}
