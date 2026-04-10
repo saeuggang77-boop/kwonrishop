@@ -29,6 +29,10 @@
     {
       "path": "/api/cron/sync-franchise-disclosure",
       "schedule": "0 5 * * 1"
+    },
+    {
+      "path": "/api/cron/warm",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
