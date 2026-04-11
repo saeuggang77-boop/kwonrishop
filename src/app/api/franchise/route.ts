@@ -24,7 +24,10 @@ export async function GET(request: Request) {
           tier: {
             in: allowedTiers,
           } as any,
-          tierExpiresAt: { gt: new Date() },
+          OR: [
+            { tierExpiresAt: { gt: new Date() } },
+            { tierExpiresAt: null },
+          ],
         },
         select: {
           id: true,

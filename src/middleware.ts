@@ -108,7 +108,7 @@ export async function middleware(req: NextRequest) {
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
         "img-src 'self' data: blob: https: http:",
         "font-src 'self' data: https://cdn.jsdelivr.net",
-        "connect-src 'self' https://api.tosspayments.com https://*.kakao.com https://*.pusher.com wss://*.pusher.com https://*.googleapis.com https://vitals.vercel-insights.com",
+        "connect-src 'self' https://api.tosspayments.com https://*.kakao.com https://*.pusher.com wss://*.pusher.com https://*.googleapis.com https://vitals.vercel-insights.com https://api.solapi.com https://apis.data.go.kr https://api.odcloud.kr https://franchise.ftc.go.kr",
         "frame-src 'self' https://api.tosspayments.com https://js.tosspayments.com https://nid.naver.com https://kauth.kakao.com https://*.daumcdn.net https://*.daum.net https://*.kakao.com",
       ].join("; ")
     );
