@@ -91,12 +91,21 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send verification email
+    // Send verification email (실패해도 가입은 성공 처리)
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${rawToken}&email=${encodeURIComponent(email.toLowerCase())}`;
 
     const { subject, html } = emailVerificationEmail(sanitizedName, verifyUrl);
-    await sendEmail(email.toLowerCase(), subject, html);
+    try {
+      await sendEmail(email.toLowerCase(), subject, html);
+    } catch (emailError) {
+      console.error("인증 이메일 발송 실패:", emailError);
+      return NextResponse.json({
+        success: true,
+        message: "회원가입이 완료되었습니다. 인증 이메일 발송에 실패했습니다. 로그인 후 마이페이지에서 인증 이메일을 재발송할 수 있습니다.",
+        emailSent: false,
+      });
+    }
 
     return NextResponse.json({
       success: true,
