@@ -23,6 +23,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${equipment.title} - 집기장터 - 권리샵`,
     description,
+    alternates: {
+      canonical: `/equipment/${id}`,
+    },
     openGraph: {
       title: `${equipment.title} - ${priceText}`,
       description,

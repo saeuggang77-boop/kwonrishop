@@ -25,6 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/partners`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/community`,
       lastModified: new Date(),
       changeFrequency: "daily",
@@ -35,6 +41,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/pricing`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
     },
   ];
 
@@ -89,7 +101,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-    return [...staticPages, ...listingPages, ...franchisePages, ...communityPages, ...equipmentPages];
+    // Dynamic partner pages
+    const partners = await prisma.partnerService.findMany({
+      where: { status: "ACTIVE" },
+      select: { id: true, updatedAt: true },
+    });
+
+    const partnerPages: MetadataRoute.Sitemap = partners.map((partner) => ({
+      url: `${baseUrl}/partners/${partner.id}`,
+      lastModified: partner.updatedAt,
+      changeFrequency: "daily",
+      priority: 0.7,
+    }));
+
+    return [...staticPages, ...listingPages, ...franchisePages, ...communityPages, ...equipmentPages, ...partnerPages];
   } catch (error) {
     console.error("Error generating sitemap:", error);
     // Return at least static pages if database query fails

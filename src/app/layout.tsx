@@ -21,20 +21,33 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXTAUTH_URL || "https://www.kwonrishop.com"),
   title: "권리샵 - 상가직거래 플랫폼",
   description: "권리금 직거래로 중개수수료 없이 상가를 사고파세요. 매물등록부터 거래완료까지 안전하게. 상가임대, 점포매매, 창업, 프랜차이즈 정보를 한곳에서 확인하세요.",
   keywords: ["권리금", "상가매매", "점포매매", "상가직거래", "창업", "프랜차이즈", "상가임대", "권리금직거래", "중개수수료없이", "상가매물"],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "권리샵 - 상가직거래 플랫폼",
     description: "권리금 직거래로 중개수수료 없이 상가를 사고파세요. 매물등록부터 거래완료까지 안전하게.",
     siteName: "권리샵",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "권리샵 - 상가직거래 플랫폼",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "권리샵 - 상가직거래 플랫폼",
     description: "권리금 직거래로 중개수수료 없이 상가를 사고파세요.",
+    images: ["/opengraph-image"],
   },
 };
 

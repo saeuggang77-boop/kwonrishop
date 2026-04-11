@@ -22,6 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${partner.companyName} - 협력업체 - 권리샵`,
     description,
+    alternates: {
+      canonical: `/partners/${id}`,
+    },
     openGraph: {
       title: `${partner.companyName} - 권리샵 협력업체`,
       description,
