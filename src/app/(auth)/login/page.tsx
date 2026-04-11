@@ -49,7 +49,18 @@ function LoginContent() {
         setError(result.error);
       }
     } else if (result?.ok) {
-      router.push(callbackUrl);
+      // ADMIN 역할이면 관리자페이지로 리다이렉트
+      try {
+        const sessionRes = await fetch("/api/auth/session");
+        const sessionData = await sessionRes.json();
+        if (sessionData?.user?.role === "ADMIN") {
+          router.push("/admin");
+        } else {
+          router.push(callbackUrl);
+        }
+      } catch {
+        router.push(callbackUrl);
+      }
       router.refresh();
     }
   }

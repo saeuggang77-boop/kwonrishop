@@ -293,19 +293,29 @@ export default function Header() {
                     onClick={() => setMenuOpen(false)}
                   />
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50" role="menu">
+                    {session.user.role === "ADMIN" ? (
+                      <Link
+                        href="/admin"
+                        className="block px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        관리자페이지
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/sell"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        매물등록
+                      </Link>
+                    )}
                     <Link
                       href="/mypage"
                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                       onClick={() => setMenuOpen(false)}
                     >
                       마이페이지
-                    </Link>
-                    <Link
-                      href="/sell"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      매물등록
                     </Link>
                     <hr className="my-1 border-gray-200 dark:border-gray-700" />
                     <button
@@ -420,19 +430,29 @@ export default function Header() {
                     )}
                   </Link>
                   <hr className="my-2 border-gray-200 dark:border-gray-700" />
+                  {session.user.role === "ADMIN" ? (
+                    <Link
+                      href="/admin"
+                      className="block px-4 py-3 text-sm font-bold text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      관리자페이지
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/sell"
+                      className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      매물등록
+                    </Link>
+                  )}
                   <Link
                     href="/mypage"
                     className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     마이페이지
-                  </Link>
-                  <Link
-                    href="/sell"
-                    className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    매물등록
                   </Link>
                   <button
                     onClick={() => {
