@@ -166,8 +166,8 @@ export default function AdminEquipmentPage() {
           <p className="text-gray-400 dark:text-gray-500">집기가 없습니다</p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto">
+          <table className="w-full min-w-[800px]">
             <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">사진</th>
@@ -208,9 +208,9 @@ export default function AdminEquipmentPage() {
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
                     {item.price.toLocaleString()}원
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                    <div>{item.user.name}</div>
-                    <div className="text-xs text-gray-400 dark:text-gray-500">{item.user.email}</div>
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-[180px]">
+                    <div className="truncate">{item.user.name}</div>
+                    <div className="text-xs text-gray-400 dark:text-gray-500 truncate">{item.user.email}</div>
                   </td>
                   <td className="px-6 py-4">
                     <span
