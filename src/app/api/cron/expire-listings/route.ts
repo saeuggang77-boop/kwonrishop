@@ -89,22 +89,32 @@ export async function GET(request: NextRequest) {
       });
 
       // 매물 소유자에게 만료 SMS & 푸시 전송 (비차단)
-      expiredListings.forEach((listing: any) => {
-        const storeName = listing.storeName || listing.addressRoad || "매물";
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      for (const listing of expiredListings) {
+        const storeName = (listing as any).storeName || (listing as any).addressRoad || "매물";
 
-        // SMS (non-blocking)
-        if (listing.user.phone) {
-          notifyListingExpiring(listing.user.phone, storeName, 0).catch(() => {});
+        // SMS: 24시간 내 광고 만료 알림(LISTING_TIER_DOWNGRADE, AD_EXPIRED)이 이미 간 유저는 스킵
+        if ((listing as any).user.phone) {
+          const alreadySmsed = await prisma.notification.findFirst({
+            where: {
+              userId: (listing as any).userId,
+              type: { in: ["LISTING_TIER_DOWNGRADE", "AD_EXPIRED"] },
+              createdAt: { gte: oneDayAgo },
+            },
+          });
+          if (!alreadySmsed) {
+            notifyListingExpiring((listing as any).user.phone, storeName, 0).catch(() => {});
+          }
         }
 
         // 웹 푸시 (non-blocking)
         sendPushToUser(
-          listing.userId,
+          (listing as any).userId,
           "매물이 만료되었습니다",
           `${storeName}이(가) 만료되었습니다. 연장하려면 클릭하세요.`,
-          `/listings/${listing.id}`
+          `/listings/${(listing as any).id}`
         ).catch(() => {});
-      });
+      }
 
       console.log(`Expired ${expiredListings.length} listings`);
     }
@@ -155,22 +165,32 @@ export async function GET(request: NextRequest) {
       });
 
       // 집기 소유자에게 만료 SMS & 푸시 전송 (비차단)
-      expiredEquipments.forEach((equip: any) => {
-        const equipTitle = equip.title || "집기 매물";
+      const eqOneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      for (const equip of expiredEquipments) {
+        const equipTitle = (equip as any).title || "집기 매물";
 
-        // SMS (non-blocking)
-        if (equip.user.phone) {
-          notifyListingExpiring(equip.user.phone, equipTitle, 0).catch(() => {});
+        // SMS: 24시간 내 광고 만료 알림이 이미 간 유저는 스킵
+        if ((equip as any).user.phone) {
+          const alreadySmsed = await prisma.notification.findFirst({
+            where: {
+              userId: (equip as any).userId,
+              type: { in: ["EQUIPMENT_TIER_DOWNGRADE", "AD_EXPIRED"] },
+              createdAt: { gte: eqOneDayAgo },
+            },
+          });
+          if (!alreadySmsed) {
+            notifyListingExpiring((equip as any).user.phone, equipTitle, 0).catch(() => {});
+          }
         }
 
         // 웹 푸시 (non-blocking)
         sendPushToUser(
-          equip.userId,
+          (equip as any).userId,
           "집기 매물이 만료되었습니다",
           `${equipTitle}이(가) 만료되었습니다. 연장하려면 클릭하세요.`,
-          `/equipment/${equip.id}`
+          `/equipment/${(equip as any).id}`
         ).catch(() => {});
-      });
+      }
 
       console.log(`Expired ${expiredEquipments.length} equipment items`);
     }
@@ -225,8 +245,19 @@ export async function GET(request: NextRequest) {
         },
       });
 
+      // SMS: 24시간 내 광고 사전알림(AD_EXPIRING)이 이미 간 유저는 스킵
       if (listing.user.phone) {
-        notifyListingExpiring(listing.user.phone, storeName, daysLeft).catch(() => {});
+        const preAlertOneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const alreadySmsed = await prisma.notification.findFirst({
+          where: {
+            userId: listing.userId,
+            type: "AD_EXPIRING",
+            createdAt: { gte: preAlertOneDayAgo },
+          },
+        });
+        if (!alreadySmsed) {
+          notifyListingExpiring(listing.user.phone, storeName, daysLeft).catch(() => {});
+        }
       }
 
       // 웹 푸시 (non-blocking)

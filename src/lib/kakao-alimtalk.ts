@@ -120,8 +120,8 @@ export async function notifyPaymentExpiring(
   productName: string,
   daysLeft: number
 ): Promise<boolean> {
-  return sendSms({
-    to: recipientPhone,
-    text: `[권리샵] ${productName} 상품이 ${daysLeft}일 후 만료됩니다. 연장하려면 사이트를 방문하세요.`,
-  });
+  const msg = daysLeft === 0
+    ? `[권리샵] ${productName} 상품이 만료되었습니다. 연장하려면 사이트를 방문하세요.`
+    : `[권리샵] ${productName} 상품이 ${daysLeft}일 후 만료됩니다. 연장하려면 사이트를 방문하세요.`;
+  return sendSms({ to: recipientPhone, text: msg });
 }

@@ -185,7 +185,7 @@ export async function GET(request: NextRequest) {
             ).catch(() => {});
 
             if (ps.user.phone) {
-              notifyPaymentExpiring(ps.user.phone, `${ps.tier} 파트너 구독`, 0).catch(() => {});
+              notifyPaymentExpiring(ps.user.phone, `"${ps.companyName}" ${ps.tier} 파트너 구독`, 0).catch(() => {});
             }
           });
         }
@@ -250,7 +250,7 @@ export async function GET(request: NextRequest) {
           ).catch(() => {});
 
           if (fb.manager?.phone) {
-            notifyPaymentExpiring(fb.manager.phone, `${fb.tier} 프랜차이즈 구독`, 0).catch(() => {});
+            notifyPaymentExpiring(fb.manager.phone, `"${fb.brandName}" ${fb.tier} 프랜차이즈 구독`, 0).catch(() => {});
           }
         });
       }
@@ -310,7 +310,7 @@ export async function GET(request: NextRequest) {
         ).catch(() => {});
 
         if (eq.user?.phone) {
-          notifyPaymentExpiring(eq.user.phone, `${eq.tier} 집기장터 광고`, 0).catch(() => {});
+          notifyPaymentExpiring(eq.user.phone, `"${eq.title}" ${eq.tier} 집기장터 광고`, 0).catch(() => {});
         }
       });
     }
@@ -365,7 +365,7 @@ export async function GET(request: NextRequest) {
         ).catch(() => {});
 
         if (l.user?.phone) {
-          notifyPaymentExpiring(l.user.phone, `${l.tier} 매물 광고`, 0).catch(() => {});
+          notifyPaymentExpiring(l.user.phone, `"${l.storeName || l.addressRoad || "매물"}" ${l.tier} 매물 광고`, 0).catch(() => {});
         }
       });
     }
@@ -455,7 +455,9 @@ export async function GET(request: NextRequest) {
       });
 
       if (ad.user.phone) {
-        notifyPaymentExpiring(ad.user.phone, ad.product.name, daysLeft).catch(() => {});
+        const smsTargetName = ad.listing?.storeName || ad.listing?.addressRoad || ad.partnerService?.companyName || ad.equipment?.title || "";
+        const smsProductLabel = smsTargetName ? `"${smsTargetName}" ${ad.product.name}` : ad.product.name;
+        notifyPaymentExpiring(ad.user.phone, smsProductLabel, daysLeft).catch(() => {});
       }
 
       // 웹 푸시 (non-blocking)
