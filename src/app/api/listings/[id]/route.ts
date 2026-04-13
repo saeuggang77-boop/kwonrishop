@@ -145,10 +145,8 @@ export async function PUT(
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-  const rl = rateLimitRequest(req, 10, 60000);
-  if (!rl.success) {
-    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
-  }
+  const rateLimitError = await rateLimitRequest(req, 10, 60000);
+  if (rateLimitError) return rateLimitError;
 
   const session = await getServerSession(authOptions);
 
@@ -393,10 +391,8 @@ export async function DELETE(
   if (!validateOrigin(_req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-  const rl = rateLimitRequest(_req, 10, 60000);
-  if (!rl.success) {
-    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
-  }
+  const rateLimitError = await rateLimitRequest(_req, 10, 60000);
+  if (rateLimitError) return rateLimitError;
 
   const session = await getServerSession(authOptions);
 

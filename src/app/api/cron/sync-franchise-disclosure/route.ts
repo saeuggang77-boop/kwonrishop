@@ -25,10 +25,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const rl = rateLimitRequest(request, 1, 300000); // 5분에 1회
-    if (!rl.success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-    }
+    const rateLimitError = await rateLimitRequest(request, 1, 300000); // 5분에 1회
+    if (rateLimitError) return rateLimitError;
 
     if (!process.env.FTC_DISCLOSURE_API_KEY) {
       return NextResponse.json({

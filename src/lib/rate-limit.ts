@@ -84,14 +84,27 @@ export function getClientIp(request: Request): string {
  * Rate limit a request with automatic route isolation.
  * Builds a composite key from IP + HTTP method + URL pathname,
  * so each API endpoint has its own independent rate limit counter.
+ * Returns NextResponse with 429 status if rate limit exceeded, null otherwise.
  */
-export function rateLimitRequest(
+export async function rateLimitRequest(
   request: Request,
   limit: number,
   windowMs: number
-): { success: boolean; remaining: number } {
+): Promise<Response | null> {
   const ip = getClientIp(request);
   const url = new URL(request.url);
   const key = `${request.method}:${url.pathname}:${ip}`;
-  return rateLimit(key, limit, windowMs);
+  const result = rateLimit(key, limit, windowMs);
+
+  if (!result.success) {
+    return new Response(
+      JSON.stringify({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." }),
+      {
+        status: 429,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
+  return null;
 }

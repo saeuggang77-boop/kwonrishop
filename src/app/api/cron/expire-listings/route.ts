@@ -20,10 +20,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const rl = rateLimitRequest(request, 2, 60000);
-    if (!rl.success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-    }
+    const rateLimitError = await rateLimitRequest(request, 2, 60000);
+    if (rateLimitError) return rateLimitError;
 
     // Find listings that should be expired
     const thirtyDaysAgo = new Date();

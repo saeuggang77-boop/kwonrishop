@@ -4,8 +4,8 @@ import { hashToken } from "@/lib/password";
 import { rateLimitRequest } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
-  const limit = rateLimitRequest(req, 10, 60000);
-  if (!limit.success) {
+  const rateLimitError = await rateLimitRequest(req, 10, 60000);
+  if (rateLimitError) {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     return NextResponse.redirect(`${baseUrl}/login?error=RateLimit`);
   }

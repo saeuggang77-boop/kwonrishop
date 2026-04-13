@@ -9,13 +9,8 @@ import { uploadToS3, isS3Configured } from "@/lib/s3";
 
 export async function POST(req: NextRequest) {
   // Rate limiting: 30 uploads per minute (사진 15장 + 증빙자료)
-  const limiter = rateLimitRequest(req, 30, 60000);
-  if (!limiter.success) {
-    return NextResponse.json(
-      { error: "업로드 요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },
-      { status: 429 }
-    );
-  }
+  const rateLimitError = await rateLimitRequest(req, 30, 60000);
+  if (rateLimitError) return rateLimitError;
 
   // CSRF protection
   if (!validateOrigin(req)) {

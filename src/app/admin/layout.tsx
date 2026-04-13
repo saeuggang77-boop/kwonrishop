@@ -16,6 +16,7 @@ const ADMIN_MENU = [
   { href: "/admin/inquiries", label: "문의관리", icon: "📧" },
   { href: "/admin/users", label: "회원관리", icon: "👥" },
   { href: "/admin/notices", label: "공지사항", icon: "📢" },
+  { href: "/admin/auto-content", label: "자동 콘텐츠", icon: "🤖" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

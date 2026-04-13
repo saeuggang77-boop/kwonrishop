@@ -11,13 +11,8 @@ import { validateOrigin } from "@/lib/csrf";
  */
 export async function GET(request: Request) {
   // Rate limiting
-  const limiter = rateLimitRequest(request, 10, 60000);
-  if (!limiter.success) {
-    return NextResponse.json(
-      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },
-      { status: 429 }
-    );
-  }
+  const rateLimitError = await rateLimitRequest(request, 10, 60000);
+  if (rateLimitError) return rateLimitError;
 
   // CSRF protection
   if (!validateOrigin(request)) {

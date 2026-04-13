@@ -26,10 +26,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const rl = rateLimitRequest(request, 2, 60000);
-    if (!rl.success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-    }
+    const rateLimitError = await rateLimitRequest(request, 2, 60000);
+    if (rateLimitError) return rateLimitError;
 
     const now = new Date();
     const cutoffTime = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24시간 전

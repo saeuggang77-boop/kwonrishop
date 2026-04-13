@@ -10,13 +10,8 @@ export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-  const limit = rateLimitRequest(req, 2, 300000); // 2 requests per 5 minutes
-  if (!limit.success) {
-    return NextResponse.json(
-      { error: "인증 메일은 5분에 1회만 재발송할 수 있습니다." },
-      { status: 429 }
-    );
-  }
+  const rateLimitError = await rateLimitRequest(req, 2, 300000); // 2 requests per 5 minutes
+  if (rateLimitError) return rateLimitError;
 
   try {
     const { email } = await req.json();

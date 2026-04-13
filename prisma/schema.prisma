@@ -48,6 +48,10 @@ model User {
   franchiseInquiries   FranchiseInquiry[] @relation("UserFranchiseInquiries")
   blockedUsers         Block[]   @relation("blocker")
   blockedByUsers       Block[]   @relation("blocked")
+
+  // 자동 콘텐츠 (유령회원)
+  isGhost              Boolean           @default(false)
+  ghostPersonality     GhostPersonality?
 }
 
 enum UserRole {
@@ -638,8 +642,9 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  author   User      @relation(fields: [authorId], references: [id])
-  comments Comment[]
+  author      User          @relation(fields: [authorId], references: [id])
+  comments    Comment[]
+  contentPool ContentPool[]
 
   @@index([tag, createdAt])
   @@index([createdAt])
@@ -951,4 +956,72 @@ model Block {
   @@unique([userId, blockedId])
   @@index([userId])
   @@index([blockedId])
+}
+
+// ==========================================
+// 자동 콘텐츠 시스템
+// ==========================================
+
+enum GhostPersonality {
+  CHATTY
+  ADVISOR
+  QUESTIONER
+  EMOJI_LOVER
+  CALM
+  SASSY
+  CUSTOM
+}
+
+enum ContentType {
+  POST
+  COMMENT
+  REPLY
+}
+
+model AutoContentConfig {
+  id                 String   @id @default("singleton")
+  enabled            Boolean  @default(false)
+  autoCommentEnabled Boolean  @default(true)
+  postsPerDay        Int      @default(8)
+  commentsPerPostMin Int      @default(2)
+  commentsPerPostMax Int      @default(10)
+  authorReplyRateMin Int      @default(20)
+  authorReplyRateMax Int      @default(60)
+  activeStartHour    Int      @default(14)
+  activeEndHour      Int      @default(4)
+  realPostAutoReply  Boolean  @default(true)
+  monthlyBudgetKrw   Int      @default(100000)
+  seoKeywords        String[] @default([])
+  seoKeywordUsage    Json?    @default("{}")
+  categoryWeights    Json?
+  updatedAt          DateTime @updatedAt
+}
+
+model ContentPool {
+  id              String           @id @default(cuid())
+  type            ContentType
+  personality     GhostPersonality
+  title           String?
+  content         String           @db.Text
+  category        String?
+  isUsed          Boolean          @default(false)
+  publishedPostId String?
+  createdAt       DateTime         @default(now())
+
+  publishedPost Post? @relation(fields: [publishedPostId], references: [id])
+
+  @@index([type, isUsed])
+  @@index([createdAt])
+}
+
+model AiUsageLog {
+  id               String   @id @default(cuid())
+  model            String
+  inputTokens      Int
+  outputTokens     Int
+  estimatedCostKrw Int
+  context          String?
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
 }

@@ -275,10 +275,8 @@ export async function POST(req: NextRequest) {
   if (!validateOrigin(req)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-  const limit = rateLimitRequest(req, 15, 60000);
-  if (!limit.success) {
-    return NextResponse.json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." }, { status: 429 });
-  }
+  const rateLimitError = await rateLimitRequest(req, 15, 60000);
+  if (rateLimitError) return rateLimitError;
 
   const session = await getServerSession(authOptions);
 

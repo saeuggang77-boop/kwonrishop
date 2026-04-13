@@ -7,10 +7,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // 공개 프로필 API - 크롤링 방지를 위한 rate limiting
-  const rl = rateLimitRequest(req, 30, 60000);
-  if (!rl.success) {
-    return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
-  }
+  const rateLimitError = await rateLimitRequest(req, 30, 60000);
+  if (rateLimitError) return rateLimitError;
 
   try {
     const { id: userId } = await params;

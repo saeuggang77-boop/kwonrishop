@@ -76,13 +76,8 @@ export async function GET(req: NextRequest) {
 // 게시글 작성
 export async function POST(req: NextRequest) {
   // Rate limiting: 5 posts per minute
-  const limiter = rateLimitRequest(req, 15, 60000);
-  if (!limiter.success) {
-    return NextResponse.json(
-      { error: "게시글 작성이 너무 빠릅니다. 잠시 후 다시 시도해주세요." },
-      { status: 429 }
-    );
-  }
+  const rateLimitError = await rateLimitRequest(req, 15, 60000);
+  if (rateLimitError) return rateLimitError;
 
   // CSRF protection
   if (!validateOrigin(req)) {
