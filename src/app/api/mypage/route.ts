@@ -27,8 +27,9 @@ export async function GET() {
         where: { userId: session.user.id },
         select: { verified: true, businessName: true },
       }),
-      prisma.listing.findUnique({
-        where: { userId: session.user.id },
+      prisma.listing.findFirst({
+        where: { userId: session.user.id, status: { not: "DELETED" } },
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           status: true,

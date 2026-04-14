@@ -21,8 +21,10 @@ export async function GET(
         image: true,
         createdAt: true,
         role: true,
-        listing: {
+        listings: {
           where: { status: "ACTIVE" },
+          take: 1,
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
             storeName: true,
@@ -75,9 +77,9 @@ export async function GET(
         image: user.image,
         createdAt: user.createdAt,
         role: user.role,
-        listing: user.listing ? {
-          ...user.listing,
-          reviews: undefined, // Remove reviews from listing object
+        listing: user.listings[0] ? {
+          ...user.listings[0],
+          reviews: undefined,
         } : null,
       },
     });

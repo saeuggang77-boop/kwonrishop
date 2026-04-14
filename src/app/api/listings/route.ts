@@ -303,12 +303,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "사업자인증이 필요합니다." }, { status: 403 });
   }
 
-  const existingListing = await prisma.listing.findFirst({
-    where: { userId: session.user.id },
-    select: { id: true, status: true },
+  const existingActiveListing = await prisma.listing.findFirst({
+    where: {
+      userId: session.user.id,
+      status: { not: "DELETED" },
+    },
+    select: { id: true },
   });
 
-  if (existingListing && existingListing.status !== "DELETED") {
+  if (existingActiveListing) {
     return NextResponse.json(
       { error: "이미 등록된 매물이 있습니다. 1인 1매물만 등록 가능합니다." },
       { status: 400 },

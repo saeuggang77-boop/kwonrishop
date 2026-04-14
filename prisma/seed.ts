@@ -1322,60 +1322,40 @@ async function main() {
 
   for (let i = 0; i < listingsData.length; i++) {
     const d = listingsData[i];
-    await prisma.listing.upsert({
-      where: { userId: d.sellerId },
-      update: {
-        status: "ACTIVE",
-        storeName: d.storeName,
-        description: d.description,
-        addressRoad: d.addressRoad,
-        addressJibun: d.addressJibun,
-        latitude: d.latitude,
-        longitude: d.longitude,
-        categoryId: d.categoryId,
-        subCategoryId: d.subCategoryId,
-        deposit: d.deposit,
-        monthlyRent: d.monthlyRent,
-        premium: d.premium,
-        areaPyeong: d.areaPyeong,
-        areaSqm: d.areaSqm,
-        currentFloor: d.currentFloor,
-        totalFloor: d.totalFloor,
-        brandType: d.brandType,
-        viewCount: d.viewCount,
-        favoriteCount: d.favoriteCount,
-        monthlyRevenue: d.monthlyRevenue,
-        contactPublic: d.contactPublic,
-        themes: d.themes,
-        isBasement: (d as any).isBasement ?? false,
-      },
-      create: {
-        userId: d.sellerId,
-        status: "ACTIVE",
-        storeName: d.storeName,
-        description: d.description,
-        addressRoad: d.addressRoad,
-        addressJibun: d.addressJibun,
-        latitude: d.latitude,
-        longitude: d.longitude,
-        categoryId: d.categoryId,
-        subCategoryId: d.subCategoryId,
-        deposit: d.deposit,
-        monthlyRent: d.monthlyRent,
-        premium: d.premium,
-        areaPyeong: d.areaPyeong,
-        areaSqm: d.areaSqm,
-        currentFloor: d.currentFloor,
-        totalFloor: d.totalFloor,
-        brandType: d.brandType,
-        viewCount: d.viewCount,
-        favoriteCount: d.favoriteCount,
-        monthlyRevenue: d.monthlyRevenue,
-        contactPublic: d.contactPublic,
-        themes: d.themes,
-        isBasement: (d as any).isBasement ?? false,
-      },
+    const existing = await prisma.listing.findFirst({
+      where: { userId: d.sellerId, status: { not: "DELETED" } },
+      select: { id: true },
     });
+    const listingFields = {
+      status: "ACTIVE" as const,
+      storeName: d.storeName,
+      description: d.description,
+      addressRoad: d.addressRoad,
+      addressJibun: d.addressJibun,
+      latitude: d.latitude,
+      longitude: d.longitude,
+      categoryId: d.categoryId,
+      subCategoryId: d.subCategoryId,
+      deposit: d.deposit,
+      monthlyRent: d.monthlyRent,
+      premium: d.premium,
+      areaPyeong: d.areaPyeong,
+      areaSqm: d.areaSqm,
+      currentFloor: d.currentFloor,
+      totalFloor: d.totalFloor,
+      brandType: d.brandType,
+      viewCount: d.viewCount,
+      favoriteCount: d.favoriteCount,
+      monthlyRevenue: d.monthlyRevenue,
+      contactPublic: d.contactPublic,
+      themes: d.themes,
+      isBasement: (d as any).isBasement ?? false,
+    };
+    if (existing) {
+      await prisma.listing.update({ where: { id: existing.id }, data: listingFields });
+    } else {
+      await prisma.listing.create({ data: { userId: d.sellerId, ...listingFields } });
+    }
   }
   console.log(`  ✓ 데모 매물 ${listingsData.length}개 생성`);
 
@@ -1385,7 +1365,7 @@ async function main() {
   const paidListings = listingsData.filter((d) => d.tier !== null);
   for (let i = 0; i < paidListings.length; i++) {
     const d = paidListings[i];
-    const listing = await prisma.listing.findUnique({ where: { userId: d.sellerId } });
+    const listing = await prisma.listing.findFirst({ where: { userId: d.sellerId, status: { not: "DELETED" } } });
     if (!listing) continue;
     await prisma.adPurchase.upsert({
       where: { id: `demo-purchase-listing-${i}` },
@@ -1903,7 +1883,7 @@ async function main() {
 
   // 매물 이미지 (유료: 5장, 무료: 3장)
   for (let i = 0; i < listingsData.length; i++) {
-    const listing = await prisma.listing.findUnique({ where: { userId: listingsData[i].sellerId } });
+    const listing = await prisma.listing.findFirst({ where: { userId: listingsData[i].sellerId, status: { not: "DELETED" } } });
     if (!listing) continue;
     await prisma.listingImage.deleteMany({ where: { listingId: listing.id } });
     const imgCount = listingsData[i].tier ? 5 : 3;

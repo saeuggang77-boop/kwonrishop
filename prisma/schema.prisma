@@ -28,7 +28,7 @@ model User {
   accounts             Account[]
   sessions             Session[]
   businessVerification BusinessVerification?
-  listing              Listing?
+  listings             Listing[]
   franchiseBrand       FranchiseBrand?
   partnerService       PartnerService?
   equipment            Equipment[]
@@ -150,7 +150,7 @@ model SubCategory {
 
 model Listing {
   id     String        @id @default(cuid())
-  userId String        @unique // 1인 1매물
+  userId String        // 1인 1활성매물 (코드 레벨에서 DELETED 제외 체크)
   status ListingStatus @default(DRAFT)
 
   // Step 1: 위치정보
@@ -243,6 +243,7 @@ model Listing {
   @@index([status, createdAt])
   @@index([status, tier])
   @@index([latitude, longitude])
+  @@index([userId, status])
 }
 
 enum ListingStatus {

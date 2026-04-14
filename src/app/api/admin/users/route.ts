@@ -60,20 +60,18 @@ export async function GET(request: Request) {
         role: true,
         emailVerified: true,
         createdAt: true,
-        listing: {
-          select: {
-            id: true,
-          },
+        listings: {
+          where: { status: { not: "DELETED" } },
+          select: { id: true },
         },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    // Transform to include listingCount (0 or 1 since it's 1:1)
     const transformedUsers = users.map((u) => ({
       ...u,
-      listingCount: u.listing ? 1 : 0,
-      listing: undefined,
+      listingCount: u.listings.length,
+      listings: undefined,
     }));
 
     return NextResponse.json({

@@ -12,8 +12,9 @@ export async function GET(req: NextRequest) {
 
   try {
     // Get user's listing
-    const listing = await prisma.listing.findUnique({
-      where: { userId: session.user.id },
+    const listing = await prisma.listing.findFirst({
+      where: { userId: session.user.id, status: { not: "DELETED" } },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         viewCount: true,
