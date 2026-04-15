@@ -387,7 +387,7 @@ export default function FranchiseDetailClient() {
                 <div className="bg-green-50 rounded-xl p-5 max-w-md mx-auto border border-green-200">
                   <p className="text-sm font-medium text-green-900 mb-1">이 브랜드의 본사이신가요?</p>
                   <p className="text-xs text-green-700 mb-3">유료 플랜에 등록하시면 가맹 문의를 직접 받을 수 있습니다.</p>
-                  <button onClick={() => router.push("/pricing?tab=franchise")} className="px-5 py-2.5 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">본사 등록하고 문의 받기</button>
+                  <button onClick={() => router.push("/pricing?tab=FRANCHISE")} className="px-5 py-2.5 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">본사 등록하고 문의 받기</button>
                 </div>
               </div>
             )}

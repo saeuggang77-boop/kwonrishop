@@ -259,7 +259,7 @@ export default function PartnersPage() {
                     전체 <span className="font-light text-terra-500">업체</span>
                   </h2>
                 </div>
-                <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">광고 등록으로 상단 노출 →</a>
+                <a href="/pricing?tab=PARTNER" className="text-xs text-muted hover:text-terra-500 transition-colors">광고 등록으로 상단 노출 →</a>
               </div>
               {basicPartners.length > 0 && (
                 <TierSection
@@ -500,7 +500,7 @@ function FreeSection({
             <h2 className="text-sm font-bold text-muted uppercase tracking-wider">일반 업체</h2>
             <span className="text-sm text-line-deep">{total}개</span>
           </div>
-          <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">
+          <a href="/pricing?tab=PARTNER" className="text-xs text-muted hover:text-terra-500 transition-colors">
             광고 등록으로 상단 노출 →
           </a>
         </div>

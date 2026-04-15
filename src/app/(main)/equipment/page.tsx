@@ -333,7 +333,7 @@ function EquipmentListContent() {
                     전체 <span className="font-light text-terra-500">집기</span>
                   </h2>
                 </div>
-                <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">광고 등록으로 상단 노출 →</a>
+                <a href="/pricing?tab=EQUIPMENT" className="text-xs text-muted hover:text-terra-500 transition-colors">광고 등록으로 상단 노출 →</a>
               </div>
               {basicEquipments.length > 0 && (
                 <TierSection
@@ -574,7 +574,7 @@ function FreeSection({
             <h2 className="text-sm font-bold text-muted uppercase tracking-wider">일반 집기</h2>
             <span className="text-sm text-line-deep">{total}개</span>
           </div>
-          <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">
+          <a href="/pricing?tab=EQUIPMENT" className="text-xs text-muted hover:text-terra-500 transition-colors">
             광고 등록으로 상단 노출 →
           </a>
         </div>
