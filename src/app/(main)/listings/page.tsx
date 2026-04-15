@@ -403,16 +403,16 @@ function ListingsContent() {
               setShowFilters(!showFilters);
             }
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-cream border border-line rounded-full text-sm font-semibold text-ink hover:border-green-700 transition-colors"
           aria-expanded={showFilters}
           aria-label="상세 필터 옵션"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
           </svg>
           상세필터
           {activeFilterCount > 0 && (
-            <span className="px-2 py-0.5 bg-green-700 text-white rounded-full text-xs" aria-label={`${activeFilterCount}개 필터 활성화됨`}>
+            <span className="px-2 py-0.5 bg-terra-500 text-cream rounded-full text-[10px] font-bold" aria-label={`${activeFilterCount}개 필터 활성화됨`}>
               {activeFilterCount}
             </span>
           )}
@@ -569,7 +569,7 @@ function ListingsContent() {
             </button>
             <button
               onClick={() => { setPage(1); fetchListings(); }}
-              className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
+              className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-800 transition-colors"
               aria-label="선택한 필터 적용하여 검색"
             >
               필터 적용
@@ -1062,7 +1062,7 @@ function ListingsContent() {
                 fetchListings();
                 closeFilterModal();
               }}
-              className="flex-[2] min-h-[48px] px-4 py-3 bg-green-700 text-white rounded-lg text-base font-medium hover:bg-green-600 transition-colors"
+              className="flex-[2] min-h-[48px] px-4 py-3 bg-green-700 text-white rounded-lg text-base font-medium hover:bg-green-800 transition-colors"
               aria-label="필터 적용하기"
             >
               필터 적용하기

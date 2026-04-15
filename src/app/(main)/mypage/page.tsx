@@ -426,7 +426,7 @@ export default function MyPage() {
                 <div className="text-xs text-gray-500">채팅</div>
               </div>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="p-4 bg-cream-elev rounded-2xl">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 hover:text-green-700">
                   {data.listing.storeName || "매물"}
@@ -655,7 +655,7 @@ export default function MyPage() {
           {data.partnerService ? (
             <Link
               href={`/partners/${data.partnerService.id}`}
-              className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="block p-3 bg-cream-elev rounded-2xl hover:bg-gray-100 transition-colors"
             >
               <p className="font-medium text-gray-900">{data.partnerService.companyName}</p>
               <div className="flex gap-3 mt-1 text-xs text-gray-400">
@@ -700,7 +700,7 @@ export default function MyPage() {
           </div>
           <Link
             href={`/franchise/${data.franchiseBrand.id}`}
-            className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="block p-3 bg-cream-elev rounded-2xl hover:bg-gray-100 transition-colors"
           >
             <p className="font-medium text-gray-900">{data.franchiseBrand.brandName}</p>
             <div className="flex gap-3 mt-1 text-xs text-gray-400">
@@ -737,7 +737,7 @@ export default function MyPage() {
         {data.equipmentCount > 0 ? (
           <Link
             href="/equipment?mine=true"
-            className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="block p-3 bg-cream-elev rounded-2xl hover:bg-gray-100 transition-colors"
           >
             <p className="font-medium text-gray-900">등록 집기 {data.equipmentCount}건</p>
             <span className="text-sm text-gray-400">관리하기 &rsaquo;</span>
@@ -763,7 +763,7 @@ export default function MyPage() {
           {data.user.role === "SELLER" && data.listing && data.activeListingAd && (
             <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
               <h3 className="font-bold text-gray-900 mb-3">광고 현황</h3>
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 bg-cream-elev rounded-2xl">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <Link href={`/listings/${data.listing.id}`} className="font-medium text-gray-900 hover:text-green-700">
                     {data.listing.storeName || "매물"}
@@ -897,7 +897,7 @@ export default function MyPage() {
                 <Link
                   key={report.id}
                   href={`/reports/seller/${report.listingId}`}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center justify-between p-3 bg-cream-elev rounded-2xl hover:bg-gray-100 transition-colors"
                 >
                   <div>
                     <p className="text-sm font-medium text-gray-900">{report.listingName || "매물 시장분석"}</p>

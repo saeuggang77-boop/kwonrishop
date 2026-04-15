@@ -80,7 +80,7 @@ export default function ComparePage() {
           <p className="text-gray-600 mb-6">매물 목록에서 비교할 매물을 선택해주세요 (최대 3개)</p>
           <Link
             href="/listings"
-            className="inline-block px-6 py-3 bg-green-700 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
+            className="inline-block px-6 py-3 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition-colors"
           >
             매물 검색하러 가기
           </Link>
@@ -373,7 +373,7 @@ export default function ComparePage() {
         <div className="mt-6 flex justify-center">
           <Link
             href="/listings"
-            className="px-6 py-3 bg-green-700 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
+            className="px-6 py-3 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition-colors"
           >
             더 많은 매물 보기
           </Link>
