@@ -127,12 +127,12 @@ export default function HomeClient({
             상가 직거래 플랫폼
           </div>
           <h1 className="font-extrabold text-cream leading-[1.15] tracking-tight mb-5 text-4xl md:text-5xl">
-            상가,
-            <span className="block font-light text-terra-300 mt-1">직접 거래하세요.</span>
+            정직한 상가 직거래,
+            <span className="block font-light text-terra-300 mt-1">권리샵.</span>
           </h1>
           <p className="text-sm md:text-[15px] text-cream/65 leading-relaxed max-w-lg mx-auto mb-8">
-            중개수수료 0원, 수천만 원의 권리금은<br />
-            당사자끼리 정할 때 가장 투명합니다.
+            중개 없이, 당사자끼리<br />
+            권리금까지 투명하게 합의합니다.
           </p>
           <form onSubmit={handleSearch} className="max-w-xl mx-auto">
             <div className="flex items-center bg-cream rounded-full p-1.5 pl-6 shadow-[0_16px_48px_rgba(0,0,0,0.15)]">
