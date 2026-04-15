@@ -819,51 +819,51 @@ export default function ListingDetailClient() {
       <div className={activeDetailTab === "detail" ? "block" : "hidden md:block"}>
       {/* ===== 5. 권리금 해부하기 ===== */}
       {hasPremiumBreakdown && (
-        <Section title="권리금 해부하기">
-          <div className="space-y-4">
-            {/* 비율 바 */}
-            <div className="flex h-3 rounded-full overflow-hidden bg-gray-100">
+        <Section title="권리금 해부하기" subtitle="총 권리금이 어떻게 구성되어 있는지 한눈에 확인하세요">
+          <div>
+            {/* 비율 스택바 (pill) */}
+            <div className="flex h-8 rounded-full overflow-hidden shadow-[0_2px_8px_rgba(31,63,46,0.08)] mb-4">
               {listing.premiumBusiness != null && listing.premiumBusiness > 0 && premiumTotal > 0 && (
                 <div
-                  className="bg-green-500 transition-all"
+                  className="bg-terra-500 transition-all"
                   style={{ width: `${(listing.premiumBusiness / premiumTotal) * 100}%` }}
                   title={`영업권리금 ${((listing.premiumBusiness / premiumTotal) * 100).toFixed(1)}%`}
                 />
               )}
               {listing.premiumFacility != null && listing.premiumFacility > 0 && premiumTotal > 0 && (
                 <div
-                  className="bg-emerald-500 transition-all"
+                  className="bg-green-700 transition-all"
                   style={{ width: `${(listing.premiumFacility / premiumTotal) * 100}%` }}
                   title={`시설권리금 ${((listing.premiumFacility / premiumTotal) * 100).toFixed(1)}%`}
                 />
               )}
               {listing.premiumLocation != null && listing.premiumLocation > 0 && premiumTotal > 0 && (
                 <div
-                  className="bg-amber-500 transition-all"
+                  className="bg-green-300 transition-all"
                   style={{ width: `${(listing.premiumLocation / premiumTotal) * 100}%` }}
                   title={`바닥권리금 ${((listing.premiumLocation / premiumTotal) * 100).toFixed(1)}%`}
                 />
               )}
             </div>
 
-            {/* 범례 */}
-            <div className="space-y-3">
+            {/* 3-column 컴팩트 카드 */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <PremiumItem
-                color="bg-green-500"
+                color="bg-terra-500"
                 label="영업권리금"
                 value={listing.premiumBusiness}
                 total={premiumTotal}
                 desc={listing.premiumBusinessDesc}
               />
               <PremiumItem
-                color="bg-emerald-500"
+                color="bg-green-700"
                 label="시설권리금"
                 value={listing.premiumFacility}
                 total={premiumTotal}
                 desc={listing.premiumFacilityDesc}
               />
               <PremiumItem
-                color="bg-amber-500"
+                color="bg-green-300"
                 label="바닥권리금"
                 value={listing.premiumLocation}
                 total={premiumTotal}
@@ -872,9 +872,9 @@ export default function ListingDetailClient() {
             </div>
 
             {/* 합계 */}
-            <div className="flex justify-between items-center pt-3 border-t border-line">
-              <span className="text-sm font-bold text-gray-900">합계</span>
-              <span className="text-base font-bold text-green-700">{fmt(premiumTotal)}만원</span>
+            <div className="flex justify-between items-center pt-4 mt-4 border-t border-dashed border-line-deep">
+              <span className="text-sm font-bold text-ink">합계</span>
+              <span className="text-ink font-bold"><span className="font-serif italic font-medium text-xl text-green-700 mr-1">{fmt(premiumTotal)}</span>만원</span>
             </div>
           </div>
         </Section>
@@ -1518,10 +1518,37 @@ function CompareButton({ listingId }: { listingId: string }) {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  subtitle,
+  kicker,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  kicker?: string;
+  children: React.ReactNode;
+}) {
+  // 한글 타이틀에서 마지막 단어만 테라색 light로 강조 (예: "평균 매출정보" → "평균 매출정보")
+  // 공백 기준으로 split — 한 단어면 그대로 강조
+  const parts = title.trim().split(/\s+/);
+  const main = parts.length > 1 ? parts.slice(0, -1).join(" ") + " " : "";
+  const accent = parts[parts.length - 1];
+
   return (
-    <div className="py-4 border-b border-line">
-      <h2 className="font-bold text-gray-900 mb-3">{title}</h2>
+    <div className="py-8 border-b border-line">
+      {kicker && (
+        <div className="flex items-center gap-2 mb-2 text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">
+          <span className="w-5 h-px bg-terra-500" />
+          {kicker}
+        </div>
+      )}
+      <h2 className="font-extrabold text-green-700 tracking-tight text-xl md:text-2xl leading-tight">
+        {main}
+        <span className="font-light text-terra-500">{accent}</span>
+      </h2>
+      {subtitle && <p className="text-sm text-muted mt-1.5 mb-5">{subtitle}</p>}
+      {!subtitle && <div className="mb-4" />}
       {children}
     </div>
   );
@@ -1548,19 +1575,19 @@ function PremiumItem({ color, label, value, total, desc }: {
   desc: string | null;
 }) {
   if (!value || value <= 0) return null;
-  const pct = total > 0 ? ((value / total) * 100).toFixed(1) : "0";
+  const pct = total > 0 ? ((value / total) * 100).toFixed(0) : "0";
   return (
-    <div className="flex items-start gap-3">
-      <div className={`w-3 h-3 rounded-full ${color} mt-1 shrink-0`} />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm font-medium text-gray-700">{label}</span>
-          <span className="text-sm text-gray-900">
-            {value.toLocaleString()}만 <span className="text-xs text-gray-400">({pct}%)</span>
-          </span>
-        </div>
-        {desc && <p className="text-xs text-gray-400 mt-0.5 truncate">{desc}</p>}
+    <div className="bg-cream-elev rounded-2xl p-4">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className={`w-2 h-2 rounded-full ${color} shrink-0`} />
+        <span className="text-xs font-semibold text-muted">{label}</span>
       </div>
+      <div className="flex items-baseline gap-1">
+        <span className="font-serif italic font-medium text-xl text-green-700">{value.toLocaleString()}</span>
+        <span className="text-xs text-muted font-medium">만</span>
+        <span className="ml-auto text-[11px] text-muted font-semibold">{pct}%</span>
+      </div>
+      {desc && <p className="text-[11px] text-muted mt-1 truncate">{desc}</p>}
     </div>
   );
 }

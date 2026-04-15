@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>매물 상세 B안 완전판 미리보기</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-700: #1F3F2E;
+    --green-800: #162E21;
+    --green-100: #DFEADF;
+    --green-50: #F3F7F3;
+    --terra-500: #D96C4F;
+    --terra-300: #F0B092;
+    --terra-100: #FAE2D3;
+    --terra-700: #B04E32;
+    --cream: #FBF8F3;
+    --cream-elev: #F4EFE4;
+    --ink: #1A2620;
+    --muted: #5F6B62;
+    --line: #E0D8C5;
+    --line-deep: #C8BFA8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+    padding-bottom: 80px;
+  }
+  .serif-num { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; }
+
+  /* Header */
+  .top {
+    padding: 14px 32px;
+    background: rgba(251, 248, 243, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .logo { font-size: 18px; font-weight: 800; color: var(--green-700); display: flex; align-items: center; gap: 7px; }
+  .logo .dot { width: 9px; height: 9px; background: var(--terra-500); border-radius: 50%; }
+  .login-btn { padding: 8px 18px; background: var(--terra-500); color: var(--cream); border-radius: 99px; font-size: 12px; font-weight: 700; border: none; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  /* Breadcrumb */
+  .breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .breadcrumb a { color: inherit; text-decoration: none; }
+  .breadcrumb .sep { margin: 0 6px; color: var(--line-deep); }
+
+  /* Title */
+  .title-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .title-area .meta { font-size: 12px; color: var(--terra-500); font-weight: 600; margin-bottom: 6px; }
+  .title-area h1 { font-size: 32px; font-weight: 800; color: var(--green-700); letter-spacing: -0.02em; margin: 0 0 6px; line-height: 1.2; }
+  .title-area .addr { font-size: 14px; color: var(--muted); }
+  .share-row { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--cream); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink); cursor: pointer; transition: all 0.2s;
+  }
+  .icon-btn:hover { border-color: var(--green-700); background: var(--cream-elev); }
+  .icon-btn.fav.active { background: var(--terra-100); color: var(--terra-500); border-color: var(--terra-500); }
+
+  /* Gallery */
+  .gallery {
+    display: grid; grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr; gap: 6px;
+    margin-bottom: 40px; border-radius: 24px; overflow: hidden;
+    aspect-ratio: 2/1;
+  }
+  .gallery .img { background: var(--cream-elev); position: relative; }
+  .gallery .img.main { grid-row: span 2; background: linear-gradient(135deg, #2D5A3D, #1F3F2E); }
+  .gallery .img.main::after {
+    content: 'MAIN';
+    position: absolute; top: 16px; left: 16px;
+    background: var(--terra-500); color: var(--cream);
+    padding: 4px 10px; border-radius: 99px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+  }
+  .view-all {
+    position: absolute; bottom: 14px; right: 14px;
+    background: var(--ink); color: var(--cream);
+    padding: 8px 14px; border-radius: 99px;
+    font-size: 12px; font-weight: 600; border: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* Main grid */
+  .main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 48px; align-items: start; }
+
+  /* Section blocks */
+  .sec {
+    border-bottom: 1px solid var(--line);
+    padding: 40px 0;
+  }
+  .sec:first-child { padding-top: 0; }
+  .sec:last-child { border-bottom: none; }
+  .sec h2 {
+    font-size: 22px; font-weight: 800; color: var(--green-700);
+    letter-spacing: -0.02em; margin: 0 0 16px;
+  }
+  .sec h2 .light { font-weight: 300; color: var(--terra-500); }
+  .sec-sub { font-size: 13px; color: var(--muted); margin-top: -8px; margin-bottom: 20px; }
+  .sec p { color: var(--ink); line-height: 1.7; margin: 0; font-size: 15px; }
+
+  /* Info grid */
+  .info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 700px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
+  .info-box {
+    background: var(--cream-elev); border-radius: 18px; padding: 18px;
+  }
+  .info-box .lab { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 4px; }
+  .info-box .val { font-size: 18px; font-weight: 800; color: var(--green-700); line-height: 1.1; }
+  .info-box .val .unit { font-size: 12px; color: var(--muted); margin-left: 2px; font-weight: 500; }
+
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .chip {
+    padding: 5px 12px; border-radius: 99px;
+    font-size: 12px; font-weight: 600;
+    background: var(--cream-elev); color: var(--green-700);
+    border: 1px solid var(--line);
+  }
+  .chip.terra { background: var(--terra-100); color: var(--terra-700); border-color: var(--terra-300); }
+
+  /* Pie chart (권리금 해부) */
+  .pie-row { display: flex; gap: 32px; align-items: center; }
+  .pie-wrap { flex-shrink: 0; width: 200px; height: 200px; position: relative; }
+  .pie-row ul.legend { flex: 1; min-width: 0; }
+  @media (max-width: 700px) { .pie-row { flex-direction: column; align-items: stretch; } .pie-wrap { margin: 0 auto; } }
+  .pie {
+    width: 200px !important;
+    height: 200px !important;
+    min-width: 200px;
+    max-width: 200px;
+    background: conic-gradient(
+      var(--terra-500) 0% 45%,
+      var(--green-700) 45% 75%,
+      #8FB494 75% 100%
+    );
+    border-radius: 50%; position: relative;
+    flex-shrink: 0;
+  }
+  .pie.pie-revenue {
+    background: conic-gradient(
+      #E8A87C 0% 34%,
+      #C38A5E 34% 54%,
+      #9E7049 54% 63%,
+      #C8BFA8 63% 72%,
+      var(--green-700) 72% 100%
+    );
+  }
+  .pie::after {
+    content: ''; position: absolute; inset: 24%;
+    background: var(--cream); border-radius: 50%;
+  }
+  .pie-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1;
+    text-align: center;
+  }
+  .pie-center .tot-lab { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .pie-center .tot-val { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 28px; color: var(--green-700); line-height: 1; margin-top: 2px; }
+  .pie-center .tot-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .legend { list-style: none; padding: 0; margin: 0; }
+  .legend li { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--line-deep); }
+  .legend li:last-child { border-bottom: none; }
+  .legend .leg-left { display: flex; align-items: center; gap: 12px; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend .name { font-size: 14px; font-weight: 600; }
+  .legend .val { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 18px; color: var(--green-700); }
+  .legend .pct { font-size: 11px; color: var(--muted); margin-left: 8px; }
+
+  /* 권리금 해부 — 컴팩트 */
+  .premium-breakdown { margin-top: 4px; }
+  .stack-bar {
+    display: flex; height: 32px; border-radius: 99px; overflow: hidden;
+    margin-bottom: 16px; box-shadow: 0 2px 8px rgba(31,63,46,0.08);
+  }
+  .stack-bar .seg { display: block; height: 100%; }
+  .breakdown-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  .br-item {
+    background: var(--cream-elev); border-radius: 14px; padding: 14px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .br-head { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; font-weight: 600; }
+  .br-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .br-val { display: flex; align-items: baseline; gap: 3px; margin-top: 4px; }
+  .br-val .serif-num { font-size: 22px; color: var(--green-700); }
+  .br-unit { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .br-pct { font-size: 11px; color: var(--muted); font-weight: 600; }
+  @media (max-width: 600px) { .breakdown-row { grid-template-columns: 1fr; } }
+
+  /* 매출 summary */
+  .summary-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;
+  }
+  .summary-box {
+    background: var(--cream-elev); border-radius: 16px; padding: 16px;
+  }
+  .summary-box.highlight {
+    background: var(--green-50); border: 1.5px solid var(--green-700);
+  }
+  .summary-box .sum-lab { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; font-weight: 700; }
+  .summary-box .sum-val-row { display: flex; align-items: baseline; gap: 4px; }
+  .summary-box .sum-unit { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .summary-box .sum-detail { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  @media (max-width: 600px) { .summary-row { grid-template-columns: 1fr; } }
+
+  /* Revenue graph (매출 bar chart) */
+  .bar-chart {
+    display: flex; align-items: end; gap: 12px;
+    height: 200px; padding: 20px 0;
+    border-bottom: 1px dashed var(--line-deep);
+    margin-bottom: 12px;
+  }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .bar {
+    width: 100%; max-width: 50px;
+    background: var(--green-700);
+    border-radius: 6px 6px 0 0; position: relative;
+    transition: all 0.2s;
+  }
+  .bar.highlight { background: var(--terra-500); }
+  .bar-val {
+    font-size: 10px; font-weight: 700; color: var(--green-700);
+    white-space: nowrap;
+  }
+  .bar-val.highlight { color: var(--terra-500); }
+  .bar-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .stats-inline {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px;
+  }
+  .stats-inline .sum { text-align: center; }
+  .stats-inline .sum .sum-lab { font-size: 11px; color: var(--muted); }
+  .stats-inline .sum .sum-val { font-family: 'Fraunces', serif; font-style: italic; font-size: 24px; color: var(--green-700); margin-top: 4px; }
+  .stats-inline .sum .sum-unit { font-size: 12px; color: var(--muted); margin-left: 2px; }
+
+  /* Compare gauge */
+  .gauge-row { display: flex; flex-direction: column; gap: 20px; }
+  .gauge-item {
+    padding: 16px 0;
+  }
+  .gauge-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .gauge-head .lab { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .gauge-head .badge {
+    font-size: 10px; padding: 3px 10px; border-radius: 99px;
+    font-weight: 700; letter-spacing: 0.05em;
+  }
+  .gauge-head .badge.lower { background: var(--green-100); color: var(--green-700); }
+  .gauge-head .badge.higher { background: var(--terra-100); color: var(--terra-700); }
+  .gauge-bar { height: 10px; background: var(--cream-elev); border-radius: 99px; position: relative; overflow: hidden; }
+  .gauge-bar .fill { height: 100%; border-radius: 99px; }
+  .gauge-bar .fill.mine { background: var(--terra-500); }
+  .gauge-bar .fill.avg { background: var(--green-700); opacity: 0.4; }
+  .gauge-nums { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .gauge-nums .mine-num { color: var(--terra-500); font-weight: 700; }
+  .gauge-nums .avg-num { color: var(--green-700); font-weight: 600; }
+
+  /* Price history */
+  .price-hist { border: 1px dashed var(--line-deep); border-radius: 16px; padding: 16px; }
+  .hist-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .hist-item:last-child { border-bottom: none; }
+  .hist-date { font-size: 12px; color: var(--muted); }
+  .hist-val { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 16px; color: var(--green-700); }
+  .hist-val.down { color: var(--terra-500); }
+  .hist-val .arr { font-size: 10px; margin-right: 2px; font-family: 'Pretendard Variable'; font-style: normal; }
+
+  /* Competition */
+  .comp-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .comp-item {
+    background: var(--cream-elev); border-radius: 18px; padding: 18px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .comp-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .comp-value { font-family: 'Fraunces', serif; font-style: italic; font-size: 28px; color: var(--green-700); line-height: 1; }
+  .comp-comparison { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .comp-comparison strong { color: var(--terra-500); }
+
+  /* Seller card */
+  .seller-card {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--cream-elev); border-radius: 20px; padding: 20px;
+  }
+  .seller-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--green-700); color: var(--terra-300);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 22px;
+    flex-shrink: 0;
+  }
+  .seller-info { flex: 1; }
+  .seller-name { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0 0 2px; }
+  .seller-meta { font-size: 12px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
+  .seller-meta .verified { color: var(--green-700); font-weight: 600; display: flex; align-items: center; gap: 3px; }
+
+  /* Map */
+  .map-block {
+    aspect-ratio: 16/9; background: linear-gradient(135deg, #2D5A3D, #1F3F2E);
+    border-radius: 20px; display: flex; align-items: center; justify-content: center;
+    color: rgba(251, 248, 243, 0.5); font-size: 14px; position: relative; overflow: hidden;
+  }
+  .map-block::after {
+    content: ''; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+    width: 28px; height: 28px;
+    background: var(--terra-500);
+    border-radius: 50% 50% 50% 0;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    box-shadow: 0 0 0 6px rgba(217, 108, 79, 0.25);
+  }
+
+  /* 상권분석 heatmap */
+  .district-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
+  }
+  @media (max-width: 700px) { .district-stats { grid-template-columns: repeat(2, 1fr); } }
+
+  .age-chart {
+    display: flex; gap: 8px; align-items: end; height: 120px;
+    padding: 16px; background: var(--cream-elev); border-radius: 18px;
+  }
+  .age-bar {
+    flex: 1; background: var(--green-700); border-radius: 6px 6px 0 0;
+    position: relative; min-height: 20%;
+  }
+  .age-bar.peak { background: var(--terra-500); }
+  .age-bar::after {
+    content: attr(data-label);
+    position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: var(--muted); white-space: nowrap;
+  }
+
+  /* 주변 상권 현황 */
+  .sec-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .sec-title-row h2 { margin: 0; }
+  .radius-tag { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+  .pub-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 10px; border-radius: 99px;
+    background: var(--green-100); color: var(--green-700);
+    font-size: 11px; font-weight: 700;
+  }
+  .info-box.highlight-terra { background: var(--terra-50, #FDF4EE); border: 1px solid var(--terra-300); }
+  .info-box .delta { font-size: 11px; margin-top: 6px; font-weight: 700; }
+  .info-box .delta.up { color: var(--green-700); }
+  .info-box .sub-muted { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .info-box .sub-chip {
+    display: inline-block; padding: 3px 8px;
+    border-radius: 99px; font-size: 10px; font-weight: 700;
+    margin-top: 6px;
+  }
+  .info-box .sub-chip.terra { background: var(--terra-100); color: var(--terra-700); }
+  .info-box .sub-chip.green { background: var(--green-100); color: var(--green-700); }
+  .info-box .sub-row { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+
+  .district-block {
+    margin-top: 24px;
+    background: var(--cream-elev); border-radius: 20px; padding: 24px;
+  }
+  .district-block h3, .district-card h3 {
+    font-size: 14px; font-weight: 700; color: var(--ink);
+    margin: 0 0 16px; letter-spacing: -0.01em;
+  }
+  .industry-list { list-style: none; padding: 0; margin: 0; }
+  .industry-list li { padding: 10px 0; }
+  .il-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; font-size: 13px; }
+  .il-name { font-weight: 600; color: var(--ink); }
+  .il-count { font-weight: 700; color: var(--ink); }
+  .il-bar { height: 10px; background: var(--cream); border-radius: 99px; overflow: hidden; }
+  .il-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+
+  .district-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
+  }
+  @media (max-width: 700px) { .district-grid { grid-template-columns: 1fr; } }
+  .district-card {
+    background: var(--cream-elev); border-radius: 20px; padding: 20px;
+  }
+  .pop-item { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px dashed var(--line-deep); font-size: 13px; }
+  .pop-item:last-child { border-bottom: none; }
+  .pop-lab { color: var(--muted); font-weight: 600; }
+  .pop-val { color: var(--ink); font-weight: 700; }
+  .pop-val .serif-num { font-size: 16px; margin-right: 2px; color: var(--green-700); }
+
+  .hour-chart { display: flex; gap: 4px; align-items: end; height: 120px; margin-top: 8px; }
+  .hr-bar { flex: 1; background: var(--green-700); border-radius: 4px 4px 0 0; min-height: 5%; }
+  .hr-bar.peak { background: var(--terra-500); }
+  .hour-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--muted); }
+
+  .insight-box {
+    margin-top: 24px; padding: 16px;
+    background: var(--green-50, #F3F7F3); border: 1px solid var(--green-100);
+    border-radius: 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .insight-box p { margin: 0; font-size: 13px; color: var(--ink); line-height: 1.6; }
+
+  /* Recently viewed */
+  .rec-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 700px) { .rec-cards { grid-template-columns: 1fr; } }
+  .rec-card {
+    background: var(--cream); border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+  }
+  .rec-thumb { aspect-ratio: 4/3; background: var(--cream-elev); position: relative; }
+  .rec-thumb .tier {
+    position: absolute; top: 10px; left: 10px;
+    padding: 3px 10px; background: var(--green-700); color: var(--cream);
+    border-radius: 99px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  }
+  .rec-body { padding: 14px; }
+  .rec-meta { font-size: 11px; color: var(--terra-500); font-weight: 600; }
+  .rec-title { font-size: 14px; font-weight: 700; margin: 2px 0 8px; }
+  .rec-price { display: flex; justify-content: space-between; font-size: 13px; }
+  .rec-price .num { font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; color: var(--green-700); }
+
+  /* Sidebar */
+  .sidebar { position: sticky; top: 90px; }
+  .cta-card {
+    background: var(--cream); border: 1.5px solid var(--green-700); border-radius: 24px; padding: 28px;
+    box-shadow: 0 16px 48px rgba(31, 63, 46, 0.08);
+  }
+  .cta-tier {
+    display: inline-block; padding: 4px 12px;
+    background: var(--terra-500); color: var(--cream);
+    border-radius: 99px; font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+    margin-bottom: 14px;
+  }
+  .cta-price { margin-bottom: 20px; }
+  .cta-price .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; font-weight: 700; }
+  .cta-price .big { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; }
+  .cta-price .big .num { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 44px; color: var(--green-700); line-height: 1; }
+  .cta-price .big .unit { font-size: 22px; font-weight: 800; color: var(--green-700); }
+  .cta-price .sub { font-size: 13px; color: var(--muted); }
+  .cta-divider { border-top: 1px dashed var(--line-deep); padding-top: 16px; margin-top: 16px; }
+  .cta-detail { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+  .cta-detail .dk { color: var(--muted); }
+  .cta-detail .dv { color: var(--ink); font-weight: 600; }
+  .cta-detail .dv .num { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 16px; margin-right: 1px; }
+  .cta-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .btn-primary {
+    width: 100%; padding: 14px;
+    background: var(--terra-500); color: var(--cream);
+    border-radius: 99px; font-size: 14px; font-weight: 700;
+    border: none; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(217, 108, 79, 0.25);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-secondary {
+    width: 100%; padding: 12px;
+    background: var(--cream); color: var(--green-700);
+    border: 1px solid var(--line); border-radius: 99px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .cta-meta {
+    display: flex; gap: 16px; margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12px; color: var(--muted);
+  }
+  .cta-meta span { display: flex; align-items: center; gap: 4px; }
+  .trust-card {
+    margin-top: 16px; background: var(--cream-elev); border-radius: 16px; padding: 16px;
+    font-size: 12px; color: var(--muted);
+    display: flex; align-items: start; gap: 10px;
+  }
+  .trust-card svg { color: var(--green-700); flex-shrink: 0; margin-top: 2px; }
+  .trust-card strong { color: var(--green-700); font-weight: 700; display: block; margin-bottom: 2px; }
+
+  /* Mobile bar */
+  .mobile-bar {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--cream); border-top: 1px solid var(--line);
+    padding: 14px 16px; z-index: 40;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.06);
+  }
+  .mobile-bar-inner { display: flex; align-items: center; gap: 12px; }
+  .mobile-bar-price { flex: 1; }
+  .mobile-bar-price .p-label { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .mobile-bar-price .p-value { font-size: 18px; font-weight: 800; color: var(--green-700); }
+  .mobile-bar-price .p-value .num { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 22px; }
+  .mobile-fav { width: 44px; height: 44px; border-radius: 50%; background: var(--cream); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .mobile-cta { padding: 0 20px; height: 44px; background: var(--terra-500); color: var(--cream); border-radius: 99px; font-size: 14px; font-weight: 700; border: none; }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .mobile-bar { display: block; }
+    .gallery { aspect-ratio: 4/3; grid-template-columns: 1fr 1fr; grid-template-rows: 2fr 1fr 1fr; }
+    .gallery .img.main { grid-column: span 2; grid-row: 1; }
+    .title-area h1 { font-size: 24px; }
+    .container { padding: 16px; }
+  }
+
+  /* Nav preview */
+  .nav-preview {
+    position: fixed; bottom: 24px; right: 24px;
+    display: flex; gap: 8px;
+    background: var(--ink); padding: 8px;
+    border-radius: 99px; z-index: 100;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  }
+  .nav-preview a {
+    padding: 10px 16px; font-size: 12px;
+    color: rgba(250, 247, 242, 0.7);
+    text-decoration: none; border-radius: 99px; font-weight: 600;
+  }
+  .nav-preview a.active { background: var(--terra-500); color: var(--cream); }
+  @media (max-width: 900px) {
+    .nav-preview { bottom: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="logo"><span class="dot"></span>권리샵</div>
+  <button class="login-btn">로그인 →</button>
+</header>
+
+<div class="container">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">매물</a>
+    <span class="sep">·</span>
+    <a href="#">외식업</a>
+    <span class="sep">·</span>
+    <span>논현동 프리미엄 북카페</span>
+  </div>
+
+  <!-- Title -->
+  <div class="title-row">
+    <div class="title-area">
+      <div class="meta">외식업 · 카페 · 북카페</div>
+      <h1>논현동 프리미엄 북카페</h1>
+      <div class="addr">서울 강남구 논현로 · 1층 · 42평</div>
+    </div>
+    <div class="share-row">
+      <button class="icon-btn fav active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></button>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div class="gallery">
+    <div class="img main"></div>
+    <div class="img"></div>
+    <div class="img"></div>
+    <div class="img"></div>
+    <div class="img"><button class="view-all">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      사진 8장 전체보기
+    </button></div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+    <div>
+
+      <!-- 1. 권리금 해부하기 (컴팩트 인라인) -->
+      <section class="sec">
+        <h2>권리금 <span class="light">해부하기</span></h2>
+        <p class="sec-sub">1.8억의 권리금이 어떻게 구성되어 있는지 한눈에 확인하세요.</p>
+        <div class="premium-breakdown">
+          <div class="stack-bar">
+            <span class="seg" style="width:45%; background:var(--terra-500);" title="영업권리금 45%"></span>
+            <span class="seg" style="width:30%; background:var(--green-700);" title="시설권리금 30%"></span>
+            <span class="seg" style="width:25%; background:var(--green-300, #8FB494);" title="바닥권리금 25%"></span>
+          </div>
+          <div class="breakdown-row">
+            <div class="br-item">
+              <div class="br-head"><span class="br-dot" style="background:var(--terra-500);"></span>영업권리금</div>
+              <div class="br-val"><span class="serif-num">8,100</span><span class="br-unit">만</span></div>
+              <div class="br-pct">45%</div>
+            </div>
+            <div class="br-item">
+              <div class="br-head"><span class="br-dot" style="background:var(--green-700);"></span>시설권리금</div>
+              <div class="br-val"><span class="serif-num">5,400</span><span class="br-unit">만</span></div>
+              <div class="br-pct">30%</div>
+            </div>
+            <div class="br-item">
+              <div class="br-head"><span class="br-dot" style="background:#8FB494;"></span>바닥권리금</div>
+              <div class="br-val"><span class="serif-num">4,500</span><span class="br-unit">만</span></div>
+              <div class="br-pct">25%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 기본 정보 -->
+      <section class="sec">
+        <h2>매물 <span class="light">기본 정보</span></h2>
+        <div class="info-grid">
+          <div class="info-box"><div class="lab">면적</div><div class="val"><span class="serif-num">42</span><span class="unit">평 (139m²)</span></div></div>
+          <div class="info-box"><div class="lab">층수</div><div class="val"><span class="serif-num">1</span><span class="unit">층 / 5층</span></div></div>
+          <div class="info-box"><div class="lab">주차</div><div class="val"><span class="serif-num">8</span><span class="unit">대</span></div></div>
+          <div class="info-box"><div class="lab">운영형태</div><div class="val"><span class="unit" style="font-size:14px;color:var(--green-700);">개인</span></div></div>
+        </div>
+        <div class="chips">
+          <span class="chip">역세권</span>
+          <span class="chip">코너 자리</span>
+          <span class="chip">단골 많음</span>
+          <span class="chip">브레이크타임 없음</span>
+          <span class="chip terra">매출 인증 완료</span>
+        </div>
+      </section>
+
+      <!-- 3. 평균 매출정보 (도넛: 매출 구성) -->
+      <section class="sec">
+        <h2>평균 <span class="light">매출 정보</span></h2>
+        <p class="sec-sub">월 매출을 재료·인건비·임대료·순이익으로 나눠 확인하세요.</p>
+        <div class="pie-row">
+          <div class="pie-wrap">
+            <div class="pie pie-revenue"></div>
+            <div class="pie-center">
+              <div class="tot-lab">월 매출</div>
+              <div class="tot-val">4,500</div>
+              <div class="tot-sub">만원</div>
+            </div>
+          </div>
+          <ul class="legend">
+            <li>
+              <div class="leg-left"><span class="dot" style="background:#E8A87C;"></span><span class="name">재료비</span></div>
+              <div><span class="val">1,530</span><span class="pct">34%</span></div>
+            </li>
+            <li>
+              <div class="leg-left"><span class="dot" style="background:#C38A5E;"></span><span class="name">인건비</span></div>
+              <div><span class="val">900</span><span class="pct">20%</span></div>
+            </li>
+            <li>
+              <div class="leg-left"><span class="dot" style="background:#9E7049;"></span><span class="name">임대료</span></div>
+              <div><span class="val">390</span><span class="pct">9%</span></div>
+            </li>
+            <li>
+              <div class="leg-left"><span class="dot" style="background:#C8BFA8;"></span><span class="name">기타비용</span></div>
+              <div><span class="val">400</span><span class="pct">9%</span></div>
+            </li>
+            <li>
+              <div class="leg-left"><span class="dot" style="background:var(--green-700);"></span><span class="name" style="font-weight:700; color:var(--green-700);">순이익</span></div>
+              <div><span class="val" style="color:var(--green-700); font-weight:500;">1,280</span><span class="pct" style="color:var(--green-700); font-weight:700;">28%</span></div>
+            </li>
+          </ul>
+        </div>
+        <!-- 투자금 & 월 수익 요약 -->
+        <div class="summary-row">
+          <div class="summary-box">
+            <div class="sum-lab">투자금</div>
+            <div class="sum-val-row">
+              <span class="serif-num" style="font-size:24px; color:var(--ink);">28,000</span><span class="sum-unit">만원</span>
+            </div>
+            <div class="sum-detail">보증금 10,000 + 권리금 18,000</div>
+          </div>
+          <div class="summary-box highlight">
+            <div class="sum-lab" style="color:var(--green-700);">월 수익</div>
+            <div class="sum-val-row">
+              <span class="serif-num" style="font-size:24px; color:var(--green-700);">+1,280</span>
+              <span class="sum-unit" style="color:var(--green-700);">만원 · 28%</span>
+            </div>
+            <div class="sum-detail" style="color:var(--green-600, #2D5A3D);">투자금 대비 연 54% 회수</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 지역 시세 비교 -->
+      <section class="sec">
+        <h2>지역 <span class="light">시세 비교</span></h2>
+        <p class="sec-sub">강남구 내 27개 매물 대비 본 매물의 가격 위치</p>
+        <div class="gauge-row">
+          <div class="gauge-item">
+            <div class="gauge-head">
+              <span class="lab">보증금</span>
+              <span class="badge higher">평균 대비 12% 높음</span>
+            </div>
+            <div class="gauge-bar"><div class="fill mine" style="width:75%"></div></div>
+            <div class="gauge-nums">
+              <span><span class="mine-num">내 매물: 10,000만</span></span>
+              <span><span class="avg-num">지역 평균: 8,900만</span></span>
+            </div>
+          </div>
+          <div class="gauge-item">
+            <div class="gauge-head">
+              <span class="lab">월세</span>
+              <span class="badge lower">평균 대비 6% 낮음</span>
+            </div>
+            <div class="gauge-bar"><div class="fill mine" style="width:60%"></div></div>
+            <div class="gauge-nums">
+              <span><span class="mine-num">내 매물: 300만</span></span>
+              <span><span class="avg-num">지역 평균: 320만</span></span>
+            </div>
+          </div>
+          <div class="gauge-item">
+            <div class="gauge-head">
+              <span class="lab">권리금</span>
+              <span class="badge higher">평균 대비 15% 높음</span>
+            </div>
+            <div class="gauge-bar"><div class="fill mine" style="width:82%"></div></div>
+            <div class="gauge-nums">
+              <span><span class="mine-num">내 매물: 1.8억</span></span>
+              <span><span class="avg-num">지역 평균: 1.56억</span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. 매물 설명 -->
+      <section class="sec">
+        <h2>매장 <span class="light">설명</span></h2>
+        <p>
+          논현역 도보 3분, 1층 코너 자리에 위치한 42평 북카페입니다. 지난 5년간 안정적인 매출을 기록하고 있으며,
+          단골 고객 비중이 높아 양도 후에도 안정적인 운영이 가능합니다.<br><br>
+          주방 및 좌석 전체 리모델링이 2년 전에 완료되었고, 모든 집기와 인테리어가 양호한 상태입니다.
+          주변 오피스·학원 유동인구가 풍부해 평일 브런치 시간대부터 저녁까지 꾸준한 수요가 있습니다.
+        </p>
+      </section>
+
+      <!-- 6. 가격 변동 이력 -->
+      <section class="sec">
+        <h2>가격 <span class="light">변동 이력</span></h2>
+        <div class="price-hist">
+          <div class="hist-item">
+            <span class="hist-date">2026.04.10 (등록일)</span>
+            <span class="hist-val">2.0<span style="font-size:11px;">억</span></span>
+          </div>
+          <div class="hist-item">
+            <span class="hist-date">2026.04.14</span>
+            <span class="hist-val down"><span class="arr">↓</span> 1.8<span style="font-size:11px;">억</span> <span style="font-size:10px; color:var(--muted); margin-left:6px;">10% 인하</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. 지역 경쟁 분석 -->
+      <section class="sec">
+        <h2>지역 <span class="light">경쟁 분석</span></h2>
+        <p class="sec-sub">동일 업종·지역 내 인기 지표 (지난 30일)</p>
+        <div class="comp-row">
+          <div class="comp-item">
+            <div>
+              <div class="comp-label">조회수</div>
+              <div class="comp-value">287</div>
+              <div class="comp-comparison">지역 평균 대비 <strong>+142%</strong></div>
+            </div>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="1.5">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </div>
+          <div class="comp-item">
+            <div>
+              <div class="comp-label">관심</div>
+              <div class="comp-value">42</div>
+              <div class="comp-comparison">지역 평균 대비 <strong>+210%</strong></div>
+            </div>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--terra-500)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. 판매자 -->
+      <section class="sec">
+        <h2>판매자 <span class="light">정보</span></h2>
+        <div class="seller-card">
+          <div class="seller-avatar">박</div>
+          <div class="seller-info">
+            <div class="seller-name">박*한 사장님</div>
+            <div class="seller-meta">
+              <span class="verified">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                사업자 인증 완료
+              </span>
+              <span>·</span>
+              <span>매물 등록 3건</span>
+              <span>·</span>
+              <span>평균 응답시간 2시간</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. 위치 -->
+      <section class="sec">
+        <h2>위치 <span class="light">& 교통</span></h2>
+        <div class="map-block">— 카카오맵 — </div>
+        <div class="chips" style="margin-top: 14px;">
+          <span class="chip">지하철 논현역 3분</span>
+          <span class="chip">버스정류장 1분</span>
+          <span class="chip">공영주차장 5분</span>
+        </div>
+      </section>
+
+      <!-- 10. 주변 상권 현황 -->
+      <section class="sec">
+        <div class="sec-title-row">
+          <div>
+            <h2>주변 <span class="light">상권 현황</span> <span class="radius-tag">(반경 500m)</span></h2>
+            <p class="sec-sub">출처: 소상공인시장진흥공단 상권정보서비스</p>
+          </div>
+          <span class="pub-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            공공데이터 인증
+          </span>
+        </div>
+
+        <!-- 4개 핵심 지표 카드 -->
+        <div class="district-stats">
+          <div class="info-box">
+            <div class="lab">일평균 유동인구</div>
+            <div class="val"><span class="serif-num">5,510</span><span class="unit">명</span></div>
+            <div class="delta up">▲ 12% 전분기비</div>
+          </div>
+          <div class="info-box highlight-terra">
+            <div class="lab" style="color:var(--terra-700);">동종업종 (업종)</div>
+            <div class="val" style="color:var(--terra-700);"><span class="serif-num">23</span><span class="unit" style="color:var(--terra-700);">개</span></div>
+            <div class="sub-chip terra">경쟁강도 보통</div>
+          </div>
+          <div class="info-box">
+            <div class="lab">전체 점포 수</div>
+            <div class="val"><span class="serif-num">847</span><span class="unit">개</span></div>
+            <div class="sub-muted">반경 500m 내</div>
+          </div>
+          <div class="info-box">
+            <div class="lab">업종 폐업률</div>
+            <div class="val"><span class="serif-num">8.2</span><span class="unit">%</span></div>
+            <div class="sub-row">
+              <span class="sub-chip green">안정</span>
+              <span class="sub-muted">전국 12% 대비</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 주변 업종 분포 TOP 5 -->
+        <div class="district-block">
+          <h3>주변 업종 분포 <span class="serif-num" style="color:var(--green-700); font-size:18px;">TOP 5</span></h3>
+          <ul class="industry-list">
+            <li>
+              <div class="il-head"><span class="il-name">외식업</span><span class="il-count"><span class="serif-num">312</span>개 (37%)</span></div>
+              <div class="il-bar"><div class="il-fill" style="width:37%; background:var(--green-700);"></div></div>
+            </li>
+            <li>
+              <div class="il-head"><span class="il-name">카페/디저트</span><span class="il-count"><span class="serif-num">189</span>개 (22%)</span></div>
+              <div class="il-bar"><div class="il-fill" style="width:22%; background:#2D5A3D;"></div></div>
+            </li>
+            <li>
+              <div class="il-head"><span class="il-name">소매</span><span class="il-count"><span class="serif-num">156</span>개 (18%)</span></div>
+              <div class="il-bar"><div class="il-fill" style="width:18%; background:#5E8F67;"></div></div>
+            </li>
+            <li>
+              <div class="il-head"><span class="il-name">서비스</span><span class="il-count"><span class="serif-num">123</span>개 (15%)</span></div>
+              <div class="il-bar"><div class="il-fill" style="width:15%; background:var(--terra-500);"></div></div>
+            </li>
+            <li>
+              <div class="il-head"><span class="il-name">기타</span><span class="il-count"><span class="serif-num">67</span>개 (8%)</span></div>
+              <div class="il-bar"><div class="il-fill" style="width:8%; background:var(--terra-300);"></div></div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 인구 구성 + 시간대별 유동인구 -->
+        <div class="district-grid">
+          <div class="district-card">
+            <h3>👥 주변 인구 구성</h3>
+            <div class="pop-item"><span class="pop-lab">주거 인구</span><span class="pop-val"><span class="serif-num">45,000</span>명</span></div>
+            <div class="pop-item"><span class="pop-lab">직장 인구</span><span class="pop-val"><span class="serif-num">89,000</span>명</span></div>
+            <div class="pop-item"><span class="pop-lab">주요 연령대</span><span class="pop-val" style="color:var(--terra-500);">20~30대 <span class="serif-num">62</span>%</span></div>
+          </div>
+          <div class="district-card">
+            <h3>🕐 시간대별 유동인구</h3>
+            <div class="hour-chart">
+              <div class="hr-bar" style="height:15%"></div>
+              <div class="hr-bar" style="height:20%"></div>
+              <div class="hr-bar" style="height:45%"></div>
+              <div class="hr-bar peak" style="height:90%"></div>
+              <div class="hr-bar" style="height:65%"></div>
+              <div class="hr-bar" style="height:50%"></div>
+              <div class="hr-bar peak" style="height:95%"></div>
+              <div class="hr-bar" style="height:75%"></div>
+              <div class="hr-bar" style="height:35%"></div>
+              <div class="hr-bar" style="height:20%"></div>
+            </div>
+            <div class="hour-labels">
+              <span>06시</span><span>12시</span><span>18시</span><span>24시</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 분석 코멘트 -->
+        <div class="insight-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--green-700); flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <p>본 매물 주 소비 타겟은 <strong style="color:var(--green-700);">30대 직장인</strong>입니다. 12시/18시 유동인구가 가장 많아 <strong style="color:var(--green-700);">평일 점심·저녁 시간대</strong>에 수요가 집중됩니다. 동종업종 경쟁강도 <strong style="color:var(--terra-500);">보통</strong>, 폐업률 <strong style="color:var(--green-700);">안정</strong>이라 중위험 시장입니다.</p>
+        </div>
+      </section>
+
+      <!-- 11. 최근 본 매물 -->
+      <section class="sec">
+        <h2>비슷한 <span class="light">추천 매물</span></h2>
+        <div class="rec-cards">
+          <div class="rec-card">
+            <div class="rec-thumb"><span class="tier">PREMIUM</span></div>
+            <div class="rec-body">
+              <div class="rec-meta">외식업 · 카페</div>
+              <div class="rec-title">강남역 테이크아웃 카페</div>
+              <div class="rec-price"><span style="color:var(--muted);">권리금</span><span><span class="num">7,500</span>만</span></div>
+            </div>
+          </div>
+          <div class="rec-card">
+            <div class="rec-thumb"><span class="tier">PREMIUM</span></div>
+            <div class="rec-body">
+              <div class="rec-meta">외식업 · 디저트</div>
+              <div class="rec-title">압구정 마카롱 전문점</div>
+              <div class="rec-price"><span style="color:var(--muted);">권리금</span><span><span class="num">1.2</span>억</span></div>
+            </div>
+          </div>
+          <div class="rec-card">
+            <div class="rec-thumb"><span class="tier">PREMIUM</span></div>
+            <div class="rec-body">
+              <div class="rec-meta">외식업 · 브런치</div>
+              <div class="rec-title">청담동 루프탑 브런치</div>
+              <div class="rec-price"><span style="color:var(--muted);">권리금</span><span><span class="num">2.3</span>억</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Sticky sidebar -->
+    <aside class="sidebar">
+      <div class="cta-card">
+        <div class="cta-tier">VIP</div>
+        <div class="cta-price">
+          <div class="label">권리금</div>
+          <div class="big"><span class="num">1.8</span><span class="unit">억</span></div>
+          <div class="sub">협의 가능 · 매출 인증 완료</div>
+        </div>
+        <div class="cta-divider">
+          <div class="cta-detail"><span class="dk">보증금</span><span class="dv"><span class="num">10,000</span>만원</span></div>
+          <div class="cta-detail"><span class="dk">월세</span><span class="dv"><span class="num">300</span>만원</span></div>
+          <div class="cta-detail"><span class="dk">관리비</span><span class="dv">별도 문의</span></div>
+        </div>
+        <div class="cta-actions">
+          <button class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            채팅 문의하기
+          </button>
+          <button class="btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 018.63 13.37 19.5 19.5 0 015.36 3.18 2 2 0 017.34 1h3a2 2 0 012 1.72"/></svg>
+            전화 연결
+          </button>
+        </div>
+        <div class="cta-meta">
+          <span>조회 <strong class="serif-num" style="color:var(--green-700); font-size:14px;">287</strong></span>
+          <span>관심 <strong class="serif-num" style="color:var(--terra-500); font-size:14px;">42</strong></span>
+          <span style="margin-left:auto;">7일 전 등록</span>
+        </div>
+      </div>
+      <div class="trust-card">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <div><strong>검증된 매도자</strong>사업자 인증 완료 · 매출 증빙 제출</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- 모바일 고정 CTA -->
+<div class="mobile-bar">
+  <div class="mobile-bar-inner">
+    <div class="mobile-bar-price">
+      <div class="p-label">권리금</div>
+      <div class="p-value"><span class="num">1.8</span>억</div>
+    </div>
+    <button class="mobile-fav"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--terra-500)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>
+    <button class="mobile-cta">채팅 문의</button>
+  </div>
+</div>
+
+<div class="nav-preview">
+  <a href="/design-preview/v3.html">v3 홈</a>
+  <a href="#" class="active">매물 상세 완전판</a>
+</div>
+
+</body>
+</html>
