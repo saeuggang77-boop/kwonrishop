@@ -219,7 +219,7 @@ function EquipmentListContent() {
         <div className="max-w-6xl mx-auto px-4 text-center relative">
           <div className="text-xs font-semibold text-terra-300 tracking-[0.2em] uppercase mb-3">Equipment Market</div>
           <h1 className="font-extrabold text-cream text-3xl md:text-5xl tracking-tight mb-3 leading-tight">
-            <span className="font-serif italic font-light text-terra-300">중고 집기</span>, 합리적으로
+            <span className="font-light text-terra-300">중고 집기</span>, 합리적으로
           </h1>
           <p className="text-cream/60 text-sm md:text-base">사장님이 직접 올린 중고 집기·인테리어</p>
         </div>
@@ -368,7 +368,7 @@ function TierSection({
               VIP Equipment
             </div>
             <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">
-              프리미엄 <span className="font-serif italic font-light text-terra-500">집기</span>
+              프리미엄 <span className="font-light text-terra-500">집기</span>
             </h2>
           </div>
           {hasMore && (
@@ -546,7 +546,7 @@ function FreeSection({
             onClick={() => onEquipmentClick(eq.id)}
           >
             <div className="w-7 h-7 rounded-full bg-cream-elev flex items-center justify-center shrink-0 mr-3">
-              <span className="text-[10px] font-serif italic font-light text-green-700">{eq.title.charAt(0)}</span>
+              <span className="text-[10px] font-light text-green-700">{eq.title.charAt(0)}</span>
             </div>
             <span className="text-sm text-ink font-medium mr-2 shrink-0">{eq.title}</span>
             <span className="text-xs font-serif italic text-green-700 font-medium shrink-0">

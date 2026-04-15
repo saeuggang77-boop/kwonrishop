@@ -20,7 +20,7 @@ export default function Error({
           <span className="font-serif italic font-light text-4xl text-terra-500">!</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight mb-3">
-          잠시 <span className="font-serif italic font-light text-terra-500">문제</span>가 발생했어요
+          잠시 <span className="font-light text-terra-500">문제</span>가 발생했어요
         </h2>
         <p className="text-sm text-muted mb-8">
           일시적인 오류입니다. 다시 시도해주세요.

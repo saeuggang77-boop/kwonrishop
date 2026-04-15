@@ -106,7 +106,7 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
             {data.stats.slice(0, 2).map((stat, idx) => (
               <div key={idx} className="text-xs">
                 <div className="text-muted mb-0.5">{stat.label}</div>
-                <div className="font-serif italic font-medium text-green-700 text-lg leading-tight tracking-tight">{stat.value}</div>
+                <div className="font-extrabold text-green-700 text-lg leading-tight tracking-tight">{stat.value}</div>
               </div>
             ))}
           </div>

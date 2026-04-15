@@ -149,7 +149,7 @@ function LoginContent() {
         {/* Main Card */}
         <div className="bg-cream rounded-3xl shadow-[0_8px_32px_rgba(31,63,46,0.08)] border border-line p-8">
           <h2 className="text-2xl font-extrabold text-green-700 tracking-tight mb-1">
-            돌아오신 걸 <span className="font-serif italic font-light text-terra-500">환영</span>해요
+            돌아오신 걸 <span className="font-light text-terra-500">환영</span>해요
           </h2>
           <p className="text-sm text-muted mb-6">권리샵에 로그인해주세요</p>
 

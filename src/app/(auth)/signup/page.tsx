@@ -110,7 +110,7 @@ export default function SignupPage() {
               </svg>
             </div>
             <h2 className="text-2xl font-extrabold text-green-700 tracking-tight mb-2">
-              인증 <span className="font-serif italic font-light text-terra-500">메일</span>을 보냈어요
+              인증 <span className="font-light text-terra-500">메일</span>을 보냈어요
             </h2>
             <p className="text-sm text-muted mb-1">
               <span className="font-semibold text-ink">{email}</span>

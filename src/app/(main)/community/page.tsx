@@ -50,7 +50,7 @@ function CommunityContent() {
         <div className="relative">
           <div className="text-xs font-semibold text-terra-300 tracking-[0.2em] uppercase mb-3">Community</div>
           <h1 className="font-extrabold text-cream text-3xl md:text-5xl tracking-tight mb-3 leading-tight">
-            사장님들의 <span className="font-serif italic font-light text-terra-300">이야기</span>
+            사장님들의 <span className="font-light text-terra-300">이야기</span>
           </h1>
           <p className="text-sm text-cream/60">창업 노하우·양도후기·궁금한 점을 나누세요</p>
         </div>

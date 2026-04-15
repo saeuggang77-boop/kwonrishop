@@ -8,7 +8,7 @@ export default function NotFound() {
           404
         </div>
         <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight mb-3">
-          페이지를 찾을 수 <span className="font-serif italic font-light text-terra-500">없습니다</span>
+          페이지를 찾을 수 <span className="font-light text-terra-500">없습니다</span>
         </h2>
         <p className="text-sm text-muted mb-8">
           요청하신 페이지가 존재하지 않거나 이동되었습니다.

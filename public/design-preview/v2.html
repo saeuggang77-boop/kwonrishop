@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>권리샵 v2 개선 미리보기</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-700: #1F3F2E;
+    --green-800: #162E21;
+    --green-100: #DFEADF;
+    --terra-500: #D96C4F;
+    --terra-300: #F0B092;
+    --terra-100: #FAE2D3;
+    --cream: #FBF8F3;
+    --cream-elev: #F4EFE4;
+    --ink: #1A2620;
+    --muted: #5F6B62;
+    --line: #E0D8C5;
+    --line-deep: #C8BFA8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream-elev);
+    color: var(--ink);
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+  .label {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: inline-block;
+  }
+  .label.before { background: var(--muted); }
+  .label.after { background: var(--terra-500); }
+  .section-wrap { padding: 40px 24px; max-width: 1200px; margin: 0 auto; }
+  h3.section-title {
+    font-size: 28px; font-weight: 800; margin: 0 0 24px;
+    letter-spacing: -0.02em; color: var(--green-700);
+  }
+  .mock {
+    background: var(--cream);
+    border-radius: 24px;
+    overflow: hidden;
+    margin-top: 16px;
+    margin-bottom: 40px;
+    border: 1px solid var(--line);
+  }
+
+  /* ============ HEADER MOCK ============ */
+  .mock-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    background: rgba(251, 248, 243, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .logo {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 20px; font-weight: 800; color: var(--green-700);
+    letter-spacing: -0.04em;
+  }
+  .logo .dot { width: 10px; height: 10px; background: var(--terra-500); border-radius: 50%; }
+  .nav-items { display: flex; gap: 24px; font-size: 14px; color: var(--ink); font-weight: 500; }
+  .login-btn-before {
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+  }
+  .login-btn-after {
+    padding: 10px 20px;
+    background: var(--terra-500);
+    color: var(--cream);
+    border-radius: 99px;
+    font-size: 13px; font-weight: 700;
+    border: none;
+    box-shadow: 0 4px 16px rgba(217, 108, 79, 0.35);
+  }
+
+  /* ============ FRANCHISE SECTION ============ */
+  .franchise-before {
+    padding: 60px 32px;
+    background: var(--cream);
+  }
+  .franchise-after {
+    padding: 80px 32px;
+    background: var(--green-700);
+    position: relative;
+    overflow: hidden;
+  }
+  .franchise-after::before {
+    content: '';
+    position: absolute;
+    top: -30%; right: -20%;
+    width: 500px; height: 500px;
+    background: var(--terra-500);
+    opacity: 0.08;
+    border-radius: 50%;
+    filter: blur(80px);
+  }
+  .franchise-content { max-width: 1100px; margin: 0 auto; position: relative; }
+  .sec-heading {
+    display: flex; align-items: end; justify-content: space-between;
+    margin-bottom: 32px; flex-wrap: wrap; gap: 16px;
+  }
+  .kicker {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .kicker-line { width: 24px; height: 1px; }
+  .kicker-after { color: var(--terra-300); }
+  .kicker-after .kicker-line { background: var(--terra-300); }
+  .kicker-before { color: var(--terra-500); }
+  .kicker-before .kicker-line { background: var(--terra-500); }
+  .title-after {
+    font-size: 36px; font-weight: 800; color: var(--cream);
+    letter-spacing: -0.02em; margin: 0; line-height: 1.1;
+  }
+  .title-before {
+    font-size: 36px; font-weight: 800; color: var(--green-700);
+    letter-spacing: -0.02em; margin: 0; line-height: 1.1;
+  }
+  .title em {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+  }
+  .title-after em { color: var(--terra-300); }
+  .title-before em { color: var(--terra-500); }
+  .more-after {
+    color: var(--terra-300);
+    font-size: 13px; font-weight: 600; text-decoration: none;
+  }
+  .more-before {
+    color: var(--green-700);
+    font-size: 13px; font-weight: 600; text-decoration: none;
+  }
+
+  .f-cards { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; }
+  .f-card {
+    border-radius: 24px; padding: 20px;
+    border: 1px solid var(--line);
+    background: var(--cream);
+  }
+  .f-card.gold-after {
+    background: var(--cream);
+    border: 2px solid var(--terra-500);
+    padding: 24px;
+  }
+  .f-card.silver-after {
+    background: var(--green-800);
+    border: 1px solid rgba(250,247,242,0.1);
+    color: var(--cream);
+  }
+  .f-card.bronze-after {
+    background: var(--green-800);
+    border: 1px solid rgba(250,247,242,0.1);
+    color: var(--cream);
+  }
+  .f-card-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--green-700);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .gold-after .f-card-avatar { background: var(--terra-500); }
+  .f-card-avatar span {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 28px; color: var(--cream);
+  }
+  .f-name { font-weight: 700; font-size: 18px; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .f-industry { font-size: 12px; opacity: 0.7; margin-bottom: 16px; }
+  .f-meta { font-size: 13px; opacity: 0.8; }
+  .f-badge {
+    position: absolute; top: 16px; right: 16px;
+    padding: 4px 10px; border-radius: 99px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  }
+  .f-card { position: relative; }
+  .badge-gold { background: var(--terra-500); color: var(--cream); }
+  .badge-silver { background: rgba(250,247,242,0.15); color: var(--cream); }
+  .badge-bronze { background: rgba(250,247,242,0.1); color: rgba(250,247,242,0.8); }
+
+  /* ============ ASYMMETRIC SECTION ============ */
+  .asym-after {
+    padding: 80px 32px;
+    background: var(--cream);
+  }
+  .asym-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px;
+    align-items: center;
+  }
+  .asym-visual {
+    aspect-ratio: 4/5;
+    background: var(--green-700);
+    border-radius: 40% 40% 40% 12% / 40% 40% 40% 12%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .asym-visual::before {
+    content: '';
+    position: absolute;
+    width: 140px; height: 140px;
+    background: var(--terra-500);
+    border-radius: 50%;
+    top: 18%; right: 15%;
+  }
+  .asym-visual .big-num {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 200px; color: var(--cream);
+    line-height: 1;
+    z-index: 1;
+  }
+  .asym-text .kicker-before { margin-bottom: 12px; }
+  .asym-heading {
+    font-size: 44px; font-weight: 800; color: var(--green-700);
+    letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 20px;
+  }
+  .asym-heading em {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    color: var(--terra-500);
+  }
+  .asym-text p {
+    font-size: 16px; color: var(--muted); line-height: 1.7; margin: 0 0 24px;
+  }
+  .stats-row {
+    display: flex; gap: 32px; padding-top: 24px;
+    border-top: 1px dashed var(--line-deep);
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+    font-size: 36px; color: var(--green-700); line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px; color: var(--muted); margin-top: 4px;
+  }
+
+  /* ============ BEFORE ASYM = current symmetric ============ */
+  .asym-before {
+    padding: 60px 32px;
+    background: var(--cream);
+  }
+  .asym-before-inner { max-width: 1100px; margin: 0 auto; }
+
+  /* back to top nav */
+  .nav-preview {
+    position: fixed; bottom: 24px; right: 24px;
+    display: flex; gap: 8px;
+    background: var(--ink); padding: 8px;
+    border-radius: 99px; z-index: 100;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  }
+  .nav-preview a {
+    padding: 10px 18px;
+    font-size: 12px;
+    color: rgba(250, 247, 242, 0.7);
+    text-decoration: none;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+  .nav-preview a.primary {
+    background: var(--terra-500);
+    color: var(--cream);
+  }
+  /* intro */
+  .intro {
+    padding: 60px 24px;
+    background: var(--green-700);
+    color: var(--cream);
+    text-align: center;
+  }
+  .intro h1 {
+    font-size: 40px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.02em;
+  }
+  .intro h1 em {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    color: var(--terra-300);
+  }
+  .intro p { color: rgba(250,247,242,0.7); margin: 0; }
+</style>
+</head>
+<body>
+<div class="intro">
+  <h1>v2 개선 <em>미리보기</em></h1>
+  <p>B안 기반 · 섹션 리듬 · 헤더 CTA · 비대칭 레이아웃 3가지 변화</p>
+</div>
+
+<!-- ========== A. HEADER LOGIN CTA ========== -->
+<div class="section-wrap">
+  <h3 class="section-title">B. 헤더 로그인 버튼 — Before → After</h3>
+  <div class="label before">Before (현재)</div>
+  <div class="mock">
+    <div class="mock-header">
+      <div class="logo"><span class="dot"></span>권리샵</div>
+      <div class="nav-items">
+        <span>매물검색</span><span>프랜차이즈</span><span>협력업체</span><span>집기장터</span><span>커뮤니티</span>
+      </div>
+      <button class="login-btn-before">로그인</button>
+    </div>
+  </div>
+
+  <div class="label after">After — 테라 pill CTA</div>
+  <div class="mock">
+    <div class="mock-header">
+      <div class="logo"><span class="dot"></span>권리샵</div>
+      <div class="nav-items">
+        <span>매물검색</span><span>프랜차이즈</span><span>협력업체</span><span>집기장터</span><span>커뮤니티</span>
+      </div>
+      <button class="login-btn-after">로그인 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== A2. FRANCHISE SECTION GREEN REVERSE ========== -->
+<div class="section-wrap">
+  <h3 class="section-title">A. 프랜차이즈 섹션 딥그린 반전 — Before → After</h3>
+  <div class="label before">Before (현재 — 크림 배경)</div>
+  <div class="mock">
+    <div class="franchise-before">
+      <div class="franchise-content">
+        <div class="sec-heading">
+          <div>
+            <div class="kicker kicker-before"><span class="kicker-line"></span>Franchise</div>
+            <h2 class="title-before">검증된 <em>프랜차이즈</em></h2>
+          </div>
+          <a class="more-before">더보기 →</a>
+        </div>
+        <div class="f-cards">
+          <div class="f-card" style="border-color: var(--green-700); border-width: 2px;">
+            <div class="f-card-avatar"><span>본</span></div>
+            <span class="f-badge badge-silver" style="background: var(--green-700); color: var(--cream);">GOLD</span>
+            <div class="f-name" style="color: var(--ink);">본가 설렁탕</div>
+            <div class="f-industry" style="color: var(--muted);">외식업 · 한식</div>
+            <div class="f-meta" style="color: var(--muted);">전국 147개 · 8,500만</div>
+          </div>
+          <div class="f-card">
+            <div class="f-card-avatar"><span>골</span></div>
+            <span class="f-badge" style="background: var(--green-100); color: var(--green-700);">SILVER</span>
+            <div class="f-name" style="color: var(--ink);">골목 치킨</div>
+            <div class="f-industry" style="color: var(--muted);">외식업 · 치킨</div>
+            <div class="f-meta" style="color: var(--muted);">전국 62개</div>
+          </div>
+          <div class="f-card">
+            <div class="f-card-avatar"><span>모</span></div>
+            <span class="f-badge" style="background: var(--green-100); color: var(--green-700);">BRONZE</span>
+            <div class="f-name" style="color: var(--ink);">모나미 마카롱</div>
+            <div class="f-industry" style="color: var(--muted);">카페 · 디저트</div>
+            <div class="f-meta" style="color: var(--muted);">전국 18개</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="label after">After — 딥그린 반전 + GOLD 테라 보더</div>
+  <div class="mock">
+    <div class="franchise-after">
+      <div class="franchise-content">
+        <div class="sec-heading">
+          <div>
+            <div class="kicker kicker-after"><span class="kicker-line"></span>Franchise Directory</div>
+            <h2 class="title-after">검증된 <em>프랜차이즈</em></h2>
+          </div>
+          <a class="more-after">전체 브랜드 →</a>
+        </div>
+        <div class="f-cards">
+          <div class="f-card gold-after">
+            <div class="f-card-avatar"><span>본</span></div>
+            <span class="f-badge badge-gold">GOLD</span>
+            <div class="f-name" style="color: var(--green-700);">본가 설렁탕</div>
+            <div class="f-industry" style="color: var(--muted);">외식업 · 한식</div>
+            <div class="f-meta" style="color: var(--green-700);"><span style="font-family: 'Fraunces', serif; font-style: italic; font-size: 22px;">8,500</span>만 · 147개</div>
+          </div>
+          <div class="f-card silver-after">
+            <div class="f-card-avatar"><span>골</span></div>
+            <span class="f-badge badge-silver">SILVER</span>
+            <div class="f-name">골목 치킨</div>
+            <div class="f-industry">외식업 · 치킨</div>
+            <div class="f-meta">62개 가맹점</div>
+          </div>
+          <div class="f-card bronze-after">
+            <div class="f-card-avatar"><span>모</span></div>
+            <span class="f-badge badge-bronze">BRONZE</span>
+            <div class="f-name">모나미 마카롱</div>
+            <div class="f-industry">카페 · 디저트</div>
+            <div class="f-meta">18개 가맹점</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== C. ASYMMETRIC SECTION ========== -->
+<div class="section-wrap">
+  <h3 class="section-title">C. "우리의 약속" 비대칭 섹션 (신규 추가)</h3>
+  <div class="label before">Before (현재 — 중앙정렬 Feature Strip)</div>
+  <div class="mock">
+    <div class="asym-before">
+      <div class="asym-before-inner" style="text-align: center; padding: 40px 0;">
+        <h2 style="font-size: 48px; font-weight: 800; color: var(--green-700); margin: 0;">
+          수수료 <em style="font-family:'Fraunces',serif;font-style:italic;font-weight:300;color:var(--terra-500);">0원,</em><br>
+          그게 직거래다.
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="label after">After — 좌 시각물 / 우 카피 + 숫자 스탯</div>
+  <div class="mock">
+    <div class="asym-after">
+      <div class="asym-inner">
+        <div class="asym-visual">
+          <span class="big-num">0</span>
+        </div>
+        <div class="asym-text">
+          <div class="kicker kicker-before"><span class="kicker-line"></span>우리의 약속</div>
+          <h2 class="asym-heading">중개수수료, <em>0원으로.</em></h2>
+          <p>권리샵은 중개인 대신 사장님과 예비창업자를 직접 연결합니다.<br>수천만 원의 권리금은 당사자 간 대화로 가장 투명해집니다.</p>
+          <div class="stats-row">
+            <div>
+              <div class="stat-num">8,400+</div>
+              <div class="stat-label">등록 매물</div>
+            </div>
+            <div>
+              <div class="stat-num">1,240+</div>
+              <div class="stat-label">검증 브랜드</div>
+            </div>
+            <div>
+              <div class="stat-num">0원</div>
+              <div class="stat-label">중개수수료</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-preview">
+  <a href="/design-preview/index.html">← A/B/C</a>
+  <a href="#" class="primary">v2 개선</a>
+</div>
+</body>
+</html>

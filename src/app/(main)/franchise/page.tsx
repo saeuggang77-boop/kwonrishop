@@ -113,7 +113,7 @@ export default function FranchisePage() {
         <div className="relative">
           <div className="text-xs font-semibold text-terra-300 tracking-[0.2em] uppercase mb-3">Franchise Directory</div>
           <h1 className="font-extrabold text-cream text-3xl md:text-5xl tracking-tight mb-3 leading-tight">
-            검증된 <span className="font-serif italic font-light text-terra-300">프랜차이즈</span>
+            검증된 <span className="font-light text-terra-300">프랜차이즈</span>
           </h1>
           <p className="text-sm text-cream/60">공정위 등록 {total.toLocaleString()}개 브랜드 · 숫자로 확인하세요</p>
         </div>
@@ -166,7 +166,7 @@ export default function FranchisePage() {
                 Premium
               </div>
               <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">
-                프리미엄 <span className="font-serif italic font-light text-terra-500">프랜차이즈</span>
+                프리미엄 <span className="font-light text-terra-500">프랜차이즈</span>
               </h2>
               <p className="text-sm text-muted mt-1.5">검증된 유료 브랜드를 먼저 확인하세요</p>
             </div>
@@ -189,7 +189,7 @@ export default function FranchisePage() {
                       <img src={brand.bannerImage} alt={brand.brandName} className="w-full h-24 rounded-2xl object-cover mb-3" />
                     ) : (
                       <div className="w-full h-24 rounded-2xl bg-green-700 flex items-center justify-center mb-3">
-                        <span className="text-3xl font-serif italic font-light text-terra-300">{brandInitial}</span>
+                        <span className="text-3xl font-light text-terra-300">{brandInitial}</span>
                       </div>
                     )}
                     <div className="flex items-start justify-between mb-2">
@@ -221,7 +221,7 @@ export default function FranchisePage() {
                     className="border-[1.5px] border-line-deep bg-cream rounded-3xl p-4 cursor-pointer hover:shadow-[0_8px_24px_rgba(31,63,46,0.10)] hover:-translate-y-1 transition-all"
                   >
                     <div className="w-full h-20 rounded-2xl bg-cream-elev flex items-center justify-center mb-3">
-                      <span className="text-2xl font-serif italic font-light text-green-700">{brandInitial}</span>
+                      <span className="text-2xl font-light text-green-700">{brandInitial}</span>
                     </div>
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
@@ -251,7 +251,7 @@ export default function FranchisePage() {
                 >
                   <div className="flex items-start gap-3 mb-2">
                     <div className="w-12 h-12 rounded-full bg-cream-elev flex items-center justify-center shrink-0">
-                      <span className="text-lg font-serif italic font-light text-green-700">{brandInitial}</span>
+                      <span className="text-lg font-light text-green-700">{brandInitial}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base font-bold text-ink truncate">{brand.brandName}</h3>
@@ -272,7 +272,7 @@ export default function FranchisePage() {
       {/* Result Count + Sort */}
       <div className="mb-5 flex items-center justify-between border-t border-line pt-6">
         <p className="text-sm text-muted">
-          전체 <span className="font-serif italic font-medium text-green-700 text-lg">{total.toLocaleString()}</span>개 브랜드
+          전체 <span className="font-extrabold text-green-700 text-lg">{total.toLocaleString()}</span>개 브랜드
         </p>
         <select
           value={sort}

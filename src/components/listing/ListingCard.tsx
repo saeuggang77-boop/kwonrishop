@@ -101,7 +101,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-[13px] text-muted">권리금</span>
-              <span className="font-serif italic font-medium text-green-700 text-xl leading-none tracking-tight">
+              <span className="font-extrabold text-green-700 text-xl leading-none tracking-tight">
                 {listing.premiumNone
                   ? "무권리"
                   : `${listing.premium.toLocaleString()}만${listing.premiumNegotiable ? " (협의)" : ""}`}

@@ -36,7 +36,7 @@ export default function SectionHeading({
           {titleAccent && (
             <>
               {" "}
-              <span className="font-serif italic font-light text-terra-500">{titleAccent}</span>
+              <span className="font-light text-terra-500">{titleAccent}</span>
             </>
           )}
         </h2>
