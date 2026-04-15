@@ -484,7 +484,7 @@ export default function EquipmentEditPage() {
           <button
             type="button"
             onClick={handleAddressSearch}
-            className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl hover:bg-gray-50 transition-colors mb-2"
+            className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl hover:bg-cream-elev transition-colors mb-2"
           >
             주소 검색
           </button>
@@ -546,7 +546,7 @@ export default function EquipmentEditPage() {
           <button
             type="button"
             onClick={() => router.push(`/equipment/${id}`)}
-            className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-cream-elev transition-colors"
           >
             취소
           </button>

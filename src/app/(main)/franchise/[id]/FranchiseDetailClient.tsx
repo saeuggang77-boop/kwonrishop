@@ -219,7 +219,7 @@ export default function FranchiseDetailClient() {
                       .filter(([_, count]) => count > 0)
                       .sort(([_, a], [__, b]) => b - a)
                       .map(([region, count]) => (
-                        <div key={region} className="bg-gray-50 rounded-lg p-2 text-center">
+                        <div key={region} className="bg-cream-elev rounded-xl p-2 text-center">
                           <p className="text-xs text-gray-500">{region}</p>
                           <p className="text-sm font-bold text-gray-900">{count}<span className="text-xs font-normal text-gray-500">개</span></p>
                         </div>
@@ -233,25 +233,25 @@ export default function FranchiseDetailClient() {
                     <div className="flex items-center gap-2 mb-3"><span className="text-lg">📊</span><h4 className="font-medium text-gray-900">공정위 공시 통계 ({brand.ftcRawData.year || '2024'}년)</h4></div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {brand.ftcRawData.newStores != null && (
-                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                        <div className="bg-cream rounded-2xl p-3 text-center border border-green-200">
                           <p className="text-xs text-gray-500 mb-1">신규 가맹점</p>
                           <p className="text-lg font-bold text-green-700">{brand.ftcRawData.newStores.toLocaleString()}<span className="text-xs font-normal text-gray-500">개</span></p>
                         </div>
                       )}
                       {brand.ftcRawData.contractEnd != null && (
-                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                        <div className="bg-cream rounded-2xl p-3 text-center border border-green-200">
                           <p className="text-xs text-gray-500 mb-1">계약 종료</p>
                           <p className="text-lg font-bold text-gray-700">{brand.ftcRawData.contractEnd.toLocaleString()}<span className="text-xs font-normal text-gray-500">건</span></p>
                         </div>
                       )}
                       {brand.ftcRawData.contractCancel != null && (
-                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                        <div className="bg-cream rounded-2xl p-3 text-center border border-green-200">
                           <p className="text-xs text-gray-500 mb-1">계약 해지</p>
                           <p className="text-lg font-bold text-red-600">{brand.ftcRawData.contractCancel.toLocaleString()}<span className="text-xs font-normal text-gray-500">건</span></p>
                         </div>
                       )}
                       {brand.ftcRawData.revenuePerArea != null && brand.ftcRawData.revenuePerArea > 0 && (
-                        <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                        <div className="bg-cream rounded-2xl p-3 text-center border border-green-200">
                           <p className="text-xs text-gray-500 mb-1">면적당 매출</p>
                           <p className="text-lg font-bold text-green-700">{Math.round(brand.ftcRawData.revenuePerArea / 1000).toLocaleString()}<span className="text-xs font-normal text-gray-500">만원</span></p>
                         </div>
@@ -306,7 +306,7 @@ export default function FranchiseDetailClient() {
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-700 text-white">골드 전용</span>
                   </div>
                   <p className="text-sm text-gray-600 mb-3">전국 가맹점 위치와 현황을 한눈에 확인하세요</p>
-                  <div className="bg-white rounded-lg p-8 text-center border border-green-300">
+                  <div className="bg-cream rounded-2xl p-8 text-center border border-green-300">
                     <p className="text-gray-500 text-sm">골드 전용 기능: 가맹점 현황 지도는 준비 중입니다</p>
                   </div>
                 </div>

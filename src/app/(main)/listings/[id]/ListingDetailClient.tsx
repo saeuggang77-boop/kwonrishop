@@ -756,7 +756,7 @@ export default function ListingDetailClient() {
       </p>
 
       {/* ===== 4. 가격 요약 ===== */}
-      <div className="bg-gray-50 rounded-xl p-4 mb-4">
+      <div className="bg-cream-elev rounded-2xl p-4 mb-4">
         <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:gap-4 sm:text-center">
           <div className="flex justify-between sm:block">
             <p className="text-xs text-gray-400 sm:mb-1">보증금</p>
@@ -1144,7 +1144,7 @@ export default function ListingDetailClient() {
 
       {/* ===== 12. 판매자 정보 ===== */}
       <Section title="판매자">
-        <div className="bg-gray-50 rounded-xl p-4">
+        <div className="bg-cream-elev rounded-2xl p-4">
           <div className="flex items-center gap-3">
             {listing.user.image ? (
               <Image src={listing.user.image} alt={`${listing.user.name || '판매자'} 프로필 사진`} width={48} height={48} className="rounded-full" />
@@ -1171,7 +1171,7 @@ export default function ListingDetailClient() {
 
         {/* 연락하기 */}
         {listing.contactPublic && listing.user.phone && (
-          <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <div className="mt-4 bg-gray-50 border border-line rounded-3xl p-4">
             <h4 className="font-medium text-gray-900 mb-1">연락하기</h4>
             <p className="text-xs text-gray-500 mb-3">바로 연락</p>
             {listing.user.phoneLocked ? (
@@ -1273,7 +1273,7 @@ export default function ListingDetailClient() {
               <Link
                 key={item.id}
                 href={`/listings/${item.id}`}
-                className="shrink-0 w-40 md:w-auto md:shrink bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+                className="shrink-0 w-40 md:w-auto md:shrink bg-white border border-line rounded-3xl overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="relative aspect-[4/3] bg-gray-100">
                   {item.imageUrl ? (
@@ -1321,12 +1321,12 @@ export default function ListingDetailClient() {
                       className="fixed inset-0 z-20"
                       onClick={() => setShowStatusMenu(false)}
                     />
-                    <div className="absolute bottom-full mb-2 left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[120px] z-30">
+                    <div className="absolute bottom-full mb-2 left-0 bg-white border border-line rounded-2xl shadow-lg py-1 min-w-[120px] z-30">
                       {getAvailableStatusTransitions(listing.status).map((status) => (
                         <button
                           key={status.value}
                           onClick={() => handleStatusChange(status.value)}
-                          className={`w-full text-left px-4 py-2 text-sm font-medium ${status.color} hover:bg-gray-50 transition-colors`}
+                          className={`w-full text-left px-4 py-2 text-sm font-medium ${status.color} hover:bg-cream-elev transition-colors`}
                         >
                           {status.label}
                         </button>
@@ -1415,7 +1415,7 @@ export default function ListingDetailClient() {
               <button
                 onClick={handleFavorite}
                 aria-label={favorited ? "관심매물 해제" : "관심매물 등록"}
-                className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${favorited ? "border-red-300 text-red-500 bg-red-50" : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"}`}
+                className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${favorited ? "border-red-300 text-red-500 bg-red-50" : "border-gray-300 text-gray-600 hover:bg-cream-elev active:bg-gray-100"}`}
               >
                 {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{listing.favoriteCount}</span>
               </button>
@@ -1444,7 +1444,7 @@ export default function ListingDetailClient() {
                       </Link>
                     </>
                   )}
-                  <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-gray-100 text-gray-700 border border-gray-200 rounded-xl font-medium text-center hover:bg-gray-200 transition-colors text-sm">
+                  <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-gray-100 text-gray-700 border border-line rounded-3xl font-medium text-center hover:bg-gray-200 transition-colors text-sm">
                     채팅
                   </Link>
                 </>
@@ -1496,7 +1496,7 @@ function CompareButton({ listingId }: { listingId: string }) {
       className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${
         inCompare
           ? "border-green-300 text-green-700 bg-green-50"
-          : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"
+          : "border-gray-300 text-gray-600 hover:bg-cream-elev active:bg-gray-100"
       }`}
     >
       {inCompare ? (

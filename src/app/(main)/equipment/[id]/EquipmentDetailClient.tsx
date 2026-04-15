@@ -358,7 +358,7 @@ export default function EquipmentDetailClient() {
             className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${
               favorited
                 ? "border-red-300 text-red-500 bg-red-50"
-                : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"
+                : "border-gray-300 text-gray-600 hover:bg-cream-elev active:bg-gray-100"
             }`}
           >
             <span aria-hidden="true">{favorited ? "♥" : "♡"}</span> <span className="hidden sm:inline">{equipment.favoriteCount}</span>
@@ -370,7 +370,7 @@ export default function EquipmentDetailClient() {
           />
           <button
             onClick={() => setReportOpen(true)}
-            className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"
+            className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 text-gray-600 hover:bg-cream-elev active:bg-gray-100 transition-colors text-sm md:text-base font-medium"
             aria-label="신고하기"
           >
             <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -402,7 +402,7 @@ export default function EquipmentDetailClient() {
             <div className="flex gap-2">
               <button
                 onClick={() => setReportOpen(false)}
-                className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-cream-elev transition-colors"
               >
                 취소
               </button>
