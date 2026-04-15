@@ -74,7 +74,6 @@ export default function FranchiseDetailClient() {
   const [brand, setBrand] = useState<FranchiseBrand | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [activeTab, setActiveTab] = useState("info");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
@@ -148,14 +147,38 @@ export default function FranchiseDetailClient() {
         )}
       </div>
 
-      <div className="bg-cream rounded-3xl border border-line overflow-hidden">
-        <div className="flex border-b border-line overflow-x-auto" role="tablist">
-          {[{ id: "info", label: "기본정보" }, { id: "fees", label: "창업비용" }, { id: "benefits", label: "창업특혜" }, { id: "analysis", label: "업종분석" }, ...(brand.managerId ? [{ id: "inquiry", label: "문의하기" }] : [{ id: "inquiry", label: "가맹 상담" }])].map((tab) => (
-            <button key={tab.id} role="tab" aria-selected={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 min-w-[80px] px-3 md:px-6 py-3 md:py-4 font-semibold transition-colors text-sm md:text-base whitespace-nowrap ${activeTab === tab.id ? "bg-cream-elev text-green-700 border-b-2 border-terra-500" : "text-muted hover:bg-cream-elev"}`}>{tab.label}</button>
+      {/* Sticky 앵커 네비 */}
+      <nav className="sticky top-14 z-30 -mx-4 px-4 bg-cream/92 backdrop-blur-md border-b border-line mb-6" aria-label="섹션 네비게이션">
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide py-2">
+          {[
+            { id: "info", label: "기본정보" },
+            { id: "fees", label: "창업비용" },
+            { id: "benefits", label: "창업특혜" },
+            { id: "analysis", label: "업종분석" },
+            ...(brand.managerId ? [{ id: "inquiry", label: "문의하기" }] : [{ id: "inquiry", label: "가맹 상담" }]),
+          ].map((tab) => (
+            <a
+              key={tab.id}
+              href={`#${tab.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById(tab.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold text-muted hover:bg-cream-elev hover:text-green-700 transition-colors"
+            >
+              {tab.label}
+            </a>
           ))}
         </div>
-        <div className="p-6" role="tabpanel">
-          {activeTab === "info" && (
+      </nav>
+
+      <div className="space-y-6 scroll-mt-32" style={{ scrollMarginTop: 120 }}>
+        {/* ===== 기본정보 ===== */}
+        <section id="info" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Info</span>
+            <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">기본 <span className="font-light text-terra-500">정보</span></h2>
+          </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div><span className="text-sm text-gray-600">업종</span><p className="font-medium text-gray-900 mt-1">{brand.industry}</p></div>
@@ -265,8 +288,14 @@ export default function FranchiseDetailClient() {
                 </div>
               )}
             </div>
-          )}
-          {activeTab === "fees" && (
+        </section>
+
+        {/* ===== 창업비용 ===== */}
+        <section id="fees" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Fees</span>
+            <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">창업 <span className="font-light text-terra-500">비용</span></h2>
+          </div>
             <div className="space-y-3 overflow-x-auto">
               {brand.franchiseFee !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">가맹비</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.franchiseFee.toLocaleString()}만원</span></div>}
               {brand.educationFee !== null && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">교육비</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.educationFee.toLocaleString()}만원</span></div>}
@@ -314,11 +343,33 @@ export default function FranchiseDetailClient() {
 
               <div className="bg-green-50 rounded-lg p-3 md:p-4 mt-4"><p className="text-xs md:text-sm text-green-800">* 상기 비용은 예상 금액이며, 실제 창업 비용은 매장 규모 및 지역에 따라 달라질 수 있습니다.</p></div>
             </div>
-          )}
-          {activeTab === "benefits" && (<div>{brand.benefits ? <div className="prose max-w-none"><p className="text-gray-900 whitespace-pre-wrap">{brand.benefits}</p></div> : <div className="text-center py-12 text-gray-400"><p>등록된 창업특혜 정보가 없습니다</p></div>}</div>)}
-          {activeTab === "analysis" && <IndustryRevenueSection industry={brand.industry} brandName={brand.brandName} brandAvgRevenue={brand.avgRevenue} />}
-          {activeTab === "inquiry" && (
-            brand.managerId ? (
+        </section>
+
+        {/* ===== 창업특혜 ===== */}
+        <section id="benefits" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Benefits</span>
+            <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">창업 <span className="font-light text-terra-500">특혜</span></h2>
+          </div>
+          <div>{brand.benefits ? <div className="prose max-w-none"><p className="text-ink whitespace-pre-wrap">{brand.benefits}</p></div> : <div className="text-center py-12 text-muted"><p>등록된 창업특혜 정보가 없습니다</p></div>}</div>
+        </section>
+
+        {/* ===== 업종분석 ===== */}
+        <section id="analysis" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Analysis</span>
+            <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">업종 <span className="font-light text-terra-500">분석</span></h2>
+          </div>
+          <IndustryRevenueSection industry={brand.industry} brandName={brand.brandName} brandAvgRevenue={brand.avgRevenue} />
+        </section>
+
+        {/* ===== 문의하기 / 가맹 상담 ===== */}
+        <section id="inquiry" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">{brand.managerId ? "Inquiry" : "Contact"}</span>
+            <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">{brand.managerId ? <>문의 <span className="font-light text-terra-500">하기</span></> : <>가맹 <span className="font-light text-terra-500">상담</span></>}</h2>
+          </div>
+          {brand.managerId ? (
               <form onSubmit={handleInquirySubmit} className="space-y-4">
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="이름을 입력하세요" /></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="010-0000-0000" /></div>
@@ -339,9 +390,8 @@ export default function FranchiseDetailClient() {
                   <button onClick={() => router.push("/pricing?tab=franchise")} className="px-5 py-2.5 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">본사 등록하고 문의 받기</button>
                 </div>
               </div>
-            )
-          )}
-        </div>
+            )}
+        </section>
       </div>
       <StartupPartnerSection
         sameType={{ type: "franchise", id, title: "추천 프랜차이즈", viewAllLink: "/franchise" }}
