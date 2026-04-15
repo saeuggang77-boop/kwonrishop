@@ -157,7 +157,7 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
               {scopeLabel}
             </span>
           </div>
-          <h3 className="font-bold text-gray-900">{ad.product.name}</h3>
+          <h3 className="font-extrabold text-green-700 tracking-tight">{ad.product.name}</h3>
           <p className="text-sm text-gray-500">{targetName}</p>
         </div>
         <div className="text-right text-sm">

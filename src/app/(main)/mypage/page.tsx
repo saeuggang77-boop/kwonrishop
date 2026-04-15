@@ -68,7 +68,7 @@ function RecentlyViewedSection() {
   return (
     <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-bold text-gray-900">최근 본 매물</h3>
+        <h3 className="font-extrabold text-green-700 tracking-tight">최근 본 매물</h3>
         <Link href="/listings" className="text-sm text-gray-400 hover:text-green-700">전체보기</Link>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
@@ -231,47 +231,44 @@ export default function MyPage() {
   }[data.user.role] || data.user.role;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">마이페이지</h1>
-
-      {/* 프로필 카드 (항상 표시) */}
-      <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-gray-900">프로필</h3>
-          <Link
-            href="/mypage/edit"
-            className="text-sm text-green-700 hover:text-green-700 font-medium"
-          >
-            프로필 수정
-          </Link>
-        </div>
-        <div className="flex items-center gap-4">
-          {data.user.image ? (
-            <Image src={data.user.image} alt={`${data.user.name || '사용자'} 프로필 사진`} width={56} height={56} className="rounded-full" />
-          ) : (
-            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xl font-bold">
-              {data.user.name?.[0] || "U"}
-            </div>
-          )}
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">{data.user.name || "사용자"}</h2>
-            <p className="text-sm text-gray-500">{data.user.email}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">
-                {roleLabel}
-              </span>
-              {data.user.role === "BUYER" && (
-                <Link href="/verify-business" className="text-xs text-gray-400 hover:text-green-700 underline underline-offset-2">
-                  역할 전환
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      {/* 헤더 + 프로필 통합 카드 */}
+      <div className="bg-green-700 rounded-3xl p-6 md:p-8 mb-6 relative overflow-hidden">
+        <div aria-hidden className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full bg-terra-500/10 blur-3xl pointer-events-none" />
+        <div className="relative">
+          <div className="text-[11px] font-bold text-terra-300 tracking-[0.2em] uppercase mb-2">My Account</div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-cream tracking-tight mb-6">마이 <span className="font-light text-terra-300">페이지</span></h1>
+          <div className="flex items-center gap-4">
+            {data.user.image ? (
+              <Image src={data.user.image} alt={`${data.user.name || '사용자'} 프로필 사진`} width={64} height={64} className="rounded-full" />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-terra-500 flex items-center justify-center text-cream text-2xl font-extrabold">
+                {data.user.name?.[0] || "U"}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg md:text-xl font-bold text-cream truncate">{data.user.name || "사용자"}</h2>
+              <p className="text-sm text-cream/60 truncate">{data.user.email}</p>
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <span className="inline-block px-2.5 py-0.5 bg-cream text-green-700 text-[11px] font-bold rounded-full tracking-wider">
+                  {roleLabel}
+                </span>
+                {data.user.role === "BUYER" && (
+                  <Link href="/verify-business" className="text-xs text-cream/70 hover:text-cream underline underline-offset-2">
+                    역할 전환
+                  </Link>
+                )}
+                <Link href="/mypage/edit" className="text-xs text-terra-300 hover:text-cream font-semibold ml-auto">
+                  프로필 수정 →
                 </Link>
-              )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* 탭 바 */}
-      <div className="flex bg-gray-100 rounded-xl p-1 mb-4 gap-1">
+      <div className="flex bg-cream-elev rounded-full p-1 mb-6 gap-1 border border-line">
         {([
           { key: 'profile', label: '프로필' },
           { key: 'business', label: '매물관리' },
@@ -281,10 +278,10 @@ export default function MyPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-3 min-h-[44px] text-sm font-semibold rounded-lg transition-all ${
+            className={`flex-1 py-2.5 min-h-[44px] text-sm font-semibold rounded-full transition-all ${
               activeTab === tab.key
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-green-700 text-cream shadow-[0_4px_12px_rgba(31,63,46,0.2)]'
+                : 'text-muted hover:text-ink'
             }`}
           >
             {tab.label}
@@ -368,7 +365,7 @@ export default function MyPage() {
           {/* 내 매물 */}
       <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-gray-900">내 매물</h3>
+          <h3 className="font-extrabold text-green-700 tracking-tight">내 매물</h3>
           {data.listing && (
             <div className="flex items-center gap-3">
               <Link
@@ -380,7 +377,7 @@ export default function MyPage() {
               <span className="text-gray-300">|</span>
               <Link
                 href="/sell/edit"
-                className="text-sm text-green-700 hover:text-green-700 font-medium"
+                className="text-sm text-green-700 hover:text-terra-500 font-medium"
               >
                 매물 수정
               </Link>
@@ -574,7 +571,7 @@ export default function MyPage() {
       {data.user.role === "SELLER" && data.listing && (
         <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-gray-900">🔄 정기 끌어올리기</h3>
+            <h3 className="font-extrabold text-green-700 tracking-tight">🔄 정기 끌어올리기</h3>
           </div>
           {bumpSubscription ? (
             <div>
@@ -633,7 +630,7 @@ export default function MyPage() {
       {data.user.role === "PARTNER" && (
         <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-gray-900">내 서비스</h3>
+            <h3 className="font-extrabold text-green-700 tracking-tight">내 서비스</h3>
             {data.partnerService && (
               <div className="flex items-center gap-3">
                 <Link
@@ -645,7 +642,7 @@ export default function MyPage() {
                 <span className="text-gray-300">|</span>
                 <Link
                   href="/partners/register?edit=true"
-                  className="text-sm text-green-700 hover:text-green-700 font-medium"
+                  className="text-sm text-green-700 hover:text-terra-500 font-medium"
                 >
                   서비스 수정
                 </Link>
@@ -681,7 +678,7 @@ export default function MyPage() {
       {data.user.role === "FRANCHISE" && data.franchiseBrand && (
         <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-gray-900">내 브랜드</h3>
+            <h3 className="font-extrabold text-green-700 tracking-tight">내 브랜드</h3>
             <div className="flex items-center gap-3">
               <Link
                 href={`/franchise/${data.franchiseBrand.id}`}
@@ -692,7 +689,7 @@ export default function MyPage() {
               <span className="text-gray-300">|</span>
               <Link
                 href="/franchise/edit"
-                className="text-sm text-green-700 hover:text-green-700 font-medium"
+                className="text-sm text-green-700 hover:text-terra-500 font-medium"
               >
                 브랜드 수정
               </Link>
@@ -713,7 +710,7 @@ export default function MyPage() {
       {/* 내 집기 */}
       <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-gray-900">내 집기</h3>
+          <h3 className="font-extrabold text-green-700 tracking-tight">내 집기</h3>
           <div className="flex items-center gap-3">
             {data.equipmentCount > 0 && (
               <>
@@ -728,7 +725,7 @@ export default function MyPage() {
             )}
             <Link
               href="/equipment/register"
-              className="text-sm text-green-700 hover:text-green-700 font-medium"
+              className="text-sm text-green-700 hover:text-terra-500 font-medium"
             >
               집기 등록
             </Link>
@@ -830,7 +827,7 @@ export default function MyPage() {
           {data.user.role === "SELLER" && data.listing && (
             <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold text-gray-900">🔄 정기 끌어올리기</h3>
+                <h3 className="font-extrabold text-green-700 tracking-tight">🔄 정기 끌어올리기</h3>
               </div>
               {bumpSubscription ? (
                 <div>
@@ -889,7 +886,7 @@ export default function MyPage() {
       {data.user.role === "SELLER" && data.listing && (
         <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-gray-900">내 분석 리포트</h3>
+            <h3 className="font-extrabold text-green-700 tracking-tight">내 분석 리포트</h3>
           </div>
           {sellerReports.length > 0 ? (
             <div className="space-y-2">
