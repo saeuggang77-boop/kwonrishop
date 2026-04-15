@@ -586,13 +586,13 @@ export default function MyPage() {
         )}
       </div>
 
-      {/* 끌어올리기 구독 (SELLER만, 매물이 있을 때) */}
+      {/* SELLER 매물 광고 CTA — 활성 광고 유무에 따라 업셀/add-on 분기 */}
       {data.user.role === "SELLER" && data.listing && (
-        <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-extrabold text-green-700 tracking-tight">🔄 정기 끌어올리기</h3>
-          </div>
-          {bumpSubscription ? (
+        bumpSubscription ? (
+          <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-green-700 tracking-tight">🔄 정기 끌어올리기</h3>
+            </div>
             <div>
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
@@ -629,20 +629,41 @@ export default function MyPage() {
                 {cancellingSubscription ? "처리 중..." : "구독 해지하기"}
               </button>
             </div>
-          ) : (
-            <div>
-              <p className="text-sm text-gray-600 mb-3">
-                정기 끌어올리기로 항상 상단 노출을 유지하세요!
-              </p>
-              <Link
-                href={`/pricing?listingId=${data.listing.id}#subscription`}
-                className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800 text-center"
-              >
-                구독 상품 보기
-              </Link>
+          </div>
+        ) : data.activeListingAd ? (
+          <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-green-700 tracking-tight">🔄 정기 끌어올리기</h3>
             </div>
-          )}
-        </div>
+            <p className="text-sm text-gray-600 mb-3">
+              프리미엄 광고와 함께 최신순 정렬에서도 상단을 유지하세요.
+            </p>
+            <Link
+              href={`/pricing?listingId=${data.listing.id}#subscription`}
+              className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800 text-center"
+            >
+              구독 상품 보기 →
+            </Link>
+          </div>
+        ) : (
+          <div className="bg-terra-100 rounded-3xl border border-terra-300 p-5 mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-terra-500 tracking-tight">🚀 프리미엄 광고로 노출 늘리기</h3>
+            </div>
+            <ul className="text-sm text-ink space-y-1 mb-3">
+              <li>✓ 검색·카테고리 <span className="font-serif italic text-green-700">상단 고정</span></li>
+              <li>✓ 추천 매물 섹션 featured 노출</li>
+              <li>✓ 상세 페이지 광고 뱃지로 신뢰 강화</li>
+            </ul>
+            <p className="text-xs text-muted mb-3">지금은 시간순 리스트에만 노출 중입니다.</p>
+            <Link
+              href={`/pricing?listingId=${data.listing.id}`}
+              className="inline-block w-full px-4 py-2.5 bg-terra-500 text-cream text-sm rounded-lg font-semibold hover:bg-terra-600 text-center"
+            >
+              광고 상품 보기 →
+            </Link>
+          </div>
+        )
       )}
 
       {/* 내 서비스 (PARTNER) */}
@@ -693,6 +714,27 @@ export default function MyPage() {
         </div>
       )}
 
+      {/* PARTNER tier=FREE 업셀 */}
+      {data.user.role === "PARTNER" && data.partnerService?.tier === "FREE" && (
+        <div className="bg-terra-100 rounded-3xl border border-terra-300 p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-extrabold text-terra-500 tracking-tight">🚀 협력업체 광고로 노출 늘리기</h3>
+          </div>
+          <ul className="text-sm text-ink space-y-1 mb-3">
+            <li>✓ 협력업체 디렉토리 <span className="font-serif italic text-green-700">상단 고정</span></li>
+            <li>✓ BASIC · PREMIUM · VIP 등급별 노출 혜택</li>
+            <li>✓ 홈 추천 섹션 featured 노출</li>
+          </ul>
+          <p className="text-xs text-muted mb-3">지금은 기본 리스트에만 노출 중입니다.</p>
+          <Link
+            href="/pricing?tab=PARTNER"
+            className="inline-block w-full px-4 py-2.5 bg-terra-500 text-cream text-sm rounded-lg font-semibold hover:bg-terra-600 text-center"
+          >
+            광고 상품 보기 →
+          </Link>
+        </div>
+      )}
+
       {/* 내 브랜드 (FRANCHISE) */}
       {data.user.role === "FRANCHISE" && data.franchiseBrand && (
         <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
@@ -722,6 +764,27 @@ export default function MyPage() {
             <div className="flex gap-3 mt-1 text-xs text-gray-400">
               <span>등급: {tierLabel(data.franchiseBrand.tier)}</span>
             </div>
+          </Link>
+        </div>
+      )}
+
+      {/* FRANCHISE tier=FREE 업셀 */}
+      {data.user.role === "FRANCHISE" && data.franchiseBrand?.tier === "FREE" && (
+        <div className="bg-terra-100 rounded-3xl border border-terra-300 p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-extrabold text-terra-500 tracking-tight">🚀 브랜드 광고로 노출 늘리기</h3>
+          </div>
+          <ul className="text-sm text-ink space-y-1 mb-3">
+            <li>✓ 프랜차이즈 디렉토리 <span className="font-serif italic text-green-700">상단 고정</span></li>
+            <li>✓ BRONZE · SILVER · GOLD 등급별 노출 혜택</li>
+            <li>✓ 홈 추천 섹션 featured 노출</li>
+          </ul>
+          <p className="text-xs text-muted mb-3">지금은 기본 리스트에만 노출 중입니다.</p>
+          <Link
+            href="/pricing?tab=FRANCHISE"
+            className="inline-block w-full px-4 py-2.5 bg-terra-500 text-cream text-sm rounded-lg font-semibold hover:bg-terra-600 text-center"
+          >
+            광고 상품 보기 →
           </Link>
         </div>
       )}
