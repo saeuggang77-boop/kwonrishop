@@ -22,13 +22,13 @@ export async function GET() {
           select: { id: true, name: true, type: true, price: true, duration: true, categoryScope: true },
         },
         listing: {
-          select: { id: true, storeName: true, addressRoad: true },
+          select: { id: true, storeName: true, addressRoad: true, status: true },
         },
         equipment: {
-          select: { id: true, title: true },
+          select: { id: true, title: true, status: true },
         },
         partnerService: {
-          select: { id: true, companyName: true },
+          select: { id: true, companyName: true, status: true },
         },
       },
       orderBy: { createdAt: "desc" },
@@ -37,8 +37,8 @@ export async function GET() {
     // 대상 매물/집기/협력업체가 삭제되었거나 null이면 active로 간주하지 않음 (고아 레코드 방지)
     const isTargetAlive = (p: (typeof purchases)[number]) => {
       if (p.listingId) return !!p.listing && p.listing.status !== "DELETED";
-      if (p.equipmentId) return !!p.equipment;
-      if (p.partnerServiceId) return !!p.partnerService;
+      if (p.equipmentId) return !!p.equipment && p.equipment.status !== "DELETED";
+      if (p.partnerServiceId) return !!p.partnerService && p.partnerService.status !== "DELETED";
       return true; // COMMON 카테고리 (target 없음)
     };
 
