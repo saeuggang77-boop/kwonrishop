@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
+import AdProductInlineSelect from "@/components/promotion/AdProductInlineSelect";
 
 interface FranchiseBrand {
   id: string;
@@ -249,27 +250,20 @@ export default function FranchiseEditPage() {
           </p>
         </div>
 
-        {/* 안내 */}
+        {/* 유료 구독 인라인 선택 (무료 등급일 때만) */}
         {brand.tier === null && (
-          <div className="bg-navy-50 border border-navy-200 rounded-xl p-4">
-            <div className="flex items-start gap-2">
-              <svg className="w-5 h-5 text-navy-700 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <h4 className="text-sm font-medium text-navy-900 mb-1">유료 서비스 안내</h4>
-                <p className="text-sm text-navy-700">
-                  유료 구독 시 배너 이미지, 메인 노출, 문의 접수 등 추가 기능을 이용하실 수 있습니다.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => router.push("/pricing")}
-                  className="mt-2 text-sm text-navy-700 hover:text-navy-700 font-medium"
-                >
-                  구독 플랜 보기 →
-                </button>
-              </div>
+          <div className="bg-navy-50 border border-navy-200 rounded-xl p-5">
+            <div className="mb-4">
+              <h4 className="text-sm font-semibold text-navy-900 mb-1">💎 브랜드 노출을 강화하세요</h4>
+              <p className="text-xs text-navy-700">
+                유료 구독 시 메인 노출, 전용 상세 페이지, 문의 접수 등 추가 기능을 이용할 수 있습니다.
+              </p>
             </div>
+            <AdProductInlineSelect
+              scope="FRANCHISE"
+              onSkip={() => router.push(`/franchise/${brand.id}`)}
+              skipLabel="나중에 하기"
+            />
           </div>
         )}
 

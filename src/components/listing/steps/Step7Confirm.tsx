@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useListingFormStore } from "@/store/listingForm";
 import { formatPhone } from "@/lib/utils";
 import PushPromptCard from "@/components/PushPromptCard";
+import { SHOW_REVENUE_SYNC } from "@/lib/flags";
+import AdProductInlineSelect from "@/components/promotion/AdProductInlineSelect";
 
 interface Props {
   onPrev: () => void;
@@ -150,14 +152,10 @@ export default function Step7Confirm({ onPrev }: Props) {
       {/* 성공 모달 */}
       {showSuccess && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
-          onClick={() => {
-            reset();
-            router.push(`/listings/${registeredId}`);
-          }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 overflow-y-auto py-8"
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 체크 아이콘 */}
@@ -180,57 +178,19 @@ export default function Step7Confirm({ onPrev }: Props) {
             {/* 구분선 */}
             <div className="h-px bg-gradient-to-r from-transparent via-navy-500 to-transparent mb-6"></div>
 
-            {/* 광고 유도 섹션 */}
-            <div className="bg-navy-50 dark:bg-navy-800/20 rounded-xl p-5 mb-6">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
-                더 많은 예비창업자에게 알리고 싶다면?
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                광고 상품을 이용하면 조회수가 평균 5배 증가합니다
-              </p>
-
-              {/* 혜택 리스트 */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                  <span>검색 결과 상위 노출</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
-                  <span>프리미엄 배지 표시</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  <span>조회수 리포트 제공</span>
-                </div>
-              </div>
+            {/* 광고 상품 인라인 선택 */}
+            <div className="mb-6">
+              <AdProductInlineSelect
+                scope="LISTING"
+                listingId={registeredId}
+                onSkip={() => { reset(); router.push(`/listings/${registeredId}`); }}
+                skipLabel="나중에 하기 (내 매물로 이동)"
+              />
             </div>
 
             {/* 푸시 알림 + PWA 설치 유도 */}
-            <div className="mb-6">
+            <div>
               <PushPromptCard accentColor="blue" showGrantedText customTitle="구매자 연락을 놓치지 마세요" customDescription="관심 표시·채팅 문의를 실시간으로 받아볼 수 있어요" />
-            </div>
-
-            {/* 버튼 */}
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => { reset(); router.push("/pricing"); }}
-                className="w-full px-6 py-3 bg-navy-700 hover:bg-navy-600 text-white rounded-lg font-medium transition-colors"
-              >
-                광고 상품 보기
-              </button>
-              <button
-                onClick={() => { reset(); router.push(`/listings/${registeredId}`); }}
-                className="w-full px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                내 매물 보기
-              </button>
             </div>
           </div>
         </div>
@@ -310,44 +270,65 @@ export default function Step7Confirm({ onPrev }: Props) {
         </Section>
       </div>
 
-      {/* 매출 매입자료 연동 */}
-      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">매출 매입자료 연동 (선택)</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">매출 데이터를 연동하면 매물 신뢰도가 높아집니다</p>
+      {/* 매출 매입자료 연동 (개발 중 - 플래그로 숨김) */}
+      {SHOW_REVENUE_SYNC && (
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">매출 매입자료 연동 (선택)</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">매출 데이터를 연동하면 매물 신뢰도가 높아집니다</p>
 
-        <div className="space-y-3">
-          {SERVICES.map((svc) => (
-            <div
-              key={svc.key}
-              className="flex items-center gap-4 p-4 border rounded-lg border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 opacity-60"
-            >
-              <div className="text-3xl shrink-0">{svc.icon}</div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-gray-900 dark:text-white">{svc.title} (준비 중)</h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{svc.description}</p>
-              </div>
-              <button
-                onClick={() => showToast("해당 서비스는 준비 중입니다. 곧 오픈됩니다.")}
-                disabled
-                className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+          <div className="space-y-3">
+            {SERVICES.map((svc) => (
+              <div
+                key={svc.key}
+                className="flex items-center gap-4 p-4 border rounded-lg border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 opacity-60"
               >
-                준비 중
-              </button>
-            </div>
-          ))}
-        </div>
+                <div className="text-3xl shrink-0">{svc.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">{svc.title} (준비 중)</h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{svc.description}</p>
+                </div>
+                <button
+                  onClick={() => showToast("해당 서비스는 준비 중입니다. 곧 오픈됩니다.")}
+                  disabled
+                  className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                >
+                  준비 중
+                </button>
+              </div>
+            ))}
+          </div>
 
-        <div className="mt-4 bg-navy-50 dark:bg-navy-800/20 border border-navy-200 dark:border-navy-700 rounded-lg p-4">
-          <div className="flex items-start gap-2">
-            <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-sm text-navy-800 dark:text-navy-300">
-              외부 매출 자료 연동 기능은 현재 개발 중입니다. 빠른 시일 내에 오픈 예정입니다.
-            </p>
+          <div className="mt-4 bg-navy-50 dark:bg-navy-800/20 border border-navy-200 dark:border-navy-700 rounded-lg p-4">
+            <div className="flex items-start gap-2">
+              <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-sm text-navy-800 dark:text-navy-300">
+                외부 매출 자료 연동 기능은 현재 개발 중입니다. 빠른 시일 내에 오픈 예정입니다.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* 광고 안내 배너 (매출자료 숨김 시 대체) */}
+      {!SHOW_REVENUE_SYNC && (
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="bg-navy-50 dark:bg-navy-800/20 border border-navy-200 dark:border-navy-700 rounded-lg p-4">
+            <div className="flex items-start gap-2">
+              <span className="text-xl shrink-0">💎</span>
+              <div>
+                <h4 className="text-sm font-semibold text-navy-900 dark:text-navy-300 mb-1">
+                  등록 완료 후 광고 상품을 선택할 수 있어요
+                </h4>
+                <p className="text-xs text-navy-700 dark:text-navy-400">
+                  매물을 등록하면 곧바로 광고 상품을 선택해 더 많은 예비 창업자에게 노출할 수 있습니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">

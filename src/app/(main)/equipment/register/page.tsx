@@ -7,6 +7,7 @@ import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/con
 import Image from "next/image";
 import { toast } from "@/lib/toast";
 import PushPromptCard from "@/components/PushPromptCard";
+import AdProductInlineSelect from "@/components/promotion/AdProductInlineSelect";
 
 declare global {
   interface Window {
@@ -245,37 +246,43 @@ export default function EquipmentRegisterPage() {
   return (
     <>
       {/* 성공 모달 */}
-      {showSuccess && (
+      {showSuccess && registeredId && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
-          onClick={() => router.push(`/equipment/${registeredId}`)}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 overflow-y-auto py-8"
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-12 h-12 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
               집기 등록 완료!
             </h2>
-            <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-              집기가 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-5">
+              집기가 성공적으로 등록되었습니다. 지금 바로 노출됩니다.
             </p>
-            <div className="mb-6">
+
+            <div className="h-px bg-gradient-to-r from-transparent via-navy-500 to-transparent mb-5"></div>
+
+            {/* 광고 상품 인라인 선택 */}
+            <div className="mb-5">
+              <AdProductInlineSelect
+                scope="EQUIPMENT"
+                equipmentId={registeredId}
+                onSkip={() => router.push(`/equipment/${registeredId}`)}
+                skipLabel="나중에 하기 (내 집기로 이동)"
+              />
+            </div>
+
+            <div>
               <PushPromptCard accentColor="green" showGrantedText customTitle="구매자 관심을 놓치지 마세요" customDescription="관심 표시·문의를 바로 확인할 수 있어요" />
             </div>
-            <button
-              onClick={() => router.push(`/equipment/${registeredId}`)}
-              className="w-full px-6 py-3 bg-navy-700 hover:bg-navy-600 text-white rounded-lg font-medium transition-colors"
-            >
-              내 집기 보기
-            </button>
           </div>
         </div>
       )}

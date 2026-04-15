@@ -7,6 +7,7 @@ import { SERVICE_TYPE_LABELS, REGION_OPTIONS } from "@/lib/constants";
 import Image from "next/image";
 import { toast } from "@/lib/toast";
 import PushPromptCard from "@/components/PushPromptCard";
+import AdProductInlineSelect from "@/components/promotion/AdProductInlineSelect";
 
 declare global {
   interface Window {
@@ -264,37 +265,43 @@ export default function PartnerRegisterPage() {
   return (
     <>
       {/* 성공 모달 */}
-      {showSuccess && (
+      {showSuccess && registeredId && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
-          onClick={() => router.push(`/partners/${registeredId}`)}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 overflow-y-auto py-8"
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-12 h-12 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
               협력업체 등록 완료!
             </h2>
-            <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-              서비스가 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-5">
+              서비스가 성공적으로 등록되었습니다. 지금 바로 노출됩니다.
             </p>
-            <div className="mb-6">
+
+            <div className="h-px bg-gradient-to-r from-transparent via-navy-500 to-transparent mb-5"></div>
+
+            {/* 광고 상품 인라인 선택 */}
+            <div className="mb-5">
+              <AdProductInlineSelect
+                scope="PARTNER"
+                partnerServiceId={registeredId}
+                onSkip={() => router.push(`/partners/${registeredId}`)}
+                skipLabel="나중에 하기 (내 서비스로 이동)"
+              />
+            </div>
+
+            <div>
               <PushPromptCard accentColor="purple" showGrantedText customTitle="고객 문의를 놓치지 마세요" customDescription="실시간 알림으로 문의에 바로 응답하세요" />
             </div>
-            <button
-              onClick={() => router.push(`/partners/${registeredId}`)}
-              className="w-full px-6 py-3 bg-navy-700 hover:bg-navy-600 text-white rounded-lg font-medium transition-colors"
-            >
-              내 서비스 보기
-            </button>
           </div>
         </div>
       )}
