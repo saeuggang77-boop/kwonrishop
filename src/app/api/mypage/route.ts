@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
 
-  const [user, verification, listing, favoriteCount, chatCount, partnerService, franchiseBrand, equipmentCount, equipmentFavoriteCount, activeListingAd] =
+  const [user, verification, listing, favoriteCount, chatCount, partnerService, franchiseBrand, equipmentCount, equipmentFavoriteCount, activeListingAd, myEquipment] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: session.user.id },
@@ -95,6 +95,12 @@ export async function GET() {
           product: { select: { name: true } },
         },
       }),
+      prisma.equipment.findMany({
+        where: { userId: session.user.id, status: { not: "DELETED" } },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { id: true, title: true, tier: true, status: true, viewCount: true },
+      }),
     ]);
 
   // Calculate unread chat messages
@@ -142,5 +148,6 @@ export async function GET() {
       daysLeft: Math.ceil((activeListingAd.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
       viewCountAtAdStart: activeListingAd.viewCountAtAdStart,
     } : null,
+    myEquipment,
   });
 }

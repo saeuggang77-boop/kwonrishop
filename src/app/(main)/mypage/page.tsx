@@ -40,6 +40,13 @@ interface MyData {
     daysLeft: number;
     viewCountAtAdStart: number | null;
   } | null;
+  myEquipment: Array<{
+    id: string;
+    title: string;
+    tier: string;
+    status: string;
+    viewCount: number;
+  }>;
 }
 
 function tierLabel(tier: string | null | undefined): string {
@@ -825,6 +832,29 @@ export default function MyPage() {
           <p className="text-sm text-gray-400">등록된 집기가 없습니다</p>
         )}
       </div>
+
+      {/* 집기 tier=FREE 업셀 (무료 집기가 1개 이상일 때) */}
+      {data.myEquipment?.some((e) => e.tier === "FREE") && (
+        <div className="bg-terra-100 rounded-3xl border border-terra-300 p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-extrabold text-terra-500 tracking-tight">🚀 집기 광고로 노출 늘리기</h3>
+          </div>
+          <ul className="text-sm text-ink space-y-1 mb-3">
+            <li>✓ 집기 장터 <span className="font-serif italic text-green-700">상단 고정</span></li>
+            <li>✓ BASIC · PREMIUM · VIP 등급별 노출 혜택</li>
+            <li>✓ 홈 추천 집기 섹션 featured 노출</li>
+          </ul>
+          <p className="text-xs text-muted mb-3">
+            무료로 등록된 집기가 {data.myEquipment.filter((e) => e.tier === "FREE").length}건 있습니다.
+          </p>
+          <Link
+            href="/pricing?tab=EQUIPMENT"
+            className="inline-block w-full px-4 py-2.5 bg-terra-500 text-cream text-sm rounded-lg font-semibold hover:bg-terra-600 text-center"
+          >
+            광고 상품 보기 →
+          </Link>
+        </div>
+      )}
         </>
       )}
 
