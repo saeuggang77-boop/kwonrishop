@@ -283,50 +283,79 @@ function EquipmentListContent() {
           onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
         />
       ) : (
-        /* ===== 브라우즈 모드 (티어별 섹션) ===== */
+        /* ===== 브라우즈 모드 (2계층: 추천 + 전체) ===== */
         <>
-          {/* VIP - 2열 가로형 */}
-          {vipEquipments.length > 0 && (
-            <TierSection
-              tier="VIP"
-              equipments={vipEquipments}
-              limit={TIER_LIMITS.VIP}
-              onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
-              onShowAll={() => { setCategory(""); setKeyword(""); }}
-            />
+          {/* 추천 집기 (VIP + PREMIUM 통합) */}
+          {(vipEquipments.length > 0 || premiumEquipments.length > 0) && (
+            <section className="mb-16">
+              <div className="mb-8">
+                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                  <span className="w-6 h-px bg-terra-500" />
+                  Featured Equipment
+                </div>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">
+                  추천 <span className="font-light text-terra-500">집기</span>
+                </h2>
+              </div>
+              {vipEquipments.length > 0 && (
+                <TierSection
+                  tier="VIP"
+                  equipments={vipEquipments}
+                  limit={TIER_LIMITS.VIP}
+                  onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
+                  onShowAll={() => { setCategory(""); setKeyword(""); }}
+                  hideHeader
+                />
+              )}
+              {premiumEquipments.length > 0 && (
+                <TierSection
+                  tier="PREMIUM"
+                  equipments={premiumEquipments}
+                  limit={TIER_LIMITS.PREMIUM}
+                  onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
+                  onShowAll={() => { setCategory(""); setKeyword(""); }}
+                  hideHeader
+                />
+              )}
+            </section>
           )}
 
-          {/* PREMIUM - 3열 가로형 */}
-          {premiumEquipments.length > 0 && (
-            <TierSection
-              tier="PREMIUM"
-              equipments={premiumEquipments}
-              limit={TIER_LIMITS.PREMIUM}
-              onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
-              onShowAll={() => { setCategory(""); setKeyword(""); }}
-            />
+          {/* 전체 집기 (BASIC + FREE 통합) */}
+          {(basicEquipments.length > 0 || freeEquipments.length > 0) && (
+            <section>
+              <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
+                <div>
+                  <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                    <span className="w-6 h-px bg-terra-500" />
+                    All Equipment
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">
+                    전체 <span className="font-light text-terra-500">집기</span>
+                  </h2>
+                </div>
+                <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">광고 등록으로 상단 노출 →</a>
+              </div>
+              {basicEquipments.length > 0 && (
+                <TierSection
+                  tier="BASIC"
+                  equipments={basicEquipments}
+                  limit={TIER_LIMITS.BASIC}
+                  onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
+                  onShowAll={() => { setCategory(""); setKeyword(""); }}
+                  hideHeader
+                />
+              )}
+              <FreeSection
+                equipments={freeEquipments}
+                total={freeTotal}
+                page={freePage}
+                totalPages={freeTotalPages}
+                onPageChange={setFreePage}
+                onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
+                hideHeader
+              />
+            </section>
           )}
-
-          {/* BASIC - 2열 줄광고 */}
-          {basicEquipments.length > 0 && (
-            <TierSection
-              tier="BASIC"
-              equipments={basicEquipments}
-              limit={TIER_LIMITS.BASIC}
-              onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
-              onShowAll={() => { setCategory(""); setKeyword(""); }}
-            />
-          )}
-
-          {/* 무료 - 텍스트 리스트 */}
-          <FreeSection
-            equipments={freeEquipments}
-            total={freeTotal}
-            page={freePage}
-            totalPages={freeTotalPages}
-            onPageChange={setFreePage}
-            onEquipmentClick={(id) => router.push(`/equipment/${id}`)}
-          />
         </>
       )}
 
@@ -347,12 +376,14 @@ function TierSection({
   limit,
   onEquipmentClick,
   onShowAll,
+  hideHeader = false,
 }: {
   tier: "VIP" | "PREMIUM" | "BASIC";
   equipments: Equipment[];
   limit: number;
   onEquipmentClick: (id: string) => void;
   onShowAll: () => void;
+  hideHeader?: boolean;
 }) {
   const displayed = equipments.slice(0, limit);
   const hasMore = equipments.length > limit;
@@ -360,21 +391,23 @@ function TierSection({
   /* ── VIP 섹션 ── */
   if (tier === "VIP") {
     return (
-      <div className="mb-14">
-        <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
-          <div>
-            <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2 flex items-center gap-2">
-              <span className="w-6 h-px bg-terra-500" />
-              VIP Equipment
+      <div className="mb-10">
+        {!hideHeader && (
+          <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
+            <div>
+              <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2 flex items-center gap-2">
+                <span className="w-6 h-px bg-terra-500" />
+                VIP Equipment
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">
+                프리미엄 <span className="font-light text-terra-500">집기</span>
+              </h2>
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">
-              프리미엄 <span className="font-light text-terra-500">집기</span>
-            </h2>
+            {hasMore && (
+              <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors whitespace-nowrap">더보기 →</button>
+            )}
           </div>
-          {hasMore && (
-            <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors whitespace-nowrap">더보기 →</button>
-          )}
-        </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {displayed.map((eq) => (
             <div
@@ -388,7 +421,7 @@ function TierSection({
                     <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-serif italic font-light text-5xl text-terra-300">{eq.title.charAt(0)}</span>
+                      <span className="font-extrabold text-5xl text-terra-300">{eq.title.charAt(0)}</span>
                     </div>
                   )}
                   <div className="absolute top-3 left-3 inline-flex items-center px-3 py-1 bg-terra-500 text-cream text-[10px] font-bold rounded-full tracking-wider">
@@ -423,16 +456,18 @@ function TierSection({
   /* ── PREMIUM 섹션 ── */
   if (tier === "PREMIUM") {
     return (
-      <div className="mb-14">
-        <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 bg-green-700 text-cream text-[10px] font-bold rounded-full tracking-wider">PREMIUM</span>
-            <h3 className="text-lg font-bold text-ink tracking-tight">추천 집기</h3>
+      <div className="mb-10">
+        {!hideHeader && (
+          <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 bg-green-700 text-cream text-[10px] font-bold rounded-full tracking-wider">PREMIUM</span>
+              <h3 className="text-lg font-bold text-ink tracking-tight">추천 집기</h3>
+            </div>
+            {hasMore && (
+              <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors">더보기 →</button>
+            )}
           </div>
-          {hasMore && (
-            <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors">더보기 →</button>
-          )}
-        </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {displayed.map((eq) => (
             <div
@@ -446,7 +481,7 @@ function TierSection({
                     <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-serif italic font-light text-3xl text-green-700">{eq.title.charAt(0)}</span>
+                      <span className="font-extrabold text-3xl text-green-700">{eq.title.charAt(0)}</span>
                     </div>
                   )}
                 </div>
@@ -472,16 +507,18 @@ function TierSection({
 
   /* ── BASIC 섹션 ── */
   return (
-    <div className="mb-14">
-      <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full tracking-wider">BASIC</span>
-          <h3 className="text-lg font-bold text-ink tracking-tight">등록 집기</h3>
+    <div className="mb-6">
+      {!hideHeader && (
+        <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full tracking-wider">BASIC</span>
+            <h3 className="text-lg font-bold text-ink tracking-tight">등록 집기</h3>
+          </div>
+          {hasMore && (
+            <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors">더보기 →</button>
+          )}
         </div>
-        {hasMore && (
-          <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors">더보기 →</button>
-        )}
-      </div>
+      )}
       <div className="bg-cream rounded-3xl border border-line overflow-hidden">
         {displayed.map((eq, i) => (
           <div
@@ -517,6 +554,7 @@ function FreeSection({
   totalPages,
   onPageChange,
   onEquipmentClick,
+  hideHeader = false,
 }: {
   equipments: Equipment[];
   total: number;
@@ -524,20 +562,23 @@ function FreeSection({
   totalPages: number;
   onPageChange: (p: number) => void;
   onEquipmentClick: (id: string) => void;
+  hideHeader?: boolean;
 }) {
   if (total === 0 && equipments.length === 0) return null;
 
   return (
-    <div className="mb-10 border-t border-line pt-10">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-muted uppercase tracking-wider">일반 집기</h2>
-          <span className="text-sm text-line-deep">{total}개</span>
+    <div className={hideHeader ? "" : "mb-10 border-t border-line pt-10"}>
+      {!hideHeader && (
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-bold text-muted uppercase tracking-wider">일반 집기</h2>
+            <span className="text-sm text-line-deep">{total}개</span>
+          </div>
+          <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">
+            광고 등록으로 상단 노출 →
+          </a>
         </div>
-        <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">
-          광고 등록으로 상단 노출 →
-        </a>
-      </div>
+      )}
       <div className="space-y-1">
         {equipments.map((eq) => (
           <div
