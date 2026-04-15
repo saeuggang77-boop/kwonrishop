@@ -147,18 +147,18 @@ export default function PartnersPage() {
       <div className="max-w-6xl mx-auto px-4 py-6">
 
       {/* 필터 바 */}
-      <form onSubmit={handleSearch} className="flex flex-wrap gap-2 mb-10">
+      <form onSubmit={handleSearch} className="flex flex-wrap gap-2 mb-10 bg-cream-elev rounded-3xl p-3 border border-line">
         <input
           type="text"
           placeholder="업체명, 서비스 검색"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="flex-1 min-w-[160px] px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+          className="flex-1 min-w-[160px] px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 focus:border-green-700 outline-none"
         />
         <select
           value={serviceType}
           onChange={(e) => handleFilterChange("serviceType", e.target.value)}
-          className="px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+          className="px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium"
         >
           <option value="">서비스 전체</option>
           {Object.entries(SERVICE_TYPE_LABELS).map(([key, label]) => (
@@ -168,7 +168,7 @@ export default function PartnersPage() {
         <select
           value={region}
           onChange={(e) => handleFilterChange("region", e.target.value)}
-          className="px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+          className="px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium"
         >
           <option value="">지역 전체</option>
           {REGION_OPTIONS.map((r) => (
@@ -177,7 +177,7 @@ export default function PartnersPage() {
         </select>
         <button
           type="submit"
-          className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
+          className="px-5 py-2.5 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors"
         >
           검색
         </button>
@@ -185,7 +185,7 @@ export default function PartnersPage() {
           <button
             type="button"
             onClick={clearSearch}
-            className="px-3 py-2 text-gray-500 text-sm hover:text-gray-700"
+            className="px-3 py-2 text-muted text-sm hover:text-ink"
           >
             초기화
           </button>
@@ -286,53 +286,56 @@ function TierSection({
   /* ── VIP 섹션 ── */
   if (tier === "VIP") {
     return (
-      <div className="mb-12">
-        <div className="flex items-center gap-2 mb-5">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-700 rounded-lg">
-            <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-            <span className="text-white text-sm font-bold tracking-wide">VIP</span>
+      <div className="mb-14">
+        <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
+          <div>
+            <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2 flex items-center gap-2">
+              <span className="w-6 h-px bg-terra-500" />
+              VIP Partners
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">
+              프리미엄 <span className="font-serif italic font-light text-terra-500">파트너</span>
+            </h2>
           </div>
-          <span className="text-sm text-green-600 font-medium">프리미엄 파트너</span>
           {hasMore && (
-            <button onClick={onShowAll} className="ml-auto text-sm text-green-700 hover:text-green-700">더보기 &rarr;</button>
+            <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors whitespace-nowrap">더보기 →</button>
           )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {displayed.map((p) => (
             <div
               key={p.id}
-              className="bg-white rounded-2xl overflow-hidden cursor-pointer border-2 border-green-600 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)] hover:-translate-y-0.5 transition-all duration-200"
+              className="bg-cream-elev rounded-3xl overflow-hidden cursor-pointer border-2 border-green-700 shadow-[0_8px_32px_rgba(31,63,46,0.10)] hover:shadow-[0_16px_40px_rgba(31,63,46,0.14)] hover:-translate-y-1 transition-all duration-300"
               onClick={() => onPartnerClick(p.id)}
             >
               <div className="flex">
-                <div className="w-44 h-40 shrink-0 bg-gray-100 relative">
+                <div className="w-44 h-40 shrink-0 bg-green-800 relative">
                   {p.images.length > 0 ? (
                     <Image src={p.images[0].url} alt={p.companyName} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-black text-5xl text-gray-300/60">{p.companyName.charAt(0)}</span>
+                      <span className="font-serif italic font-light text-5xl text-terra-300">{p.companyName.charAt(0)}</span>
                     </div>
                   )}
-                  <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 bg-green-700/90 text-white text-[9px] font-bold rounded">
-                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <div className="absolute top-3 left-3 inline-flex items-center px-3 py-1 bg-terra-500 text-cream text-[10px] font-bold rounded-full tracking-wider">
                     VIP
                   </div>
                 </div>
                 <div className="flex-1 p-5 flex flex-col justify-between min-w-0">
                   <div>
-                    <h3 className="font-extrabold text-gray-900 text-lg leading-tight truncate">{p.companyName}</h3>
-                    <p className="text-xs text-green-600 font-medium mt-1">
+                    <h3 className="font-extrabold text-ink text-lg leading-tight truncate tracking-tight">{p.companyName}</h3>
+                    <p className="text-xs text-terra-500 font-semibold mt-1">
                       {SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}
                       {p.serviceArea.length > 0 && ` · ${p.serviceArea.slice(0, 2).join(", ")}`}
                     </p>
                     {p.description && (
-                      <p className="text-sm text-gray-500 mt-2 line-clamp-2 leading-relaxed">{p.description}</p>
+                      <p className="text-sm text-muted mt-2 line-clamp-2 leading-relaxed">{p.description}</p>
                     )}
                   </div>
                   {p.serviceArea.length > 0 && (
                     <div className="flex items-center gap-1.5 mt-3 flex-wrap">
                       {p.serviceArea.slice(0, 3).map((area) => (
-                        <span key={area} className="px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-semibold rounded-full border border-green-200">{area}</span>
+                        <span key={area} className="px-2.5 py-0.5 bg-cream text-green-700 text-[10px] font-semibold rounded-full border border-line">{area}</span>
                       ))}
                     </div>
                   )}
@@ -348,42 +351,42 @@ function TierSection({
   /* ── PREMIUM 섹션 ── */
   if (tier === "PREMIUM") {
     return (
-      <div className="mb-12">
-        <div className="flex items-center gap-2 mb-5">
-          <div className="px-3 py-1.5 bg-green-500 rounded-lg">
-            <span className="text-white text-sm font-bold tracking-wide">PREMIUM</span>
+      <div className="mb-14">
+        <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-1 bg-green-700 text-cream text-[10px] font-bold rounded-full tracking-wider">PREMIUM</span>
+            <h3 className="text-lg font-bold text-ink tracking-tight">추천 파트너</h3>
           </div>
-          <span className="text-sm text-green-500/80 font-medium">추천 파트너</span>
           {hasMore && (
-            <button onClick={onShowAll} className="ml-auto text-sm text-green-700 hover:text-green-700">더보기 &rarr;</button>
+            <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors">더보기 →</button>
           )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {displayed.map((p) => (
             <div
               key={p.id}
-              className="bg-white rounded-xl overflow-hidden cursor-pointer border-[1.5px] border-green-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-200"
+              className="bg-cream rounded-3xl overflow-hidden cursor-pointer border-[1.5px] border-line-deep shadow-[0_2px_12px_rgba(31,63,46,0.06)] hover:shadow-[0_8px_24px_rgba(31,63,46,0.10)] hover:-translate-y-1 transition-all duration-300"
               onClick={() => onPartnerClick(p.id)}
             >
               <div className="flex">
-                <div className="w-28 h-28 shrink-0 bg-gray-100 relative">
+                <div className="w-28 h-28 shrink-0 bg-cream-elev relative">
                   {p.images.length > 0 ? (
                     <Image src={p.images[0].url} alt={p.companyName} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-bold text-3xl text-gray-300/60">{p.companyName.charAt(0)}</span>
+                      <span className="font-serif italic font-light text-3xl text-green-700">{p.companyName.charAt(0)}</span>
                     </div>
                   )}
                 </div>
                 <div className="flex-1 p-3.5 flex flex-col justify-between min-w-0">
                   <div>
-                    <h3 className="font-bold text-gray-900 text-sm truncate">{p.companyName}</h3>
-                    <p className="text-[11px] text-green-500 font-medium mt-0.5">
+                    <h3 className="font-bold text-ink text-sm truncate tracking-tight">{p.companyName}</h3>
+                    <p className="text-[11px] text-terra-500 font-semibold mt-0.5">
                       {SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}
                       {p.serviceArea.length > 0 && ` · ${p.serviceArea.slice(0, 2).join(", ")}`}
                     </p>
                     {p.description && (
-                      <p className="text-[11px] text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">{p.description}</p>
+                      <p className="text-[11px] text-muted mt-1.5 line-clamp-2 leading-relaxed">{p.description}</p>
                     )}
                   </div>
                 </div>
@@ -397,34 +400,34 @@ function TierSection({
 
   /* ── BASIC 섹션 ── */
   return (
-    <div className="mb-12">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="px-3 py-1.5 bg-green-500 rounded-lg">
-          <span className="text-white text-sm font-extrabold tracking-wide">BASIC</span>
+    <div className="mb-14">
+      <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full tracking-wider">BASIC</span>
+          <h3 className="text-lg font-bold text-ink tracking-tight">등록 업체</h3>
         </div>
-        <span className="text-sm text-green-500/80 font-medium">등록 업체</span>
         {hasMore && (
-          <button onClick={onShowAll} className="ml-auto text-sm text-green-700 hover:text-green-700">더보기 &rarr;</button>
+          <button onClick={onShowAll} className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors">더보기 →</button>
         )}
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden divide-y divide-gray-100">
-        {displayed.map((p) => (
+      <div className="bg-cream rounded-3xl border border-line overflow-hidden">
+        {displayed.map((p, i) => (
           <div
             key={p.id}
-            className="flex items-center justify-between px-5 py-3.5 hover:bg-green-50/30 cursor-pointer transition-colors group"
+            className={`flex items-center justify-between px-5 py-4 hover:bg-cream-elev cursor-pointer transition-colors group ${i !== 0 ? "border-t border-line" : ""}`}
             onClick={() => onPartnerClick(p.id)}
           >
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-gray-900 truncate">{p.companyName}</p>
-                <span className="text-[11px] text-gray-400">·</span>
-                <span className="text-[11px] text-gray-400">{SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm font-semibold text-ink truncate">{p.companyName}</p>
+                <span className="text-[11px] text-line-deep">·</span>
+                <span className="text-[11px] text-terra-500 font-medium">{SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}</span>
               </div>
               {p.serviceArea.length > 0 && (
-                <p className="text-xs text-gray-400 mt-0.5">{p.serviceArea.slice(0, 2).join(", ")}</p>
+                <p className="text-xs text-muted mt-0.5">{p.serviceArea.slice(0, 2).join(", ")}</p>
               )}
             </div>
-            <span className="text-xs text-green-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-3">자세히 &rarr;</span>
+            <span className="text-xs text-green-700 font-semibold opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-3">자세히 →</span>
           </div>
         ))}
       </div>
@@ -451,30 +454,30 @@ function FreeSection({
   if (total === 0 && partners.length === 0) return null;
 
   return (
-    <div className="mb-10">
-      <div className="flex items-center justify-between mb-3">
+    <div className="mb-10 border-t border-line pt-10">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-base font-bold text-gray-500">일반 업체</h2>
-          <span className="text-sm text-gray-300">{total}개</span>
+          <h2 className="text-sm font-bold text-muted uppercase tracking-wider">일반 업체</h2>
+          <span className="text-sm text-line-deep">{total}개</span>
         </div>
-        <a href="/pricing" className="text-[11px] text-gray-400 hover:text-green-500 transition-colors">
-          광고 등록으로 상단 노출 &rarr;
+        <a href="/pricing" className="text-xs text-muted hover:text-terra-500 transition-colors">
+          광고 등록으로 상단 노출 →
         </a>
       </div>
-      <div className="space-y-0">
+      <div className="space-y-1">
         {partners.map((p) => (
           <div
             key={p.id}
-            className="flex items-center py-2.5 px-3 rounded-lg hover:bg-white cursor-pointer transition-colors"
+            className="flex items-center py-2.5 px-3 rounded-2xl hover:bg-cream-elev cursor-pointer transition-colors"
             onClick={() => onPartnerClick(p.id)}
           >
-            <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mr-3">
-              <span className="text-[10px] font-bold text-gray-400">{p.companyName.charAt(0)}</span>
+            <div className="w-7 h-7 rounded-full bg-cream-elev flex items-center justify-center shrink-0 mr-3">
+              <span className="text-[10px] font-serif italic font-light text-green-700">{p.companyName.charAt(0)}</span>
             </div>
-            <span className="text-sm text-gray-800 font-medium mr-2 shrink-0">{p.companyName}</span>
-            <span className="text-xs text-gray-400 shrink-0">{SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}</span>
+            <span className="text-sm text-ink font-medium mr-2 shrink-0">{p.companyName}</span>
+            <span className="text-xs text-muted shrink-0">{SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}</span>
             {p.serviceArea.length > 0 && (
-              <span className="text-xs text-gray-300 ml-auto shrink-0">{p.serviceArea.slice(0, 2).join(", ")}</span>
+              <span className="text-xs text-muted ml-auto shrink-0">{p.serviceArea.slice(0, 2).join(", ")}</span>
             )}
           </div>
         ))}

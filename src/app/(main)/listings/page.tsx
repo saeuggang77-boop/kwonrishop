@@ -316,33 +316,33 @@ function ListingsContent() {
       </div>
 
       {/* 플로팅 검색바 */}
-      <div className="mx-auto max-w-2xl px-4 -mt-6 relative z-10">
-        <form onSubmit={handleSearch} className="flex gap-2 bg-white rounded-xl shadow-lg p-1.5">
+      <div className="mx-auto max-w-2xl px-4 -mt-7 relative z-10">
+        <form onSubmit={handleSearch} className="flex gap-2 bg-cream rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.15)] p-1.5 pl-5">
           <input
             type="text"
             placeholder="지역, 업종, 상호명 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+            className="flex-1 px-2 py-3 bg-transparent border-none outline-none text-ink placeholder:text-muted"
           />
           <button
             type="submit"
-            className="px-6 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors shrink-0"
+            className="px-6 py-3 bg-green-700 text-cream rounded-full font-semibold hover:bg-green-800 transition-colors shrink-0"
           >
             검색
           </button>
         </form>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* 카테고리 필터 */}
-      <div className="flex gap-2 overflow-x-auto pb-3 mb-4">
+      <div className="flex gap-2 overflow-x-auto pb-3 mb-4 scrollbar-hide">
         <button
           onClick={() => handleCategoryClick("")}
-          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+          className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
             !categoryId
-              ? "bg-green-700 text-white"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? "bg-green-700 text-cream shadow-[0_4px_12px_rgba(31,63,46,0.2)]"
+              : "bg-cream border border-line text-ink hover:border-green-700"
           }`}
         >
           전체
@@ -351,10 +351,10 @@ function ListingsContent() {
           <button
             key={cat.id}
             onClick={() => handleCategoryClick(cat.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+            className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
               categoryId === cat.id
-                ? "bg-green-700 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-green-700 text-cream shadow-[0_4px_12px_rgba(31,63,46,0.2)]"
+                : "bg-cream border border-line text-ink hover:border-green-700"
             }`}
           >
             {cat.icon} {cat.name}
@@ -364,14 +364,14 @@ function ListingsContent() {
 
       {/* 소분류 필터 */}
       {selectedCategory && selectedCategory.subCategories.length > 0 && (
-        <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
+        <div className="bg-cream-elev rounded-3xl p-4 mb-4 border border-line">
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSubCategoryId("")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                 !subCategoryId
-                  ? "bg-green-700 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                  ? "bg-green-700 text-cream"
+                  : "bg-cream text-ink hover:bg-cream-hover border border-line"
               }`}
             >
               전체
@@ -380,10 +380,10 @@ function ListingsContent() {
               <button
                 key={sub.id}
                 onClick={() => handleSubCategoryClick(sub.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                   subCategoryId === sub.id
-                    ? "bg-green-700 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                    ? "bg-green-700 text-cream"
+                    : "bg-cream text-ink hover:bg-cream-hover border border-line"
                 }`}
               >
                 {sub.name}
