@@ -535,7 +535,7 @@ export default function ListingDetailClient() {
   const isExpired = listing.status === "EXPIRED";
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-6">
       {jsonLdData && <JsonLd data={jsonLdData} />}
       <Breadcrumb items={[
         { label: "매물검색", href: "/listings" },
@@ -567,6 +567,10 @@ export default function ListingDetailClient() {
           </button>
         </div>
       )}
+
+      {/* ===== 2-column layout wrapper (lg+ desktop only) ===== */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8">
+      <div className="lg:max-w-[760px] lg:min-w-0">
 
       {/* ===== 1. 사진 갤러리 (탭 분류) ===== */}
       {listing.images.length > 1 && (
@@ -1299,8 +1303,8 @@ export default function ListingDetailClient() {
 
       </div>
 
-      {/* ===== 19. 하단 고정바 ===== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-line z-10 md:static md:mt-6 md:rounded-xl md:border md:shadow-sm">
+      {/* ===== 19. 하단 고정바 (lg+ 에선 사이드바로 대체) ===== */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-line z-10 md:static md:mt-6 md:rounded-xl md:border md:shadow-sm lg:hidden">
         {isOwner ? (
           /* 소유자일 때: 매물 관리 바 */
           <div className="max-w-3xl mx-auto px-4 py-3 relative">
@@ -1464,6 +1468,105 @@ export default function ListingDetailClient() {
             </div>
           </>
         )}
+      </div>
+
+      {/* ===== Close left column ===== */}
+      </div>
+
+      {/* ===== Desktop Sticky Sidebar (lg+ only) ===== */}
+      {!isOwner && (
+        <aside className="hidden lg:block">
+          <div className="sticky top-20 space-y-4">
+            {/* Price/Action card */}
+            <div className="bg-cream rounded-3xl border-2 border-green-700 shadow-[0_8px_32px_rgba(31,63,46,0.08)] p-6">
+              {listing.featuredTier && listing.featuredTier !== "FREE" && (
+                <div className="mb-3">
+                  <span className="inline-block px-3 py-1 bg-terra-500 text-cream text-[10px] font-bold rounded-full tracking-wider">
+                    {listing.featuredTier}
+                  </span>
+                </div>
+              )}
+
+              {/* 권리금 */}
+              <div className="mb-5">
+                <div className="text-[10px] text-muted uppercase tracking-[0.15em] mb-1 font-bold">권리금</div>
+                <div className="flex items-baseline gap-1">
+                  {listing.premiumNone ? (
+                    <span className="text-2xl font-extrabold text-green-700">무권리</span>
+                  ) : (
+                    <>
+                      <span className="font-serif italic font-medium text-4xl text-green-700 leading-none">{fmt(listing.premium)}</span>
+                      <span className="text-xl font-extrabold text-green-700">만</span>
+                    </>
+                  )}
+                </div>
+                {listing.premiumNegotiable && <div className="text-xs text-muted mt-1">협의 가능</div>}
+              </div>
+
+              {/* 보증금 · 월세 */}
+              <div className="border-t border-dashed border-line-deep pt-4 space-y-2 mb-5">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">보증금</span>
+                  <span className="text-ink font-semibold"><span className="font-serif italic font-medium mr-0.5">{fmt(listing.deposit)}</span>만</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">월세</span>
+                  <span className="text-ink font-semibold"><span className="font-serif italic font-medium mr-0.5">{fmt(listing.monthlyRent)}</span>만</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="space-y-2">
+                <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex items-center justify-center gap-2 w-full py-3.5 bg-terra-500 text-cream rounded-full font-bold text-sm hover:bg-terra-600 transition-colors shadow-[0_4px_16px_rgba(217,108,79,0.25)]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                  채팅 문의
+                </Link>
+                {listing.contactPublic && listing.user.phone && !listing.user.phoneLocked && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <a href={`tel:${listing.user.phone}`} className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 018.63 13.37 19.5 19.5 0 015.36 3.18 2 2 0 017.34 1h3a2 2 0 012 1.72"/></svg>
+                      전화
+                    </a>
+                    <a href={`sms:${listing.user.phone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${listing.storeName || '매물'}을(를) 보고 연락드립니다.`)}`} className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                      문자
+                    </a>
+                  </div>
+                )}
+                <button
+                  onClick={handleFavorite}
+                  aria-label={favorited ? "관심매물 해제" : "관심매물 등록"}
+                  className={`flex items-center justify-center gap-1.5 w-full py-2.5 rounded-full font-semibold text-xs transition-colors border ${favorited ? "bg-terra-100 text-terra-500 border-terra-500" : "bg-cream text-muted border-line hover:border-green-700 hover:text-green-700"}`}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill={favorited ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2}><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  {favorited ? "관심매물 해제" : `관심매물 등록 (${listing.favoriteCount})`}
+                </button>
+              </div>
+
+              {/* Meta */}
+              <div className="border-t border-line pt-4 mt-4 flex items-center justify-between text-[11px] text-muted">
+                <span>조회 <span className="font-serif italic font-medium text-green-700 ml-0.5">{listing.viewCount}</span></span>
+                <span>관심 <span className="font-serif italic font-medium text-terra-500 ml-0.5">{listing.favoriteCount}</span></span>
+              </div>
+            </div>
+
+            {/* Trust card */}
+            {listing.user.businessVerified && (
+              <div className="bg-cream-elev rounded-2xl p-4 flex items-start gap-2.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="text-green-700 shrink-0 mt-0.5">
+                  <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <div className="text-xs text-muted">
+                  <strong className="block text-green-700 font-bold mb-0.5">검증된 매도자</strong>
+                  사업자 인증 완료
+                </div>
+              </div>
+            )}
+          </div>
+        </aside>
+      )}
+
+      {/* Close grid wrapper */}
       </div>
 
     </div>
