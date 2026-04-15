@@ -160,7 +160,7 @@ function VerifyBusinessContent() {
           <div className="space-y-2">
             <Link
               href={successRedirect}
-              className="block w-full px-4 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
+              className="block w-full px-4 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors"
             >
               {buttonText}
             </Link>
@@ -450,7 +450,7 @@ function VerifyBusinessContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "인증 중..." : hasFailedOnce ? "다시 인증하기" : "사업자 인증하기"}
           </button>

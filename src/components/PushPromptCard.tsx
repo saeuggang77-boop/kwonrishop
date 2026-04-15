@@ -139,7 +139,7 @@ export default function PushPromptCard({
       border: "border-green-200",
       iconBg: "bg-green-100",
       iconText: "text-green-700",
-      button: "bg-green-700 hover:bg-green-600",
+      button: "bg-green-700 hover:bg-green-800",
     },
     purple: {
       bg: "bg-green-50",
@@ -223,7 +223,7 @@ export default function PushPromptCard({
           <p className="text-xs text-gray-500 mt-1">{desc}</p>
 
           {showIOSGuide && (
-            <div className="mt-2 p-2.5 bg-white rounded-lg border border-gray-200">
+            <div className="mt-2 p-2.5 bg-cream rounded-2xl border border-line">
               <p className="text-xs text-gray-700 leading-relaxed">
                 Safari 하단의 <strong>공유(□↑)</strong> 버튼을 누른 후{" "}
                 <strong>&quot;홈 화면에 추가&quot;</strong>를 선택해주세요

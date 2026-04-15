@@ -200,7 +200,7 @@ export default function ReviewsPage() {
           {currentReviews.map((review) => (
             <div
               key={review.id}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+              className="bg-cream rounded-3xl border border-line overflow-hidden"
             >
               {/* 매물 정보 헤더 */}
               <div className="px-5 py-3 bg-gray-50 border-b border-gray-200">
@@ -245,7 +245,7 @@ export default function ReviewsPage() {
 
               {/* Answer */}
               {review.answer ? (
-                <div className="px-5 py-4 bg-gray-50 border-t border-gray-200">
+                <div className="px-5 py-4 bg-gray-50 border-t border-line">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-green-100 text-green-600 text-sm font-bold">A</span>
                     <span className="text-sm font-medium text-gray-900">판매자</span>
@@ -262,7 +262,7 @@ export default function ReviewsPage() {
               ) : activeTab === "received" ? (
                 /* Seller can answer */
                 answeringId === review.id ? (
-                  <div className="px-5 py-4 bg-gray-50 border-t border-gray-200">
+                  <div className="px-5 py-4 bg-gray-50 border-t border-line">
                     <textarea
                       value={answerContent}
                       onChange={(e) => setAnswerContent(e.target.value)}
@@ -288,7 +288,7 @@ export default function ReviewsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="px-5 py-3 bg-green-50 border-t border-gray-200">
+                  <div className="px-5 py-3 bg-green-50 border-t border-line">
                     <button
                       onClick={() => { setAnsweringId(review.id); setAnswerContent(""); }}
                       className="text-sm text-green-700 font-medium hover:underline"
@@ -298,7 +298,7 @@ export default function ReviewsPage() {
                   </div>
                 )
               ) : (
-                <div className="px-5 py-3 bg-gray-50 border-t border-gray-200">
+                <div className="px-5 py-3 bg-gray-50 border-t border-line">
                   <p className="text-xs text-gray-400 text-center">아직 답변이 없습니다</p>
                 </div>
               )}

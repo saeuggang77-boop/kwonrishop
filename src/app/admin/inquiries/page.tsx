@@ -198,7 +198,7 @@ export default function AdminInquiriesPage() {
                 </div>
 
                 {isExpanded && (
-                  <div className="border-t border-gray-200 p-5 bg-gray-50">
+                  <div className="border-t border-line p-5 bg-gray-50">
                     {/* Message */}
                     <div className="mb-5">
                       <h4 className="font-semibold text-gray-900 mb-2">문의 내용</h4>

@@ -113,7 +113,7 @@ export default function AdminEquipmentPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">집기장터 관리</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+      <div className="bg-cream rounded-3xl border border-line p-4 mb-6">
         <div className="flex gap-4">
           <select
             value={statusFilter}
@@ -154,7 +154,7 @@ export default function AdminEquipmentPage() {
 
       {/* Table */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-cream rounded-3xl border border-line p-6">
           <div className="space-y-3">
             {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
@@ -162,11 +162,11 @@ export default function AdminEquipmentPage() {
           </div>
         </div>
       ) : equipment.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-20 text-center">
+        <div className="bg-cream rounded-3xl border border-line p-20 text-center">
           <p className="text-gray-400">집기가 없습니다</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+        <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
           <table className="w-full min-w-[800px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>

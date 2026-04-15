@@ -79,7 +79,7 @@ function RequestResetForm() {
             </p>
             <Link
               href="/login"
-              className="block w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm text-center"
+              className="block w-full py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors text-sm text-center"
             >
               로그인으로 돌아가기
             </Link>
@@ -121,7 +121,7 @@ function RequestResetForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+              className="w-full py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "전송 중..." : "재설정 링크 보내기"}
             </button>
@@ -202,7 +202,7 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
             </p>
             <Link
               href="/login?reset=true"
-              className="block w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm text-center"
+              className="block w-full py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors text-sm text-center"
             >
               로그인하기
             </Link>
@@ -312,7 +312,7 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+              className="w-full py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "변경 중..." : "비밀번호 변경"}
             </button>

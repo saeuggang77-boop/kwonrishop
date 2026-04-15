@@ -73,7 +73,7 @@ export default function StatsPage() {
           <p className="text-red-600 mb-4">{error || "데이터를 불러올 수 없습니다."}</p>
           <Link
             href="/mypage"
-            className="inline-block px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600"
+            className="inline-block px-4 py-2 bg-green-700 text-cream rounded-full text-sm font-medium hover:bg-green-800"
           >
             마이페이지로 돌아가기
           </Link>
@@ -223,7 +223,7 @@ export default function StatsPage() {
         ) : (
           <div className="space-y-3">
             {data.recentFavorites.map((fav, idx) => (
-              <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+              <div key={idx} className="flex items-center justify-between py-2 border-b border-line last:border-0">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
                     {fav.userName[0]}

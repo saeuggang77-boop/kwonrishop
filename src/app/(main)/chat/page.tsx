@@ -162,7 +162,7 @@ function ChatContent() {
 
       <div className="flex gap-4 h-[calc(100dvh-12rem)]">
         {/* 채팅방 목록 */}
-        <div className={`w-full md:w-80 bg-white rounded-xl border border-gray-200 overflow-y-auto md:shrink-0 ${
+        <div className={`w-full md:w-80 bg-cream rounded-3xl border border-line overflow-y-auto md:shrink-0 ${
           showRoomList ? "block" : "hidden md:block"
         }`}>
           {loading ? (
@@ -182,7 +182,7 @@ function ChatContent() {
                     setActiveRoom(room.id);
                     setShowRoomList(false);
                   }}
-                  className={`w-full text-left p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+                  className={`w-full text-left p-4 border-b border-line hover:bg-gray-50 transition-colors ${
                     activeRoom === room.id ? "bg-green-50" : ""
                   }`}
                 >
@@ -225,7 +225,7 @@ function ChatContent() {
         </div>
 
         {/* 메시지 영역 */}
-        <div className={`flex-1 bg-white rounded-xl border border-gray-200 flex flex-col ${
+        <div className={`flex-1 bg-cream rounded-3xl border border-line flex flex-col ${
           showRoomList ? "hidden md:flex" : "flex"
         }`}>
           {activeRoom ? (
@@ -317,7 +317,7 @@ function ChatContent() {
               </div>
 
               {/* 입력 */}
-              <div className="p-3 md:p-4 border-t border-gray-200">
+              <div className="p-3 md:p-4 border-t border-line">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -329,7 +329,7 @@ function ChatContent() {
                   />
                   <button
                     onClick={sendMessage}
-                    className="px-4 md:px-5 py-2.5 bg-green-700 text-white rounded-xl text-sm font-medium hover:bg-green-600 min-w-[60px]"
+                    className="px-4 md:px-5 py-2.5 bg-green-700 text-cream rounded-full text-sm font-medium hover:bg-green-800 min-w-[60px]"
                     aria-label="메시지 전송"
                   >
                     전송

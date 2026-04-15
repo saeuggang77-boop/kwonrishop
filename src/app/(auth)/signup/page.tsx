@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 
 const PASSWORD_CATEGORY_RULES = [
   { label: "영문", test: (p: string) => /[a-zA-Z]/.test(p) },
@@ -99,19 +100,22 @@ export default function SignupPage() {
   // Success screen
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="w-full max-w-md text-center">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+      <div className="min-h-screen flex items-center justify-center bg-cream px-4 relative overflow-hidden">
+        <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-terra-500/5 blur-3xl" />
+        <div className="w-full max-w-md text-center relative">
+          <div className="bg-cream rounded-3xl shadow-[0_8px_32px_rgba(31,63,46,0.08)] border border-line p-8">
+            <div className="w-16 h-16 bg-terra-100 rounded-full flex items-center justify-center mx-auto mb-5">
+              <svg className="w-8 h-8 text-terra-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">인증 이메일이 발송되었습니다</h2>
-            <p className="text-sm text-gray-500 mb-1">
-              <span className="font-medium text-gray-900">{email}</span>
+            <h2 className="text-2xl font-extrabold text-green-700 tracking-tight mb-2">
+              인증 <span className="font-serif italic font-light text-terra-500">메일</span>을 보냈어요
+            </h2>
+            <p className="text-sm text-muted mb-1">
+              <span className="font-semibold text-ink">{email}</span>
             </p>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-muted mb-7">
               메일함을 확인하고 인증 링크를 클릭해주세요.
             </p>
 
@@ -119,13 +123,13 @@ export default function SignupPage() {
               <button
                 onClick={handleResend}
                 disabled={resendLoading || resendSuccess}
-                className="w-full py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+                className="w-full py-3 border border-line bg-cream text-green-700 rounded-full font-semibold hover:border-green-700 transition-colors disabled:opacity-50 text-sm"
               >
                 {resendSuccess ? "재발송 완료" : resendLoading ? "발송 중..." : "인증 메일 재발송"}
               </button>
               <Link
                 href="/login"
-                className="block w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm text-center"
+                className="block w-full py-3 bg-green-700 text-cream rounded-full font-semibold hover:bg-green-800 transition-colors text-sm text-center"
               >
                 로그인 페이지로
               </Link>
@@ -137,15 +141,19 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-cream px-4 py-10 relative overflow-hidden">
+      <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-terra-500/5 blur-3xl" />
+      <div aria-hidden className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-green-700/5 blur-3xl" />
+      <div className="w-full max-w-md relative">
         {/* Logo */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">권리샵</h1>
-          <p className="mt-1 text-gray-500">회원가입</p>
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-3">
+            <Logo size="lg" href={null} />
+          </div>
+          <p className="text-xs text-muted tracking-wide">권리샵에 오신 것을 환영합니다</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-cream rounded-3xl shadow-[0_8px_32px_rgba(31,63,46,0.08)] border border-line p-8">
           {/* Social Login */}
           <div className="space-y-2.5 mb-5">
             <button
@@ -204,7 +212,7 @@ export default function SignupPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="이름을 입력하세요"
                 autoComplete="name"
-                className="w-full px-4 py-3.5 min-h-[44px] border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
+                className="w-full px-4 py-3.5 min-h-[44px] border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none text-sm transition-all"
               />
             </div>
 
@@ -219,7 +227,7 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 autoComplete="email"
-                className="w-full px-4 py-3.5 min-h-[44px] border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
+                className="w-full px-4 py-3.5 min-h-[44px] border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none text-sm transition-all"
               />
             </div>
 
@@ -235,7 +243,7 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="비밀번호를 입력하세요"
                   autoComplete="new-password"
-                  className="w-full px-4 py-3.5 min-h-[44px] pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
+                  className="w-full px-4 py-3.5 min-h-[44px] pr-12 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none text-sm transition-all"
                 />
                 <button
                   type="button"
@@ -368,7 +376,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+              className="w-full py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "가입 중..." : "회원가입"}
             </button>

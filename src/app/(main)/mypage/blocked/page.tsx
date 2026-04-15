@@ -77,14 +77,14 @@ export default function BlockedUsersPage() {
       </div>
 
       {blockedUsers.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-cream rounded-3xl border border-line p-8 text-center">
           <svg className="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
           </svg>
           <p className="text-sm text-gray-500">차단한 사용자가 없습니다.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+        <div className="bg-cream rounded-3xl border border-line divide-y divide-gray-100">
           {blockedUsers.map((block) => (
             <div key={block.id} className="flex items-center justify-between px-5 py-4">
               <div className="flex items-center gap-3">

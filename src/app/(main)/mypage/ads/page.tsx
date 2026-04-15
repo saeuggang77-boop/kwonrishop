@@ -87,7 +87,7 @@ export default function MyAdsPage() {
         </p>
         <Link
           href="/pricing"
-          className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600"
+          className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800"
         >
           광고 상품 보기
         </Link>
@@ -99,7 +99,7 @@ export default function MyAdsPage() {
           활성 광고 <span className="text-green-700">{active.length}</span>
         </h2>
         {active.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+          <div className="bg-cream rounded-3xl border border-line p-6 text-center">
             <p className="text-sm text-gray-400">활성 광고가 없습니다</p>
           </div>
         ) : (
@@ -171,7 +171,7 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-line">
         <span>
           {ad.activatedAt
             ? `${new Date(ad.activatedAt).toLocaleDateString("ko-KR")} ~ ${ad.expiresAt ? new Date(ad.expiresAt).toLocaleDateString("ko-KR") : ""}`
@@ -180,7 +180,7 @@ function AdCard({ ad, isActive }: { ad: AdPurchase; isActive: boolean }) {
         {!isActive && (
           <Link
             href={`/pricing?${renewParams.toString()}`}
-            className="px-3 py-1 bg-green-700 text-white rounded text-xs font-medium hover:bg-green-600"
+            className="px-3 py-1 bg-green-700 text-white rounded text-xs font-medium hover:bg-green-800"
           >
             재구매
           </Link>

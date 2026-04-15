@@ -34,7 +34,7 @@ export default function LockedSection({
         <p className="text-sm font-medium text-gray-700 text-center">{message}</p>
         <button
           onClick={() => router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`)}
-          className="px-6 py-2.5 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm"
+          className="px-6 py-2.5 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors text-sm"
         >
           무료 회원가입
         </button>

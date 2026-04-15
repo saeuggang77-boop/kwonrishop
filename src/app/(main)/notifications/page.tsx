@@ -212,7 +212,7 @@ export default function NotificationsPage() {
       </div>
 
       {data.notifications.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <div className="bg-cream rounded-3xl border border-line p-12 text-center">
           <svg
             className="w-16 h-16 text-gray-300 mx-auto mb-4"
             fill="none"
@@ -240,7 +240,7 @@ export default function NotificationsPage() {
               <div
                 key={notif.id}
                 onClick={() => handleNotificationClick(notif)}
-                className={`bg-white rounded-xl border border-gray-200 p-4 transition-colors cursor-pointer hover:border-green-300 ${
+                className={`bg-cream rounded-3xl border border-line p-4 transition-colors cursor-pointer hover:border-green-300 ${
                   !notif.read ? "bg-green-50/50" : ""
                 }`}
               >

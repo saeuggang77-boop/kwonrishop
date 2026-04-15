@@ -235,7 +235,7 @@ export default function Step1Location({ onNext }: Props) {
       <div className="mt-8 flex justify-end">
         <button
           onClick={handleSubmit}
-          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
+          className="px-8 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors"
         >
           다음
         </button>

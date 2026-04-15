@@ -106,7 +106,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={f.id}
               href={`/franchise/${f.id}`}
-              className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-cream rounded-3xl border border-line p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm shrink-0">
@@ -151,7 +151,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={p.id}
               href={`/partners/${p.id}`}
-              className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-cream rounded-3xl border border-line overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="h-28 bg-gray-100 relative">
                 {p.images?.[0]?.url ? (
@@ -194,7 +194,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={l.id}
               href={`/listings/${l.id}`}
-              className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-cream rounded-3xl border border-line overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="h-28 bg-gray-100 relative">
                 {l.images?.[0]?.url ? (
@@ -241,7 +241,7 @@ export default function CrossSellSection({ type, id }: CrossSellProps) {
             <Link
               key={eq.id}
               href={`/equipment/${eq.id}`}
-              className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="block w-56 shrink-0 md:w-auto md:shrink bg-cream rounded-3xl border border-line overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="h-28 bg-gray-100 relative">
                 {eq.images?.[0]?.url ? (
@@ -287,7 +287,7 @@ function ListingCard({ listing }: { listing: ListingRecommendation }) {
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="block w-56 shrink-0 md:w-auto md:shrink bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      className="block w-56 shrink-0 md:w-auto md:shrink bg-cream rounded-3xl border border-line overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
     >
       <div className="h-28 bg-gray-100 relative">
         {listing.images?.[0]?.url ? (

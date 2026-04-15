@@ -89,7 +89,7 @@ export default function PartnerDetailClient() {
         <p className="text-gray-400 mb-4">{error}</p>
         <button
           onClick={loadPartner}
-          className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 transition-colors"
+          className="px-6 py-2 bg-green-700 text-cream rounded-full hover:bg-green-800 transition-colors"
         >
           재시도
         </button>
@@ -155,7 +155,7 @@ export default function PartnerDetailClient() {
       )}
 
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-cream rounded-3xl border border-line p-6 mb-6">
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -196,7 +196,7 @@ export default function PartnerDetailClient() {
         )}
 
         {/* Contact Info */}
-        <div className="pt-4 border-t border-gray-200 space-y-3">
+        <div className="pt-4 border-t border-line space-y-3">
           {partner.contactEmail && (
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600 w-20">이메일:</span>
@@ -238,7 +238,7 @@ export default function PartnerDetailClient() {
 
         {/* 연락하기 */}
         {partner.contactPhone && (
-          <div className="pt-4 border-t border-gray-200 mt-4">
+          <div className="pt-4 border-t border-line mt-4">
             <h4 className="font-medium text-gray-900 mb-1">연락하기</h4>
             <p className="text-xs text-gray-500 mb-3">바로 연락</p>
             {partner.contactPhoneLocked ? (
@@ -247,12 +247,12 @@ export default function PartnerDetailClient() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 <p className="text-sm text-gray-600 text-center">연락처는 로그인 후 확인할 수 있습니다</p>
-                <Link href="/login" className="px-5 py-2.5 bg-green-700 text-white text-sm font-medium rounded-xl hover:bg-green-600 transition-colors">로그인하고 연락하기</Link>
+                <Link href="/login" className="px-5 py-2.5 bg-green-700 text-white text-sm font-medium rounded-xl hover:bg-green-800 transition-colors">로그인하고 연락하기</Link>
               </div>
             ) : (
               <>
                 <div className="flex gap-3">
-                  <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors">
+                  <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                     전화
                   </a>
@@ -271,7 +271,7 @@ export default function PartnerDetailClient() {
         )}
 
         {/* View Count */}
-        <div className="pt-4 border-t border-gray-200 mt-4">
+        <div className="pt-4 border-t border-line mt-4">
           <p className="text-sm text-gray-500">
             조회 {partner.viewCount.toLocaleString()}
           </p>
@@ -280,7 +280,7 @@ export default function PartnerDetailClient() {
 
       {/* Map - if coordinates exist */}
       {partner.latitude && partner.longitude && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-cream rounded-3xl border border-line p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">위치</h3>
           <KakaoMap latitude={partner.latitude} longitude={partner.longitude} level={3} className="h-80" showInfoWindow={true} address={partner.addressRoad || ""} />
         </div>
@@ -296,12 +296,12 @@ export default function PartnerDetailClient() {
       />
 
       {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-line p-4 md:hidden">
         {partner.contactPhone ? (
           <div className="flex gap-2">
             {!partner.contactPhoneLocked ? (
               <>
-                <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors text-sm">
+                <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors text-sm">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                   전화 문의
                 </a>
@@ -311,7 +311,7 @@ export default function PartnerDetailClient() {
                 </a>
               </>
             ) : (
-              <Link href="/login" className="flex-1 py-3 bg-green-700 text-white rounded-xl font-medium text-center hover:bg-green-600 transition-colors">
+              <Link href="/login" className="flex-1 py-3 bg-green-700 text-cream rounded-full font-medium text-center hover:bg-green-800 transition-colors">
                 로그인하고 연락하기
               </Link>
             )}
@@ -319,7 +319,7 @@ export default function PartnerDetailClient() {
         ) : (
           <button
             onClick={() => toast.info("채팅 기능은 곧 지원됩니다")}
-            className="w-full py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors"
+            className="w-full py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors"
           >
             문의하기
           </button>

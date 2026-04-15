@@ -272,7 +272,7 @@ export default function Step7Confirm({ onPrev }: Props) {
 
       {/* 매출 매입자료 연동 (개발 중 - 플래그로 숨김) */}
       {SHOW_REVENUE_SYNC && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-line">
           <h3 className="text-base font-semibold text-gray-900 mb-1">매출 매입자료 연동 (선택)</h3>
           <p className="text-sm text-gray-500 mb-4">매출 데이터를 연동하면 매물 신뢰도가 높아집니다</p>
 
@@ -313,7 +313,7 @@ export default function Step7Confirm({ onPrev }: Props) {
 
       {/* 광고 안내 배너 (매출자료 숨김 시 대체) */}
       {!SHOW_REVENUE_SYNC && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-line">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-start gap-2">
               <span className="text-xl shrink-0">💎</span>
@@ -353,7 +353,7 @@ export default function Step7Confirm({ onPrev }: Props) {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? (uploadProgress || "등록 중...") : "매물 등록하기"}
         </button>
@@ -365,7 +365,7 @@ export default function Step7Confirm({ onPrev }: Props) {
 
 function Section({ title, children, onEdit }: { title: string; children: React.ReactNode; onEdit?: () => void }) {
   return (
-    <div className="border-b border-gray-100 pb-4">
+    <div className="border-b border-line pb-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
         {onEdit && (

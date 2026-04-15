@@ -95,7 +95,7 @@ function SuccessContent() {
           <div className="flex gap-3">
             <Link
               href="/mypage"
-              className="flex-1 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600"
+              className="flex-1 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800"
             >
               마이페이지 확인
             </Link>
@@ -145,7 +145,7 @@ function SuccessContent() {
                       {orderInfo.vatAmount.toLocaleString()}원
                     </span>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-gray-200">
+                  <div className="flex justify-between pt-2 border-t border-line">
                     <span className="text-lg font-bold text-green-700">총 결제금액</span>
                     <span className="text-lg font-bold text-green-700">
                       {orderInfo.amount.toLocaleString()}원
@@ -160,7 +160,7 @@ function SuccessContent() {
                   </span>
                 </div>
               )}
-              <div className="flex justify-between pt-2 border-t border-gray-100">
+              <div className="flex justify-between pt-2 border-t border-line">
                 <span className="text-gray-600">주문번호</span>
                 <span className="font-medium text-gray-900 text-xs">
                   {orderInfo.orderId}
@@ -173,7 +173,7 @@ function SuccessContent() {
         <div className="flex gap-3">
           <Link
             href="/mypage"
-            className="flex-1 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600"
+            className="flex-1 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800"
           >
             마이페이지
           </Link>

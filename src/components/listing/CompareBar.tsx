@@ -94,7 +94,7 @@ export default function CompareBar() {
             </button>
             <button
               onClick={() => router.push("/listings/compare")}
-              className="px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-600 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-800 transition-colors"
               aria-label={`선택한 ${compareIds.length}개 매물 비교하기`}
             >
               비교하기

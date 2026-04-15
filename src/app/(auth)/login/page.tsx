@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -87,18 +88,16 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-green-50/50 to-slate-50 px-4 py-8">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-cream px-4 py-10 relative overflow-hidden">
+      <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-terra-500/5 blur-3xl" />
+      <div aria-hidden className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-green-700/5 blur-3xl" />
+      <div className="w-full max-w-md relative">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-[52px] h-[52px] bg-gradient-to-br from-green-600 to-green-500 rounded-[14px] mb-3 shadow-lg shadow-green-600/25">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
+        <div className="text-center mb-10">
+          <div className="flex justify-center mb-3">
+            <Logo size="lg" href={null} />
           </div>
-          <h1 className="text-[26px] font-black text-gray-900 tracking-tight">권리샵</h1>
-          <p className="mt-0.5 text-[13px] text-gray-400">상가직거래 플랫폼</p>
+          <p className="text-xs text-muted tracking-wide">상가 직거래 플랫폼</p>
         </div>
 
         {/* Success Banners */}
@@ -148,9 +147,11 @@ function LoginContent() {
         )}
 
         {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-sm shadow-black/[0.04] border border-gray-200/60 p-7">
-          <h2 className="text-xl font-extrabold text-gray-900 mb-1">로그인</h2>
-          <p className="text-sm text-gray-400 mb-6">권리샵에 오신 것을 환영합니다</p>
+        <div className="bg-cream rounded-3xl shadow-[0_8px_32px_rgba(31,63,46,0.08)] border border-line p-8">
+          <h2 className="text-2xl font-extrabold text-green-700 tracking-tight mb-1">
+            돌아오신 걸 <span className="font-serif italic font-light text-terra-500">환영</span>해요
+          </h2>
+          <p className="text-sm text-muted mb-6">권리샵에 로그인해주세요</p>
 
           {/* Social Login */}
           <div className="space-y-2.5">
@@ -181,15 +182,15 @@ function LoginContent() {
             </button>
           </div>
 
-          <p className="text-center text-xs text-gray-400 mt-2.5">
+          <p className="text-center text-xs text-muted mt-3">
             소셜 로그인은 별도 가입 없이 바로 시작됩니다
           </p>
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400 shrink-0">또는 이메일로 로그인</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <div className="flex-1 h-px bg-line" />
+            <span className="text-xs text-muted shrink-0">또는 이메일로 로그인</span>
+            <div className="flex-1 h-px bg-line" />
           </div>
 
           {/* Email Login Form */}
@@ -224,7 +225,7 @@ function LoginContent() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 autoComplete="email"
-                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 bg-gray-50 text-gray-900 rounded-[10px] focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:bg-white outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none text-sm transition-all"
               />
             </div>
 
@@ -239,18 +240,18 @@ function LoginContent() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
                 autoComplete="current-password"
-                className="w-full px-4 py-3.5 min-h-[44px] border-[1.5px] border-gray-200 bg-gray-50 text-gray-900 rounded-[10px] focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:bg-white outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 min-h-[44px] border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none text-sm transition-all"
               />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-1.5 text-[13px] text-gray-500 cursor-pointer">
-                <input type="checkbox" className="w-5 h-5 accent-green-600 rounded" />
+              <label className="flex items-center gap-1.5 text-[13px] text-muted cursor-pointer">
+                <input type="checkbox" className="w-5 h-5 accent-green-700 rounded" />
                 로그인 유지
               </label>
               <Link
                 href="/forgot-password"
-                className="text-[13px] text-green-700 font-medium hover:underline"
+                className="text-[13px] text-green-700 font-semibold hover:text-terra-500 transition-colors"
               >
                 비밀번호 찾기
               </Link>
@@ -259,26 +260,26 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl font-bold text-[15px] hover:from-green-700 hover:to-green-600 active:scale-[0.98] transition-all disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed shadow-sm shadow-green-600/20"
+              className="w-full py-3.5 bg-green-700 text-cream rounded-full font-bold text-[15px] hover:bg-green-800 active:scale-[0.98] transition-all disabled:bg-line-deep disabled:cursor-not-allowed"
             >
               {loading ? "로그인 중..." : "로그인"}
             </button>
           </form>
 
           {/* Signup Link */}
-          <p className="mt-5 text-center text-sm text-gray-400">
+          <p className="mt-6 text-center text-sm text-muted">
             아직 계정이 없으신가요?{" "}
-            <Link href="/signup" className="font-semibold text-green-700 hover:underline">
+            <Link href="/signup" className="font-bold text-terra-500 hover:text-terra-600 underline underline-offset-4 decoration-terra-300">
               회원가입
             </Link>
           </p>
         </div>
 
         {/* Footer Links */}
-        <p className="mt-6 text-[11px] text-gray-300 text-center leading-relaxed">
+        <p className="mt-6 text-[11px] text-muted text-center leading-relaxed">
           로그인 시{" "}
-          <Link href="/terms" className="underline hover:text-gray-500">이용약관</Link> 및{" "}
-          <Link href="/privacy" className="underline hover:text-gray-500">개인정보처리방침</Link>에
+          <Link href="/terms" className="underline hover:text-green-700">이용약관</Link> 및{" "}
+          <Link href="/privacy" className="underline hover:text-green-700">개인정보처리방침</Link>에
           동의합니다.
         </p>
       </div>

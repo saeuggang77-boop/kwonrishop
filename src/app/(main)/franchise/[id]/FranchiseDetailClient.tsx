@@ -125,31 +125,33 @@ export default function FranchiseDetailClient() {
       <JsonLd data={jsonLdData} />
       {brand.bannerImage && (<div className="mb-6 rounded-xl overflow-hidden relative h-64"><Image src={brand.bannerImage} alt={brand.brandName} fill className="object-cover" priority /></div>)}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-cream rounded-3xl border border-line p-6 mb-6 shadow-[0_2px_12px_rgba(31,63,46,0.06)]">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-2xl shrink-0">{brand.brandName.charAt(0)}</div>
+          <div className="w-16 h-16 rounded-full bg-green-700 flex items-center justify-center shrink-0">
+            <span className="font-serif italic font-light text-3xl text-terra-300">{brand.brandName.charAt(0)}</span>
+          </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">{brand.brandName}</h1>
-              {brand.ftcId && <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">공정위 등록 브랜드</span>}
-              {brand.tier && <span className={`px-2 py-1 rounded-full text-xs font-medium ${brand.tier === "GOLD" ? "bg-green-700 text-white" : brand.tier === "SILVER" ? "bg-gray-100 text-gray-700" : "bg-gray-100 text-gray-500"}`}>{brand.tier}</span>}
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">{brand.brandName}</h1>
+              {brand.ftcId && <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider bg-green-100 text-green-700">공정위 등록</span>}
+              {brand.tier && <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider ${brand.tier === "GOLD" ? "bg-terra-500 text-cream" : brand.tier === "SILVER" ? "bg-green-700 text-cream" : "bg-green-100 text-green-700"}`}>{brand.tier}</span>}
             </div>
-            <p className="text-gray-600">{brand.companyName}</p>
+            <p className="text-muted">{brand.companyName}</p>
           </div>
         </div>
         {(!brand.tier || brand.tier === "FREE") && (
-          <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-sm text-green-800 mb-2">이 브랜드의 본사이신가요?</p>
-            <p className="text-xs text-green-700">유료 플랜으로 등록하고 더 많은 노출과 관리 기능을 활용하세요</p>
-            <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-green-700 font-medium hover:underline">등록하고 관리하기 →</button>
+          <div className="mt-5 p-4 bg-cream-elev rounded-2xl border border-line">
+            <p className="text-sm font-semibold text-ink mb-1">이 브랜드의 본사이신가요?</p>
+            <p className="text-xs text-muted">유료 플랜으로 등록하고 더 많은 노출과 관리 기능을 활용하세요</p>
+            <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-terra-500 font-bold hover:text-terra-700">등록하고 관리하기 →</button>
           </div>
         )}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="flex border-b border-gray-200 overflow-x-auto" role="tablist">
+      <div className="bg-cream rounded-3xl border border-line overflow-hidden">
+        <div className="flex border-b border-line overflow-x-auto" role="tablist">
           {[{ id: "info", label: "기본정보" }, { id: "fees", label: "창업비용" }, { id: "benefits", label: "창업특혜" }, { id: "analysis", label: "업종분석" }, ...(brand.managerId ? [{ id: "inquiry", label: "문의하기" }] : [{ id: "inquiry", label: "가맹 상담" }])].map((tab) => (
-            <button key={tab.id} role="tab" aria-selected={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 min-w-[80px] px-3 md:px-6 py-3 md:py-4 font-medium transition-colors text-sm md:text-base whitespace-nowrap ${activeTab === tab.id ? "bg-green-50 text-green-700 border-b-2 border-green-600" : "text-gray-600 hover:bg-gray-50"}`}>{tab.label}</button>
+            <button key={tab.id} role="tab" aria-selected={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 min-w-[80px] px-3 md:px-6 py-3 md:py-4 font-semibold transition-colors text-sm md:text-base whitespace-nowrap ${activeTab === tab.id ? "bg-cream-elev text-green-700 border-b-2 border-terra-500" : "text-muted hover:bg-cream-elev"}`}>{tab.label}</button>
           ))}
         </div>
         <div className="p-6" role="tabpanel">
@@ -318,10 +320,10 @@ export default function FranchiseDetailClient() {
           {activeTab === "inquiry" && (
             brand.managerId ? (
               <form onSubmit={handleInquirySubmit} className="space-y-4">
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" placeholder="이름을 입력하세요" /></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" placeholder="010-0000-0000" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="이름을 입력하세요" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="010-0000-0000" /></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">문의내용</label><textarea required value={message} onChange={(e) => setMessage(e.target.value)} rows={6} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none" placeholder="문의하실 내용을 입력하세요" /></div>
-                <button type="submit" disabled={submitting} className="w-full py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">{submitting ? "전송 중..." : "문의하기"}</button>
+                <button type="submit" disabled={submitting} className="w-full py-3.5 bg-green-700 text-cream rounded-full font-bold hover:bg-green-800 transition-colors disabled:bg-line-deep disabled:cursor-not-allowed">{submitting ? "전송 중..." : "문의하기"}</button>
               </form>
             ) : (
               <div className="text-center py-10">

@@ -47,7 +47,7 @@ export default function EquipmentCard({ equipment }: EquipmentCardProps) {
 
   return (
     <Link href={`/equipment/${equipment.id}`}>
-      <div className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+      <div className="block bg-cream rounded-3xl border border-line overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
         {/* 이미지 */}
         <div className="relative aspect-[4/3] bg-gray-100">
           {equipment.images[0] ? (

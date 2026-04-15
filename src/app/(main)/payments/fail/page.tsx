@@ -22,7 +22,7 @@ function FailContent() {
         <div className="flex gap-3 mt-6">
           <Link
             href="/pricing"
-            className="flex-1 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600"
+            className="flex-1 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800"
           >
             다시 시도
           </Link>

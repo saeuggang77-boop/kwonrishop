@@ -204,7 +204,7 @@ export default function IndustryRevenueSection({
                   key={item.region}
                   className={`${
                     index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                  } border-b border-gray-100 last:border-0`}
+                  } border-b border-line last:border-0`}
                 >
                   <td className="py-3 px-4 text-gray-900 font-medium">
                     {item.region}

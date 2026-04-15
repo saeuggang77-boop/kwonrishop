@@ -334,7 +334,7 @@ export default function KeywordManager() {
       </div>
 
       {/* 키워드 추가 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-cream rounded-3xl border border-line p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-1">키워드 추가</h2>
         <p className="text-sm text-gray-500 mb-4">
           직접 입력, 파일 업로드, 또는 네이버 카페 통계를 붙여넣기하세요
@@ -486,7 +486,7 @@ export default function KeywordManager() {
       )}
 
       {/* 키워드 목록 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-cream rounded-3xl border border-line p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           <div>
             <h2 className="text-xl font-bold text-gray-900">키워드 목록</h2>

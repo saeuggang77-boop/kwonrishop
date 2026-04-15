@@ -233,7 +233,7 @@ function SelectRoleContent() {
               </p>
 
               {role.note && (
-                <div className="inline-flex items-center gap-1 text-[11px] text-gray-400 mt-2.5 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-md">
+                <div className="inline-flex items-center gap-1 text-[11px] text-gray-400 mt-2.5 bg-gray-50 border border-line px-2.5 py-1 rounded-md">
                   <ShieldIcon />
                   {role.note}
                 </div>

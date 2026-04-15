@@ -205,7 +205,7 @@ export default function Header() {
                       onClick={() => setNotifOpen(false)}
                     />
                     <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 max-h-96 overflow-y-auto" role="menu">
-                      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+                      <div className="flex items-center justify-between px-4 py-2 border-b border-line">
                         <h3 className="font-bold text-gray-900">알림</h3>
                         {unreadCount > 0 && (
                           <button
@@ -245,7 +245,7 @@ export default function Header() {
                           <Link
                             href="/notifications"
                             onClick={() => setNotifOpen(false)}
-                            className="block px-4 py-2 text-center text-sm font-medium text-green-700 hover:text-green-600 border-t border-gray-100"
+                            className="block px-4 py-2 text-center text-sm font-medium text-green-700 hover:text-green-600 border-t border-line"
                           >
                             모든 알림 보기
                           </Link>
@@ -327,7 +327,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-600 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-800 transition-colors"
             >
               로그인
             </Link>

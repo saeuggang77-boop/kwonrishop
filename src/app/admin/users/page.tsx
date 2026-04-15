@@ -90,7 +90,7 @@ export default function AdminUsersPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">회원관리</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+      <div className="bg-cream rounded-3xl border border-line p-4 mb-6">
         <div className="flex gap-4">
           <select
             value={roleFilter}
@@ -131,7 +131,7 @@ export default function AdminUsersPage() {
 
       {/* Table */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-cream rounded-3xl border border-line p-6">
           <div className="space-y-3">
             {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
@@ -139,11 +139,11 @@ export default function AdminUsersPage() {
           </div>
         </div>
       ) : users.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-20 text-center">
+        <div className="bg-cream rounded-3xl border border-line p-20 text-center">
           <p className="text-gray-400">회원이 없습니다</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+        <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>

@@ -77,7 +77,7 @@ function FairTradeAgreementModal({ onAgree }: { onAgree: () => void }) {
       <button
         onClick={onAgree}
         disabled={!checked}
-        className="w-full py-3.5 bg-green-700 text-white rounded-xl font-semibold hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm"
+        className="w-full py-3.5 bg-green-700 text-cream rounded-full font-semibold hover:bg-green-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm"
       >
         매물등록 시작하기
       </button>

@@ -231,7 +231,7 @@ export default function StartupPartnerSection({
   if (!loading && !hasTabData && !hasSameType) return null;
 
   return (
-    <div className="border-t border-gray-200 pt-6 md:pt-8">
+    <div className="border-t border-line pt-6 md:pt-8">
       {/* ===== 같은 종류 추천 (sameType 있을 때만) ===== */}
       {hasSameType && sameType && (
         <div className="mb-6">
@@ -249,7 +249,7 @@ export default function StartupPartnerSection({
       )}
 
       {hasSameType && hasTabData && (
-        <div className="border-t border-gray-200 pt-6 mb-0" />
+        <div className="border-t border-line pt-6 mb-0" />
       )}
 
       {/* ===== 창업 파트너 (탭 섹션) ===== */}
@@ -335,7 +335,7 @@ export default function StartupPartnerSection({
 
 function SameTypeCard({ item }: { item: RecommendItem }) {
   return (
-    <Link href={item.href} className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <Link href={item.href} className="block bg-cream rounded-3xl border border-line overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
       <div className="aspect-[4/3] bg-gray-100 relative">
         {item.imageUrl ? (
           <Image src={item.imageUrl} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />

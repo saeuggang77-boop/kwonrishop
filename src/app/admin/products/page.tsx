@@ -155,7 +155,7 @@ export default function AdminProductsPage() {
 
       {/* Add New Product Form */}
       {showAddForm && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div className="bg-cream rounded-3xl border border-line p-6 mb-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">새 상품 추가</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -241,7 +241,7 @@ export default function AdminProductsPage() {
 
       {/* Products Table by Category */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-cream rounded-3xl border border-line p-6">
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
@@ -251,7 +251,7 @@ export default function AdminProductsPage() {
       ) : (
         <div className="space-y-6">
           {Object.entries(groupedProducts).map(([scope, scopeProducts]) => (
-            <div key={scope} className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+            <div key={scope} className="bg-cream rounded-3xl border border-line overflow-x-auto">
               <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
                 <h2 className="text-lg font-bold text-gray-900">
                   {CATEGORY_SCOPE_LABEL[scope] || scope} 상품

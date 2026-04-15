@@ -118,7 +118,7 @@ export default function AdminDashboardPage() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {statCards.map((card, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+              <div key={i} className="bg-cream rounded-3xl border border-line p-6">
                 <div className={`w-12 h-12 rounded-full ${card.color} flex items-center justify-center text-2xl mb-3`}>
                   {card.icon}
                 </div>
@@ -129,7 +129,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {stats?.usersByRole && stats.usersByRole.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6 mt-6">
+            <div className="bg-cream rounded-3xl border border-line p-6 mt-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">역할별 회원 분포</h2>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {stats.usersByRole.map((item) => (
@@ -146,7 +146,7 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* 인기 업종 */}
             {stats?.popularCategories && stats.popularCategories.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-cream rounded-3xl border border-line p-6">
                 <h2 className="text-lg font-bold text-gray-900 mb-4">인기 업종 TOP 5</h2>
                 <div className="space-y-3">
                   {stats.popularCategories.map((item, idx) => (
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
 
             {/* 인기 지역 */}
             {stats?.popularRegions && stats.popularRegions.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-cream rounded-3xl border border-line p-6">
                 <h2 className="text-lg font-bold text-gray-900 mb-4">인기 지역 TOP 5</h2>
                 <div className="space-y-3">
                   {stats.popularRegions.map((item, idx) => (
@@ -186,7 +186,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* 시계열 차트 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 mt-6">
+          <div className="bg-cream rounded-3xl border border-line p-6 mt-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <h2 className="text-lg font-bold text-gray-900">최근 30일 추이</h2>
               <div className="inline-flex bg-gray-100 rounded-lg p-1">

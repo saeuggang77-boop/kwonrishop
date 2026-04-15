@@ -95,7 +95,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
             ) : error && categories.length === 0 ? (
               <div className="text-center py-6">
                 <p className="text-sm text-red-500 mb-3">{error}</p>
-                <button type="button" onClick={fetchCategories} className="px-4 py-2 text-sm bg-green-700 text-white rounded-lg hover:bg-green-600 transition-colors">
+                <button type="button" onClick={fetchCategories} className="px-4 py-2 text-sm bg-green-700 text-cream rounded-full hover:bg-green-800 transition-colors">
                   다시 시도
                 </button>
               </div>
@@ -182,7 +182,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
 
         {/* 금액 - 업종 선택 후 표시 */}
         {data.subCategoryId && (
-          <div className="border-t border-gray-200 pt-6 space-y-4">
+          <div className="border-t border-line pt-6 space-y-4">
             <h3 className="font-medium text-gray-900">거래 금액 (만원)</h3>
 
             <div className="grid grid-cols-2 gap-4">
@@ -279,7 +279,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
 
             {/* 권리금 산정 (선택) */}
             {!data.premiumNone && data.premium > 0 && (
-              <div className="border-t border-gray-200 pt-4 mt-2">
+              <div className="border-t border-line pt-4 mt-2">
                 <h4 className="font-medium text-gray-900 mb-3 text-sm">
                   권리금 산정 <span className="text-gray-400 font-normal">(선택)</span>
                 </h4>
@@ -385,7 +385,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     const total = (data.premiumBusiness || 0) + (data.premiumFacility || 0) + (data.premiumLocation || 0);
                     const diff = total - data.premium;
                     return (
-                      <div className="pt-2 border-t border-gray-200">
+                      <div className="pt-2 border-t border-line">
                         <div className="flex justify-between text-xs text-gray-600">
                           <span>산정 합계</span>
                           <span className={`font-medium ${diff === 0 ? "text-green-700" : diff > 0 ? "text-red-500" : "text-gray-900"}`}>
@@ -430,7 +430,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
         </button>
         <button
           onClick={handleSubmit}
-          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
+          className="px-8 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 transition-colors"
         >
           다음
         </button>

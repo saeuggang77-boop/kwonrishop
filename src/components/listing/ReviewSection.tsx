@@ -169,7 +169,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
 
   if (loading) {
     return (
-      <div className="py-4 border-b border-gray-100">
+      <div className="py-4 border-b border-line">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-24 mb-3" />
           <div className="h-4 bg-gray-200 rounded w-full" />
@@ -179,13 +179,13 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
   }
 
   return (
-    <div className="py-4 border-b border-gray-100">
+    <div className="py-4 border-b border-line">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-gray-900">Q&A 문의 ({questions.length})</h2>
         {session && !isOwnListing && !showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="px-3 py-1 text-sm bg-green-700 text-white rounded-lg hover:bg-green-600 font-medium"
+            className="px-3 py-1 text-sm bg-green-700 text-cream rounded-full hover:bg-green-800 font-medium"
           >
             문의하기
           </button>
@@ -220,7 +220,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
               <button
                 type="submit"
                 disabled={submitting || !content.trim()}
-                className="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 text-sm font-medium disabled:opacity-50"
+                className="px-4 py-2 bg-green-700 text-cream rounded-full hover:bg-green-800 text-sm font-medium disabled:opacity-50"
               >
                 {submitting ? "등록 중..." : "문의 등록"}
               </button>
@@ -267,7 +267,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
 
               {/* Answer */}
               {q.answer ? (
-                <div className="p-4 bg-gray-50 border-t border-gray-200">
+                <div className="p-4 bg-gray-50 border-t border-line">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-green-100 text-green-600 text-xs font-bold">A</span>
                     <span className="text-sm font-medium text-gray-900">판매자</span>
@@ -283,7 +283,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
               ) : isOwnListing ? (
                 /* Seller can answer */
                 answeringId === q.id ? (
-                  <div className="p-4 bg-gray-50 border-t border-gray-200">
+                  <div className="p-4 bg-gray-50 border-t border-line">
                     <textarea
                       value={answerContent}
                       onChange={(e) => setAnswerContent(e.target.value)}
@@ -309,7 +309,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                     </div>
                   </div>
                 ) : (
-                  <div className="p-3 bg-green-50 border-t border-gray-200">
+                  <div className="p-3 bg-green-50 border-t border-line">
                     <button
                       onClick={() => { setAnsweringId(q.id); setAnswerContent(""); }}
                       className="text-sm text-green-700 font-medium hover:underline"
@@ -319,7 +319,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                   </div>
                 )
               ) : (
-                <div className="p-3 bg-gray-50 border-t border-gray-200">
+                <div className="p-3 bg-gray-50 border-t border-line">
                   <p className="text-xs text-gray-400 text-center">아직 답변이 없습니다</p>
                 </div>
               )}

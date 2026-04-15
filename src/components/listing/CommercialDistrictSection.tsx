@@ -111,8 +111,8 @@ export default function CommercialDistrictSection({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
-        <div className="px-5 py-4 border-b border-gray-100">
+      <div className="bg-white rounded-xl border border-line shadow-sm">
+        <div className="px-5 py-4 border-b border-line">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
               <span>📊</span> 주변 상권 현황
@@ -140,8 +140,8 @@ export default function CommercialDistrictSection({
 
   // 로그인한 사용자 - 전체 데이터 표시
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
-      <div className="px-5 py-4 border-b border-gray-100">
+    <div className="bg-white rounded-xl border border-line shadow-sm">
+      <div className="px-5 py-4 border-b border-line">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
             <span>📊</span> 주변 상권 현황

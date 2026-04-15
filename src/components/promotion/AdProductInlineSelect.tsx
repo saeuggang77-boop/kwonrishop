@@ -239,7 +239,7 @@ function CompactCard({
         bg: "bg-gradient-to-br from-green-50 to-white",
         badge: "추천",
         badgeBg: "bg-green-500 text-white",
-        btn: "bg-green-700 hover:bg-green-600 active:bg-green-800",
+        btn: "bg-green-700 hover:bg-green-800 active:bg-green-800",
         ring: "ring-1 ring-green-400",
       }
     : {

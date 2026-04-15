@@ -209,7 +209,7 @@ export default function FAQPage() {
             {filteredFAQs.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-lg border border-gray-200 overflow-hidden"
+                className="bg-cream rounded-2xl border border-line overflow-hidden"
               >
                 <button
                   onClick={() => setOpenId(openId === item.id ? null : item.id)}
@@ -259,7 +259,7 @@ export default function FAQPage() {
             </a>
             <a
               href="mailto:samsungcu@naver.com"
-              className="px-5 py-2.5 bg-green-700 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
+              className="px-5 py-2.5 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition-colors"
             >
               이메일 문의
             </a>

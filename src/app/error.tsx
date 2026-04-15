@@ -14,20 +14,20 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center px-4">
+    <div className="min-h-[70vh] flex items-center justify-center px-4 bg-cream">
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-2xl">
-          !
+        <div className="w-20 h-20 mx-auto mb-6 bg-terra-100 rounded-full flex items-center justify-center">
+          <span className="font-serif italic font-light text-4xl text-terra-500">!</span>
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
-          오류가 발생했습니다
+        <h2 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight mb-3">
+          잠시 <span className="font-serif italic font-light text-terra-500">문제</span>가 발생했어요
         </h2>
-        <p className="text-sm text-gray-500 mb-6">
-          일시적인 문제가 발생했습니다. 다시 시도해주세요.
+        <p className="text-sm text-muted mb-8">
+          일시적인 오류입니다. 다시 시도해주세요.
         </p>
         <button
           onClick={reset}
-          className="px-6 py-2.5 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm"
+          className="px-6 py-3 bg-green-700 text-cream rounded-full font-semibold hover:bg-green-800 transition-colors text-sm"
         >
           다시 시도
         </button>

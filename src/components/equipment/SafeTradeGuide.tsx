@@ -182,7 +182,7 @@ export function SafeTradeModal({ open, onClose }: { open: boolean; onClose: () =
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
+        <div className="sticky bottom-0 bg-white border-t border-line px-6 py-4">
           <button
             onClick={onClose}
             className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"

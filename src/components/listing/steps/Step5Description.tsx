@@ -84,7 +84,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
         <button
           onClick={onNext}
           disabled={!isValid || hasContact}
-          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

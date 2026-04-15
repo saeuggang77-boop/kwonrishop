@@ -99,7 +99,7 @@ export default function AdminFranchisePage() {
       </div>
 
       {/* Brand Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-cream rounded-3xl border border-line overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">

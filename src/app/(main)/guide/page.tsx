@@ -356,7 +356,7 @@ export default function GuidePage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="/login"
-              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors"
+              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
             >
               회원가입하기
             </a>

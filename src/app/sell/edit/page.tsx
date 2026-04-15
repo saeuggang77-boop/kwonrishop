@@ -257,7 +257,7 @@ export default function ListingEditPage() {
           <p className="text-green-800">{message || "등록된 매물이 없습니다."}</p>
           <button
             onClick={() => router.push("/sell")}
-            className="mt-4 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
+            className="mt-4 px-4 py-2 bg-green-700 text-cream rounded-full hover:bg-green-800"
           >
             매물 등록하기
           </button>
@@ -273,7 +273,7 @@ export default function ListingEditPage() {
         주소, 업종, 테마는 수정이 불가합니다. 변경이 필요하면 매물을 삭제 후 재등록해주세요.
       </p>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 mb-4">
+      <form onSubmit={handleSubmit} className="bg-cream rounded-3xl border border-line p-4 md:p-5 mb-4">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -406,7 +406,7 @@ export default function ListingEditPage() {
 
           {/* 권리금 산정 */}
           {!formData.premiumNone && formData.premium && parseInt(formData.premium) > 0 && (
-            <div className="border-t border-gray-200 pt-4">
+            <div className="border-t border-line pt-4">
               <h3 className="text-sm font-medium text-gray-900 mb-3">권리금 산정 (선택)</h3>
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -479,7 +479,7 @@ export default function ListingEditPage() {
           )}
 
           {/* 매출/수익 정보 */}
-          <div className="border-t border-gray-200 pt-4">
+          <div className="border-t border-line pt-4">
             <h3 className="text-sm font-medium text-gray-900 mb-3">매출/수익 정보 (선택)</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -518,7 +518,7 @@ export default function ListingEditPage() {
           </div>
 
           {/* 사진 관리 */}
-          <div className="border-t border-gray-200 pt-4">
+          <div className="border-t border-line pt-4">
             <h3 className="text-sm font-medium text-gray-900 mb-3">사진 관리</h3>
 
             {/* 기존 사진 목록 */}
@@ -611,7 +611,7 @@ export default function ListingEditPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full sm:flex-1 px-4 py-3 bg-green-700 text-white rounded-lg hover:bg-green-600 active:bg-green-800 font-medium disabled:opacity-50 touch-manipulation"
+            className="w-full sm:flex-1 px-4 py-3 bg-green-700 text-cream rounded-full hover:bg-green-800 active:bg-green-800 font-medium disabled:opacity-50 touch-manipulation"
           >
             {saving ? "저장 중..." : "저장"}
           </button>

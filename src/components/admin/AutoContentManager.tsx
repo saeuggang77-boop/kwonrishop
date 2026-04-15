@@ -628,7 +628,7 @@ export default function AutoContentManager() {
       )}
 
       {/* 섹션 1: 시스템 설정 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-cream rounded-3xl border border-line p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-1">시스템 설정</h2>
         <p className="text-sm text-gray-500 mb-6">자동 콘텐츠 생성 시스템 제어</p>
 
@@ -844,7 +844,7 @@ export default function AutoContentManager() {
       </div>
 
       {/* 섹션 2: 콘텐츠 풀 현황 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-cream rounded-3xl border border-line p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-1">콘텐츠 풀 현황</h2>
         <p className="text-sm text-gray-500 mb-6">AI가 생성한 콘텐츠 재고 관리</p>
 
@@ -904,7 +904,7 @@ export default function AutoContentManager() {
             </thead>
             <tbody>
               {stats.poolStats.map((stat) => (
-                <tr key={stat.type} className="border-b border-gray-100">
+                <tr key={stat.type} className="border-b border-line">
                   <td className="py-3 px-4 font-medium text-gray-900">{TYPE_LABELS[stat.type]}</td>
                   <td className="py-3 px-4 text-gray-600">{stat.total}</td>
                   <td className="py-3 px-4 text-gray-600">{stat.used}</td>
@@ -1015,7 +1015,7 @@ export default function AutoContentManager() {
                     ).map((item) => (
                       <tr
                         key={item.id}
-                        className={`border-t border-gray-100 cursor-pointer hover:bg-gray-50 ${selectedPoolIds.has(item.id) ? "bg-blue-50" : ""}`}
+                        className={`border-t border-line cursor-pointer hover:bg-gray-50 ${selectedPoolIds.has(item.id) ? "bg-blue-50" : ""}`}
                         onClick={() => setExpandedPoolItemId(expandedPoolItemId === item.id ? null : item.id)}
                       >
                         <td className="w-10 px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -1037,7 +1037,7 @@ export default function AutoContentManager() {
                             <span className="truncate font-medium text-gray-900">{item.title || "제목 없음"}</span>
                           </div>
                           {expandedPoolItemId === item.id && (
-                            <div className="mt-3 whitespace-pre-wrap text-sm text-gray-700 border-t border-gray-200 pt-3">
+                            <div className="mt-3 whitespace-pre-wrap text-sm text-gray-700 border-t border-line pt-3">
                               {item.content}
                             </div>
                           )}
@@ -1101,7 +1101,7 @@ export default function AutoContentManager() {
       </div>
 
       {/* 섹션 3: 유령회원 현황 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-cream rounded-3xl border border-line p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-1">유령회원 현황</h2>
         <p className="text-sm text-gray-500 mb-6">자동 콘텐츠를 작성하는 가상 회원 (총 {stats.totalGhostUsers}명)</p>
 
@@ -1115,7 +1115,7 @@ export default function AutoContentManager() {
             </thead>
             <tbody>
               {stats.ghostStats.map((stat) => (
-                <tr key={stat.personality} className="border-b border-gray-100">
+                <tr key={stat.personality} className="border-b border-line">
                   <td className="py-3 px-4 font-medium text-gray-900">
                     {PERSONALITY_LABELS[stat.personality] || stat.personality}
                   </td>
@@ -1177,7 +1177,7 @@ export default function AutoContentManager() {
                 </thead>
                 <tbody>
                   {stats.ghostUsers.map((user) => (
-                    <tr key={user.id} className={`border-t border-gray-100 ${selectedGhostIds.has(user.id) ? "bg-blue-50" : ""}`}>
+                    <tr key={user.id} className={`border-t border-line ${selectedGhostIds.has(user.id) ? "bg-blue-50" : ""}`}>
                       <td className="w-10 px-4 py-3">
                         <input
                           type="checkbox"
@@ -1257,7 +1257,7 @@ export default function AutoContentManager() {
       </div>
 
       {/* 섹션 4: 오늘의 활동 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-cream rounded-3xl border border-line p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-1">오늘의 활동</h2>
         <p className="text-sm text-gray-500 mb-6">오늘 자동 생성된 콘텐츠 통계</p>
 

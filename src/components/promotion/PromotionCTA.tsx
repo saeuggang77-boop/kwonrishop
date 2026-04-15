@@ -22,7 +22,7 @@ export function ListingInfeedPromo() {
         </div>
         <Link
           href="/pricing?tab=listing"
-          className="shrink-0 rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-600"
+          className="shrink-0 rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-800"
         >
           요금제 보기 →
         </Link>
@@ -62,7 +62,7 @@ export function ListingUpsellBanner({
       {/* CTA 버튼 */}
       <Link
         href="/pricing?tab=listing"
-        className="whitespace-nowrap rounded-lg bg-green-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-green-600"
+        className="whitespace-nowrap rounded-lg bg-green-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-green-800"
       >
         업그레이드
       </Link>
@@ -219,7 +219,7 @@ export function DashboardPlanCard({ currentPlan }: { currentPlan?: string }) {
       {/* CTA 버튼 */}
       <Link
         href="/pricing?tab=listing"
-        className="block w-full rounded-lg bg-green-700 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-green-600"
+        className="block w-full rounded-lg bg-green-700 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-green-800"
       >
         프리미엄 시작하기 →
       </Link>

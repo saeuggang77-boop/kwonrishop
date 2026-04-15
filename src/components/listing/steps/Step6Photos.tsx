@@ -320,7 +320,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
         </div>
 
         {/* 매출 증빙자료 */}
-        <div className="border-t border-gray-200 pt-6">
+        <div className="border-t border-line pt-6">
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               매출 증빙자료
@@ -392,7 +392,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
         </div>
 
         {/* 연락처 공개 */}
-        <div className="border-t border-gray-200 pt-6">
+        <div className="border-t border-line pt-6">
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
             연락처 공개 여부
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-semibold rounded">
@@ -472,7 +472,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
         <button
           onClick={onNext}
           disabled={data.images.length === 0 || !photoRequirementMet}
-          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

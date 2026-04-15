@@ -163,7 +163,7 @@ export default function AdminNoticesPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+      <div className="bg-cream rounded-2xl border border-line overflow-x-auto">
         <table className="w-full min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>

@@ -66,7 +66,7 @@ function RecentlyViewedSection() {
   if (recentListings.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+    <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-bold text-gray-900">최근 본 매물</h3>
         <Link href="/listings" className="text-sm text-gray-400 hover:text-green-700">전체보기</Link>
@@ -235,7 +235,7 @@ export default function MyPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">마이페이지</h1>
 
       {/* 프로필 카드 (항상 표시) */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900">프로필</h3>
           <Link
@@ -296,7 +296,7 @@ export default function MyPage() {
       {activeTab === 'profile' && (
         <>
           {/* 사업자인증 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
         <h3 className="font-bold text-gray-900 mb-3">사업자인증</h3>
         {data.verification?.verified ? (
           <div className="flex items-center gap-2 text-sm text-green-600">
@@ -309,7 +309,7 @@ export default function MyPage() {
           <>
             <Link
               href="/verify-business"
-              className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600"
+              className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800"
             >
               사업자 인증하기
             </Link>
@@ -325,7 +325,7 @@ export default function MyPage() {
 
       {/* KPI 카드 */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <div className="bg-cream rounded-3xl border border-line p-4 text-center">
           <div className="flex justify-center mb-2">
             <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -336,7 +336,7 @@ export default function MyPage() {
           </div>
           <div className="text-xs text-gray-500">관심매물</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <div className="bg-cream rounded-3xl border border-line p-4 text-center">
           <div className="flex justify-center mb-2">
             <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -347,7 +347,7 @@ export default function MyPage() {
           </div>
           <div className="text-xs text-gray-500">채팅</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <div className="bg-cream rounded-3xl border border-line p-4 text-center">
           <div className="flex justify-center mb-2">
             <svg className="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -366,7 +366,7 @@ export default function MyPage() {
       {activeTab === 'business' && (
         <>
           {/* 내 매물 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900">내 매물</h3>
           {data.listing && (
@@ -391,7 +391,7 @@ export default function MyPage() {
           <div>
             {/* KPI 요약 카드 */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-              <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+              <div className="bg-cream rounded-3xl border border-line p-4 text-center">
                 <div className="flex justify-center mb-2">
                   <svg className="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -403,7 +403,7 @@ export default function MyPage() {
                 </div>
                 <div className="text-xs text-gray-500">조회수</div>
               </div>
-              <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+              <div className="bg-cream rounded-3xl border border-line p-4 text-center">
                 <div className="flex justify-center mb-2">
                   <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -414,7 +414,7 @@ export default function MyPage() {
                 </div>
                 <div className="text-xs text-gray-500">관심</div>
               </div>
-              <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+              <div className="bg-cream rounded-3xl border border-line p-4 text-center">
                 <div className="flex justify-center mb-2">
                   <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -517,7 +517,7 @@ export default function MyPage() {
               {!data.activeListingAd || data.activeListingAd.daysLeft <= 0 ? (
                 <Link
                   href="/pricing"
-                  className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600 text-center"
+                  className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800 text-center"
                 >
                   광고로 노출 올리기
                 </Link>
@@ -561,7 +561,7 @@ export default function MyPage() {
         ) : data.verification?.verified ? (
           <Link
             href="/sell"
-            className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600"
+            className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800"
           >
             매물 등록하기
           </Link>
@@ -572,7 +572,7 @@ export default function MyPage() {
 
       {/* 끌어올리기 구독 (SELLER만, 매물이 있을 때) */}
       {data.user.role === "SELLER" && data.listing && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900">🔄 정기 끌어올리기</h3>
           </div>
@@ -620,7 +620,7 @@ export default function MyPage() {
               </p>
               <Link
                 href={`/pricing?listingId=${data.listing.id}#subscription`}
-                className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600 text-center"
+                className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800 text-center"
               >
                 구독 상품 보기
               </Link>
@@ -631,7 +631,7 @@ export default function MyPage() {
 
       {/* 내 서비스 (PARTNER) */}
       {data.user.role === "PARTNER" && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900">내 서비스</h3>
             {data.partnerService && (
@@ -667,7 +667,7 @@ export default function MyPage() {
           ) : data.verification?.verified ? (
             <Link
               href="/partners/register"
-              className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600"
+              className="inline-block px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800"
             >
               서비스 등록하기
             </Link>
@@ -679,7 +679,7 @@ export default function MyPage() {
 
       {/* 내 브랜드 (FRANCHISE) */}
       {data.user.role === "FRANCHISE" && data.franchiseBrand && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900">내 브랜드</h3>
             <div className="flex items-center gap-3">
@@ -711,7 +711,7 @@ export default function MyPage() {
       )}
 
       {/* 내 집기 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-gray-900">내 집기</h3>
           <div className="flex items-center gap-3">
@@ -761,7 +761,7 @@ export default function MyPage() {
 
           {/* 광고 현황 (SELLER만, 매물 있을 때) */}
           {data.user.role === "SELLER" && data.listing && data.activeListingAd && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+            <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
               <h3 className="font-bold text-gray-900 mb-3">광고 현황</h3>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -803,7 +803,7 @@ export default function MyPage() {
                 {!data.activeListingAd || data.activeListingAd.daysLeft <= 0 ? (
                   <Link
                     href="/pricing"
-                    className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600 text-center"
+                    className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800 text-center"
                   >
                     광고로 노출 올리기
                   </Link>
@@ -828,7 +828,7 @@ export default function MyPage() {
 
           {/* 끌어올리기 구독 (SELLER만, 매물이 있을 때) */}
           {data.user.role === "SELLER" && data.listing && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+            <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-bold text-gray-900">🔄 정기 끌어올리기</h3>
               </div>
@@ -876,7 +876,7 @@ export default function MyPage() {
                   </p>
                   <Link
                     href={`/pricing?listingId=${data.listing.id}#subscription`}
-                    className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600 text-center"
+                    className="inline-block w-full px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-800 text-center"
                   >
                     구독 상품 보기
                   </Link>
@@ -887,7 +887,7 @@ export default function MyPage() {
 
           {/* 내 분석 리포트 (SELLER만) */}
       {data.user.role === "SELLER" && data.listing && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900">내 분석 리포트</h3>
           </div>
@@ -925,7 +925,7 @@ export default function MyPage() {
         <>
           {/* 알림 설정 */}
       {pushStatus !== "loading" && pushStatus !== "unsupported" && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+        <div className="bg-cream rounded-3xl border border-line p-5 mb-4">
           <h3 className="font-bold text-gray-900 mb-3">알림 설정</h3>
           <div className="flex items-center justify-between">
             <div>
@@ -956,7 +956,7 @@ export default function MyPage() {
       )}
 
       {/* 메뉴 */}
-      <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+      <div className="bg-cream rounded-3xl border border-line divide-y divide-gray-100">
         {(data.user.role === "SELLER" || data.user.role === "FRANCHISE" || data.user.role === "PARTNER") && (
           <>
             <div className="px-5 py-2 bg-gray-50">

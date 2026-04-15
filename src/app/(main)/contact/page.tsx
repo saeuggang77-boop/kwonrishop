@@ -240,7 +240,7 @@ export default function ContactPage() {
               </p>
               <a
                 href="/faq"
-                className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors"
+                className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-medium rounded-lg hover:bg-green-800 transition-colors"
               >
                 FAQ 보러가기
               </a>
@@ -332,7 +332,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "제출 중..." : "문의 제출하기"}
               </button>
