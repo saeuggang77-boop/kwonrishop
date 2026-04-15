@@ -21,6 +21,14 @@ interface FranchiseBrand {
   managerId: string | null;
   logo: string | null;
   bannerImage: string | null;
+  description: string | null;
+}
+
+function getTagline(description: string | null, max = 80): string {
+  if (!description) return "";
+  const firstLine = description.split(/\r?\n/)[0].trim();
+  if (firstLine.length <= max) return firstLine;
+  return firstLine.slice(0, max).trim() + "…";
 }
 
 // 업종 필터는 DB에서 동적으로 로드 (공정위 API 원본 데이터 기반)
@@ -156,11 +164,15 @@ export default function FranchisePage() {
         ))}
       </div>
 
-      {/* 프리미엄 프랜차이즈 - 2열 그리드 */}
-      {featuredBrands.length > 0 && (
-        <div className="mb-10">
-          <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
-            <div>
+      {/* 프리미엄 프랜차이즈 - tier별 섹션 */}
+      {featuredBrands.length > 0 && (() => {
+        const goldBrands = featuredBrands.filter((b) => b.tier === "GOLD");
+        const silverBrands = featuredBrands.filter((b) => b.tier === "SILVER");
+        const bronzeBrands = featuredBrands.filter((b) => !b.tier || b.tier === "BRONZE");
+
+        return (
+          <div className="mb-10">
+            <div className="mb-6">
               <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2 flex items-center gap-2">
                 <span className="w-6 h-px bg-terra-500" />
                 Premium
@@ -170,104 +182,118 @@ export default function FranchisePage() {
               </h2>
               <p className="text-sm text-muted mt-1.5">검증된 유료 브랜드를 먼저 확인하세요</p>
             </div>
-            <span className="text-sm font-medium text-green-700">{featuredBrands.length}개</span>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {featuredBrands.map((brand) => {
-              const tier = brand.tier || "BRONZE";
 
-              const brandInitial = brand.brandName.charAt(0);
-
-              if (tier === "GOLD") {
-                return (
-                  <div
-                    key={brand.id}
-                    onClick={() => router.push(`/franchise/${brand.id}`)}
-                    className="border-2 border-green-700 bg-cream-elev rounded-3xl p-4 cursor-pointer hover:shadow-[0_16px_40px_rgba(31,63,46,0.14)] hover:-translate-y-1 transition-all"
-                  >
-                    {brand.bannerImage ? (
-                      <img src={brand.bannerImage} alt={brand.brandName} className="w-full h-24 rounded-2xl object-cover mb-3" />
-                    ) : (
-                      <div className="w-full h-24 rounded-2xl bg-green-700 flex items-center justify-center mb-3">
-                        <span className="text-3xl font-light text-terra-300">{brandInitial}</span>
+            {/* GOLD: 2열 가로형 */}
+            {goldBrands.length > 0 && (
+              <div className="mb-6">
+                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— GOLD</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {goldBrands.map((brand) => (
+                    <div
+                      key={brand.id}
+                      onClick={() => router.push(`/franchise/${brand.id}`)}
+                      className="flex bg-cream border-2 border-green-700 rounded-3xl overflow-hidden cursor-pointer hover:shadow-[0_16px_40px_rgba(31,63,46,0.14)] hover:-translate-y-1 transition-all"
+                    >
+                      <div className="w-[170px] shrink-0 bg-cream-elev flex items-center justify-center relative border-r border-line">
+                        <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-terra-500 text-cream tracking-wider z-10">GOLD</span>
+                        {brand.logo ? (
+                          <img src={brand.logo} alt={brand.brandName} className="max-w-[70%] max-h-[70%] object-contain" />
+                        ) : (
+                          <span className="font-serif italic font-medium text-2xl text-green-700 text-center px-2.5">{brand.brandName}</span>
+                        )}
                       </div>
-                    )}
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h3 className="text-base font-bold text-ink truncate">{brand.brandName}</h3>
-                        <p className="text-xs text-muted truncate">{brand.companyName}</p>
+                      <div className="flex-1 p-4 min-w-0 flex flex-col gap-2">
+                        <div>
+                          <h3 className="text-lg font-extrabold text-ink truncate">{brand.brandName}</h3>
+                          <p className="text-[11px] text-muted">
+                            {brand.companyName}
+                            {brand.industry && <> · <span className="text-terra-500 font-semibold">{brand.industry}</span></>}
+                          </p>
+                        </div>
+                        {brand.description && (
+                          <p className="text-[13px] text-ink-2 leading-relaxed pl-2.5 border-l-2 border-terra-300 line-clamp-2">
+                            {getTagline(brand.description, 100)}
+                          </p>
+                        )}
+                        <div className="flex gap-1.5 pt-1.5 border-t border-dashed border-line mt-auto">
+                          <span className="text-[10px] bg-cream-elev text-muted px-2 py-0.5 rounded-full">가맹점 지도</span>
+                          <span className="text-[10px] bg-cream-elev text-muted px-2 py-0.5 rounded-full">비용 계산기</span>
+                          <span className="text-[10px] bg-cream-elev text-muted px-2 py-0.5 rounded-full">상담</span>
+                        </div>
                       </div>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-terra-500 text-cream ml-2 shrink-0 tracking-wider">GOLD</span>
                     </div>
-                    {brand.totalStores !== null && (
-                      <p className="text-xs text-green-700 font-semibold mb-2">매장 {brand.totalStores.toLocaleString()}개</p>
-                    )}
-                    <div className="flex gap-2 text-[10px] text-muted">
-                      <span>가맹점 지도</span>
-                      <span className="text-line-deep">·</span>
-                      <span>비용 계산기</span>
-                      <span className="text-line-deep">·</span>
-                      <span>상담</span>
-                    </div>
-                  </div>
-                );
-              }
-
-              if (tier === "SILVER") {
-                return (
-                  <div
-                    key={brand.id}
-                    onClick={() => router.push(`/franchise/${brand.id}`)}
-                    className="border-[1.5px] border-line-deep bg-cream rounded-3xl p-4 cursor-pointer hover:shadow-[0_8px_24px_rgba(31,63,46,0.10)] hover:-translate-y-1 transition-all"
-                  >
-                    <div className="w-full h-20 rounded-2xl bg-cream-elev flex items-center justify-center mb-3">
-                      <span className="text-2xl font-light text-green-700">{brandInitial}</span>
-                    </div>
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h3 className="text-base font-bold text-ink truncate">{brand.brandName}</h3>
-                        <p className="text-xs text-muted truncate">{brand.companyName}</p>
-                      </div>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-700 text-cream ml-2 shrink-0 tracking-wider">SILVER</span>
-                    </div>
-                    {brand.totalStores !== null && (
-                      <p className="text-xs text-green-700 font-semibold mb-2">매장 {brand.totalStores.toLocaleString()}개</p>
-                    )}
-                    <div className="flex gap-2 text-[10px] text-muted">
-                      <span>비용 계산기</span>
-                      <span className="text-line-deep">·</span>
-                      <span>상담</span>
-                    </div>
-                  </div>
-                );
-              }
-
-              // BRONZE
-              return (
-                <div
-                  key={brand.id}
-                  onClick={() => router.push(`/franchise/${brand.id}`)}
-                  className="border border-line bg-cream rounded-3xl p-4 cursor-pointer hover:shadow-[0_4px_16px_rgba(31,63,46,0.08)] hover:-translate-y-0.5 transition-all"
-                >
-                  <div className="flex items-start gap-3 mb-2">
-                    <div className="w-12 h-12 rounded-full bg-cream-elev flex items-center justify-center shrink-0">
-                      <span className="text-lg font-light text-green-700">{brandInitial}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-base font-bold text-ink truncate">{brand.brandName}</h3>
-                      <p className="text-xs text-muted truncate">{brand.companyName}</p>
-                    </div>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 ml-1 shrink-0 tracking-wider">BRONZE</span>
-                  </div>
-                  {brand.totalStores !== null && (
-                    <p className="text-xs text-muted mb-1">매장 {brand.totalStores.toLocaleString()}개 · 상담 가능</p>
-                  )}
+                  ))}
                 </div>
-              );
-            })}
+              </div>
+            )}
+
+            {/* SILVER: 3열 가로형 */}
+            {silverBrands.length > 0 && (
+              <div className="mb-6">
+                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— SILVER</div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {silverBrands.map((brand) => (
+                    <div
+                      key={brand.id}
+                      onClick={() => router.push(`/franchise/${brand.id}`)}
+                      className="flex bg-cream border border-line rounded-2xl overflow-hidden cursor-pointer hover:border-green-700 hover:shadow-[0_8px_24px_rgba(31,63,46,0.08)] hover:-translate-y-1 transition-all"
+                    >
+                      <div className="w-[110px] shrink-0 bg-cream-elev flex items-center justify-center relative border-r border-line">
+                        <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-green-700 text-cream tracking-wider z-10">SILVER</span>
+                        {brand.logo ? (
+                          <img src={brand.logo} alt={brand.brandName} className="max-w-[75%] max-h-[75%] object-contain" />
+                        ) : (
+                          <span className="font-serif italic font-medium text-base text-green-700 text-center px-1.5 leading-tight">{brand.brandName}</span>
+                        )}
+                      </div>
+                      <div className="flex-1 p-3 min-w-0 flex flex-col gap-1.5">
+                        <h3 className="text-sm font-extrabold text-ink truncate">{brand.brandName}</h3>
+                        <p className="text-[10px] text-muted truncate">
+                          {brand.companyName}
+                          {brand.industry && <> · <span className="text-terra-500 font-semibold">{brand.industry}</span></>}
+                        </p>
+                        {brand.description && (
+                          <p className="text-[11.5px] text-ink-2 leading-snug line-clamp-2">
+                            {getTagline(brand.description, 60)}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* BRONZE: 컴팩트 리스트 */}
+            {bronzeBrands.length > 0 && (
+              <div>
+                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— BRONZE</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {bronzeBrands.map((brand) => (
+                    <div
+                      key={brand.id}
+                      onClick={() => router.push(`/franchise/${brand.id}`)}
+                      className="flex items-center gap-3 bg-cream border border-line rounded-2xl px-3.5 py-2.5 cursor-pointer hover:border-green-700 transition-colors"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-cream-elev flex items-center justify-center shrink-0 border border-line">
+                        <span className="font-serif italic text-muted text-sm">{brand.brandName.charAt(0)}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-[13px] font-bold text-ink truncate">{brand.brandName}</h3>
+                        <p className="text-[11px] text-muted truncate">
+                          {brand.companyName}
+                          {brand.industry && ` · ${brand.industry}`}
+                        </p>
+                      </div>
+                      <span className="text-[9px] bg-cream-elev text-muted px-1.5 py-0.5 rounded-full font-bold shrink-0 tracking-wider">BRONZE</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Result Count + Sort */}
       <div className="mb-5 flex items-center justify-between border-t border-line pt-6">
