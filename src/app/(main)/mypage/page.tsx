@@ -106,6 +106,17 @@ export default function MyPage() {
   const [pushStatus, setPushStatus] = useState<"loading" | "granted" | "denied" | "default" | "unsupported">("loading");
   const [pushToggling, setPushToggling] = useState(false);
   const [activeTab, setActiveTab] = useState<'profile' | 'business' | 'ads' | 'settings'>('profile');
+  const [tabAutoInitialized, setTabAutoInitialized] = useState(false);
+
+  useEffect(() => {
+    if (data && !tabAutoInitialized) {
+      const role = data.user?.role;
+      if (role === "SELLER" || role === "FRANCHISE" || role === "PARTNER" || role === "ADMIN") {
+        setActiveTab("business");
+      }
+      setTabAutoInitialized(true);
+    }
+  }, [data, tabAutoInitialized]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -270,10 +281,18 @@ export default function MyPage() {
       {/* 탭 바 */}
       <div className="flex bg-cream-elev rounded-full p-1 mb-6 gap-1 border border-line">
         {([
-          { key: 'profile', label: '프로필' },
-          { key: 'business', label: '매물관리' },
-          { key: 'ads', label: '광고/결제' },
-          { key: 'settings', label: '설정' },
+          { key: 'profile' as const, label: '프로필' },
+          {
+            key: 'business' as const,
+            label:
+              data?.user?.role === "FRANCHISE"
+                ? "내 브랜드"
+                : data?.user?.role === "PARTNER"
+                ? "내 서비스"
+                : "매물관리",
+          },
+          { key: 'ads' as const, label: '광고/결제' },
+          { key: 'settings' as const, label: '설정' },
         ] as const).map(tab => (
           <button
             key={tab.key}
