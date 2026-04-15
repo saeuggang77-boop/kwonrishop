@@ -238,10 +238,21 @@ export async function DELETE(
   }
 
   try {
-    await prisma.equipment.update({
-      where: { id },
-      data: { status: "DELETED" },
-    });
+    const now = new Date();
+    await prisma.$transaction([
+      prisma.equipment.update({
+        where: { id },
+        data: { status: "DELETED", tier: "FREE", tierExpiresAt: null },
+      }),
+      prisma.adPurchase.updateMany({
+        where: {
+          equipmentId: id,
+          status: "PAID",
+          OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+        },
+        data: { status: "EXPIRED", expiresAt: now },
+      }),
+    ]);
 
     return NextResponse.json({ success: true, message: "집기가 삭제되었습니다." });
   } catch (error) {

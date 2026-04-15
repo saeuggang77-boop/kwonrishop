@@ -427,14 +427,28 @@ export async function DELETE(
 
   try {
     // 소프트 삭제 (status를 DELETED로 변경) + 광고 자동 종료 (환불 없음 — 약관 제10조)
-    await prisma.listing.update({
-      where: { id },
-      data: {
-        status: "DELETED",
-        tier: "FREE",
-        tierExpiresAt: null,
-      },
-    });
+    const now = new Date();
+    await prisma.$transaction([
+      prisma.listing.update({
+        where: { id },
+        data: {
+          status: "DELETED",
+          tier: "FREE",
+          tierExpiresAt: null,
+        },
+      }),
+      prisma.adPurchase.updateMany({
+        where: {
+          listingId: id,
+          status: "PAID",
+          OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+        },
+        data: {
+          status: "EXPIRED",
+          expiresAt: now,
+        },
+      }),
+    ]);
 
     return NextResponse.json({ success: true, message: "매물이 삭제되었습니다." });
   } catch (error) {

@@ -243,11 +243,22 @@ export async function DELETE(
   }
 
   try {
-    // 소프트 삭제 (status를 DELETED로 변경)
-    await prisma.partnerService.update({
-      where: { id },
-      data: { status: "DELETED" },
-    });
+    // 소프트 삭제 + 광고 자동 종료 (환불 없음)
+    const now = new Date();
+    await prisma.$transaction([
+      prisma.partnerService.update({
+        where: { id },
+        data: { status: "DELETED", tier: "FREE", tierExpiresAt: null },
+      }),
+      prisma.adPurchase.updateMany({
+        where: {
+          partnerServiceId: id,
+          status: "PAID",
+          OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+        },
+        data: { status: "EXPIRED", expiresAt: now },
+      }),
+    ]);
 
     return NextResponse.json({ success: true, message: "협력업체가 삭제되었습니다." });
   } catch (error) {

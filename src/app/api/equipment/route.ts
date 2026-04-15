@@ -35,12 +35,10 @@ export async function GET(req: NextRequest) {
       where: {
         status: "ACTIVE",
         tier: { in: allowedTiers } as any,
-        adPurchases: {
-          some: {
-            status: "PAID",
-            expiresAt: { gt: new Date() },
-          },
-        },
+        OR: [
+          { tierExpiresAt: { gt: new Date() } },
+          { tierExpiresAt: null },
+        ],
       },
       orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
       take: limit,

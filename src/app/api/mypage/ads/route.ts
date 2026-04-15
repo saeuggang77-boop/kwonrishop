@@ -34,11 +34,22 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
+    // 대상 매물/집기/협력업체가 삭제되었거나 null이면 active로 간주하지 않음 (고아 레코드 방지)
+    const isTargetAlive = (p: (typeof purchases)[number]) => {
+      if (p.listingId) return !!p.listing && p.listing.status !== "DELETED";
+      if (p.equipmentId) return !!p.equipment;
+      if (p.partnerServiceId) return !!p.partnerService;
+      return true; // COMMON 카테고리 (target 없음)
+    };
+
     const active = purchases.filter(
-      (p) => p.status === "PAID" && (!p.expiresAt || p.expiresAt > now)
+      (p) => p.status === "PAID" && (!p.expiresAt || p.expiresAt > now) && isTargetAlive(p)
     );
     const expired = purchases.filter(
-      (p) => p.status === "EXPIRED" || (p.status === "PAID" && p.expiresAt && p.expiresAt <= now)
+      (p) =>
+        p.status === "EXPIRED" ||
+        (p.status === "PAID" && p.expiresAt && p.expiresAt <= now) ||
+        (p.status === "PAID" && !isTargetAlive(p))
     );
 
     return NextResponse.json({ active, expired });

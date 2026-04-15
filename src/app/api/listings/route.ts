@@ -42,6 +42,10 @@ export async function GET(req: NextRequest) {
       where: {
         status: "ACTIVE",
         tier: { not: "FREE" },
+        OR: [
+          { tierExpiresAt: { gt: new Date() } },
+          { tierExpiresAt: null },
+        ],
       },
       orderBy: [
         { tier: "desc" },

@@ -81,6 +81,10 @@ export async function GET() {
           status: "PAID",
           product: { categoryScope: "LISTING" },
           expiresAt: { gt: new Date() },
+          listing: {
+            userId: session.user.id,
+            status: { not: "DELETED" },
+          },
         },
         orderBy: { expiresAt: "desc" },
         select: {
