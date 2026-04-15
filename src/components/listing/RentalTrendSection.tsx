@@ -109,7 +109,7 @@ export default function RentalTrendSection({
           {/* 내 매물 바 */}
           <div
             className={`absolute top-1 bottom-1 left-0 rounded transition-all ${
-              isCheaper ? "bg-green-500" : "bg-navy-500"
+              isCheaper ? "bg-green-500" : "bg-green-500"
             }`}
             style={{ width: `${myWidth}%` }}
           />
@@ -176,7 +176,7 @@ export default function RentalTrendSection({
           💰 지역 임대 시세 ({data.region} {data.industryType})
         </h3>
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 bg-navy-100 text-navy-700 text-xs font-medium rounded">
+          <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
             한국부동산원 공식
           </span>
         </div>
@@ -193,7 +193,7 @@ export default function RentalTrendSection({
       </div>
 
       {/* 가격 적정성 요약 카드 */}
-      <div className="bg-navy-50 rounded-xl p-4 space-y-2">
+      <div className="bg-green-50 rounded-xl p-4 space-y-2">
         <div className="flex items-start gap-2">
           <span className="text-lg">📋</span>
           <div className="flex-1">
@@ -222,7 +222,7 @@ export default function RentalTrendSection({
         <div className="bg-gray-50 rounded-xl p-3">
           <div className="text-xs text-gray-500 mb-1">임대가격 변동률</div>
           <div className={`text-lg font-bold ${
-            data.rentChangeRate > 0 ? "text-red-600" : data.rentChangeRate < 0 ? "text-navy-700" : "text-gray-900"
+            data.rentChangeRate > 0 ? "text-red-600" : data.rentChangeRate < 0 ? "text-green-700" : "text-gray-900"
           }`}>
             {data.rentChangeRate > 0 ? "+" : ""}{data.rentChangeRate.toFixed(1)}%
           </div>

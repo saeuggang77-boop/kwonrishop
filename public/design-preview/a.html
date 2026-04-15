@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A안 — 프리미엄 블랙 + 골드 · 권리샵</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0D0F;
+    --bg-elev: #1B1B1E;
+    --bg-elev-2: #26262A;
+    --cream: #FAF7F2;
+    --cream-mute: #E8E3D9;
+    --gold: #C9A45C;
+    --gold-deep: #A37F3E;
+    --terracotta: #8B4513;
+    --line: rgba(201, 164, 92, 0.2);
+    --line-soft: rgba(250, 247, 242, 0.08);
+    --muted: rgba(250, 247, 242, 0.55);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    font-feature-settings: 'ss18';
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+  .serif { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; letter-spacing: 0; }
+
+  /* Top bar */
+  .top {
+    border-bottom: 1px solid var(--line-soft);
+    padding: 16px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.04em; }
+  .logo .accent { color: var(--gold); font-family: 'Instrument Serif', serif; font-weight: 400; font-style: italic; margin-left: 2px; }
+  .nav { display: flex; gap: 28px; font-size: 14px; color: var(--muted); }
+  .nav a { color: inherit; text-decoration: none; }
+  .nav a:hover { color: var(--cream); }
+  .login-btn {
+    font-size: 13px; font-weight: 600;
+    padding: 9px 18px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    border-radius: 2px;
+    background: transparent;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 120px 32px 100px;
+    text-align: center;
+    background:
+      radial-gradient(ellipse at top, rgba(201, 164, 92, 0.08), transparent 60%),
+      linear-gradient(180deg, #0D0D0F, #0D0D0F);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .eyebrow::before, .eyebrow::after { content: '—'; margin: 0 12px; opacity: 0.4; }
+  .hero h1 {
+    font-size: 72px; line-height: 1.05; font-weight: 800;
+    margin: 0 0 20px; letter-spacing: -0.04em;
+  }
+  .hero h1 em {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400; font-style: italic;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+  .hero p { font-size: 17px; color: var(--muted); margin: 0 auto 44px; max-width: 560px; line-height: 1.6; }
+  .cta-primary {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--bg);
+    font-size: 15px; font-weight: 700;
+    padding: 18px 40px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .cta-primary:hover { background: var(--gold-deep); }
+  .cta-secondary {
+    display: inline-block;
+    background: transparent;
+    color: var(--cream);
+    font-size: 15px; font-weight: 600;
+    padding: 18px 32px;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    margin-left: 12px;
+  }
+
+  /* Search bar */
+  .search-bar {
+    max-width: 900px; margin: 60px auto -40px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 12px;
+    display: grid; grid-template-columns: 1.3fr 1fr 1fr auto;
+    gap: 1px;
+  }
+  .search-bar > div {
+    padding: 16px 20px;
+    background: var(--bg-elev);
+    border-right: 1px solid var(--line-soft);
+  }
+  .search-bar > div:last-of-type { border-right: none; }
+  .sf-label { font-size: 10px; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 4px; text-transform: uppercase; }
+  .sf-val { font-size: 14px; color: var(--cream); }
+  .search-btn {
+    background: var(--gold); color: var(--bg);
+    border: none; padding: 0 32px;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+
+  /* Section */
+  section { padding: 100px 32px; max-width: 1200px; margin: 0 auto; }
+  .sec-title {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 40px; border-bottom: 1px solid var(--line-soft); padding-bottom: 24px;
+  }
+  .sec-title h2 { font-size: 40px; font-weight: 800; margin: 0; letter-spacing: -0.03em; }
+  .sec-title h2 em { font-family: 'Instrument Serif', serif; font-weight: 400; font-style: italic; color: var(--gold); }
+  .sec-title .more { font-size: 13px; color: var(--gold); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+  .listing {
+    background: var(--bg-elev);
+    border: 1px solid var(--line-soft);
+    position: relative;
+    transition: all 0.3s;
+  }
+  .listing:hover { border-color: var(--gold); }
+  .listing.vip { border: 1px solid var(--gold); }
+  .listing .thumb {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, #2a2a2e, #1a1a1d);
+    position: relative;
+    overflow: hidden;
+  }
+  .listing .thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 40%, rgba(201,164,92,0.15), transparent 60%);
+  }
+  .tier-badge {
+    position: absolute; top: 16px; left: 16px;
+    font-size: 11px; font-weight: 700;
+    padding: 6px 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  .tier-vip { background: var(--gold); color: var(--bg); }
+  .tier-premium { background: var(--bg-elev-2); color: var(--cream); border: 1px solid var(--gold); }
+  .tier-basic { background: transparent; color: var(--muted); border: 1px solid var(--line-soft); }
+  .listing-body { padding: 24px; }
+  .listing-meta { font-size: 11px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+  .listing h3 { font-size: 18px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .listing .addr { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .price-row { display: flex; justify-content: space-between; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+  .price-label { font-size: 11px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+  .price-val { font-size: 22px; font-weight: 800; color: var(--gold); letter-spacing: -0.02em; font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+  .chips { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .chip { font-size: 11px; padding: 4px 10px; background: var(--bg-elev-2); color: var(--cream-mute); border: 1px solid var(--line-soft); }
+
+  /* Quote block */
+  .quote {
+    text-align: center; padding: 120px 32px; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);
+  }
+  .quote-text { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 44px; line-height: 1.3; color: var(--cream); max-width: 780px; margin: 0 auto; letter-spacing: -0.01em; }
+  .quote-text .gold { color: var(--gold); }
+
+  /* Footer */
+  footer { padding: 60px 32px; font-size: 12px; color: var(--muted); text-align: center; letter-spacing: 0.1em; }
+  footer .logo { font-size: 16px; margin-bottom: 20px; }
+
+  /* Preview nav */
+  .preview-nav {
+    position: fixed; bottom: 24px; right: 24px;
+    display: flex; gap: 8px;
+    background: rgba(0,0,0,0.85); padding: 8px;
+    border: 1px solid var(--gold);
+    z-index: 100;
+  }
+  .preview-nav a {
+    font-size: 11px; color: var(--muted); text-decoration: none;
+    padding: 8px 12px; letter-spacing: 0.1em;
+  }
+  .preview-nav a.active { color: var(--gold); font-weight: 700; }
+  .preview-nav a:hover { color: var(--cream); }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="logo">KWONRI<span class="accent">shop</span></div>
+  <nav class="nav">
+    <a>매물</a><a>프랜차이즈</a><a>협력업체</a><a>집기장터</a><a>커뮤니티</a>
+  </nav>
+  <button class="login-btn">LOGIN</button>
+</div>
+
+<section class="hero" style="padding-bottom: 180px;">
+  <div class="eyebrow">상가 직거래 · EST. 2026</div>
+  <h1>
+    권리금,<br>
+    <em>직접 거래하다.</em>
+  </h1>
+  <p>중개 수수료 0원. 수천만 원의 권리금은 중간자 없이 당사자가 직접 합의할 때 가장 투명합니다.</p>
+  <div>
+    <button class="cta-primary">매물 둘러보기</button>
+    <button class="cta-secondary">내 매물 등록</button>
+  </div>
+</section>
+
+<div class="search-bar">
+  <div>
+    <div class="sf-label">Location</div>
+    <div class="sf-val">서울 · 전 지역</div>
+  </div>
+  <div>
+    <div class="sf-label">Industry</div>
+    <div class="sf-val">외식업 · 카페</div>
+  </div>
+  <div>
+    <div class="sf-label">Price Range</div>
+    <div class="sf-val">1억 ~ 3억</div>
+  </div>
+  <button class="search-btn">Search</button>
+</div>
+
+<section style="padding-top: 140px;">
+  <div class="sec-title">
+    <h2>추천 <em>매물</em></h2>
+    <a class="more" href="#">View All →</a>
+  </div>
+  <div class="cards">
+    <div class="listing vip">
+      <div class="thumb"><span class="tier-badge tier-vip">VIP</span></div>
+      <div class="listing-body">
+        <div class="listing-meta">외식업 · 카페</div>
+        <h3>논현동 프리미엄 북카페</h3>
+        <div class="addr">서울 강남구 논현로 · 1층 · 42평</div>
+        <div class="chips"><span class="chip">월매출 4500만</span><span class="chip">5년운영</span></div>
+        <div class="price-row">
+          <span class="price-label">권리금</span>
+          <span class="price-val">1.8억</span>
+        </div>
+      </div>
+    </div>
+    <div class="listing">
+      <div class="thumb"><span class="tier-badge tier-premium">PREMIUM</span></div>
+      <div class="listing-body">
+        <div class="listing-meta">서비스업 · 미용실</div>
+        <h3>분당 역세권 헤어살롱</h3>
+        <div class="addr">성남 분당구 서현로 · 2층 · 28평</div>
+        <div class="chips"><span class="chip">월매출 1800만</span><span class="chip">재계약가능</span></div>
+        <div class="price-row">
+          <span class="price-label">권리금</span>
+          <span class="price-val">7,500</span>
+        </div>
+      </div>
+    </div>
+    <div class="listing">
+      <div class="thumb"><span class="tier-badge tier-basic">BASIC</span></div>
+      <div class="listing-body">
+        <div class="listing-meta">소매업 · 편의점</div>
+        <h3>홍대입구 24시 편의점</h3>
+        <div class="addr">서울 마포구 양화로 · 1층 · 18평</div>
+        <div class="chips"><span class="chip">월매출 2200만</span><span class="chip">무권리</span></div>
+        <div class="price-row">
+          <span class="price-label">권리금</span>
+          <span class="price-val">무권리</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="quote">
+  <p class="quote-text">
+    "권리금은 <span class="gold">정직한 거래</span>일 때 가장 높은 가치를 가진다."
+  </p>
+</div>
+
+<section>
+  <div class="sec-title">
+    <h2>프랜차이즈 <em>디렉토리</em></h2>
+    <a class="more" href="#">Browse All →</a>
+  </div>
+  <div class="cards">
+    <div class="listing vip">
+      <div class="thumb" style="background: linear-gradient(135deg, #3a2a1e, #1a1a1d)"><span class="tier-badge tier-vip">GOLD</span></div>
+      <div class="listing-body">
+        <div class="listing-meta">외식업 · 한식</div>
+        <h3>본가 프리미엄 설렁탕</h3>
+        <div class="addr">전국 147개 가맹점 · 2014년 설립</div>
+        <div class="price-row">
+          <span class="price-label">초기 창업비</span>
+          <span class="price-val">8,500</span>
+        </div>
+      </div>
+    </div>
+    <div class="listing">
+      <div class="thumb"><span class="tier-badge tier-premium">SILVER</span></div>
+      <div class="listing-body">
+        <div class="listing-meta">외식업 · 치킨</div>
+        <h3>골목 치킨 컴퍼니</h3>
+        <div class="addr">전국 62개 가맹점 · 2019년 설립</div>
+        <div class="price-row">
+          <span class="price-label">초기 창업비</span>
+          <span class="price-val">4,200</span>
+        </div>
+      </div>
+    </div>
+    <div class="listing">
+      <div class="thumb"><span class="tier-badge tier-basic">BRONZE</span></div>
+      <div class="listing-body">
+        <div class="listing-meta">카페 · 디저트</div>
+        <h3>모나미 마카롱</h3>
+        <div class="addr">전국 18개 가맹점 · 2022년 설립</div>
+        <div class="price-row">
+          <span class="price-label">초기 창업비</span>
+          <span class="price-val">2,800</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">KWONRI<span class="accent">shop</span></div>
+  © 2026 KWONRISHOP · ALL RIGHTS RESERVED
+</footer>
+
+<div class="preview-nav">
+  <a href="/design-preview/">← 비교</a>
+  <a href="/design-preview/a.html" class="active">A</a>
+  <a href="/design-preview/b.html">B</a>
+  <a href="/design-preview/c.html">C</a>
+</div>
+</body>
+</html>

@@ -64,9 +64,9 @@ const roles: RoleOption[] = [
     label: "예비창업자",
     description: "매물을 찾고 창업을 준비하고 있어요",
     popular: true,
-    iconColor: "text-navy-500",
-    hoverBorder: "hover:border-navy-500",
-    iconBg: "bg-gradient-to-br from-navy-50 to-navy-100 dark:from-navy-950 dark:to-navy-900",
+    iconColor: "text-green-500",
+    hoverBorder: "hover:border-green-500",
+    iconBg: "bg-gradient-to-br from-green-50 to-green-100",
     icon: <SearchIcon />,
   },
   {
@@ -76,7 +76,7 @@ const roles: RoleOption[] = [
     note: "사업자인증 필요",
     iconColor: "text-green-500",
     hoverBorder: "hover:border-green-500",
-    iconBg: "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900",
+    iconBg: "bg-gradient-to-br from-green-50 to-green-100",
     icon: <HomeIcon />,
   },
   {
@@ -86,7 +86,7 @@ const roles: RoleOption[] = [
     note: "사업자인증 + 공정위 매칭",
     iconColor: "text-amber-500",
     hoverBorder: "hover:border-amber-500",
-    iconBg: "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900",
+    iconBg: "bg-gradient-to-br from-orange-50 to-orange-100",
     icon: <BuildingIcon />,
   },
   {
@@ -94,9 +94,9 @@ const roles: RoleOption[] = [
     label: "협력업체",
     description: "창업 관련 서비스를 제공해요",
     note: "사업자인증 필요",
-    iconColor: "text-navy-600",
-    hoverBorder: "hover:border-navy-500",
-    iconBg: "bg-gradient-to-br from-navy-50 to-navy-100 dark:from-navy-950 dark:to-navy-900",
+    iconColor: "text-green-600",
+    hoverBorder: "hover:border-green-500",
+    iconBg: "bg-gradient-to-br from-green-50 to-green-100",
     icon: <WrenchIcon />,
   },
 ];
@@ -111,8 +111,8 @@ function SelectRoleContent() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-navy-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
-        <div className="animate-pulse text-gray-400 dark:text-gray-500">로딩 중...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-green-50/50 to-slate-50">
+        <div className="animate-pulse text-gray-400">로딩 중...</div>
       </div>
     );
   }
@@ -162,24 +162,24 @@ function SelectRoleContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-navy-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-green-50/50 to-slate-50 px-4 py-8">
       <div className="w-full max-w-xl">
         {/* Header */}
         <div className="text-center mb-7">
-          <div className="inline-flex items-center gap-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold text-navy-700 dark:text-navy-400 mb-4">
-            <span className="w-1.5 h-1.5 bg-navy-500 rounded-full" />
+          <div className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold text-green-700 mb-4">
+            <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
             STEP 1 / 2
           </div>
-          <h1 className="text-[26px] font-black text-gray-900 dark:text-gray-100 tracking-tight">
+          <h1 className="text-[26px] font-black text-gray-900 tracking-tight">
             어떤 목적으로 오셨나요?
           </h1>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-sm text-gray-400">
             역할에 맞는 최적의 기능을 제공해 드립니다
           </p>
 
           {callbackUrl === "/sell" && (
-            <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
-              <p className="text-sm text-amber-700 dark:text-amber-400 text-center">
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-700 text-center">
                 매물을 등록하려면 <strong>사장님</strong> 역할을 선택해주세요
               </p>
             </div>
@@ -187,7 +187,7 @@ function SelectRoleContent() {
         </div>
 
         {error && (
-          <div className="mb-5 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400 text-center">
+          <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
             <p>{error}</p>
             {error.includes("계정을 찾을 수 없습니다") && (
               <button
@@ -208,7 +208,7 @@ function SelectRoleContent() {
               onClick={() => handleSelectRole(role.value)}
               disabled={loading}
               className={`
-                relative bg-white dark:bg-gray-800 rounded-2xl p-5 text-left
+                relative bg-white rounded-2xl p-5 text-left
                 border-2 border-transparent
                 shadow-sm shadow-black/[0.03]
                 transition-all
@@ -216,7 +216,7 @@ function SelectRoleContent() {
               `}
             >
               {role.popular && (
-                <span className="absolute -top-px right-4 bg-navy-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-b-lg">
+                <span className="absolute -top-px right-4 bg-green-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-b-lg">
                   가장 많이 선택
                 </span>
               )}
@@ -225,21 +225,21 @@ function SelectRoleContent() {
                 {role.icon}
               </div>
 
-              <h3 className="text-[15px] font-extrabold text-gray-900 dark:text-gray-100 mb-1">
+              <h3 className="text-[15px] font-extrabold text-gray-900 mb-1">
                 {role.label}
               </h3>
-              <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-[13px] text-gray-500 leading-relaxed">
                 {role.description}
               </p>
 
               {role.note && (
-                <div className="inline-flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 mt-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 px-2.5 py-1 rounded-md">
+                <div className="inline-flex items-center gap-1 text-[11px] text-gray-400 mt-2.5 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-md">
                   <ShieldIcon />
                   {role.note}
                 </div>
               )}
 
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight />
               </span>
             </button>
@@ -248,11 +248,11 @@ function SelectRoleContent() {
 
         {/* Footer */}
         <div className="mt-5 flex flex-col items-center gap-1.5">
-          <div className="inline-flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400">
+          <div className="inline-flex items-center gap-1.5 text-[13px] text-gray-500">
             <RefreshIcon />
             역할 변경이 필요하면 마이페이지 &gt; 사업자인증에서 진행할 수 있습니다
           </div>
-          <p className="text-[11px] text-gray-300 dark:text-gray-600">
+          <p className="text-[11px] text-gray-300">
             선택한 역할에 따라 이용 가능한 기능이 달라집니다
           </p>
         </div>
@@ -264,8 +264,8 @@ function SelectRoleContent() {
 export default function SelectRolePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-50 via-navy-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
-        <div className="animate-pulse text-gray-400 dark:text-gray-500">로딩 중...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-green-50/50 to-slate-50">
+        <div className="animate-pulse text-gray-400">로딩 중...</div>
       </div>
     }>
       <SelectRoleContent />

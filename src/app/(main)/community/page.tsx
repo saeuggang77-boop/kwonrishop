@@ -44,35 +44,41 @@ function CommunityContent() {
 
   return (
     <div>
-      {/* 네이비 헤더 */}
-      <div className="bg-navy-700 px-6 pb-10 pt-10 text-center">
-        <h1 className="text-2xl font-extrabold text-white mb-2">커뮤니티</h1>
-        <p className="text-sm text-white/60">사장님들의 창업 이야기와 노하우를 공유하세요</p>
+      {/* 히어로 */}
+      <div className="bg-green-700 px-6 pb-16 pt-14 text-center relative overflow-hidden">
+        <div aria-hidden className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-terra-500/10 blur-3xl" />
+        <div className="relative">
+          <div className="text-xs font-semibold text-terra-300 tracking-[0.2em] uppercase mb-3">Community</div>
+          <h1 className="font-extrabold text-cream text-3xl md:text-5xl tracking-tight mb-3 leading-tight">
+            사장님들의 <span className="font-serif italic font-light text-terra-300">이야기</span>
+          </h1>
+          <p className="text-sm text-cream/60">창업 노하우·양도후기·궁금한 점을 나누세요</p>
+        </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="max-w-3xl mx-auto px-4 py-8">
         {/* 글쓰기 버튼 */}
         {session && (
           <div className="flex justify-end mb-4">
             <Link
               href={`/community/write${activeTag !== "전체" ? `?tag=${encodeURIComponent(activeTag)}` : ""}`}
-              className="px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600 transition-colors"
+              className="px-5 py-2.5 bg-terra-500 text-cream text-sm rounded-full font-semibold hover:bg-terra-600 transition-colors shadow-[0_4px_16px_rgba(217,108,79,0.3)]"
             >
-              글쓰기
+              + 글쓰기
             </Link>
           </div>
         )}
 
         {/* 태그 필터 */}
-      <div className="flex gap-2 overflow-x-auto pb-3 mb-4">
+      <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
         {TAGS.map((tag) => (
           <button
             key={tag}
             onClick={() => { setActiveTag(tag); setPage(1); }}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+            className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
               activeTag === tag
-                ? "bg-navy-700 text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                ? "bg-green-700 text-cream shadow-[0_4px_12px_rgba(31,63,46,0.2)]"
+                : "bg-cream border border-line text-ink hover:border-green-700"
             }`}
           >
             {tag}
@@ -83,48 +89,56 @@ function CommunityContent() {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-16 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
+            <div key={i} className="h-16 bg-cream-elev rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-20 text-gray-400 dark:text-gray-500">
+        <div className="text-center py-20 text-muted">
           게시글이 없습니다
         </div>
       ) : (
-        <div className="divide-y divide-gray-100 dark:divide-gray-800">
-          {posts.map((post) => (
+        <div className="bg-cream border border-line rounded-3xl overflow-hidden">
+          {posts.map((post, idx) => (
             <Link
               key={post.id}
               href={`/community/${post.id}`}
-              className={`block py-4 hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 rounded-lg transition-colors ${
-                post.tag === "공지" ? "bg-navy-50/60 dark:bg-navy-900/30" : ""
-              }`}
+              className={`block px-5 py-4 hover:bg-cream-elev transition-colors ${
+                idx !== 0 ? "border-t border-line" : ""
+              } ${post.tag === "공지" ? "bg-terra-50/50" : ""}`}
             >
               <div className="flex items-start gap-3">
                 {post.tag && (
-                  <span className={`px-2 py-0.5 text-xs rounded shrink-0 mt-0.5 font-medium ${
+                  <span className={`px-2.5 py-0.5 text-[11px] rounded-full shrink-0 mt-0.5 font-bold tracking-wide ${
                     post.tag === "공지"
-                      ? "bg-navy-100 text-navy-700"
+                      ? "bg-terra-500 text-cream"
                       : post.tag === "사이트이용문의"
-                        ? "bg-navy-100 text-navy-700"
+                        ? "bg-green-700 text-cream"
                         : post.tag === "양도후기"
-                          ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
-                          : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                          ? "bg-terra-100 text-terra-700"
+                          : post.tag === "창업상담"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-cream-elev text-muted"
                   }`}>
                     {post.tag}
                   </span>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                    {post.tag === "공지" && <span className="mr-1">&#128204;</span>}
+                  <h3 className="text-sm font-semibold text-ink truncate">
                     {post.title}
-                    {post.tag === "사이트이용문의" && <span className="ml-1 text-gray-400 dark:text-gray-500">&#128274;</span>}
+                    {post.tag === "사이트이용문의" && <span className="ml-1.5 text-muted">🔒</span>}
                   </h3>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500">
-                    <span>{post.author.name || "익명"}</span>
+                  <div className="flex items-center gap-3 mt-1.5 text-xs text-muted">
+                    <span className="font-medium">{post.author.name || "익명"}</span>
+                    <span className="text-line-deep">·</span>
                     <span>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
+                    <span className="text-line-deep">·</span>
                     <span>조회 {post.viewCount}</span>
-                    <span>댓글 {post._count.comments}</span>
+                    {post._count.comments > 0 && (
+                      <>
+                        <span className="text-line-deep">·</span>
+                        <span className="text-terra-500 font-semibold">댓글 {post._count.comments}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -134,13 +148,13 @@ function CommunityContent() {
       )}
 
       {total > 20 && (
-        <div className="flex justify-center gap-2 mt-6">
+        <div className="flex justify-center gap-2 mt-8">
           {Array.from({ length: Math.min(Math.ceil(total / 20), 10) }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`w-9 h-9 rounded-lg text-sm ${
-                page === p ? "bg-navy-700 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+              className={`w-10 h-10 rounded-full text-sm font-semibold transition-colors ${
+                page === p ? "bg-green-700 text-cream" : "bg-cream border border-line text-muted hover:border-green-700"
               }`}
             >
               {p}

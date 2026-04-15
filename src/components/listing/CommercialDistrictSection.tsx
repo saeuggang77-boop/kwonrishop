@@ -95,8 +95,8 @@ export default function CommercialDistrictSection({
 
   const getBarColor = (index: number) => {
     const colors = [
-      'bg-navy-400',
-      'bg-navy-500',
+      'bg-green-400',
+      'bg-green-500',
       'bg-green-400',
       'bg-orange-400',
       'bg-pink-400',
@@ -111,10 +111,10 @@ export default function CommercialDistrictSection({
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
-        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
+        <div className="px-5 py-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
               <span>📊</span> 주변 상권 현황
               <span className="text-xs font-normal text-gray-400">(반경 500m)</span>
             </h2>
@@ -123,9 +123,9 @@ export default function CommercialDistrictSection({
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 animate-pulse">
-                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
-                <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+              <div key={i} className="bg-gray-50 rounded-xl p-4 animate-pulse">
+                <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+                <div className="h-6 bg-gray-300 rounded w-3/4"></div>
               </div>
             ))}
           </div>
@@ -140,14 +140,14 @@ export default function CommercialDistrictSection({
 
   // 로그인한 사용자 - 전체 데이터 표시
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
-      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div className="px-5 py-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+          <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
             <span>📊</span> 주변 상권 현황
             <span className="text-xs font-normal text-gray-400">(반경 500m)</span>
           </h2>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
             공공데이터 인증
           </span>
         </div>
@@ -158,40 +158,40 @@ export default function CommercialDistrictSection({
         {/* 핵심 지표 4개 카드 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* 일평균 유동인구 */}
-          <div className="bg-gradient-to-br from-navy-50 to-navy-100/50 dark:from-navy-900/20 dark:to-navy-800/10 rounded-xl p-4 text-center">
-            <div className="text-xs font-medium text-navy-700 dark:text-navy-400 mb-1">일평균 유동인구</div>
-            <div className="text-2xl font-bold text-navy-900 dark:text-navy-100">
+          <div className="bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-4 text-center">
+            <div className="text-xs font-medium text-green-700 mb-1">일평균 유동인구</div>
+            <div className="text-2xl font-bold text-green-900">
               {(data.populationByTime.reduce((a, b) => a + b, 0) / data.populationByTime.length).toFixed(0)}
               <span className="text-sm font-normal">명</span>
             </div>
             <div className="flex items-center justify-center gap-1 mt-1">
-              <span className={`text-xs font-medium ${data.quarterChange > 0 ? 'text-green-600 dark:text-green-400' : data.quarterChange < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-500'}`}>
+              <span className={`text-xs font-medium ${data.quarterChange > 0 ? 'text-green-600' : data.quarterChange < 0 ? 'text-red-600' : 'text-gray-500'}`}>
                 {data.quarterChange > 0 ? '▲' : data.quarterChange < 0 ? '▼' : ''} {Math.abs(data.quarterChange)}%
               </span>
               <span className="text-xs text-gray-400">전분기比</span>
             </div>
           </div>
           {/* 동종 업종 수 */}
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10 rounded-xl p-4 text-center">
-            <div className="text-xs font-medium text-orange-600 dark:text-orange-400 mb-1">동종업종 ({categoryName || '업종'})</div>
-            <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">{data.sameCategoryCount}<span className="text-sm font-normal">개</span></div>
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl p-4 text-center">
+            <div className="text-xs font-medium text-orange-600 mb-1">동종업종 ({categoryName || '업종'})</div>
+            <div className="text-2xl font-bold text-orange-900">{data.sameCategoryCount}<span className="text-sm font-normal">개</span></div>
             <div className="flex items-center justify-center gap-1 mt-1">
-              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">경쟁강도</span>
+              <span className="text-xs text-gray-500 font-medium">경쟁강도</span>
               {getCompetitionBadge(data.competitionLevel)}
             </div>
           </div>
           {/* 총 점포 수 */}
-          <div className="bg-gradient-to-br from-navy-50 to-navy-100/50 dark:from-navy-900/20 dark:to-navy-800/10 rounded-xl p-4 text-center">
-            <div className="text-xs font-medium text-navy-600 dark:text-navy-400 mb-1">전체 점포 수</div>
-            <div className="text-2xl font-bold text-navy-900 dark:text-navy-100">{data.totalStores}<span className="text-sm font-normal">개</span></div>
+          <div className="bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-4 text-center">
+            <div className="text-xs font-medium text-green-600 mb-1">전체 점포 수</div>
+            <div className="text-2xl font-bold text-green-900">{data.totalStores}<span className="text-sm font-normal">개</span></div>
             <div className="flex items-center justify-center gap-1 mt-1">
               <span className="text-xs text-gray-400">반경 500m 내</span>
             </div>
           </div>
           {/* 폐업률 */}
-          <div className="bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/10 rounded-xl p-4 text-center">
-            <div className="text-xs font-medium text-green-600 dark:text-green-400 mb-1">업종 폐업률</div>
-            <div className="text-2xl font-bold text-green-900 dark:text-green-100">{data.closureRate.toFixed(1)}<span className="text-sm font-normal">%</span></div>
+          <div className="bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-4 text-center">
+            <div className="text-xs font-medium text-green-600 mb-1">업종 폐업률</div>
+            <div className="text-2xl font-bold text-green-900">{data.closureRate.toFixed(1)}<span className="text-sm font-normal">%</span></div>
             <div className="flex items-center justify-center gap-1 mt-1">
               {getStabilityBadge(data.closureStability)}
               <span className="text-xs text-gray-400">전국 {data.nationalAvgClosureRate}% 대비</span>
@@ -200,20 +200,20 @@ export default function CommercialDistrictSection({
         </div>
 
         {/* 업종 분포 바 차트 */}
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">주변 업종 분포 TOP 5</h3>
+        <div className="bg-gray-50 rounded-xl p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">주변 업종 분포 TOP 5</h3>
           <div className="space-y-3">
             {data.industryDistribution.slice(0, 5).map((industry, index) => {
               const isMatch = isMatchingCategory(industry.name);
               return (
                 <div key={index}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className={`text-sm ${isMatch ? 'text-orange-600 dark:text-orange-400 font-medium' : 'text-gray-700 dark:text-gray-300'}`}>
-                      {industry.name} {isMatch && <span className="text-xs text-orange-500 dark:text-orange-400 font-medium">(이 매물)</span>}
+                    <span className={`text-sm ${isMatch ? 'text-orange-600 font-medium' : 'text-gray-700'}`}>
+                      {industry.name} {isMatch && <span className="text-xs text-orange-500 font-medium">(이 매물)</span>}
                     </span>
-                    <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{industry.count}개 ({industry.percentage}%)</span>
+                    <span className="text-sm font-bold text-gray-900">{industry.count}개 ({industry.percentage}%)</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded h-5 overflow-hidden">
+                  <div className="w-full bg-gray-200 rounded h-5 overflow-hidden">
                     <div
                       className={`h-full ${isMatch ? 'bg-orange-400' : getBarColor(index)} rounded transition-all`}
                       style={{ width: `${industry.percentage}%` }}
@@ -227,30 +227,30 @@ export default function CommercialDistrictSection({
 
         {/* 인구 구성 & 시간대별 유동인구 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">👥 주변 인구 구성</h3>
+          <div className="bg-gray-50 rounded-xl p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">👥 주변 인구 구성</h3>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">주거 인구</span>
-                <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{data.residentPopulation.toLocaleString()}명</span>
+                <span className="text-sm text-gray-600">주거 인구</span>
+                <span className="text-sm font-bold text-gray-900">{data.residentPopulation.toLocaleString()}명</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">직장 인구</span>
-                <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{data.workingPopulation.toLocaleString()}명</span>
+                <span className="text-sm text-gray-600">직장 인구</span>
+                <span className="text-sm font-bold text-gray-900">{data.workingPopulation.toLocaleString()}명</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">주요 연령대</span>
-                <span className="text-sm font-bold text-navy-700 dark:text-navy-400">{data.mainAgeGroup} ({data.mainAgeGroupPercentage}%)</span>
+                <span className="text-sm text-gray-600">주요 연령대</span>
+                <span className="text-sm font-bold text-green-700">{data.mainAgeGroup} ({data.mainAgeGroupPercentage}%)</span>
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">🕐 시간대별 유동인구</h3>
+          <div className="bg-gray-50 rounded-xl p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">🕐 시간대별 유동인구</h3>
             <div className="flex items-end gap-1 h-16">
               {data.populationByTime.map((pop, i) => {
                 const maxPop = Math.max(...data.populationByTime);
                 const height = (pop / maxPop) * 100;
-                return <div key={i} className="flex-1 bg-navy-400 dark:bg-navy-500 rounded-t" style={{ height: `${height}%` }} title={`${6 + i * 2}시: ${pop}명`}></div>;
+                return <div key={i} className="flex-1 bg-green-400 rounded-t" style={{ height: `${height}%` }} title={`${6 + i * 2}시: ${pop}명`}></div>;
               })}
             </div>
             <div className="flex justify-between mt-1">
@@ -260,7 +260,7 @@ export default function CommercialDistrictSection({
               <span className="text-xs text-gray-400">24시</span>
             </div>
             <div className="mt-2 text-center">
-              <span className="text-xs text-navy-700 dark:text-navy-400 font-medium">
+              <span className="text-xs text-green-700 font-medium">
                 피크타임: {data.peakTimes.join(', ')}
               </span>
             </div>

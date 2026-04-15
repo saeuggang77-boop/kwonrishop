@@ -100,10 +100,10 @@ export default function ReviewsPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Q&A 문의</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Q&A 문의</h1>
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl h-32 animate-pulse" />
+            <div key={i} className="bg-gray-100 rounded-xl h-32 animate-pulse" />
           ))}
         </div>
       </div>
@@ -157,16 +157,16 @@ export default function ReviewsPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Q&A 문의</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Q&A 문의</h1>
 
       {/* 탭 */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex gap-2 mb-6 border-b border-gray-200">
         <button
           onClick={() => setActiveTab("received")}
           className={`px-4 py-3 font-medium transition-colors ${
             activeTab === "received"
-              ? "text-navy-700 dark:text-navy-400 border-b-2 border-navy-600 dark:border-navy-400"
-              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              ? "text-green-700 border-b-2 border-green-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           받은 문의 <span className="text-sm">({reviews.received.length})</span>
@@ -175,8 +175,8 @@ export default function ReviewsPage() {
           onClick={() => setActiveTab("written")}
           className={`px-4 py-3 font-medium transition-colors ${
             activeTab === "written"
-              ? "text-navy-700 dark:text-navy-400 border-b-2 border-navy-600 dark:border-navy-400"
-              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              ? "text-green-700 border-b-2 border-green-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           작성한 문의 <span className="text-sm">({reviews.written.length})</span>
@@ -185,7 +185,7 @@ export default function ReviewsPage() {
 
       {/* 문의 목록 */}
       {currentReviews.length === 0 ? (
-        <div className="text-center py-20 text-gray-400 dark:text-gray-500">
+        <div className="text-center py-20 text-gray-400">
           <p>
             {activeTab === "received"
               ? "아직 받은 문의가 없습니다"
@@ -200,18 +200,18 @@ export default function ReviewsPage() {
           {currentReviews.map((review) => (
             <div
               key={review.id}
-              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+              className="bg-white rounded-xl border border-gray-200 overflow-hidden"
             >
               {/* 매물 정보 헤더 */}
-              <div className="px-5 py-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+              <div className="px-5 py-3 bg-gray-50 border-b border-gray-200">
                 <Link
                   href={`/listings/${review.listing.id}`}
-                  className="font-medium text-gray-900 dark:text-white hover:text-navy-700 dark:hover:text-navy-400"
+                  className="font-medium text-gray-900 hover:text-green-700"
                 >
                   {review.listing.storeName || "매물"}
                 </Link>
                 {activeTab === "written" && review.listing.user && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  <p className="text-xs text-gray-500 mt-0.5">
                     판매자: {review.listing.user.name || "익명"}
                   </p>
                 )}
@@ -221,15 +221,15 @@ export default function ReviewsPage() {
               <div className="p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-400 text-sm font-bold">Q</span>
-                    <span className="text-sm text-gray-400 dark:text-gray-500">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-green-100 text-green-700 text-sm font-bold">Q</span>
+                    <span className="text-sm text-gray-400">
                       {formatDate(review.createdAt)}
                     </span>
                   </div>
                   {activeTab === "received" && (
                     <button
                       onClick={() => handleReportClick(review.id)}
-                      className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 transition-colors p-1"
+                      className="text-gray-400 hover:text-red-500 transition-colors p-1"
                       title="신고하기"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,43 +238,43 @@ export default function ReviewsPage() {
                     </button>
                   )}
                 </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap pl-8">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap pl-8">
                   {review.content}
                 </p>
               </div>
 
               {/* Answer */}
               {review.answer ? (
-                <div className="px-5 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                <div className="px-5 py-4 bg-gray-50 border-t border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 text-sm font-bold">A</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">판매자</span>
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-green-100 text-green-600 text-sm font-bold">A</span>
+                    <span className="text-sm font-medium text-gray-900">판매자</span>
                     {review.answeredAt && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                      <span className="text-xs text-gray-400">
                         {formatDate(review.answeredAt)}
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap pl-8">
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap pl-8">
                     {review.answer}
                   </p>
                 </div>
               ) : activeTab === "received" ? (
                 /* Seller can answer */
                 answeringId === review.id ? (
-                  <div className="px-5 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                  <div className="px-5 py-4 bg-gray-50 border-t border-gray-200">
                     <textarea
                       value={answerContent}
                       onChange={(e) => setAnswerContent(e.target.value)}
                       rows={3}
                       maxLength={2000}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900 text-sm"
                       placeholder="답변을 입력하세요"
                     />
                     <div className="flex gap-2 mt-2 justify-end">
                       <button
                         onClick={() => { setAnsweringId(null); setAnswerContent(""); }}
-                        className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm"
+                        className="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg text-sm"
                       >
                         취소
                       </button>
@@ -288,18 +288,18 @@ export default function ReviewsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="px-5 py-3 bg-navy-50 dark:bg-navy-900/20 border-t border-gray-200 dark:border-gray-700">
+                  <div className="px-5 py-3 bg-green-50 border-t border-gray-200">
                     <button
                       onClick={() => { setAnsweringId(review.id); setAnswerContent(""); }}
-                      className="text-sm text-navy-700 dark:text-navy-400 font-medium hover:underline"
+                      className="text-sm text-green-700 font-medium hover:underline"
                     >
                       답변 작성하기
                     </button>
                   </div>
                 )
               ) : (
-                <div className="px-5 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-xs text-gray-400 dark:text-gray-500 text-center">아직 답변이 없습니다</p>
+                <div className="px-5 py-3 bg-gray-50 border-t border-gray-200">
+                  <p className="text-xs text-gray-400 text-center">아직 답변이 없습니다</p>
                 </div>
               )}
             </div>
@@ -310,17 +310,17 @@ export default function ReviewsPage() {
       {/* Report Modal */}
       {showReportModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">문의 신고</h3>
+          <div className="bg-white rounded-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">문의 신고</h3>
             <form onSubmit={handleReportSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   신고 사유 <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={reportData.reason}
                   onChange={(e) => setReportData({ ...reportData, reason: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
                   required
                 >
                   <option value="SPAM">스팸/광고</option>
@@ -330,14 +330,14 @@ export default function ReviewsPage() {
                 </select>
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   상세 내용 (선택)
                 </label>
                 <textarea
                   value={reportData.detail}
                   onChange={(e) => setReportData({ ...reportData, detail: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
                   placeholder="신고 사유를 자세히 적어주세요"
                 />
               </div>
@@ -348,7 +348,7 @@ export default function ReviewsPage() {
                     setShowReportModal(false);
                     setReportData({ reviewId: "", reason: "SPAM", detail: "" });
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
                 >
                   취소
                 </button>

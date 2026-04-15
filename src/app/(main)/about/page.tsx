@@ -2,12 +2,12 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-navy-600 to-navy-800 text-white py-20">
+      <section className="bg-gradient-to-r from-green-600 to-green-800 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             상가 직거래의 새로운 기준, 권리샵
           </h1>
-          <p className="text-xl md:text-2xl text-navy-100 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-green-100 max-w-3xl mx-auto">
             투명하고 안전한 상가 권리금 거래 플랫폼
           </p>
         </div>
@@ -30,9 +30,9 @@ export default function AboutPage() {
             {/* Key Values */}
             <div className="grid md:grid-cols-3 gap-8 mt-12">
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-navy-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-navy-700"
+                    className="w-8 h-8 text-green-700"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -55,9 +55,9 @@ export default function AboutPage() {
               </div>
 
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-navy-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-navy-700"
+                    className="w-8 h-8 text-green-700"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -80,9 +80,9 @@ export default function AboutPage() {
               </div>
 
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-navy-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-navy-700"
+                    className="w-8 h-8 text-green-700"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -170,24 +170,24 @@ export default function AboutPage() {
       </section>
 
       {/* Contact CTA */}
-      <section className="py-16 bg-navy-700 text-white">
+      <section className="py-16 bg-green-700 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
             권리샵과 함께 시작해보세요
           </h2>
-          <p className="text-xl text-navy-100 mb-8">
+          <p className="text-xl text-green-100 mb-8">
             투명하고 안전한 상가 거래의 새로운 경험
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/sell"
-              className="bg-white text-navy-700 px-8 py-3 rounded-lg font-semibold hover:bg-navy-50 transition-colors"
+              className="bg-white text-green-700 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors"
             >
               매물 등록하기
             </a>
             <a
               href="/listings"
-              className="bg-navy-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-navy-800 transition-colors border-2 border-white"
+              className="bg-green-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-800 transition-colors border-2 border-white"
             >
               매물 검색하기
             </a>

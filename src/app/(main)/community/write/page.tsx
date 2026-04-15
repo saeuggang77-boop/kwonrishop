@@ -66,7 +66,7 @@ function CommunityWriteContent() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">글쓰기</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">글쓰기</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex gap-2">
@@ -77,8 +77,8 @@ function CommunityWriteContent() {
               onClick={() => setTag(t)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 tag === t
-                  ? "bg-navy-700 text-white"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  ? "bg-green-700 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
               {t}
@@ -92,7 +92,7 @@ function CommunityWriteContent() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={200}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg text-lg outline-none focus:ring-2 focus:ring-navy-500"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg outline-none focus:ring-2 focus:ring-green-500"
         />
 
         <textarea
@@ -101,7 +101,7 @@ function CommunityWriteContent() {
           onChange={(e) => setContent(e.target.value)}
           maxLength={5000}
           rows={15}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg outline-none focus:ring-2 focus:ring-navy-500 resize-none"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 resize-none"
         />
 
         {error && (
@@ -112,14 +112,14 @@ function CommunityWriteContent() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50"
           >
             취소
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50"
+            className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50"
           >
             {loading ? "등록 중..." : "등록"}
           </button>

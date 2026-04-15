@@ -110,10 +110,10 @@ export default function AdminEquipmentPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">집기장터 관리</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">집기장터 관리</h1>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
         <div className="flex gap-4">
           <select
             value={statusFilter}
@@ -121,7 +121,7 @@ export default function AdminEquipmentPage() {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg outline-none"
+            className="px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
           >
             {STATUS_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -134,7 +134,7 @@ export default function AdminEquipmentPage() {
             placeholder="제목, 설명 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg outline-none"
+            className="flex-1 px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
           />
           <button
             onClick={() => setPage(1)}
@@ -147,45 +147,45 @@ export default function AdminEquipmentPage() {
 
       {/* Result Count */}
       <div className="mb-4">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          총 <span className="font-medium text-gray-900 dark:text-white">{total.toLocaleString()}</span>건
+        <p className="text-sm text-gray-500">
+          총 <span className="font-medium text-gray-900">{total.toLocaleString()}</span>건
         </p>
       </div>
 
       {/* Table */}
       {loading ? (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="space-y-3">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-12 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+              <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
             ))}
           </div>
         </div>
       ) : equipment.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-20 text-center">
-          <p className="text-gray-400 dark:text-gray-500">집기가 없습니다</p>
+        <div className="bg-white rounded-xl border border-gray-200 p-20 text-center">
+          <p className="text-gray-400">집기가 없습니다</p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
           <table className="w-full min-w-[800px]">
-            <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">사진</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">제목</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">카테고리</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">가격</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">판매자</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">상태</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">등록일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">액션</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">사진</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">제목</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">카테고리</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">가격</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">판매자</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-gray-200">
               {equipment.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     {item.images?.[0]?.url ? (
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
                         <Image
                           src={item.images[0].url}
                           alt={item.title}
@@ -194,42 +194,42 @@ export default function AdminEquipmentPage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs">
+                      <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
                         사진없음
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate">
+                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
                     {item.title}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                  <td className="px-6 py-4 text-sm text-gray-600">
                     {EQUIPMENT_CATEGORY_LABELS[item.category] || item.category}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
+                  <td className="px-6 py-4 text-sm text-gray-900 font-medium">
                     {item.price.toLocaleString()}원
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-[180px]">
+                  <td className="px-6 py-4 text-sm text-gray-600 max-w-[180px]">
                     <div className="truncate">{item.user.name}</div>
-                    <div className="text-xs text-gray-400 dark:text-gray-500 truncate">{item.user.email}</div>
+                    <div className="text-xs text-gray-400 truncate">{item.user.email}</div>
                   </td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         item.status === "ACTIVE"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                          ? "bg-green-100 text-green-800"
                           : item.status === "RESERVED"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                            ? "bg-yellow-100 text-yellow-800"
                             : item.status === "SOLD"
-                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                              ? "bg-blue-100 text-blue-800"
                               : item.status === "EXPIRED"
-                                ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
-                                : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                ? "bg-orange-100 text-orange-800"
+                                : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {STATUS_LABELS[item.status] || item.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                  <td className="px-6 py-4 text-sm text-gray-600">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
@@ -237,7 +237,7 @@ export default function AdminEquipmentPage() {
                       <select
                         value={item.status}
                         onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                        className="text-sm px-3 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg outline-none"
+                        className="text-sm px-3 py-1 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
                       >
                         {STATUS_OPTIONS.filter((opt) => opt.value).map((opt) => (
                           <option key={opt.value} value={opt.value}>
@@ -247,7 +247,7 @@ export default function AdminEquipmentPage() {
                       </select>
                       <button
                         onClick={() => handleDelete(item.id, item.title)}
-                        className="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         삭제
                       </button>
@@ -271,13 +271,13 @@ export default function AdminEquipmentPage() {
             const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
             return (
               <>
-                <button onClick={() => setPage(1)} disabled={page === 1} className="w-10 h-10 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed">&laquo;</button>
-                <button onClick={() => setPage(page - 1)} disabled={page === 1} className="w-10 h-10 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed">&lsaquo;</button>
+                <button onClick={() => setPage(1)} disabled={page === 1} className="w-10 h-10 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed">&laquo;</button>
+                <button onClick={() => setPage(page - 1)} disabled={page === 1} className="w-10 h-10 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed">&lsaquo;</button>
                 {pages.map((p) => (
-                  <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${page === p ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"}`}>{p}</button>
+                  <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${page === p ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>{p}</button>
                 ))}
-                <button onClick={() => setPage(page + 1)} disabled={page === totalPages} className="w-10 h-10 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed">&rsaquo;</button>
-                <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="w-10 h-10 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed">&raquo;</button>
+                <button onClick={() => setPage(page + 1)} disabled={page === totalPages} className="w-10 h-10 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed">&rsaquo;</button>
+                <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="w-10 h-10 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed">&raquo;</button>
               </>
             );
           })()}

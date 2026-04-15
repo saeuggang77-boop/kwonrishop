@@ -231,13 +231,13 @@ export default function StartupPartnerSection({
   if (!loading && !hasTabData && !hasSameType) return null;
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 pt-6 md:pt-8">
+    <div className="border-t border-gray-200 pt-6 md:pt-8">
       {/* ===== 같은 종류 추천 (sameType 있을 때만) ===== */}
       {hasSameType && sameType && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{sameType.title}</h3>
-            <Link href={sameType.viewAllLink} className="text-sm text-navy-700 hover:text-navy-700">전체보기 →</Link>
+            <h3 className="text-lg font-bold text-gray-900">{sameType.title}</h3>
+            <Link href={sameType.viewAllLink} className="text-sm text-green-700 hover:text-green-700">전체보기 →</Link>
           </div>
           <div className="grid grid-cols-2 gap-2.5 md:hidden">
             {sameTypeItems.slice(0, 2).map((item) => <SameTypeCard key={item.id} item={item} />)}
@@ -249,25 +249,25 @@ export default function StartupPartnerSection({
       )}
 
       {hasSameType && hasTabData && (
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mb-0" />
+        <div className="border-t border-gray-200 pt-6 mb-0" />
       )}
 
       {/* ===== 창업 파트너 (탭 섹션) ===== */}
       {(hasTabData || loading) && (
         <>
           <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">창업 파트너</h3>
-            <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-400 text-[10px] font-semibold rounded">AD</span>
+            <h3 className="text-lg font-bold text-gray-900">창업 파트너</h3>
+            <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-semibold rounded">AD</span>
           </div>
 
-          <div className="flex items-center gap-4 border-b border-gray-200 dark:border-gray-700 mb-4">
+          <div className="flex items-center gap-4 border-b border-gray-200 mb-4">
             {tabs.map((tab, i) => (
               <button
                 key={tab.type}
                 onClick={() => setActiveTab(i)}
                 className={`pb-2 text-sm transition-colors ${
                   activeTab === i
-                    ? "text-navy-700 font-semibold border-b-2 border-navy-600"
+                    ? "text-green-700 font-semibold border-b-2 border-green-600"
                     : "text-gray-400 font-medium border-b-2 border-transparent"
                 }`}
               >
@@ -278,7 +278,7 @@ export default function StartupPartnerSection({
 
           {loading && (
             <div className="space-y-3">
-              {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />)}
+              {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-gray-100 rounded-xl animate-pulse" />)}
             </div>
           )}
 
@@ -286,7 +286,7 @@ export default function StartupPartnerSection({
             if (activeTab !== i) return null;
             const items = tabData[tab.type] || [];
             if (items.length === 0) {
-              return <div key={tab.type} className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">등록된 항목이 없습니다</div>;
+              return <div key={tab.type} className="py-8 text-center text-sm text-gray-500">등록된 항목이 없습니다</div>;
             }
             return (
               <div key={tab.type}>
@@ -319,7 +319,7 @@ export default function StartupPartnerSection({
                     />
                   ))}
                 </div>
-                <Link href={VIEW_ALL[tab.type]?.link || "/"} className="block text-center text-sm text-navy-700 font-medium mt-3 hover:underline">
+                <Link href={VIEW_ALL[tab.type]?.link || "/"} className="block text-center text-sm text-green-700 font-medium mt-3 hover:underline">
                   {VIEW_ALL[tab.type]?.label || "전체보기"} →
                 </Link>
               </div>
@@ -335,8 +335,8 @@ export default function StartupPartnerSection({
 
 function SameTypeCard({ item }: { item: RecommendItem }) {
   return (
-    <Link href={item.href} className="block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-      <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-700 relative">
+    <Link href={item.href} className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+      <div className="aspect-[4/3] bg-gray-100 relative">
         {item.imageUrl ? (
           <Image src={item.imageUrl} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />
         ) : (
@@ -344,8 +344,8 @@ function SameTypeCard({ item }: { item: RecommendItem }) {
         )}
       </div>
       <div className="p-2.5 md:p-3">
-        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{item.title}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">{item.subtitle}</p>
+        <p className="text-sm font-semibold text-gray-900 truncate">{item.title}</p>
+        <p className="text-xs text-gray-500 mt-0.5 truncate">{item.subtitle}</p>
       </div>
     </Link>
   );
@@ -355,46 +355,46 @@ function SameTypeCard({ item }: { item: RecommendItem }) {
 
 const TIER_MOBILE_STYLES = {
   1: {
-    card: "p-4 border-2 border-navy-300 bg-white dark:bg-gray-800",
-    icon: "w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 text-3xl",
+    card: "p-4 border-2 border-green-300 bg-white",
+    icon: "w-16 h-16 rounded-xl bg-gray-50 text-3xl",
     name: "text-base",
-    badge: "px-2 py-0.5 bg-navy-700 text-white text-[9px] font-bold rounded",
-    arrow: "text-navy-300 w-5 h-5",
+    badge: "px-2 py-0.5 bg-green-700 text-white text-[9px] font-bold rounded",
+    arrow: "text-green-300 w-5 h-5",
   },
   2: {
-    card: "p-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
-    icon: "w-12 h-12 rounded-xl bg-gray-50 dark:bg-gray-700 text-2xl",
+    card: "p-3 border border-gray-200 bg-white",
+    icon: "w-12 h-12 rounded-xl bg-gray-50 text-2xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 dark:bg-gray-600 dark:text-gray-300 text-[9px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[9px] font-bold rounded",
     arrow: "text-gray-300 w-4 h-4",
   },
   3: {
-    card: "px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
-    icon: "w-10 h-10 rounded-lg bg-gray-50 dark:bg-gray-700 text-lg",
+    card: "px-3 py-2.5 border border-gray-200 bg-white",
+    icon: "w-10 h-10 rounded-lg bg-gray-50 text-lg",
     name: "text-[13px]",
-    badge: "px-1 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400 text-[8px] font-bold rounded",
+    badge: "px-1 py-0.5 bg-gray-100 text-gray-500 text-[8px] font-bold rounded",
     arrow: "text-gray-200 w-4 h-4",
   },
 } as const;
 
 const TIER_PC_STYLES = {
   1: {
-    card: "p-5 border-2 border-navy-300 bg-white dark:bg-gray-800",
-    icon: "w-20 h-20 rounded-2xl bg-gray-50 dark:bg-gray-700 text-4xl",
+    card: "p-5 border-2 border-green-300 bg-white",
+    icon: "w-20 h-20 rounded-2xl bg-gray-50 text-4xl",
     name: "text-base",
-    badge: "px-2 py-0.5 bg-navy-700 text-white text-[9px] font-bold rounded",
+    badge: "px-2 py-0.5 bg-green-700 text-white text-[9px] font-bold rounded",
   },
   2: {
-    card: "p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
-    icon: "w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 text-3xl",
+    card: "p-4 border border-gray-200 bg-white",
+    icon: "w-16 h-16 rounded-xl bg-gray-50 text-3xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 dark:bg-gray-600 dark:text-gray-300 text-[9px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[9px] font-bold rounded",
   },
   3: {
-    card: "p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
-    icon: "w-12 h-12 rounded-lg bg-gray-50 dark:bg-gray-700 text-2xl",
+    card: "p-4 border border-gray-200 bg-white",
+    icon: "w-12 h-12 rounded-lg bg-gray-50 text-2xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400 text-[8px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-500 text-[8px] font-bold rounded",
   },
 } as const;
 
@@ -414,10 +414,10 @@ function TierCardMobile({ href, icon, imageUrl, name, badge, subtitle, tierLevel
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <p className={`font-bold text-gray-900 dark:text-white ${s.name}`}>{name}</p>
+            <p className={`font-bold text-gray-900 ${s.name}`}>{name}</p>
             <span className={s.badge}>{badge}</span>
           </div>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 truncate">{subtitle}</p>
+          <p className="text-xs text-gray-600 mt-0.5 truncate">{subtitle}</p>
         </div>
         <ChevronRight className={s.arrow} />
       </div>
@@ -439,10 +439,10 @@ function TierCardPC({ href, icon, imageUrl, name, badge, subtitle, extra, tierLe
         )}
       </div>
       <div className="flex items-center gap-1.5 mb-1">
-        <p className={`font-bold text-gray-900 dark:text-white ${s.name}`}>{name}</p>
+        <p className={`font-bold text-gray-900 ${s.name}`}>{name}</p>
         <span className={s.badge}>{badge}</span>
       </div>
-      <p className="text-xs text-gray-600 dark:text-gray-400">{subtitle}</p>
+      <p className="text-xs text-gray-600">{subtitle}</p>
       {extra && <p className="text-[10px] text-gray-500 mt-1">{extra}</p>}
     </Link>
   );

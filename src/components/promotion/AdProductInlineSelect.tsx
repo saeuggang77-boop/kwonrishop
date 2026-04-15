@@ -118,10 +118,10 @@ export default function AdProductInlineSelect({
   if (loading) {
     return (
       <div className="animate-pulse space-y-3">
-        <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
+        <div className="h-5 bg-gray-200 rounded w-2/3" />
         <div className="grid grid-cols-3 gap-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+            <div key={i} className="h-40 bg-gray-200 rounded-xl" />
           ))}
         </div>
       </div>
@@ -136,10 +136,10 @@ export default function AdProductInlineSelect({
     <div>
       {/* 헤더 */}
       <div className="text-center mb-4">
-        <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">
+        <h3 className="text-base font-bold text-gray-900 mb-1">
           💎 더 많은 고객에게 노출하세요
         </h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400">
+        <p className="text-xs text-gray-500">
           광고 상품 선택 시 결제 페이지로 이동합니다 · VAT 10% 별도
         </p>
       </div>
@@ -147,21 +147,21 @@ export default function AdProductInlineSelect({
       {/* 기간 탭 (FRANCHISE/PARTNER) */}
       {needsPeriod && (
         <div className="flex justify-center mb-4">
-          <div className="inline-flex bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 gap-0.5">
+          <div className="inline-flex bg-gray-100 rounded-lg p-0.5 gap-0.5">
             {PERIODS.map((p) => (
               <button
                 key={p.key}
                 onClick={() => setPeriod(p.key)}
                 className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${
                   period === p.key
-                    ? "bg-navy-700 text-white shadow-sm"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    ? "bg-green-700 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 {p.label}
                 {p.discount && (
                   <span className={`ml-1 text-[10px] font-semibold ${
-                    period === p.key ? "text-navy-100" : "text-red-500 dark:text-red-400"
+                    period === p.key ? "text-green-100" : "text-red-500"
                   }`}>
                     {p.discount}
                   </span>
@@ -192,13 +192,13 @@ export default function AdProductInlineSelect({
         <button
           type="button"
           onClick={onSkip}
-          className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline underline-offset-4"
+          className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-4"
         >
           {skipLabel}
         </button>
         <Link
           href={`/pricing?tab=${scope}${listingId ? `&listingId=${listingId}` : ""}${partnerServiceId ? `&partnerServiceId=${partnerServiceId}` : ""}${equipmentId ? `&equipmentId=${equipmentId}` : ""}`}
-          className="text-sm text-navy-700 dark:text-navy-400 hover:text-navy-800 font-medium"
+          className="text-sm text-green-700 hover:text-green-800 font-medium"
         >
           더 많은 옵션 보기 →
         </Link>
@@ -226,8 +226,8 @@ function CompactCard({
 
   const theme = isTop
     ? {
-        border: "border-yellow-400 dark:border-yellow-500",
-        bg: "bg-gradient-to-br from-yellow-50 to-white dark:from-yellow-950/50 dark:to-gray-800",
+        border: "border-yellow-400",
+        bg: "bg-gradient-to-br from-yellow-50 to-white",
         badge: "BEST",
         badgeBg: "bg-yellow-400 text-yellow-900",
         btn: "bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700",
@@ -235,19 +235,19 @@ function CompactCard({
       }
     : isMid
     ? {
-        border: "border-navy-400",
-        bg: "bg-gradient-to-br from-navy-50 to-white dark:from-navy-950/50 dark:to-gray-800",
+        border: "border-green-400",
+        bg: "bg-gradient-to-br from-green-50 to-white",
         badge: "추천",
-        badgeBg: "bg-navy-500 text-white",
-        btn: "bg-navy-700 hover:bg-navy-600 active:bg-navy-800",
-        ring: "ring-1 ring-navy-400",
+        badgeBg: "bg-green-500 text-white",
+        btn: "bg-green-700 hover:bg-green-600 active:bg-green-800",
+        ring: "ring-1 ring-green-400",
       }
     : {
-        border: "border-gray-200 dark:border-gray-700",
-        bg: "bg-white dark:bg-gray-800",
+        border: "border-gray-200",
+        bg: "bg-white",
         badge: null,
         badgeBg: "",
-        btn: "bg-gray-800 hover:bg-gray-900 active:bg-black dark:bg-gray-700 dark:hover:bg-gray-600",
+        btn: "bg-gray-800 hover:bg-gray-900 active:bg-black",
         ring: "",
       };
 
@@ -290,22 +290,22 @@ function CompactCard({
       )}
 
       <div className="text-center mb-2 pt-1">
-        <div className="text-sm font-bold text-gray-900 dark:text-white mb-1 truncate">
+        <div className="text-sm font-bold text-gray-900 mb-1 truncate">
           {tierName}
         </div>
         <div className="flex items-baseline justify-center gap-0.5">
-          <span className="text-xl font-bold text-gray-900 dark:text-white">{priceWon}</span>
-          <span className="text-xs text-gray-600 dark:text-gray-300">만원</span>
+          <span className="text-xl font-bold text-gray-900">{priceWon}</span>
+          <span className="text-xs text-gray-600">만원</span>
         </div>
         {durationLabel && (
-          <p className="text-[10px] text-gray-500 dark:text-gray-400">{durationLabel}</p>
+          <p className="text-[10px] text-gray-500">{durationLabel}</p>
         )}
       </div>
 
       <ul className="space-y-1 mb-3 min-h-[44px]">
         {topTwo.map((h, i) => (
-          <li key={i} className="flex items-center gap-1 text-[11px] text-gray-700 dark:text-gray-300">
-            <span className="text-navy-600 dark:text-navy-400">✓</span>
+          <li key={i} className="flex items-center gap-1 text-[11px] text-gray-700">
+            <span className="text-green-600">✓</span>
             <span className="truncate">{h}</span>
           </li>
         ))}

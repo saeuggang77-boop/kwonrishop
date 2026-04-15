@@ -113,7 +113,7 @@ export default function FranchiseDetailClient() {
   if (error || !brand) return (
     <div className="max-w-5xl mx-auto px-4 py-20 text-center">
       <p className="text-gray-400 mb-4">브랜드 정보를 불러올 수 없습니다</p>
-      <button onClick={loadBrand} className="px-6 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600">다시 시도</button>
+      <button onClick={loadBrand} className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600">다시 시도</button>
     </div>
   );
 
@@ -127,21 +127,21 @@ export default function FranchiseDetailClient() {
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-full bg-navy-100 flex items-center justify-center text-navy-700 font-bold text-2xl shrink-0">{brand.brandName.charAt(0)}</div>
+          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-2xl shrink-0">{brand.brandName.charAt(0)}</div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <h1 className="text-2xl font-bold text-gray-900">{brand.brandName}</h1>
               {brand.ftcId && <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">공정위 등록 브랜드</span>}
-              {brand.tier && <span className={`px-2 py-1 rounded-full text-xs font-medium ${brand.tier === "GOLD" ? "bg-navy-700 text-white" : brand.tier === "SILVER" ? "bg-gray-100 text-gray-700" : "bg-gray-100 text-gray-500"}`}>{brand.tier}</span>}
+              {brand.tier && <span className={`px-2 py-1 rounded-full text-xs font-medium ${brand.tier === "GOLD" ? "bg-green-700 text-white" : brand.tier === "SILVER" ? "bg-gray-100 text-gray-700" : "bg-gray-100 text-gray-500"}`}>{brand.tier}</span>}
             </div>
             <p className="text-gray-600">{brand.companyName}</p>
           </div>
         </div>
         {(!brand.tier || brand.tier === "FREE") && (
-          <div className="mt-4 p-4 bg-navy-50 rounded-lg border border-navy-200">
-            <p className="text-sm text-navy-800 mb-2">이 브랜드의 본사이신가요?</p>
-            <p className="text-xs text-navy-700">유료 플랜으로 등록하고 더 많은 노출과 관리 기능을 활용하세요</p>
-            <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-navy-700 font-medium hover:underline">등록하고 관리하기 →</button>
+          <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <p className="text-sm text-green-800 mb-2">이 브랜드의 본사이신가요?</p>
+            <p className="text-xs text-green-700">유료 플랜으로 등록하고 더 많은 노출과 관리 기능을 활용하세요</p>
+            <button onClick={() => router.push("/pricing")} className="mt-2 text-xs text-green-700 font-medium hover:underline">등록하고 관리하기 →</button>
           </div>
         )}
       </div>
@@ -149,7 +149,7 @@ export default function FranchiseDetailClient() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="flex border-b border-gray-200 overflow-x-auto" role="tablist">
           {[{ id: "info", label: "기본정보" }, { id: "fees", label: "창업비용" }, { id: "benefits", label: "창업특혜" }, { id: "analysis", label: "업종분석" }, ...(brand.managerId ? [{ id: "inquiry", label: "문의하기" }] : [{ id: "inquiry", label: "가맹 상담" }])].map((tab) => (
-            <button key={tab.id} role="tab" aria-selected={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 min-w-[80px] px-3 md:px-6 py-3 md:py-4 font-medium transition-colors text-sm md:text-base whitespace-nowrap ${activeTab === tab.id ? "bg-navy-50 text-navy-700 border-b-2 border-navy-600" : "text-gray-600 hover:bg-gray-50"}`}>{tab.label}</button>
+            <button key={tab.id} role="tab" aria-selected={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 min-w-[80px] px-3 md:px-6 py-3 md:py-4 font-medium transition-colors text-sm md:text-base whitespace-nowrap ${activeTab === tab.id ? "bg-green-50 text-green-700 border-b-2 border-green-600" : "text-gray-600 hover:bg-gray-50"}`}>{tab.label}</button>
           ))}
         </div>
         <div className="p-6" role="tabpanel">
@@ -162,11 +162,11 @@ export default function FranchiseDetailClient() {
                 {brand.totalStores !== null && <div><span className="text-sm text-gray-600">전체 매장수</span><p className="font-medium text-gray-900 mt-1">{brand.totalStores.toLocaleString()}개</p></div>}
                 {brand.avgRevenue !== null && <div><span className="text-sm text-gray-600">평균 매출</span><p className="font-medium text-gray-900 mt-1">월 {brand.avgRevenue.toLocaleString()}만원</p></div>}
                 {brand.ftcRegisteredAt && <div><span className="text-sm text-gray-600">공정위 등록일</span><p className="font-medium text-gray-900 mt-1">{brand.ftcRegisteredAt}</p></div>}
-                {brand.website && <div><span className="text-sm text-gray-600">웹사이트</span><a href={brand.website} target="_blank" rel="noopener noreferrer" className="font-medium text-navy-700 hover:underline mt-1 block">{brand.website}</a></div>}
-                {brand.representativePhone && <div><span className="text-sm text-gray-600">대표전화번호</span><a href={`tel:${brand.representativePhone}`} className="font-medium text-navy-700 hover:underline mt-1 block">{brand.representativePhone}</a></div>}
+                {brand.website && <div><span className="text-sm text-gray-600">웹사이트</span><a href={brand.website} target="_blank" rel="noopener noreferrer" className="font-medium text-green-700 hover:underline mt-1 block">{brand.website}</a></div>}
+                {brand.representativePhone && <div><span className="text-sm text-gray-600">대표전화번호</span><a href={`tel:${brand.representativePhone}`} className="font-medium text-green-700 hover:underline mt-1 block">{brand.representativePhone}</a></div>}
                 {brand.headquarterAddress && <div><span className="text-sm text-gray-600">본사 주소</span><p className="font-medium text-gray-900 mt-1">{brand.headquarterAddress}</p></div>}
                 {brand.establishedDate && <div><span className="text-sm text-gray-600">설립일</span><p className="font-medium text-gray-900 mt-1">{brand.establishedDate}</p></div>}
-                {brand.franchiseStartDate && <div><span className="text-sm text-gray-600">가맹사업 시작</span><p className="font-medium text-gray-900 mt-1">{brand.franchiseStartDate} <span className="inline-block px-2 py-0.5 ml-1 rounded-full text-xs font-medium bg-navy-100 text-navy-800">{new Date().getFullYear() - parseInt(brand.franchiseStartDate.match(/\d{4}/)?.[0] || '0')}년차</span></p></div>}
+                {brand.franchiseStartDate && <div><span className="text-sm text-gray-600">가맹사업 시작</span><p className="font-medium text-gray-900 mt-1">{brand.franchiseStartDate} <span className="inline-block px-2 py-0.5 ml-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{new Date().getFullYear() - parseInt(brand.franchiseStartDate.match(/\d{4}/)?.[0] || '0')}년차</span></p></div>}
                 {brand.contractPeriod && <div><span className="text-sm text-gray-600">계약기간</span><p className="font-medium text-gray-900 mt-1">{brand.contractPeriod}</p></div>}
                 {brand.territoryProtection !== null && <div><span className="text-sm text-gray-600">영업지역 보호</span><p className="font-medium mt-1">{brand.territoryProtection ? <span className="text-green-600">O 보호</span> : <span className="text-red-600">X 미보호</span>}</p></div>}
                 {brand.companyOwnedStores !== null && <div><span className="text-sm text-gray-600">직영점수</span><p className="font-medium text-gray-900 mt-1">{brand.companyOwnedStores.toLocaleString()}개</p></div>}
@@ -180,25 +180,25 @@ export default function FranchiseDetailClient() {
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {brand.financialSummary.revenue && (
-                      <div className="bg-navy-50 rounded-lg p-3 text-center">
+                      <div className="bg-green-50 rounded-lg p-3 text-center">
                         <p className="text-xs text-gray-500 mb-1">매출액</p>
-                        <p className="text-lg font-bold text-navy-700">{Number(brand.financialSummary.revenue).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
+                        <p className="text-lg font-bold text-green-700">{Number(brand.financialSummary.revenue).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
                       </div>
                     )}
                     {brand.financialSummary.operatingProfit && (
-                      <div className="bg-navy-50 rounded-lg p-3 text-center">
+                      <div className="bg-green-50 rounded-lg p-3 text-center">
                         <p className="text-xs text-gray-500 mb-1">영업이익</p>
-                        <p className="text-lg font-bold text-navy-700">{Number(brand.financialSummary.operatingProfit).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
+                        <p className="text-lg font-bold text-green-700">{Number(brand.financialSummary.operatingProfit).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
                       </div>
                     )}
                     {brand.financialSummary.netProfit && (
-                      <div className="bg-navy-50 rounded-lg p-3 text-center">
+                      <div className="bg-green-50 rounded-lg p-3 text-center">
                         <p className="text-xs text-gray-500 mb-1">당기순이익</p>
-                        <p className={`text-lg font-bold ${Number(brand.financialSummary.netProfit) >= 0 ? 'text-navy-700' : 'text-red-600'}`}>{Number(brand.financialSummary.netProfit).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
+                        <p className={`text-lg font-bold ${Number(brand.financialSummary.netProfit) >= 0 ? 'text-green-700' : 'text-red-600'}`}>{Number(brand.financialSummary.netProfit).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
                       </div>
                     )}
                     {brand.financialSummary.totalAssets && (
-                      <div className="bg-navy-50 rounded-lg p-3 text-center">
+                      <div className="bg-green-50 rounded-lg p-3 text-center">
                         <p className="text-xs text-gray-500 mb-1">자산총계</p>
                         <p className="text-lg font-bold text-gray-700">{Number(brand.financialSummary.totalAssets).toLocaleString()}<span className="text-xs font-normal text-gray-500">천원</span></p>
                       </div>
@@ -251,14 +251,14 @@ export default function FranchiseDetailClient() {
                       {brand.ftcRawData.revenuePerArea != null && brand.ftcRawData.revenuePerArea > 0 && (
                         <div className="bg-white rounded-lg p-3 text-center border border-green-200">
                           <p className="text-xs text-gray-500 mb-1">면적당 매출</p>
-                          <p className="text-lg font-bold text-navy-700">{Math.round(brand.ftcRawData.revenuePerArea / 1000).toLocaleString()}<span className="text-xs font-normal text-gray-500">만원</span></p>
+                          <p className="text-lg font-bold text-green-700">{Math.round(brand.ftcRawData.revenuePerArea / 1000).toLocaleString()}<span className="text-xs font-normal text-gray-500">만원</span></p>
                         </div>
                       )}
                     </div>
                     <p className="text-xs text-gray-400 mt-2">* 공정거래위원회 가맹사업거래 정보공개서 기준</p>
                   </div>
                   {brand.ftcId && (
-                    <a href={`https://franchise.ftc.go.kr/mnu/00013/program/userRqst/view.do?firMstSn=${brand.ftcId}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-navy-700 hover:text-navy-700 font-medium">공정위 정보공개서 원문 보기 →</a>
+                    <a href={`https://franchise.ftc.go.kr/mnu/00013/program/userRqst/view.do?firMstSn=${brand.ftcId}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-green-700 hover:text-green-700 font-medium">공정위 정보공개서 원문 보기 →</a>
                   )}
                 </div>
               )}
@@ -274,21 +274,21 @@ export default function FranchiseDetailClient() {
               {brand.adPromotionFee && <div className="flex justify-between py-3 border-b border-gray-100"><span className="text-gray-600 text-sm md:text-base">광고판촉분담금</span><span className="font-medium text-gray-900 text-sm md:text-base">{brand.adPromotionFee}</span></div>}
 
               {(brand.tier === "SILVER" || brand.tier === "GOLD") && (brand.franchiseFee !== null || brand.educationFee !== null || brand.depositFee !== null) && (
-                <div className="bg-gradient-to-br from-navy-50 to-indigo-50 rounded-xl p-4 md:p-6 mt-6 border border-navy-200">
+                <div className="bg-gradient-to-br from-green-50 to-indigo-50 rounded-xl p-4 md:p-6 mt-6 border border-green-200">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">💰</span>
                     <h3 className="font-bold text-gray-900 text-base md:text-lg">창업 비용 계산기</h3>
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-navy-700 text-white">{brand.tier === "GOLD" ? "골드" : "실버"} 전용</span>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-700 text-white">{brand.tier === "GOLD" ? "골드" : "실버"} 전용</span>
                   </div>
                   <div className="space-y-2 mb-4">
                     {brand.franchiseFee !== null && <div className="flex justify-between text-sm"><span className="text-gray-600">가맹비</span><span className="text-gray-900">{brand.franchiseFee.toLocaleString()}만원</span></div>}
                     {brand.educationFee !== null && <div className="flex justify-between text-sm"><span className="text-gray-600">교육비</span><span className="text-gray-900">{brand.educationFee.toLocaleString()}만원</span></div>}
                     {brand.depositFee !== null && <div className="flex justify-between text-sm"><span className="text-gray-600">보증금</span><span className="text-gray-900">{brand.depositFee.toLocaleString()}만원</span></div>}
                   </div>
-                  <div className="pt-3 border-t-2 border-navy-300">
+                  <div className="pt-3 border-t-2 border-green-300">
                     <div className="flex justify-between items-center">
                       <span className="font-bold text-gray-900">총 초기 비용</span>
-                      <span className="text-xl md:text-2xl font-bold text-navy-700">
+                      <span className="text-xl md:text-2xl font-bold text-green-700">
                         {((brand.franchiseFee || 0) + (brand.educationFee || 0) + (brand.depositFee || 0)).toLocaleString()}만원
                       </span>
                     </div>
@@ -297,20 +297,20 @@ export default function FranchiseDetailClient() {
               )}
 
               {brand.tier === "GOLD" && (
-                <div className="bg-navy-50 dark:bg-navy-900/20 rounded-xl p-4 md:p-6 mt-4 border border-navy-200 dark:border-navy-700">
+                <div className="bg-green-50 rounded-xl p-4 md:p-6 mt-4 border border-green-200">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-2xl">🗺️</span>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg">가맹점 현황 지도</h3>
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-navy-700 text-white">골드 전용</span>
+                    <h3 className="font-bold text-gray-900 text-base md:text-lg">가맹점 현황 지도</h3>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-700 text-white">골드 전용</span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">전국 가맹점 위치와 현황을 한눈에 확인하세요</p>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center border border-navy-300 dark:border-navy-600">
+                  <p className="text-sm text-gray-600 mb-3">전국 가맹점 위치와 현황을 한눈에 확인하세요</p>
+                  <div className="bg-white rounded-lg p-8 text-center border border-green-300">
                     <p className="text-gray-500 text-sm">골드 전용 기능: 가맹점 현황 지도는 준비 중입니다</p>
                   </div>
                 </div>
               )}
 
-              <div className="bg-navy-50 rounded-lg p-3 md:p-4 mt-4"><p className="text-xs md:text-sm text-navy-800">* 상기 비용은 예상 금액이며, 실제 창업 비용은 매장 규모 및 지역에 따라 달라질 수 있습니다.</p></div>
+              <div className="bg-green-50 rounded-lg p-3 md:p-4 mt-4"><p className="text-xs md:text-sm text-green-800">* 상기 비용은 예상 금액이며, 실제 창업 비용은 매장 규모 및 지역에 따라 달라질 수 있습니다.</p></div>
             </div>
           )}
           {activeTab === "benefits" && (<div>{brand.benefits ? <div className="prose max-w-none"><p className="text-gray-900 whitespace-pre-wrap">{brand.benefits}</p></div> : <div className="text-center py-12 text-gray-400"><p>등록된 창업특혜 정보가 없습니다</p></div>}</div>)}
@@ -318,10 +318,10 @@ export default function FranchiseDetailClient() {
           {activeTab === "inquiry" && (
             brand.managerId ? (
               <form onSubmit={handleInquirySubmit} className="space-y-4">
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none" placeholder="이름을 입력하세요" /></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none" placeholder="010-0000-0000" /></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">문의내용</label><textarea required value={message} onChange={(e) => setMessage(e.target.value)} rows={6} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none" placeholder="문의하실 내용을 입력하세요" /></div>
-                <button type="submit" disabled={submitting} className="w-full py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">{submitting ? "전송 중..." : "문의하기"}</button>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" placeholder="이름을 입력하세요" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" placeholder="010-0000-0000" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">문의내용</label><textarea required value={message} onChange={(e) => setMessage(e.target.value)} rows={6} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none" placeholder="문의하실 내용을 입력하세요" /></div>
+                <button type="submit" disabled={submitting} className="w-full py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">{submitting ? "전송 중..." : "문의하기"}</button>
               </form>
             ) : (
               <div className="text-center py-10">
@@ -331,10 +331,10 @@ export default function FranchiseDetailClient() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">아직 본사가 등록되지 않은 브랜드입니다</h3>
                 <p className="text-sm text-gray-500 mb-1">이 브랜드는 공정위 정보공개서 기반으로 자동 등록된 브랜드로,</p>
                 <p className="text-sm text-gray-500 mb-6">본사가 직접 관리하고 있지 않아 문의 접수가 불가합니다.</p>
-                <div className="bg-navy-50 rounded-xl p-5 max-w-md mx-auto border border-navy-200">
-                  <p className="text-sm font-medium text-navy-900 mb-1">이 브랜드의 본사이신가요?</p>
-                  <p className="text-xs text-navy-700 mb-3">유료 플랜에 등록하시면 가맹 문의를 직접 받을 수 있습니다.</p>
-                  <button onClick={() => router.push("/pricing?tab=franchise")} className="px-5 py-2.5 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-600 transition-colors">본사 등록하고 문의 받기</button>
+                <div className="bg-green-50 rounded-xl p-5 max-w-md mx-auto border border-green-200">
+                  <p className="text-sm font-medium text-green-900 mb-1">이 브랜드의 본사이신가요?</p>
+                  <p className="text-xs text-green-700 mb-3">유료 플랜에 등록하시면 가맹 문의를 직접 받을 수 있습니다.</p>
+                  <button onClick={() => router.push("/pricing?tab=franchise")} className="px-5 py-2.5 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">본사 등록하고 문의 받기</button>
                 </div>
               </div>
             )

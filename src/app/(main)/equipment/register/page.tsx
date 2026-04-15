@@ -233,7 +233,7 @@ export default function EquipmentRegisterPage() {
   if (status === "loading" || checkingVerification) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-pulse text-gray-400 dark:text-gray-500">로딩 중...</div>
+        <div className="animate-pulse text-gray-400">로딩 중...</div>
       </div>
     );
   }
@@ -251,24 +251,24 @@ export default function EquipmentRegisterPage() {
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 overflow-y-auto py-8"
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
+            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
               집기 등록 완료!
             </h2>
-            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-5">
+            <p className="text-center text-sm text-gray-600 mb-5">
               집기가 성공적으로 등록되었습니다. 지금 바로 노출됩니다.
             </p>
 
-            <div className="h-px bg-gradient-to-r from-transparent via-navy-500 to-transparent mb-5"></div>
+            <div className="h-px bg-gradient-to-r from-transparent via-green-500 to-transparent mb-5"></div>
 
             {/* 광고 상품 인라인 선택 */}
             <div className="mb-5">
@@ -289,14 +289,14 @@ export default function EquipmentRegisterPage() {
 
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">집기 등록</h1>
-        <p className="text-gray-600 dark:text-gray-400">사업자인증을 완료한 회원만 등록할 수 있습니다</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">집기 등록</h1>
+        <p className="text-gray-600">사업자인증을 완료한 회원만 등록할 수 있습니다</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 제목 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             제목 <span className="text-red-500">*</span>
           </label>
           <input
@@ -304,14 +304,14 @@ export default function EquipmentRegisterPage() {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="예: 업소용 냉장고 1200L 판매합니다"
           />
         </div>
 
         {/* 카테고리 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             카테고리 <span className="text-red-500">*</span>
           </label>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
@@ -322,8 +322,8 @@ export default function EquipmentRegisterPage() {
                 onClick={() => setCategory(key)}
                 className={`flex flex-col items-center gap-1 px-3 py-3 rounded-xl text-sm font-medium transition-colors border-2 ${
                   category === key
-                    ? "border-navy-600 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
-                    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                    ? "border-green-600 bg-green-50 text-green-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                 }`}
               >
                 <span className="text-xl">{CATEGORY_ICONS[key] || "📦"}</span>
@@ -335,15 +335,15 @@ export default function EquipmentRegisterPage() {
 
         {/* 상태 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             상태 <span className="text-red-500">*</span>
           </label>
           <div className="flex gap-3">
             {Object.entries(EQUIPMENT_CONDITION_LABELS).map(([key, label]) => {
               const colors: Record<string, string> = {
-                EXCELLENT: "border-green-500 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300",
-                GOOD: "border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300",
-                FAIR: "border-red-500 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300",
+                EXCELLENT: "border-green-500 bg-green-50 text-green-700",
+                GOOD: "border-yellow-500 bg-yellow-50 text-yellow-700",
+                FAIR: "border-red-500 bg-red-50 text-red-700",
               };
               return (
                 <button
@@ -353,7 +353,7 @@ export default function EquipmentRegisterPage() {
                   className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-colors border-2 ${
                     condition === key
                       ? colors[key]
-                      : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                   }`}
                 >
                   {label}
@@ -365,7 +365,7 @@ export default function EquipmentRegisterPage() {
 
         {/* 가격 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             가격 <span className="text-red-500">*</span>
           </label>
           <div className="space-y-2">
@@ -376,10 +376,10 @@ export default function EquipmentRegisterPage() {
                 value={isFree ? "0" : (price === 0 ? "" : price)}
                 onChange={(e) => setPrice(parseInt(e.target.value) || 0)}
                 disabled={isFree}
-                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-400"
+                className="flex-1 px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100 disabled:text-gray-400"
                 placeholder="가격을 입력하세요"
               />
-              <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">원</span>
+              <span className="text-sm text-gray-500 shrink-0">원</span>
             </div>
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -395,7 +395,7 @@ export default function EquipmentRegisterPage() {
                   }}
                   className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">무료 나눔</span>
+                <span className="text-sm text-gray-700">무료 나눔</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -403,9 +403,9 @@ export default function EquipmentRegisterPage() {
                   checked={negotiable}
                   disabled={isFree}
                   onChange={(e) => setNegotiable(e.target.checked)}
-                  className="w-4 h-4 text-navy-700 rounded border-gray-300 focus:ring-navy-500 disabled:opacity-50"
+                  className="w-4 h-4 text-green-700 rounded border-gray-300 focus:ring-green-500 disabled:opacity-50"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">협의가능</span>
+                <span className="text-sm text-gray-700">협의가능</span>
               </label>
             </div>
           </div>
@@ -413,7 +413,7 @@ export default function EquipmentRegisterPage() {
 
         {/* 거래방식 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             거래방식 <span className="text-red-500">*</span>
           </label>
           <div className="flex gap-3">
@@ -428,8 +428,8 @@ export default function EquipmentRegisterPage() {
                 onClick={() => setTradeMethod(key)}
                 className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-colors border-2 ${
                   tradeMethod === key
-                    ? "border-navy-600 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
-                    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                    ? "border-green-600 bg-green-50 text-green-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                 }`}
               >
                 {label}
@@ -440,7 +440,7 @@ export default function EquipmentRegisterPage() {
 
         {/* 설명 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             설명 <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -448,45 +448,45 @@ export default function EquipmentRegisterPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={6}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none"
             placeholder="집기의 상태, 사용기간, 특이사항 등을 상세히 작성해주세요 (최소 10자)"
           />
-          <p className={`text-sm mt-1 ${description.length < 10 ? "text-red-500" : "text-gray-500 dark:text-gray-400"}`}>
+          <p className={`text-sm mt-1 ${description.length < 10 ? "text-red-500" : "text-gray-500"}`}>
             {description.length}자 / 최소 10자
           </p>
         </div>
 
         {/* 브랜드 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">브랜드 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">브랜드 (선택)</label>
           <input
             type="text"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="예: 삼성, LG, 대우 등"
           />
         </div>
 
         {/* 모델명 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">모델명 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">모델명 (선택)</label>
           <input
             type="text"
             value={modelName}
             onChange={(e) => setModelName(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="예: RF-520"
           />
         </div>
 
         {/* 구매연도 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">구매연도 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">구매연도 (선택)</label>
           <select
             value={purchaseYear}
             onChange={(e) => setPurchaseYear(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
           >
             <option value="">선택하세요</option>
             {yearOptions.map((y) => (
@@ -497,23 +497,23 @@ export default function EquipmentRegisterPage() {
 
         {/* 수량 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">수량</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">수량</label>
           <input
             type="number"
             min={1}
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
           />
         </div>
 
         {/* 주소 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">거래 위치 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">거래 위치 (선택)</label>
           <button
             type="button"
             onClick={handleAddressSearch}
-            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors mb-2"
+            className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl hover:bg-gray-50 transition-colors mb-2"
           >
             주소 검색
           </button>
@@ -523,14 +523,14 @@ export default function EquipmentRegisterPage() {
                 type="text"
                 value={addressRoad}
                 readOnly
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl"
               />
               <input
                 type="text"
                 value={addressDetail}
                 onChange={(e) => setAddressDetail(e.target.value)}
                 placeholder="상세 주소 (예: 3층)"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               />
             </div>
           )}
@@ -538,9 +538,9 @@ export default function EquipmentRegisterPage() {
 
         {/* 사진 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             사진 <span className="text-red-500">*</span>
-            <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">(최소 1장)</span>
+            <span className="text-xs text-gray-400 ml-1">(최소 1장)</span>
           </label>
           <input
             type="file"
@@ -548,9 +548,9 @@ export default function EquipmentRegisterPage() {
             multiple
             onChange={handleImageUpload}
             disabled={uploading}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
           />
-          {uploading && <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">업로드 중...</p>}
+          {uploading && <p className="text-sm text-gray-500 mt-2">업로드 중...</p>}
           {images.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mt-3">
               {images.map((img, idx) => (
@@ -574,7 +574,7 @@ export default function EquipmentRegisterPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
+          className="w-full py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           {submitting ? "등록 중..." : "등록하기"}
         </button>

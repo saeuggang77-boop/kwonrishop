@@ -19,10 +19,10 @@ const UPLOAD_SLOTS = [
 ];
 
 const TYPE_COLORS: Record<string, { bg: string; border: string; lightBg: string; text: string; hoverBorder: string }> = {
-  EXTERIOR: { bg: "bg-orange-500", border: "border-orange-300 dark:border-orange-700", lightBg: "bg-orange-50 dark:bg-orange-950/30", text: "text-orange-500 dark:text-orange-400", hoverBorder: "hover:border-orange-400" },
-  INTERIOR: { bg: "bg-navy-500", border: "border-navy-300 dark:border-navy-600", lightBg: "bg-navy-50 dark:bg-navy-950/30", text: "text-navy-500 dark:text-navy-400", hoverBorder: "hover:border-navy-400" },
-  KITCHEN: { bg: "bg-navy-600", border: "border-navy-300 dark:border-navy-700", lightBg: "bg-navy-50 dark:bg-navy-900/30", text: "text-navy-600 dark:text-navy-400", hoverBorder: "hover:border-navy-400" },
-  OTHER: { bg: "bg-gray-500", border: "border-gray-300 dark:border-gray-600", lightBg: "", text: "text-gray-400 dark:text-gray-500", hoverBorder: "hover:border-gray-400" },
+  EXTERIOR: { bg: "bg-orange-500", border: "border-orange-300", lightBg: "bg-orange-50", text: "text-orange-500", hoverBorder: "hover:border-orange-400" },
+  INTERIOR: { bg: "bg-green-500", border: "border-green-300", lightBg: "bg-green-50", text: "text-green-500", hoverBorder: "hover:border-green-400" },
+  KITCHEN: { bg: "bg-green-600", border: "border-green-300", lightBg: "bg-green-50", text: "text-green-600", hoverBorder: "hover:border-green-400" },
+  OTHER: { bg: "bg-gray-500", border: "border-gray-300", lightBg: "", text: "text-gray-400", hoverBorder: "hover:border-gray-400" },
 };
 
 const PHOTO_GUIDES = [
@@ -164,18 +164,18 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">사진 / 연락처</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">매물 사진을 등록하고 연락처 공개 여부를 설정해주세요</p>
+    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <h2 className="text-lg font-bold text-gray-900 mb-1">사진 / 연락처</h2>
+      <p className="text-sm text-gray-500 mb-6">매물 사진을 등록하고 연락처 공개 여부를 설정해주세요</p>
 
       {wasRefreshed && (
-        <div className="mb-6 p-4 bg-navy-50 dark:bg-navy-900/50 border border-navy-200 dark:border-navy-800 rounded-lg flex gap-3">
-          <svg className="w-5 h-5 text-navy-600 dark:text-navy-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex gap-3">
+          <svg className="w-5 h-5 text-green-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
           <div>
-            <p className="text-sm font-medium text-navy-800 dark:text-navy-300">새로고침으로 인해 이미지가 초기화되었습니다</p>
-            <p className="text-xs text-navy-700 dark:text-navy-400 mt-1">
+            <p className="text-sm font-medium text-green-800">새로고침으로 인해 이미지가 초기화되었습니다</p>
+            <p className="text-xs text-green-700 mt-1">
               이전에 업로드한 사진은 브라우저 새로고침으로 인해 삭제되었습니다. 다시 업로드해주세요.
               <br />
               <span className="font-medium">작성 중 페이지 이탈 시 경고 메시지가 표시되니 참고해주세요.</span>
@@ -187,17 +187,17 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
       <div className="space-y-6">
         {/* 촬영 가이드 */}
         <div>
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">촬영 가이드</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">촬영 가이드</p>
           <div className="grid grid-cols-3 gap-2">
             {PHOTO_GUIDES.map((guide) => (
               <div
                 key={guide.label}
-                className="flex flex-col items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 border-dashed rounded-xl"
+                className="flex flex-col items-center gap-2 p-3 bg-gray-50 border border-gray-200 border-dashed rounded-xl"
               >
                 {guide.icon}
                 <div className="text-center">
-                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{guide.label}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{guide.desc}</p>
+                  <p className="text-xs font-medium text-gray-700">{guide.label}</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">{guide.desc}</p>
                 </div>
               </div>
             ))}
@@ -210,10 +210,10 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
         {/* 사진 업로드 */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              매물 사진 <span className="text-gray-400 dark:text-gray-500">(최대 10장, 장당 10MB)</span>
+            <label className="text-sm font-medium text-gray-700">
+              매물 사진 <span className="text-gray-400">(최대 10장, 장당 10MB)</span>
             </label>
-            <span className="text-sm text-gray-400 dark:text-gray-500">{data.images.length}/10</span>
+            <span className="text-sm text-gray-400">{data.images.length}/10</span>
           </div>
 
           <input
@@ -231,7 +231,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               const colors = TYPE_COLORS[img.type] || TYPE_COLORS.OTHER;
               const typeLabel = IMAGE_TYPES.find((t) => t.value === img.type)?.label || "기타";
               return (
-                <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200">
                   <Image
                     src={img.url}
                     alt={`사진 ${i + 1}`}
@@ -284,7 +284,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                   {slot.required ? (
                     <span className="text-[10px] text-red-400 font-medium mt-0.5">필수</span>
                   ) : (
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">선택</span>
+                    <span className="text-[10px] text-gray-400 mt-0.5">선택</span>
                   )}
                 </button>
               );
@@ -295,7 +295,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               <button
                 type="button"
                 onClick={() => handleSlotClick("OTHER")}
-                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-navy-400 hover:text-navy-400 transition-colors"
+                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-green-400 hover:text-green-400 transition-colors"
               >
                 <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
@@ -307,8 +307,8 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
 
           {/* 사진 유형 필수 체크 */}
           {data.images.length > 0 && !photoRequirementMet && (
-            <div className="mt-3 p-3 bg-navy-50 dark:bg-navy-900/50 border border-navy-200 dark:border-navy-800 rounded-lg">
-              <p className="text-xs text-navy-700 dark:text-navy-300 font-medium">
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-xs text-green-700 font-medium">
                 {!hasExterior && !hasInterior
                   ? "외부 사진 1장, 내부 사진 1장 이상 필요합니다. 사진 유형을 선택해주세요."
                   : !hasExterior
@@ -320,11 +320,11 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
         </div>
 
         {/* 매출 증빙자료 */}
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+        <div className="border-t border-gray-200 pt-6">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               매출 증빙자료
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold rounded">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-semibold rounded">
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
@@ -333,20 +333,20 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
             </label>
           </div>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+            <p className="text-xs text-emerald-600 font-medium">
               증빙자료를 올리면 매출인증 뱃지가 달리고, 문의가 3배 높아집니다
             </p>
-            <span className="text-sm text-gray-400 dark:text-gray-500">{data.documents.length}/20</span>
+            <span className="text-sm text-gray-400">{data.documents.length}/20</span>
           </div>
 
-          <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <div className="flex gap-2">
               <svg className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
               </svg>
               <div>
-                <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">개인정보 보호 안내</p>
-                <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                <p className="text-xs font-semibold text-amber-800">개인정보 보호 안내</p>
+                <p className="text-xs text-amber-700 mt-0.5">
                   업로드 전 사업자번호, 대표자 이름, 주민등록번호 등 <strong>개인정보를 가리고</strong> 올려주세요. 증빙자료는 매물상세 페이지에서 가입된 회원만 열람할 수 있습니다.
                 </p>
               </div>
@@ -364,7 +364,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
 
           <div className="flex flex-wrap gap-3">
             {data.documents.map((doc, i) => (
-              <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+              <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
                 <Image src={doc.url} alt={`증빙 ${i + 1}`} fill className="object-cover" sizes="80px" />
                 <button
                   type="button"
@@ -379,7 +379,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               <button
                 type="button"
                 onClick={() => docInputRef.current?.click()}
-                className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-navy-400 hover:text-navy-400 transition-colors"
+                className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-green-400 hover:text-green-400 transition-colors"
               >
                 <svg className="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
@@ -388,14 +388,14 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               </button>
             )}
           </div>
-          <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2">JPG, PNG 형식만 가능 · 장당 10MB</p>
+          <p className="text-[10px] text-gray-400 mt-2">JPG, PNG 형식만 가능 · 장당 10MB</p>
         </div>
 
         {/* 연락처 공개 */}
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+        <div className="border-t border-gray-200 pt-6">
+          <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
             연락처 공개 여부
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold rounded">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-semibold rounded">
               공개 추천
             </span>
           </label>
@@ -405,8 +405,8 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               onClick={() => updateData({ contactPublic: true })}
               className={`flex-1 py-3 rounded-lg border text-sm font-medium transition-colors ${
                 data.contactPublic
-                  ? "border-navy-500 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
-                  : "border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
+                  ? "border-green-500 bg-green-50 text-green-700"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300"
               }`}
             >
               공개
@@ -416,8 +416,8 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               onClick={() => updateData({ contactPublic: false })}
               className={`flex-1 py-3 rounded-lg border text-sm font-medium transition-colors ${
                 !data.contactPublic
-                  ? "border-navy-500 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300"
-                  : "border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
+                  ? "border-green-500 bg-green-50 text-green-700"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300"
               }`}
             >
               비공개
@@ -435,7 +435,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                   value={data.contactPhone}
                   onChange={(e) => updateData({ contactPhone: formatPhoneInput(e.target.value) })}
                   placeholder="010-1234-5678"
-                  className="w-full px-3 py-3 min-h-[44px] border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-navy-500"
+                  className="w-full px-3 py-3 min-h-[44px] border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               )}
             </div>
@@ -443,19 +443,19 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
 
           {/* 공개 시 전화번호 미입력 경고 */}
           {data.contactPublic && !phoneLoading && !data.contactPhone && (
-            <p className="text-xs text-navy-600 dark:text-navy-400 mt-2">
+            <p className="text-xs text-green-600 mt-2">
               전화번호를 입력해야 매물 상세에 연락처가 노출됩니다
             </p>
           )}
 
           {data.contactPublic ? (
-            <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-              <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium leading-relaxed">
-                📞 <strong>로그인 회원</strong>에게만 전체 번호가 표시되고, 비로그인 방문자에게는 <code className="px-1 bg-emerald-100 dark:bg-emerald-900/40 rounded">010-****-5678</code> 형태로 마스킹됩니다. 스팸·크롤러를 차단하면서 진성 구매자의 즉시 연락을 받을 수 있습니다.
+            <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+              <p className="text-xs text-emerald-700 font-medium leading-relaxed">
+                📞 <strong>로그인 회원</strong>에게만 전체 번호가 표시되고, 비로그인 방문자에게는 <code className="px-1 bg-emerald-100 rounded">010-****-5678</code> 형태로 마스킹됩니다. 스팸·크롤러를 차단하면서 진성 구매자의 즉시 연락을 받을 수 있습니다.
               </p>
             </div>
           ) : (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-xs text-gray-500 mt-2">
               전화번호 없이 <strong>채팅으로만</strong> 연락받습니다. 판매자가 사이트에 접속해 있을 때만 알림을 받을 수 있어, 문의를 놓칠 수 있습니다.
             </p>
           )}
@@ -465,14 +465,14 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
       <div className="mt-8 flex justify-between">
         <button
           onClick={onPrev}
-          className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
         >
           이전
         </button>
         <button
           onClick={onNext}
           disabled={data.images.length === 0 || !photoRequirementMet}
-          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

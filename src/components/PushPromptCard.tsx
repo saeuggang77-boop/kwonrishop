@@ -102,7 +102,7 @@ export default function PushPromptCard({
   if (!visible) {
     if (showGrantedText && pushPermission === "granted") {
       return (
-        <p className="text-xs text-green-500 dark:text-green-400 mt-3 flex items-center justify-center gap-1">
+        <p className="text-xs text-green-500 mt-3 flex items-center justify-center gap-1">
           <BellIcon className="w-4 h-4" />
           알림이 이미 활성화되어 있습니다
         </p>
@@ -135,31 +135,31 @@ export default function PushPromptCard({
 
   const colors = {
     blue: {
-      bg: "bg-navy-50 dark:bg-navy-800/20",
-      border: "border-navy-200 dark:border-navy-700",
-      iconBg: "bg-navy-100 dark:bg-navy-900/50",
-      iconText: "text-navy-700 dark:text-navy-400",
-      button: "bg-navy-700 hover:bg-navy-600",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      iconBg: "bg-green-100",
+      iconText: "text-green-700",
+      button: "bg-green-700 hover:bg-green-600",
     },
     purple: {
-      bg: "bg-navy-50 dark:bg-navy-900/20",
-      border: "border-navy-200 dark:border-navy-800",
-      iconBg: "bg-navy-100 dark:bg-navy-900/50",
-      iconText: "text-navy-600 dark:text-navy-400",
-      button: "bg-navy-600 hover:bg-navy-700",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      iconBg: "bg-green-100",
+      iconText: "text-green-600",
+      button: "bg-green-600 hover:bg-green-700",
     },
     green: {
-      bg: "bg-green-50 dark:bg-green-900/20",
-      border: "border-green-200 dark:border-green-800",
-      iconBg: "bg-green-100 dark:bg-green-900/50",
-      iconText: "text-green-600 dark:text-green-400",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      iconBg: "bg-green-100",
+      iconText: "text-green-600",
       button: "bg-green-600 hover:bg-green-700",
     },
     amber: {
-      bg: "bg-amber-50 dark:bg-amber-900/20",
-      border: "border-amber-200 dark:border-amber-800",
-      iconBg: "bg-amber-100 dark:bg-amber-900/50",
-      iconText: "text-amber-600 dark:text-amber-400",
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      iconBg: "bg-amber-100",
+      iconText: "text-amber-600",
       button: "bg-amber-600 hover:bg-amber-700",
     },
   };
@@ -219,12 +219,12 @@ export default function PushPromptCard({
           <BellIcon className={`w-5 h-5 ${c.iconText}`} />
         </div>
         <div className="flex-1">
-          <h3 className="font-bold text-gray-900 dark:text-white text-sm">{title}</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{desc}</p>
+          <h3 className="font-bold text-gray-900 text-sm">{title}</h3>
+          <p className="text-xs text-gray-500 mt-1">{desc}</p>
 
           {showIOSGuide && (
-            <div className="mt-2 p-2.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-              <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+            <div className="mt-2 p-2.5 bg-white rounded-lg border border-gray-200">
+              <p className="text-xs text-gray-700 leading-relaxed">
                 Safari 하단의 <strong>공유(□↑)</strong> 버튼을 누른 후{" "}
                 <strong>&quot;홈 화면에 추가&quot;</strong>를 선택해주세요
               </p>
@@ -241,7 +241,7 @@ export default function PushPromptCard({
             </button>
             <button
               onClick={handleDismiss}
-              className="px-4 py-2 text-gray-400 dark:text-gray-500 text-sm font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="px-4 py-2 text-gray-400 text-sm font-medium hover:text-gray-600 transition-colors"
             >
               나중에
             </button>

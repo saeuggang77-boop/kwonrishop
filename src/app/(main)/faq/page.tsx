@@ -164,7 +164,7 @@ export default function FAQPage() {
               placeholder="질문을 검색하세요..."
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
-              className="w-full px-4 py-3 pl-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
+              className="w-full px-4 py-3 pl-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <svg
               className="absolute left-3 top-3.5 w-5 h-5 text-gray-400"
@@ -190,8 +190,8 @@ export default function FAQPage() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedCategory === cat
-                  ? "bg-navy-700 text-white"
-                  : "bg-white text-gray-600 border border-gray-300 hover:border-navy-400"
+                  ? "bg-green-700 text-white"
+                  : "bg-white text-gray-600 border border-gray-300 hover:border-green-400"
               }`}
             >
               {cat}
@@ -217,7 +217,7 @@ export default function FAQPage() {
                 >
                   <div className="flex-1 pr-4">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-medium text-navy-700 bg-navy-50 px-2 py-0.5 rounded">
+                      <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded">
                         {item.category}
                       </span>
                     </div>
@@ -245,7 +245,7 @@ export default function FAQPage() {
         )}
 
         {/* 추가 도움말 */}
-        <div className="mt-12 bg-navy-50 rounded-xl p-6 text-center">
+        <div className="mt-12 bg-green-50 rounded-xl p-6 text-center">
           <h3 className="font-bold text-gray-900 mb-2">찾으시는 답변이 없나요?</h3>
           <p className="text-sm text-gray-600 mb-4">
             고객센터로 문의하시면 빠르게 도와드리겠습니다
@@ -253,13 +253,13 @@ export default function FAQPage() {
           <div className="flex flex-wrap gap-3 justify-center">
             <a
               href="tel:1588-7928"
-              className="px-5 py-2.5 bg-white text-navy-700 font-medium rounded-lg border border-navy-600 hover:bg-navy-50 transition-colors"
+              className="px-5 py-2.5 bg-white text-green-700 font-medium rounded-lg border border-green-600 hover:bg-green-50 transition-colors"
             >
               전화 문의: 1588-7928
             </a>
             <a
               href="mailto:samsungcu@naver.com"
-              className="px-5 py-2.5 bg-navy-700 text-white font-medium rounded-lg hover:bg-navy-600 transition-colors"
+              className="px-5 py-2.5 bg-green-700 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
             >
               이메일 문의
             </a>

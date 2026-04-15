@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Fraunces } from "next/font/google";
 import localFont from "next/font/local";
 import SessionProvider from "@/components/providers/SessionProvider";
-import ThemeProvider from "@/components/providers/ThemeProvider";
 import SkipLink from "@/components/ui/SkipLink";
 import Toaster from "@/components/ui/Toaster";
 import PushNotificationManager from "@/components/PushNotificationManager";
@@ -11,6 +10,14 @@ import "./globals.css";
 const geist = Geist({
   variable: "--font-geist",
   subsets: ["latin"],
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 const pretendard = localFont({
@@ -55,7 +62,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#2563eb",
+  themeColor: "#1F3F2E",
   viewportFit: "cover",
 };
 
@@ -65,25 +72,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko">
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var t = localStorage.getItem('theme');
-                if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark');
-                }
-              })();
-            `,
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -101,14 +96,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${pretendard.variable} ${geist.variable} font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
+      <body className={`${pretendard.variable} ${geist.variable} ${fraunces.variable} font-sans antialiased bg-cream text-ink`}>
         <SkipLink />
         <SessionProvider>
-          <ThemeProvider>
-            <PushNotificationManager />
-            <div id="main-content">{children}</div>
-            <Toaster />
-          </ThemeProvider>
+          <PushNotificationManager />
+          <div id="main-content">{children}</div>
+          <Toaster />
         </SessionProvider>
       </body>
     </html>

@@ -170,11 +170,11 @@ function PricingContent() {
     return (
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="animate-pulse space-y-8">
-          <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mx-auto" />
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mx-auto" />
+          <div className="h-12 bg-gray-200 rounded w-1/3 mx-auto" />
+          <div className="h-10 bg-gray-200 rounded w-2/3 mx-auto" />
           <div className="grid md:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+              <div key={i} className="h-96 bg-gray-200 rounded-xl" />
             ))}
           </div>
         </div>
@@ -185,7 +185,7 @@ function PricingContent() {
   return (
     <div>
       {/* 네이비 헤더 */}
-      <div className="bg-gradient-to-br from-navy-dark to-navy px-6 pb-16 pt-12 text-center">
+      <div className="bg-gradient-to-br from-green-800 to-green-700 px-6 pb-16 pt-12 text-center">
         <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-3">
           비즈니스를 성장시키는 프리미엄 서비스
         </h1>
@@ -199,15 +199,15 @@ function PricingContent() {
 
       {/* 플로팅 탭 */}
       <div className="flex justify-center -mt-5 relative z-10 mb-8">
-        <div className="inline-flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-lg">
+        <div className="inline-flex bg-white rounded-xl p-1 shadow-lg">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.key
-                  ? "bg-navy-700 text-white shadow-sm"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                  ? "bg-green-700 text-white shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
               }`}
             >
               {tab.label}
@@ -218,14 +218,14 @@ function PricingContent() {
 
       <div className="max-w-6xl mx-auto px-4 pb-12">
         {/* 환불 정책 안내 (결제 전 필수 고지) */}
-        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
           <div className="flex items-start gap-3">
-            <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div className="text-sm">
-              <p className="font-semibold text-amber-800 dark:text-amber-300 mb-1">결제 전 환불 정책을 꼭 확인해 주세요</p>
-              <ul className="text-amber-700 dark:text-amber-400 space-y-0.5 list-disc list-inside">
+              <p className="font-semibold text-amber-800 mb-1">결제 전 환불 정책을 꼭 확인해 주세요</p>
+              <ul className="text-amber-700 space-y-0.5 list-disc list-inside">
                 <li>광고 노출이 시작된 이후에는 <strong>환불이 불가능</strong>합니다.</li>
                 <li>매장 판매·매물 삭제 등 회원 사정으로 광고를 중단해도 환불되지 않습니다.</li>
                 <li>끌어올리기 등 즉시 소모되는 서비스는 사용 후 환불 불가합니다.</li>
@@ -252,21 +252,21 @@ function PricingContent() {
       {(activeTab === "FRANCHISE" || activeTab === "PARTNER") && (
         <div className="mb-8">
           <div className="flex justify-center">
-            <div className="inline-flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 gap-1">
+            <div className="inline-flex bg-gray-100 rounded-xl p-1 gap-1">
               {PERIODS.map((period) => (
                 <button
                   key={period.key}
                   onClick={() => setFranchisePeriod(period.key)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
                     franchisePeriod === period.key
-                      ? "bg-navy-700 dark:bg-navy-700 text-white shadow-sm"
-                      : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      ? "bg-green-700 text-white shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
                   }`}
                 >
                   {period.label}
                   {period.discount && (
                     <span className={`block text-xs mt-0.5 ${
-                      franchisePeriod === period.key ? "text-navy-100 dark:text-navy-200" : "text-red-500 dark:text-red-400 font-semibold"
+                      franchisePeriod === period.key ? "text-green-100" : "text-red-500 font-semibold"
                     }`}>
                       {period.discount}
                     </span>
@@ -276,7 +276,7 @@ function PricingContent() {
             </div>
           </div>
           {franchisePeriod !== "1m" && (
-            <p className="text-center text-sm text-green-600 dark:text-green-400 font-medium mt-3">
+            <p className="text-center text-sm text-green-600 font-medium mt-3">
               장기 구독 할인이 적용된 가격입니다
             </p>
           )}
@@ -305,13 +305,13 @@ function PricingContent() {
       {activeTab === "LISTING" && subscriptionProducts.length > 0 && (
         <div className="mb-14">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
               🔄 정기 끌어올리기 구독
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-gray-600">
               패키지 없이도 매물 노출을 높이고 싶다면, 자동 끌어올리기를 이용해보세요
             </p>
-            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+            <p className="text-sm text-gray-400 mt-1">
               매번 수동 끌올 대신 설정한 주기에 맞춰 자동으로 상단에 노출됩니다
             </p>
           </div>
@@ -331,7 +331,7 @@ function PricingContent() {
       {/* 단건 공통 상품 */}
       {singleProducts.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">단건 부가 상품</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">단건 부가 상품</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {singleProducts.map((product) => (
               <SingleCard
@@ -369,28 +369,28 @@ function PackageCard({
   // 색상 테마 결정
   const theme = isTop
     ? {
-        border: "border-yellow-400 dark:border-yellow-500",
-        bg: "bg-gradient-to-br from-yellow-50 to-white dark:from-yellow-950 dark:to-gray-800",
+        border: "border-yellow-400",
+        bg: "bg-gradient-to-br from-yellow-50 to-white",
         badge: "BEST",
-        badgeBg: "bg-yellow-400 dark:bg-yellow-500 text-yellow-900 dark:text-yellow-950",
-        btn: "bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:active:bg-yellow-800",
-        ring: "ring-2 ring-yellow-400 dark:ring-yellow-500 shadow-lg",
+        badgeBg: "bg-yellow-400 text-yellow-900",
+        btn: "bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700",
+        ring: "ring-2 ring-yellow-400 shadow-lg",
       }
     : isMid
     ? {
-        border: "border-navy-400 dark:border-navy-500",
-        bg: "bg-gradient-to-br from-navy-50 to-white dark:from-navy-950 dark:to-gray-800",
+        border: "border-green-400",
+        bg: "bg-gradient-to-br from-green-50 to-white",
         badge: "추천",
-        badgeBg: "bg-navy-500 text-white",
-        btn: "bg-navy-700 hover:bg-navy-600 active:bg-navy-800",
-        ring: "ring-2 ring-navy-400 dark:ring-navy-500 shadow-md",
+        badgeBg: "bg-green-500 text-white",
+        btn: "bg-green-700 hover:bg-green-600 active:bg-green-800",
+        ring: "ring-2 ring-green-400 shadow-md",
       }
     : {
-        border: "border-gray-200 dark:border-gray-700",
-        bg: "bg-white dark:bg-gray-800",
+        border: "border-gray-200",
+        bg: "bg-white",
         badge: null,
         badgeBg: "",
-        btn: "bg-gray-800 hover:bg-gray-900 active:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500",
+        btn: "bg-gray-800 hover:bg-gray-900 active:bg-black",
         ring: "",
       };
 
@@ -410,28 +410,28 @@ function PackageCard({
       )}
 
       <div className="text-center mb-6 pt-2">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">
           {/* Show tier name without period suffix */}
           {features.badge || product.name}
         </h3>
         {features.discount && (
-          <div className="inline-block bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-xs font-bold px-2 py-0.5 rounded-full mb-2">
+          <div className="inline-block bg-red-50 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full mb-2">
             {features.discount} 할인
           </div>
         )}
         <div className="flex items-baseline justify-center gap-1">
-          <span className="text-4xl font-bold text-gray-900 dark:text-white">
+          <span className="text-4xl font-bold text-gray-900">
             {(product.price / 10000).toLocaleString()}
           </span>
-          <span className="text-xl text-gray-600 dark:text-gray-300">만원</span>
+          <span className="text-xl text-gray-600">만원</span>
         </div>
         {product.duration && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             {product.duration >= 365 ? "12개월" : product.duration >= 180 ? "6개월" : product.duration >= 90 ? "3개월" : `${product.duration}일`} 동안
           </p>
         )}
         {features.period && features.period !== "1m" && (
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+          <p className="text-xs text-gray-400 mt-0.5">
             월 {Math.round(product.price / (product.duration! / 30) / 10000).toLocaleString()}만원
           </p>
         )}
@@ -587,22 +587,22 @@ function SingleCard({
   const features = product.features as Record<string, any>;
 
   return (
-    <div className="rounded-xl p-5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-navy-300 dark:hover:border-navy-600 hover:shadow-md transition-all">
+    <div className="rounded-xl p-5 border border-gray-200 bg-white hover:border-green-300 hover:shadow-md transition-all">
       <div className="text-center mb-4">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{product.name}</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-2">{product.name}</h3>
         <div className="flex items-baseline justify-center gap-1">
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">
+          <span className="text-2xl font-bold text-gray-900">
             {product.price.toLocaleString()}
           </span>
-          <span className="text-sm text-gray-600 dark:text-gray-300">원</span>
+          <span className="text-sm text-gray-600">원</span>
         </div>
         {product.duration && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{product.duration}일 유효</p>
+          <p className="text-xs text-gray-500 mt-1">{product.duration}일 유효</p>
         )}
       </div>
 
       {features.description && (
-        <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-4">
+        <p className="text-sm text-gray-600 text-center mb-4">
           {features.description}
         </p>
       )}
@@ -610,7 +610,7 @@ function SingleCard({
       <button
         onClick={() => onPurchase(product.id)}
         disabled={purchasing}
-        className="w-full py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 active:bg-navy-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+        className="w-full py-2.5 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 active:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
       >
         {purchasing ? "처리 중..." : "구매하기"}
       </button>
@@ -646,56 +646,56 @@ function SubscriptionCard({
 
   return (
     <div
-      className={`relative rounded-xl p-5 border-2 bg-white dark:bg-gray-800 hover:shadow-lg transition-all ${
+      className={`relative rounded-xl p-5 border-2 bg-white hover:shadow-lg transition-all ${
         isPopular
-          ? "border-navy-400 dark:border-navy-500 ring-2 ring-navy-400 dark:ring-navy-500 shadow-md"
-          : "border-gray-200 dark:border-gray-700 hover:border-navy-300 dark:hover:border-navy-600"
+          ? "border-green-400 ring-2 ring-green-400 shadow-md"
+          : "border-gray-200 hover:border-green-300"
       }`}
     >
       {isPopular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-navy-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
           인기
         </div>
       )}
 
       <div className="text-center mb-4 pt-1">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+        <h3 className="text-lg font-bold text-gray-900 mb-2">
           {product.name.replace("끌어올리기 ", "")}
         </h3>
         <div className="flex items-baseline justify-center gap-1 mb-1">
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">
+          <span className="text-2xl font-bold text-gray-900">
             월 {(product.price / 10000).toLocaleString()}
           </span>
-          <span className="text-sm text-gray-600 dark:text-gray-300">만원</span>
+          <span className="text-sm text-gray-600">만원</span>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400">30일 자동 갱신</p>
+        <p className="text-xs text-gray-500">30일 자동 갱신</p>
       </div>
 
       <div className="space-y-2 mb-4 min-h-[100px]">
-        <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-          <span className="text-navy-700 dark:text-navy-400">📅</span>
+        <div className="flex items-center gap-2 text-sm text-gray-700">
+          <span className="text-green-700">📅</span>
           <span className="font-medium">{frequencyMap[features.frequency] || "자동 끌올"}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-          <span className="text-orange-500 dark:text-orange-400">⏰</span>
+        <div className="flex items-center gap-2 text-sm text-gray-700">
+          <span className="text-orange-500">⏰</span>
           <span>{timeDisplay} 자동 끌올</span>
         </div>
         {features.savingsPercent && (
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-green-600 dark:text-green-400">💰</span>
-            <span className="text-green-600 dark:text-green-400 font-medium">
+            <span className="text-green-600">💰</span>
+            <span className="text-green-600 font-medium">
               단건 대비 {features.savingsPercent}% 절약
             </span>
           </div>
         )}
         {!features.savingsPercent && features.frequency === "TWICE_DAILY" && (
-          <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <div className="flex items-center gap-2 text-sm text-gray-700">
             <span>🚀</span>
             <span className="font-medium">최대 노출 효과</span>
           </div>
         )}
         {features.frequency === "DAILY" && (
-          <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <div className="flex items-center gap-2 text-sm text-gray-700">
             <span>📈</span>
             <span>가장 꾸준한 노출</span>
           </div>
@@ -707,8 +707,8 @@ function SubscriptionCard({
         disabled={purchasing}
         className={`w-full py-2.5 rounded-lg font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
           isPopular
-            ? "bg-navy-700 hover:bg-navy-600 active:bg-navy-800"
-            : "bg-gray-800 hover:bg-gray-900 active:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500"
+            ? "bg-green-700 hover:bg-green-600 active:bg-green-800"
+            : "bg-gray-800 hover:bg-gray-900 active:bg-black"
         }`}
       >
         {purchasing ? "처리 중..." : "구독하기"}
@@ -719,7 +719,7 @@ function SubscriptionCard({
 
 function Feature({ icon, text }: { icon: string; text: string }) {
   return (
-    <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+    <li className="flex items-center gap-2 text-gray-700">
       <span className="text-lg">{icon}</span>
       <span className="text-sm">{text}</span>
     </li>
@@ -731,11 +731,11 @@ export default function PricingPage() {
     <Suspense fallback={
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="animate-pulse space-y-8">
-          <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mx-auto" />
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mx-auto" />
+          <div className="h-12 bg-gray-200 rounded w-1/3 mx-auto" />
+          <div className="h-10 bg-gray-200 rounded w-2/3 mx-auto" />
           <div className="grid md:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+              <div key={i} className="h-96 bg-gray-200 rounded-xl" />
             ))}
           </div>
         </div>

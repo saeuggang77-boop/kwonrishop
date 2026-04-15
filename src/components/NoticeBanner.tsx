@@ -34,17 +34,17 @@ export default function NoticeBanner() {
   if (!notice || dismissed) return null;
 
   return (
-    <div className="bg-navy-50 border-b border-navy-200">
+    <div className="bg-green-50 border-b border-green-200">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <span className="text-navy-700 font-bold text-sm flex-shrink-0">
+            <span className="text-green-700 font-bold text-sm flex-shrink-0">
               📢 공지
             </span>
             <p className="text-gray-900 font-medium truncate">{notice.title}</p>
             <Link
               href={`/community?tag=공지`}
-              className="text-navy-700 hover:text-navy-700 text-sm font-medium flex-shrink-0"
+              className="text-green-700 hover:text-green-700 text-sm font-medium flex-shrink-0"
             >
               더보기 →
             </Link>

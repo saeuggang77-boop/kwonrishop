@@ -63,7 +63,7 @@ export default function CommunityEditPage() {
         <p className="text-red-500 mb-4">{error}</p>
         <button
           onClick={() => router.back()}
-          className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50"
         >
           돌아가기
         </button>
@@ -98,7 +98,7 @@ export default function CommunityEditPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">글 수정</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">글 수정</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex gap-2 flex-wrap">
@@ -109,8 +109,8 @@ export default function CommunityEditPage() {
               onClick={() => setTag(t)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 tag === t
-                  ? "bg-navy-700 text-white"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  ? "bg-green-700 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
               {t}
@@ -123,7 +123,7 @@ export default function CommunityEditPage() {
           placeholder="제목을 입력하세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-lg outline-none focus:ring-2 focus:ring-navy-500"
+          className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg text-lg outline-none focus:ring-2 focus:ring-green-500"
         />
 
         <textarea
@@ -131,7 +131,7 @@ export default function CommunityEditPage() {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={15}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-navy-500 resize-none"
+          className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none focus:ring-2 focus:ring-green-500 resize-none"
         />
 
         {error && (
@@ -142,14 +142,14 @@ export default function CommunityEditPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50"
           >
             취소
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50"
+            className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50"
           >
             {loading ? "수정 중..." : "수정"}
           </button>

@@ -159,7 +159,7 @@ export default function TossPayment({
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
                     <span className="text-gray-900 font-bold">총 결제금액</span>
-                    <span className="font-bold text-navy-700 text-lg">
+                    <span className="font-bold text-green-700 text-lg">
                       {amount.toLocaleString()}원
                     </span>
                   </div>
@@ -167,7 +167,7 @@ export default function TossPayment({
               ) : (
                 <div className="flex justify-between pt-2 border-t border-gray-100">
                   <span className="text-gray-900 font-medium">결제 금액</span>
-                  <span className="font-bold text-navy-700 text-lg">
+                  <span className="font-bold text-green-700 text-lg">
                     {amount.toLocaleString()}원
                   </span>
                 </div>
@@ -186,7 +186,7 @@ export default function TossPayment({
           <>
             <button
               onClick={handlePayment}
-              className="w-full py-4 bg-navy-700 text-white rounded-xl font-bold text-lg hover:bg-navy-600 active:bg-navy-800 transition-colors"
+              className="w-full py-4 bg-green-700 text-white rounded-xl font-bold text-lg hover:bg-green-600 active:bg-green-800 transition-colors"
             >
               결제하기
             </button>

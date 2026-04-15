@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import { usePathname } from "next/navigation";
+import Logo from "@/components/ui/Logo";
 
 interface Notification {
   id: string;
@@ -79,78 +79,76 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+    <header className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-line">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-navy-700 dark:text-white">
-          권리샵
-        </Link>
+        <Logo size="md" />
 
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600 dark:text-gray-300" aria-label="주요 메뉴">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600" aria-label="주요 메뉴">
           <Link
             href="/listings"
-            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
-              pathname === "/listings" ? "text-navy-700 dark:text-white" : ""
+            className={`hover:text-green-700 outline-none transition-colors relative pb-1 ${
+              pathname === "/listings" ? "text-green-700" : ""
             }`}
             aria-current={pathname === "/listings" ? "page" : undefined}
           >
             매물검색
             {pathname === "/listings" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-700" />
             )}
           </Link>
           <Link
             href="/franchise"
-            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
-              pathname === "/franchise" ? "text-navy-700 dark:text-white" : ""
+            className={`hover:text-green-700 outline-none transition-colors relative pb-1 ${
+              pathname === "/franchise" ? "text-green-700" : ""
             }`}
             aria-current={pathname === "/franchise" ? "page" : undefined}
           >
             프랜차이즈
             {pathname === "/franchise" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-700" />
             )}
           </Link>
           <Link
             href="/partners"
-            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
-              pathname === "/partners" ? "text-navy-700 dark:text-white" : ""
+            className={`hover:text-green-700 outline-none transition-colors relative pb-1 ${
+              pathname === "/partners" ? "text-green-700" : ""
             }`}
             aria-current={pathname === "/partners" ? "page" : undefined}
           >
             협력업체
             {pathname === "/partners" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-700" />
             )}
           </Link>
           <Link
             href="/equipment"
-            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
-              pathname === "/equipment" ? "text-navy-700 dark:text-white" : ""
+            className={`hover:text-green-700 outline-none transition-colors relative pb-1 ${
+              pathname === "/equipment" ? "text-green-700" : ""
             }`}
             aria-current={pathname === "/equipment" ? "page" : undefined}
           >
             집기장터
             {pathname === "/equipment" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-700" />
             )}
           </Link>
           <Link
             href="/community"
-            className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
-              pathname === "/community" ? "text-navy-700 dark:text-white" : ""
+            className={`hover:text-green-700 outline-none transition-colors relative pb-1 ${
+              pathname === "/community" ? "text-green-700" : ""
             }`}
             aria-current={pathname === "/community" ? "page" : undefined}
           >
             커뮤니티
             {pathname === "/community" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-700" />
             )}
           </Link>
           {session && (
             <Link
               href="/chat"
-              className={`hover:text-navy-700 dark:hover:text-white outline-none transition-colors relative pb-1 ${
-                pathname === "/chat" ? "text-navy-700 dark:text-white" : ""
+              className={`hover:text-green-700 outline-none transition-colors relative pb-1 ${
+                pathname === "/chat" ? "text-green-700" : ""
               }`}
               aria-current={pathname === "/chat" ? "page" : undefined}
             >
@@ -161,7 +159,7 @@ export default function Header() {
                 </span>
               )}
               {pathname === "/chat" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-navy-700" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-700" />
               )}
             </Link>
           )}
@@ -172,14 +170,11 @@ export default function Header() {
             <div className="w-20 h-8 bg-gray-100 rounded-lg animate-pulse" />
           ) : session ? (
             <>
-              {/* Theme Toggle */}
-              <ThemeToggle />
-
               {/* Notification Bell */}
               <div className="relative">
                 <button
                   onClick={() => setNotifOpen(!notifOpen)}
-                  className="relative p-3 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  className="relative p-3 text-gray-600 hover:text-gray-900 min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label={unreadCount > 0 ? `읽지 않은 알림 ${unreadCount}건` : "알림"}
                   aria-expanded={notifOpen}
                 >
@@ -209,20 +204,20 @@ export default function Header() {
                       className="fixed inset-0"
                       onClick={() => setNotifOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50 max-h-96 overflow-y-auto" role="menu">
-                      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-                        <h3 className="font-bold text-gray-900 dark:text-gray-100">알림</h3>
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 max-h-96 overflow-y-auto" role="menu">
+                      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+                        <h3 className="font-bold text-gray-900">알림</h3>
                         {unreadCount > 0 && (
                           <button
                             onClick={markAllRead}
-                            className="text-xs text-navy-700 hover:text-navy-600 dark:text-navy-400 dark:hover:text-navy-300"
+                            className="text-xs text-green-700 hover:text-green-600"
                           >
                             모두 읽음
                           </button>
                         )}
                       </div>
                       {notifications.length === 0 ? (
-                        <p className="px-4 py-6 text-sm text-gray-400 dark:text-gray-500 text-center">
+                        <p className="px-4 py-6 text-sm text-gray-400 text-center">
                           알림이 없습니다
                         </p>
                       ) : (
@@ -232,17 +227,17 @@ export default function Header() {
                               key={notif.id}
                               href={notif.link || "#"}
                               onClick={() => setNotifOpen(false)}
-                              className={`block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-50 dark:border-gray-700 ${
-                                !notif.read ? "bg-navy-50/50 dark:bg-navy-800/20" : ""
+                              className={`block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 ${
+                                !notif.read ? "bg-green-50/50" : ""
                               }`}
                             >
-                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <p className="text-sm font-medium text-gray-900">
                                 {notif.title}
                               </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              <p className="text-xs text-gray-500 mt-1">
                                 {notif.message}
                               </p>
-                              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                              <p className="text-xs text-gray-400 mt-1">
                                 {timeAgo(notif.createdAt)}
                               </p>
                             </Link>
@@ -250,7 +245,7 @@ export default function Header() {
                           <Link
                             href="/notifications"
                             onClick={() => setNotifOpen(false)}
-                            className="block px-4 py-2 text-center text-sm font-medium text-navy-700 hover:text-navy-600 dark:text-navy-400 dark:hover:text-navy-300 border-t border-gray-100 dark:border-gray-700"
+                            className="block px-4 py-2 text-center text-sm font-medium text-green-700 hover:text-green-600 border-t border-gray-100"
                           >
                             모든 알림 보기
                           </Link>
@@ -264,7 +259,7 @@ export default function Header() {
               <div className="relative">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900"
                 aria-expanded={menuOpen}
                 aria-label="사용자 메뉴"
               >
@@ -277,7 +272,7 @@ export default function Header() {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-navy-100 flex items-center justify-center text-navy-700 text-xs font-bold">
+                  <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
                     {session.user.name?.[0] || "U"}
                   </div>
                 )}
@@ -292,11 +287,11 @@ export default function Header() {
                     className="fixed inset-0"
                     onClick={() => setMenuOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50" role="menu">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50" role="menu">
                     {session.user.role === "ADMIN" ? (
                       <Link
                         href="/admin"
-                        className="block px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="block px-4 py-2 text-sm font-medium text-blue-600 hover:bg-gray-50"
                         onClick={() => setMenuOpen(false)}
                       >
                         관리자페이지
@@ -304,7 +299,7 @@ export default function Header() {
                     ) : (
                       <Link
                         href="/sell"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setMenuOpen(false)}
                       >
                         매물등록
@@ -312,15 +307,15 @@ export default function Header() {
                     )}
                     <Link
                       href="/mypage"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       onClick={() => setMenuOpen(false)}
                     >
                       마이페이지
                     </Link>
-                    <hr className="my-1 border-gray-200 dark:border-gray-700" />
+                    <hr className="my-1 border-gray-200" />
                     <button
                       onClick={() => signOut({ callbackUrl: "/" })}
-                      className="w-full text-left px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-50"
                     >
                       로그아웃
                     </button>
@@ -332,7 +327,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="px-4 py-2 text-sm font-medium text-white bg-navy-700 rounded-lg hover:bg-navy-600 dark:bg-navy-600 dark:hover:bg-navy-500 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-600 transition-colors"
             >
               로그인
             </Link>
@@ -346,7 +341,7 @@ export default function Header() {
             aria-label="모바일 메뉴"
           >
             <svg
-              className="w-6 h-6 text-gray-600 dark:text-gray-300"
+              className="w-6 h-6 text-gray-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -378,39 +373,39 @@ export default function Header() {
             className="fixed inset-0 bg-black/50 z-40 md:hidden"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="fixed top-14 left-0 right-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-50 md:hidden">
+          <div className="fixed top-14 left-0 right-0 bg-white border-b border-gray-200 z-50 md:hidden">
             <nav className="px-4 py-3 space-y-1">
               <Link
                 href="/listings"
-                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 매물검색
               </Link>
               <Link
                 href="/franchise"
-                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 프랜차이즈
               </Link>
               <Link
                 href="/partners"
-                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 협력업체
               </Link>
               <Link
                 href="/equipment"
-                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 집기장터
               </Link>
               <Link
                 href="/community"
-                className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 커뮤니티
@@ -419,7 +414,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/chat"
-                    className="flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                    className="flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <span>채팅</span>
@@ -429,11 +424,11 @@ export default function Header() {
                       </span>
                     )}
                   </Link>
-                  <hr className="my-2 border-gray-200 dark:border-gray-700" />
+                  <hr className="my-2 border-gray-200" />
                   {session.user.role === "ADMIN" ? (
                     <Link
                       href="/admin"
-                      className="block px-4 py-3 text-sm font-bold text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                      className="block px-4 py-3 text-sm font-bold text-blue-600 hover:bg-gray-50 rounded-lg"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       관리자페이지
@@ -441,7 +436,7 @@ export default function Header() {
                   ) : (
                     <Link
                       href="/sell"
-                      className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                      className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       매물등록
@@ -449,7 +444,7 @@ export default function Header() {
                   )}
                   <Link
                     href="/mypage"
-                    className="block px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                    className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     마이페이지
@@ -459,7 +454,7 @@ export default function Header() {
                       setMobileMenuOpen(false);
                       signOut({ callbackUrl: "/" });
                     }}
-                    className="w-full text-left px-4 py-3 text-sm font-medium text-red-500 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                    className="w-full text-left px-4 py-3 text-sm font-medium text-red-500 hover:bg-gray-50 rounded-lg"
                   >
                     로그아웃
                   </button>

@@ -152,10 +152,10 @@ function EquipmentListContent() {
     return (
       <div>
         {/* Navy 배너 */}
-        <div className="bg-navy-700 text-white pt-10 pb-16">
+        <div className="bg-green-700 text-white pt-10 pb-16">
           <div className="max-w-6xl mx-auto px-4 text-center">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">내 집기</h1>
-            <p className="text-navy-200 text-sm md:text-base">내가 등록한 집기 목록</p>
+            <p className="text-green-200 text-sm md:text-base">내가 등록한 집기 목록</p>
           </div>
         </div>
 
@@ -163,7 +163,7 @@ function EquipmentListContent() {
         <div className="flex items-center justify-end mb-6">
           <button
             onClick={() => router.push("/equipment/register")}
-            className="px-4 py-2 bg-navy-700 text-white text-sm rounded-lg font-medium hover:bg-navy-600"
+            className="px-4 py-2 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600"
           >
             집기 등록
           </button>
@@ -171,11 +171,11 @@ function EquipmentListContent() {
         {myLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl aspect-[3/4] animate-pulse" />
+              <div key={i} className="bg-gray-100 rounded-xl aspect-[3/4] animate-pulse" />
             ))}
           </div>
         ) : myEquipments.length === 0 ? (
-          <div className="text-center py-20 text-gray-400 dark:text-gray-500">
+          <div className="text-center py-20 text-gray-400">
             <p>등록한 집기가 없습니다</p>
             <p className="text-sm mt-1">집기를 등록하고 판매해보세요</p>
           </div>
@@ -185,19 +185,19 @@ function EquipmentListContent() {
               <div
                 key={eq.id}
                 onClick={() => router.push(`/equipment/${eq.id}`)}
-                className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
               >
-                <div className="aspect-square bg-gray-100 dark:bg-gray-800">
+                <div className="aspect-square bg-gray-100">
                   {eq.images[0] && (
                     <Image src={eq.images[0].url} alt={eq.title} width={300} height={300} className="w-full h-full object-cover" />
                   )}
                 </div>
                 <div className="p-3">
-                  <p className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">{eq.title}</p>
-                  <p className="text-navy-700 dark:text-navy-400 font-bold text-sm mt-1">
+                  <p className="font-medium text-sm text-gray-900 truncate">{eq.title}</p>
+                  <p className="text-green-700 font-bold text-sm mt-1">
                     {eq.price.toLocaleString()}원
                   </p>
-                  <div className="flex gap-2 mt-1 text-xs text-gray-400 dark:text-gray-500">
+                  <div className="flex gap-2 mt-1 text-xs text-gray-400">
                     <span>조회 {eq.viewCount}</span>
                     <span>관심 {eq.favoriteCount}</span>
                   </div>
@@ -213,11 +213,15 @@ function EquipmentListContent() {
 
   return (
     <div>
-      {/* Navy 배너 */}
-      <div className="bg-navy-700 text-white pt-10 pb-16">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">집기장터</h1>
-          <p className="text-navy-200 text-sm md:text-base">중고 집기·인테리어를 합리적인 가격에</p>
+      {/* 히어로 */}
+      <div className="bg-green-700 text-cream pt-14 pb-20 relative overflow-hidden">
+        <div aria-hidden className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-terra-500/10 blur-3xl" />
+        <div className="max-w-6xl mx-auto px-4 text-center relative">
+          <div className="text-xs font-semibold text-terra-300 tracking-[0.2em] uppercase mb-3">Equipment Market</div>
+          <h1 className="font-extrabold text-cream text-3xl md:text-5xl tracking-tight mb-3 leading-tight">
+            <span className="font-serif italic font-light text-terra-300">중고 집기</span>, 합리적으로
+          </h1>
+          <p className="text-cream/60 text-sm md:text-base">사장님이 직접 올린 중고 집기·인테리어</p>
         </div>
       </div>
 
@@ -233,12 +237,12 @@ function EquipmentListContent() {
           placeholder="집기명, 브랜드 검색"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="flex-1 min-w-[160px] px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+          className="flex-1 min-w-[160px] px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
         />
         <select
           value={category}
           onChange={(e) => handleFilterChange(e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-navy-500 outline-none"
+          className="px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
         >
           <option value="">카테고리 전체</option>
           {Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([key, label]) => (
@@ -247,7 +251,7 @@ function EquipmentListContent() {
         </select>
         <button
           type="submit"
-          className="px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-600 transition-colors"
+          className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
         >
           검색
         </button>
@@ -255,7 +259,7 @@ function EquipmentListContent() {
           <button
             type="button"
             onClick={clearSearch}
-            className="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-200"
+            className="px-3 py-2 text-gray-500 text-sm hover:text-gray-700"
           >
             초기화
           </button>
@@ -265,7 +269,7 @@ function EquipmentListContent() {
       {loading ? (
         <div className="space-y-8">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl h-40 animate-pulse" />
+            <div key={i} className="bg-gray-100 rounded-xl h-40 animate-pulse" />
           ))}
         </div>
       ) : isSearchMode ? (
@@ -358,48 +362,48 @@ function TierSection({
     return (
       <div className="mb-12">
         <div className="flex items-center gap-2 mb-5">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-navy-700 rounded-lg">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-700 rounded-lg">
             <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
             <span className="text-white text-sm font-bold tracking-wide">VIP</span>
           </div>
-          <span className="text-sm text-navy-600 dark:text-navy-400 font-medium">프리미엄 집기</span>
+          <span className="text-sm text-green-600 font-medium">프리미엄 집기</span>
           {hasMore && (
-            <button onClick={onShowAll} className="ml-auto text-sm text-navy-700 dark:text-navy-400 hover:text-navy-700">더보기 &rarr;</button>
+            <button onClick={onShowAll} className="ml-auto text-sm text-green-700 hover:text-green-700">더보기 &rarr;</button>
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {displayed.map((eq) => (
             <div
               key={eq.id}
-              className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden cursor-pointer border-2 border-navy-600 dark:border-navy-500 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)] hover:-translate-y-0.5 transition-all duration-200"
+              className="bg-white rounded-2xl overflow-hidden cursor-pointer border-2 border-green-600 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)] hover:-translate-y-0.5 transition-all duration-200"
               onClick={() => onEquipmentClick(eq.id)}
             >
               <div className="flex">
-                <div className="w-44 h-40 shrink-0 bg-gray-100 dark:bg-gray-800 relative">
+                <div className="w-44 h-40 shrink-0 bg-gray-100 relative">
                   {eq.images.length > 0 ? (
                     <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-black text-5xl text-gray-300/60 dark:text-gray-600/40">{eq.title.charAt(0)}</span>
+                      <span className="font-black text-5xl text-gray-300/60">{eq.title.charAt(0)}</span>
                     </div>
                   )}
-                  <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 bg-navy-700/90 text-white text-[9px] font-bold rounded">
+                  <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 bg-green-700/90 text-white text-[9px] font-bold rounded">
                     <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     VIP
                   </div>
                 </div>
                 <div className="flex-1 p-5 flex flex-col justify-between min-w-0">
                   <div>
-                    <h3 className="font-extrabold text-gray-900 dark:text-white text-lg leading-tight truncate">{eq.title}</h3>
-                    <p className="text-xs text-navy-600 dark:text-navy-400 font-medium mt-1">
+                    <h3 className="font-extrabold text-gray-900 text-lg leading-tight truncate">{eq.title}</h3>
+                    <p className="text-xs text-green-600 font-medium mt-1">
                       {eq.price === 0 ? "무료 나눔" : `${eq.price.toLocaleString()}원`}
                       {eq.negotiable && eq.price > 0 && " · 협의가능"}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <p className="text-sm text-gray-500 mt-2">
                       {EQUIPMENT_CATEGORY_LABELS[eq.category] || eq.category} · {EQUIPMENT_CONDITION_LABELS[eq.condition] || eq.condition}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 mt-3 text-xs text-gray-400 dark:text-gray-500">
+                  <div className="flex items-center gap-3 mt-3 text-xs text-gray-400">
                     <span>조회 {eq.viewCount}</span>
                     <span>·</span>
                     <span>찜 {eq.favoriteCount}</span>
@@ -418,39 +422,39 @@ function TierSection({
     return (
       <div className="mb-12">
         <div className="flex items-center gap-2 mb-5">
-          <div className="px-3 py-1.5 bg-navy-500 rounded-lg">
+          <div className="px-3 py-1.5 bg-green-500 rounded-lg">
             <span className="text-white text-sm font-bold tracking-wide">PREMIUM</span>
           </div>
-          <span className="text-sm text-navy-500/80 dark:text-navy-400/80 font-medium">추천 집기</span>
+          <span className="text-sm text-green-500/80 font-medium">추천 집기</span>
           {hasMore && (
-            <button onClick={onShowAll} className="ml-auto text-sm text-navy-700 dark:text-navy-400 hover:text-navy-700">더보기 &rarr;</button>
+            <button onClick={onShowAll} className="ml-auto text-sm text-green-700 hover:text-green-700">더보기 &rarr;</button>
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {displayed.map((eq) => (
             <div
               key={eq.id}
-              className="bg-white dark:bg-gray-900 rounded-xl overflow-hidden cursor-pointer border-[1.5px] border-navy-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-200"
+              className="bg-white rounded-xl overflow-hidden cursor-pointer border-[1.5px] border-green-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-200"
               onClick={() => onEquipmentClick(eq.id)}
             >
               <div className="flex">
-                <div className="w-28 h-28 shrink-0 bg-gray-100 dark:bg-gray-800 relative">
+                <div className="w-28 h-28 shrink-0 bg-gray-100 relative">
                   {eq.images.length > 0 ? (
                     <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-bold text-3xl text-gray-300/60 dark:text-gray-600/40">{eq.title.charAt(0)}</span>
+                      <span className="font-bold text-3xl text-gray-300/60">{eq.title.charAt(0)}</span>
                     </div>
                   )}
                 </div>
                 <div className="flex-1 p-3.5 flex flex-col justify-between min-w-0">
                   <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-sm truncate">{eq.title}</h3>
-                    <p className="text-[11px] text-navy-500 dark:text-navy-400 font-medium mt-0.5">
+                    <h3 className="font-bold text-gray-900 text-sm truncate">{eq.title}</h3>
+                    <p className="text-[11px] text-green-500 font-medium mt-0.5">
                       {eq.price === 0 ? "무료 나눔" : `${eq.price.toLocaleString()}원`}
                       {eq.negotiable && eq.price > 0 && " · 협의가능"}
                     </p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1.5">
+                    <p className="text-[11px] text-gray-500 mt-1.5">
                       {EQUIPMENT_CATEGORY_LABELS[eq.category] || eq.category} · {EQUIPMENT_CONDITION_LABELS[eq.condition] || eq.condition}
                     </p>
                   </div>
@@ -467,34 +471,34 @@ function TierSection({
   return (
     <div className="mb-12">
       <div className="flex items-center gap-2 mb-4">
-        <div className="px-3 py-1.5 bg-navy-500 rounded-lg">
+        <div className="px-3 py-1.5 bg-green-500 rounded-lg">
           <span className="text-white text-sm font-extrabold tracking-wide">BASIC</span>
         </div>
-        <span className="text-sm text-navy-500/80 dark:text-navy-400/80 font-medium">등록 집기</span>
+        <span className="text-sm text-green-500/80 font-medium">등록 집기</span>
         {hasMore && (
-          <button onClick={onShowAll} className="ml-auto text-sm text-navy-700 dark:text-navy-400 hover:text-navy-700">더보기 &rarr;</button>
+          <button onClick={onShowAll} className="ml-auto text-sm text-green-700 hover:text-green-700">더보기 &rarr;</button>
         )}
       </div>
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden divide-y divide-gray-100">
         {displayed.map((eq) => (
           <div
             key={eq.id}
-            className="flex items-center justify-between px-5 py-3.5 hover:bg-navy-50/30 dark:hover:bg-navy-950/20 cursor-pointer transition-colors group"
+            className="flex items-center justify-between px-5 py-3.5 hover:bg-green-50/30 cursor-pointer transition-colors group"
             onClick={() => onEquipmentClick(eq.id)}
           >
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{eq.title}</p>
-                <span className="text-[11px] text-gray-400 dark:text-gray-500">·</span>
-                <span className="text-[11px] text-gray-400 dark:text-gray-500">
+                <p className="text-sm font-semibold text-gray-900 truncate">{eq.title}</p>
+                <span className="text-[11px] text-gray-400">·</span>
+                <span className="text-[11px] text-gray-400">
                   {eq.price === 0 ? "무료 나눔" : `${eq.price.toLocaleString()}원`}
                 </span>
               </div>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-400 mt-0.5">
                 {EQUIPMENT_CATEGORY_LABELS[eq.category] || eq.category} · {EQUIPMENT_CONDITION_LABELS[eq.condition] || eq.condition}
               </p>
             </div>
-            <span className="text-xs text-navy-500 dark:text-navy-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-3">자세히 &rarr;</span>
+            <span className="text-xs text-green-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-3">자세히 &rarr;</span>
           </div>
         ))}
       </div>
@@ -524,10 +528,10 @@ function FreeSection({
     <div className="mb-10">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-base font-bold text-gray-500 dark:text-gray-400">일반 집기</h2>
-          <span className="text-sm text-gray-300 dark:text-gray-600">{total}개</span>
+          <h2 className="text-base font-bold text-gray-500">일반 집기</h2>
+          <span className="text-sm text-gray-300">{total}개</span>
         </div>
-        <a href="/pricing" className="text-[11px] text-gray-400 dark:text-gray-500 hover:text-navy-500 dark:hover:text-navy-400 transition-colors">
+        <a href="/pricing" className="text-[11px] text-gray-400 hover:text-green-500 transition-colors">
           광고 등록으로 상단 노출 &rarr;
         </a>
       </div>
@@ -535,17 +539,17 @@ function FreeSection({
         {equipments.map((eq) => (
           <div
             key={eq.id}
-            className="flex items-center py-2.5 px-3 rounded-lg hover:bg-white dark:hover:bg-gray-800 cursor-pointer transition-colors"
+            className="flex items-center py-2.5 px-3 rounded-lg hover:bg-white cursor-pointer transition-colors"
             onClick={() => onEquipmentClick(eq.id)}
           >
-            <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0 mr-3">
-              <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">{eq.title.charAt(0)}</span>
+            <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mr-3">
+              <span className="text-[10px] font-bold text-gray-400">{eq.title.charAt(0)}</span>
             </div>
-            <span className="text-sm text-gray-800 dark:text-gray-200 font-medium mr-2 shrink-0">{eq.title}</span>
-            <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">
+            <span className="text-sm text-gray-800 font-medium mr-2 shrink-0">{eq.title}</span>
+            <span className="text-xs text-gray-400 shrink-0">
               {eq.price === 0 ? "무료 나눔" : `${eq.price.toLocaleString()}원`}
             </span>
-            <span className="text-xs text-gray-300 dark:text-gray-600 ml-auto shrink-0">
+            <span className="text-xs text-gray-300 ml-auto shrink-0">
               {EQUIPMENT_CATEGORY_LABELS[eq.category] || eq.category}
             </span>
           </div>
@@ -573,16 +577,16 @@ function SearchResultsView({
   onEquipmentClick: (id: string) => void;
 }) {
   const tierBadge = (tier: string) => {
-    if (tier === "VIP") return <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-navy-700 text-white text-[9px] font-bold rounded"><svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>VIP</span>;
-    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-navy-700/85 text-white text-[9px] font-bold rounded">PREMIUM</span>;
-    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 dark:bg-gray-600 dark:text-gray-300 text-[9px] font-bold rounded">BASIC</span>;
+    if (tier === "VIP") return <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-700 text-white text-[9px] font-bold rounded"><svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>VIP</span>;
+    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-green-700/85 text-white text-[9px] font-bold rounded">PREMIUM</span>;
+    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded">BASIC</span>;
     return null;
   };
 
   return (
     <div>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        검색 결과 <span className="font-medium text-gray-900 dark:text-white">{total.toLocaleString()}</span>개
+      <p className="text-sm text-gray-500 mb-4">
+        검색 결과 <span className="font-medium text-gray-900">{total.toLocaleString()}</span>개
       </p>
       {results.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
@@ -590,30 +594,30 @@ function SearchResultsView({
           <p className="text-sm">검색 조건을 변경해보세요</p>
         </div>
       ) : (
-        <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+        <div className="border border-gray-200 rounded-xl overflow-hidden divide-y divide-gray-100">
           {results.map((eq) => (
             <div
               key={eq.id}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
               onClick={() => onEquipmentClick(eq.id)}
             >
               {eq.tier !== "FREE" && (
-                <div className="w-16 h-12 shrink-0 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden relative">
+                <div className="w-16 h-12 shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
                   {eq.images.length > 0 ? (
                     <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-sm font-bold text-navy-400">{eq.title.charAt(0)}</span>
+                      <span className="text-sm font-bold text-green-400">{eq.title.charAt(0)}</span>
                     </div>
                   )}
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{eq.title}</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">{eq.title}</p>
                   {tierBadge(eq.tier)}
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500">
                   {eq.price === 0 ? "무료 나눔" : `${eq.price.toLocaleString()}원`}
                   {" · "}
                   {EQUIPMENT_CATEGORY_LABELS[eq.category] || eq.category}
@@ -653,14 +657,14 @@ function Pagination({
       <button
         onClick={() => onPageChange(1)}
         disabled={page === 1}
-        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
       >
         &laquo;
       </button>
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
-        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
       >
         &lsaquo;
       </button>
@@ -670,8 +674,8 @@ function Pagination({
           onClick={() => onPageChange(p)}
           className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
             page === p
-              ? "bg-navy-700 text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              ? "bg-green-700 text-white"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
           {p}
@@ -680,14 +684,14 @@ function Pagination({
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
-        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
       >
         &rsaquo;
       </button>
       <button
         onClick={() => onPageChange(totalPages)}
         disabled={page === totalPages}
-        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="w-8 h-8 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
       >
         &raquo;
       </button>
@@ -700,10 +704,10 @@ export default function EquipmentListPage() {
     <Suspense fallback={
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32" />
+          <div className="h-8 bg-gray-200 rounded w-32" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-xl aspect-[3/4] animate-pulse" />
+              <div key={i} className="bg-gray-100 rounded-xl aspect-[3/4] animate-pulse" />
             ))}
           </div>
         </div>

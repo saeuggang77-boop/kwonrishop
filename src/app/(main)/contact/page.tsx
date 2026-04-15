@@ -76,12 +76,12 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-5xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">고객센터</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">고객센터</h1>
+          <p className="text-gray-600">
             궁금하신 사항이나 문제가 있으시면 언제든지 문의해주세요
           </p>
         </div>
@@ -90,11 +90,11 @@ export default function ContactPage() {
           {/* Contact Info */}
           <div className="space-y-6">
             {/* Operating Hours */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-navy-100 dark:bg-navy-800/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-navy-700 dark:text-navy-400"
+                    className="w-6 h-6 text-green-700"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -108,8 +108,8 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">운영시간</h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                  <h3 className="font-bold text-gray-900 mb-2">운영시간</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
                     평일: 09:00 - 18:00
                     <br />
                     주말 및 공휴일: 휴무
@@ -121,11 +121,11 @@ export default function ContactPage() {
             </div>
 
             {/* Phone */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-green-600 dark:text-green-400"
+                    className="w-6 h-6 text-green-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -139,14 +139,14 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">전화 문의</h3>
+                  <h3 className="font-bold text-gray-900 mb-2">전화 문의</h3>
                   <a
                     href="tel:1588-7928"
-                    className="text-navy-700 dark:text-navy-400 hover:underline text-lg font-semibold"
+                    className="text-green-700 hover:underline text-lg font-semibold"
                   >
                     1588-7928
                   </a>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                  <p className="text-gray-600 text-sm mt-1">
                     운영시간 내 연결 가능합니다
                   </p>
                 </div>
@@ -154,11 +154,11 @@ export default function ContactPage() {
             </div>
 
             {/* Email */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-navy-100 dark:bg-navy-900/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-navy-600 dark:text-navy-400"
+                    className="w-6 h-6 text-green-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -172,14 +172,14 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">이메일 문의</h3>
+                  <h3 className="font-bold text-gray-900 mb-2">이메일 문의</h3>
                   <a
                     href="mailto:samsungcu@naver.com"
-                    className="text-navy-700 dark:text-navy-400 hover:underline font-medium"
+                    className="text-green-700 hover:underline font-medium"
                   >
                     samsungcu@naver.com
                   </a>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                  <p className="text-gray-600 text-sm mt-1">
                     영업일 기준 24시간 내 답변
                   </p>
                 </div>
@@ -187,11 +187,11 @@ export default function ContactPage() {
             </div>
 
             {/* KakaoTalk */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-yellow-600 dark:text-yellow-400"
+                    className="w-6 h-6 text-yellow-600"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -199,18 +199,18 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  <h3 className="font-bold text-gray-900 mb-2">
                     카카오톡 채널
                   </h3>
                   <a
                     href="https://pf.kakao.com/_권리샵"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-navy-700 dark:text-navy-400 hover:underline font-medium"
+                    className="text-green-700 hover:underline font-medium"
                   >
                     @권리샵
                   </a>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                  <p className="text-gray-600 text-sm mt-1">
                     실시간 채팅 상담 가능
                   </p>
                 </div>
@@ -218,10 +218,10 @@ export default function ContactPage() {
             </div>
 
             {/* FAQ Link */}
-            <div className="bg-navy-50 dark:bg-navy-800/20 rounded-xl p-6 border border-navy-200 dark:border-navy-700">
-              <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+            <div className="bg-green-50 rounded-xl p-6 border border-green-200">
+              <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-navy-700 dark:text-navy-400"
+                  className="w-5 h-5 text-green-700"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -235,12 +235,12 @@ export default function ContactPage() {
                 </svg>
                 자주 묻는 질문
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 text-sm mb-3">
+              <p className="text-gray-700 text-sm mb-3">
                 문의 전에 자주 묻는 질문을 확인해보세요
               </p>
               <a
                 href="/faq"
-                className="inline-block px-4 py-2 bg-navy-700 text-white text-sm font-medium rounded-lg hover:bg-navy-600 transition-colors"
+                className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors"
               >
                 FAQ 보러가기
               </a>
@@ -248,15 +248,15 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
               문의하기
             </h2>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   이름 <span className="text-red-500">*</span>
                 </label>
@@ -267,7 +267,7 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-700 dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                   placeholder="홍길동"
                 />
               </div>
@@ -275,7 +275,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   이메일 <span className="text-red-500">*</span>
                 </label>
@@ -286,7 +286,7 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-700 dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                   placeholder="example@email.com"
                 />
               </div>
@@ -294,7 +294,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   제목 <span className="text-red-500">*</span>
                 </label>
@@ -305,7 +305,7 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-700 dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                   placeholder="문의 제목을 입력하세요"
                 />
               </div>
@@ -313,7 +313,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   내용 <span className="text-red-500">*</span>
                 </label>
@@ -324,7 +324,7 @@ export default function ContactPage() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-700 resize-none dark:bg-gray-700 dark:text-gray-100"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 resize-none"
                   placeholder="문의 내용을 자세히 작성해주세요"
                 />
               </div>
@@ -332,53 +332,53 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-navy-700 text-white py-3 rounded-lg font-semibold hover:bg-navy-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "제출 중..." : "문의 제출하기"}
               </button>
             </form>
 
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
+            <p className="text-xs text-gray-500 mt-4 text-center">
               영업일 기준 24시간 내에 답변 드리겠습니다
             </p>
           </div>
         </div>
 
         {/* Company Info */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">
             회사 정보
           </h2>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
             <div className="flex">
-              <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
+              <span className="font-semibold text-gray-700 w-32">
                 회사명
               </span>
-              <span className="text-gray-600 dark:text-gray-400">씨이오</span>
+              <span className="text-gray-600">씨이오</span>
             </div>
             <div className="flex">
-              <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
+              <span className="font-semibold text-gray-700 w-32">
                 대표이사
               </span>
-              <span className="text-gray-600 dark:text-gray-400">박상만</span>
+              <span className="text-gray-600">박상만</span>
             </div>
             <div className="flex">
-              <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
+              <span className="font-semibold text-gray-700 w-32">
                 사업자등록번호
               </span>
-              <span className="text-gray-600 dark:text-gray-400">408-70-43230</span>
+              <span className="text-gray-600">408-70-43230</span>
             </div>
             <div className="flex">
-              <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">
+              <span className="font-semibold text-gray-700 w-32">
                 통신판매업
               </span>
-              <span className="text-gray-600 dark:text-gray-400">
+              <span className="text-gray-600">
                 제2023-서울동작-1252호
               </span>
             </div>
             <div className="flex md:col-span-2">
-              <span className="font-semibold text-gray-700 dark:text-gray-300 w-32">주소</span>
-              <span className="text-gray-600 dark:text-gray-400">
+              <span className="font-semibold text-gray-700 w-32">주소</span>
+              <span className="text-gray-600">
                 서울특별시 동작구 장승배기로4길 9
               </span>
             </div>

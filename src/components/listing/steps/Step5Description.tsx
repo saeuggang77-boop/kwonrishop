@@ -21,23 +21,23 @@ export default function Step5Description({ onNext, onPrev }: Props) {
   const hasContact = contactPattern.test(data.description);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">매물설명</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">매물에 대해 자유롭게 설명해주세요</p>
+    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <h2 className="text-lg font-bold text-gray-900 mb-1">매물설명</h2>
+      <p className="text-sm text-gray-500 mb-4">매물에 대해 자유롭게 설명해주세요</p>
 
       {/* 연락처 기재 금지 경고 */}
-      <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
+      <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
         <svg className="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
         </svg>
-        <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+        <p className="text-sm text-red-600 font-medium">
           매물 설명에 연락처, 카카오톡 아이디를 기재하지 말아주세요.
         </p>
       </div>
 
       {hasContact && (
-        <div className="mb-4 p-3 bg-navy-50 dark:bg-navy-900/50 border border-navy-200 dark:border-navy-800 rounded-lg">
-          <p className="text-sm text-navy-700 dark:text-navy-300 font-medium">
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-700 font-medium">
             연락처 또는 메신저 정보가 감지되었습니다. 삭제 후 등록해주세요.
           </p>
         </div>
@@ -48,7 +48,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
         value={data.description}
         onChange={(e) => updateData({ description: e.target.value })}
         rows={12}
-        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none"
+        className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none"
       />
 
       {/* 글자 수 카운터 */}
@@ -59,7 +59,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
           </p>
         )}
         {charCount > 0 && isValid && charCount < RECOMMENDED_LENGTH && (
-          <p className="text-xs text-navy-500 font-medium">
+          <p className="text-xs text-green-500 font-medium">
             {RECOMMENDED_LENGTH}자 이상 입력하면 조회수가 높아집니다
           </p>
         )}
@@ -69,7 +69,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
           </p>
         )}
         {charCount === 0 && <span />}
-        <p className={`text-xs ${isValid ? "text-gray-400 dark:text-gray-500" : charCount > 0 ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
+        <p className={`text-xs ${isValid ? "text-gray-400" : charCount > 0 ? "text-red-500" : "text-gray-400"}`}>
           {charCount} / 최소 {MIN_LENGTH}자
         </p>
       </div>
@@ -77,14 +77,14 @@ export default function Step5Description({ onNext, onPrev }: Props) {
       <div className="mt-8 flex justify-between">
         <button
           onClick={onPrev}
-          className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
         >
           이전
         </button>
         <button
           onClick={onNext}
           disabled={!isValid || hasContact}
-          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

@@ -161,16 +161,16 @@ export default function Step1Location({ onNext }: Props) {
           <button
             type="button"
             onClick={handleAddressSearch}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-left text-gray-500 hover:border-navy-400 transition-colors"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-left text-gray-500 hover:border-green-400 transition-colors"
           >
             {data.addressRoad || "클릭하여 주소 검색"}
           </button>
 
           {/* 주소 검색 임베드 영역 */}
           {showPostcode && (
-            <div className="mt-2 border border-navy-300 rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2 bg-navy-50 border-b border-navy-200">
-                <span className="text-sm font-medium text-navy-700">주소 검색</span>
+            <div className="mt-2 border border-green-300 rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2 bg-green-50 border-b border-green-200">
+                <span className="text-sm font-medium text-green-700">주소 검색</span>
                 <button
                   type="button"
                   onClick={() => setShowPostcode(false)}
@@ -191,7 +191,7 @@ export default function Step1Location({ onNext }: Props) {
             </div>
           )}
           {isGeocodingLoading && (
-            <p className="mt-2 text-sm text-navy-700">좌표 변환 중...</p>
+            <p className="mt-2 text-sm text-green-700">좌표 변환 중...</p>
           )}
         </div>
 
@@ -223,7 +223,7 @@ export default function Step1Location({ onNext }: Props) {
             placeholder="건물명, 층수 등"
             value={data.addressDetail}
             onChange={(e) => updateData({ addressDetail: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
           />
         </div>
 
@@ -235,7 +235,7 @@ export default function Step1Location({ onNext }: Props) {
       <div className="mt-8 flex justify-end">
         <button
           onClick={handleSubmit}
-          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
+          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
         >
           다음
         </button>

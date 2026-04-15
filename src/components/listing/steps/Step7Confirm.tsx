@@ -155,28 +155,28 @@ export default function Step7Confirm({ onPrev }: Props) {
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 overflow-y-auto py-8"
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 체크 아이콘 */}
             <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-12 h-12 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
 
             {/* 제목 & 설명 */}
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
               매물 등록 완료!
             </h2>
-            <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-center text-gray-600 mb-6">
               매물이 성공적으로 등록되었습니다.<br />지금 바로 노출됩니다.
             </p>
 
             {/* 구분선 */}
-            <div className="h-px bg-gradient-to-r from-transparent via-navy-500 to-transparent mb-6"></div>
+            <div className="h-px bg-gradient-to-r from-transparent via-green-500 to-transparent mb-6"></div>
 
             {/* 광고 상품 인라인 선택 */}
             <div className="mb-6">
@@ -196,9 +196,9 @@ export default function Step7Confirm({ onPrev }: Props) {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">등록 확인</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">입력한 내용을 확인하고 등록해주세요</p>
+      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-1">등록 확인</h2>
+        <p className="text-sm text-gray-500 mb-6">입력한 내용을 확인하고 등록해주세요</p>
 
       <div className="space-y-4">
         <Section title="위치정보" onEdit={() => setStep(1)}>
@@ -241,7 +241,7 @@ export default function Step7Confirm({ onPrev }: Props) {
 
         {data.description && (
           <Section title="매물설명" onEdit={() => setStep(5)}>
-            <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{data.description}</p>
+            <p className="text-sm text-gray-700 whitespace-pre-wrap">{data.description}</p>
           </Section>
         )}
 
@@ -249,7 +249,7 @@ export default function Step7Confirm({ onPrev }: Props) {
           {data.images.length > 0 ? (
             <div className="grid grid-cols-4 gap-2">
               {data.images.map((img, i) => (
-                <div key={i} className="aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 relative">
+                <div key={i} className="aspect-square rounded-lg overflow-hidden border border-gray-200 relative">
                   <Image src={img.url} alt={`매물 사진 ${i + 1} - ${img.type === "EXTERIOR" ? "외부" : img.type === "INTERIOR" ? "내부" : img.type === "KITCHEN" ? "주방" : "기타"}`} fill className="object-cover" sizes="150px" />
                   <span className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] text-center py-0.5">
                     {img.type === "EXTERIOR" ? "외부" : img.type === "INTERIOR" ? "내부" : img.type === "KITCHEN" ? "주방" : "기타"}
@@ -258,7 +258,7 @@ export default function Step7Confirm({ onPrev }: Props) {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400 dark:text-gray-500">등록된 사진 없음</p>
+            <p className="text-sm text-gray-400">등록된 사진 없음</p>
           )}
         </Section>
 
@@ -272,25 +272,25 @@ export default function Step7Confirm({ onPrev }: Props) {
 
       {/* 매출 매입자료 연동 (개발 중 - 플래그로 숨김) */}
       {SHOW_REVENUE_SYNC && (
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">매출 매입자료 연동 (선택)</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">매출 데이터를 연동하면 매물 신뢰도가 높아집니다</p>
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <h3 className="text-base font-semibold text-gray-900 mb-1">매출 매입자료 연동 (선택)</h3>
+          <p className="text-sm text-gray-500 mb-4">매출 데이터를 연동하면 매물 신뢰도가 높아집니다</p>
 
           <div className="space-y-3">
             {SERVICES.map((svc) => (
               <div
                 key={svc.key}
-                className="flex items-center gap-4 p-4 border rounded-lg border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 opacity-60"
+                className="flex items-center gap-4 p-4 border rounded-lg border-gray-200 bg-gray-50 opacity-60"
               >
                 <div className="text-3xl shrink-0">{svc.icon}</div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">{svc.title} (준비 중)</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{svc.description}</p>
+                  <h4 className="text-sm font-medium text-gray-900">{svc.title} (준비 중)</h4>
+                  <p className="text-xs text-gray-500 mt-0.5">{svc.description}</p>
                 </div>
                 <button
                   onClick={() => showToast("해당 서비스는 준비 중입니다. 곧 오픈됩니다.")}
                   disabled
-                  className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-300 text-gray-500 cursor-not-allowed"
                 >
                   준비 중
                 </button>
@@ -298,12 +298,12 @@ export default function Step7Confirm({ onPrev }: Props) {
             ))}
           </div>
 
-          <div className="mt-4 bg-navy-50 dark:bg-navy-800/20 border border-navy-200 dark:border-navy-700 rounded-lg p-4">
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-start gap-2">
-              <svg className="w-5 h-5 text-navy-700 dark:text-navy-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 text-green-700 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-sm text-navy-800 dark:text-navy-300">
+              <p className="text-sm text-green-800">
                 외부 매출 자료 연동 기능은 현재 개발 중입니다. 빠른 시일 내에 오픈 예정입니다.
               </p>
             </div>
@@ -313,15 +313,15 @@ export default function Step7Confirm({ onPrev }: Props) {
 
       {/* 광고 안내 배너 (매출자료 숨김 시 대체) */}
       {!SHOW_REVENUE_SYNC && (
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <div className="bg-navy-50 dark:bg-navy-800/20 border border-navy-200 dark:border-navy-700 rounded-lg p-4">
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-start gap-2">
               <span className="text-xl shrink-0">💎</span>
               <div>
-                <h4 className="text-sm font-semibold text-navy-900 dark:text-navy-300 mb-1">
+                <h4 className="text-sm font-semibold text-green-900 mb-1">
                   등록 완료 후 광고 상품을 선택할 수 있어요
                 </h4>
-                <p className="text-xs text-navy-700 dark:text-navy-400">
+                <p className="text-xs text-green-700">
                   매물을 등록하면 곧바로 광고 상품을 선택해 더 많은 예비 창업자에게 노출할 수 있습니다.
                 </p>
               </div>
@@ -331,14 +331,14 @@ export default function Step7Confirm({ onPrev }: Props) {
       )}
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
           {error}
         </div>
       )}
 
       {/* 토스트 */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl shadow-lg text-sm font-medium z-50">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 bg-gray-900 text-white rounded-xl shadow-lg text-sm font-medium z-50">
           {toast}
         </div>
       )}
@@ -346,14 +346,14 @@ export default function Step7Confirm({ onPrev }: Props) {
       <div className="mt-8 flex justify-between">
         <button
           onClick={onPrev}
-          className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
         >
           이전
         </button>
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? (uploadProgress || "등록 중...") : "매물 등록하기"}
         </button>
@@ -365,13 +365,13 @@ export default function Step7Confirm({ onPrev }: Props) {
 
 function Section({ title, children, onEdit }: { title: string; children: React.ReactNode; onEdit?: () => void }) {
   return (
-    <div className="border-b border-gray-100 dark:border-gray-700 pb-4">
+    <div className="border-b border-gray-100 pb-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h3>
+        <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
         {onEdit && (
           <button
             onClick={onEdit}
-            className="text-xs text-navy-700 hover:text-navy-800 dark:text-navy-400 dark:hover:text-navy-300"
+            className="text-xs text-green-700 hover:text-green-800"
           >
             수정
           </button>
@@ -385,8 +385,8 @@ function Section({ title, children, onEdit }: { title: string; children: React.R
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex text-sm">
-      <span className="w-20 text-gray-400 dark:text-gray-500 shrink-0">{label}</span>
-      <span className="text-gray-700 dark:text-gray-300">{value || "-"}</span>
+      <span className="w-20 text-gray-400 shrink-0">{label}</span>
+      <span className="text-gray-700">{value || "-"}</span>
     </div>
   );
 }

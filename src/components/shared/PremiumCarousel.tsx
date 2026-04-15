@@ -47,15 +47,15 @@ export default function PremiumCarousel({
   if (count === 0) return null;
 
   return (
-    <div className="mb-8 rounded-2xl bg-bg-warm p-5 dark:bg-gray-800/50">
+    <div className="mb-8 rounded-2xl bg-bg-warm p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <span className="text-yellow-500 text-xl">&#9733;</span>
             {title}
           </h2>
           {subtitle && (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-gray-500 mt-1">
               {subtitle}
             </p>
           )}
@@ -64,7 +64,7 @@ export default function PremiumCarousel({
           <button
             onClick={() => scroll("left")}
             disabled={!canScrollLeft}
-            className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             aria-label="이전"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@ export default function PremiumCarousel({
           <button
             onClick={() => scroll("right")}
             disabled={!canScrollRight}
-            className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             aria-label="다음"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

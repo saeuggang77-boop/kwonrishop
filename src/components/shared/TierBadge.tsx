@@ -5,15 +5,16 @@ interface TierBadgeProps {
   size?: "sm" | "md";
 }
 
-const TIER_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
-  // 사장님
-  BASIC: { label: "베이직", bg: "bg-gray-100 dark:bg-gray-700", text: "text-gray-500 dark:text-gray-400" },
-  PREMIUM: { label: "프리미엄", bg: "bg-gray-100 dark:bg-gray-700", text: "text-gray-700 dark:text-gray-300" },
-  VIP: { label: "VIP", bg: "bg-navy-700 dark:bg-navy-600", text: "text-white dark:text-white" },
-  // 프랜차이즈
-  BRONZE: { label: "브론즈", bg: "bg-orange-100 dark:bg-orange-900", text: "text-orange-700 dark:text-orange-300" },
-  SILVER: { label: "실버", bg: "bg-gray-200 dark:bg-gray-600", text: "text-gray-700 dark:text-gray-200" },
-  GOLD: { label: "골드", bg: "bg-navy-700 dark:bg-navy-600", text: "text-white dark:text-white" },
+// B안 — 3단계 색 위계 확립 (light / brand / accent)
+const TIER_CONFIG: Record<string, { label: string; bg: string; text: string; border?: string }> = {
+  // 사장님 매물 (3단계)
+  BASIC:   { label: "베이직",   bg: "bg-green-100", text: "text-green-700" },
+  PREMIUM: { label: "프리미엄", bg: "bg-green-700", text: "text-cream" },
+  VIP:     { label: "VIP",      bg: "bg-terra-500", text: "text-cream" },
+  // 프랜차이즈 (3단계)
+  BRONZE:  { label: "브론즈",   bg: "bg-terra-100", text: "text-terra-700" },
+  SILVER:  { label: "실버",     bg: "bg-green-700", text: "text-cream" },
+  GOLD:    { label: "골드",     bg: "bg-terra-500", text: "text-cream" },
 };
 
 export default function TierBadge({ tier, size = "sm" }: TierBadgeProps) {
@@ -21,10 +22,12 @@ export default function TierBadge({ tier, size = "sm" }: TierBadgeProps) {
   const config = TIER_CONFIG[tier];
   if (!config) return null;
 
-  const sizeClass = size === "sm" ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm";
+  const sizeClass = size === "sm"
+    ? "px-2.5 py-0.5 text-[11px]"
+    : "px-3 py-1 text-xs";
 
   return (
-    <span className={`${config.bg} ${config.text} ${sizeClass} rounded-full font-bold`}>
+    <span className={`${config.bg} ${config.text} ${sizeClass} rounded-full font-bold tracking-wide inline-flex items-center`}>
       {config.label}
     </span>
   );

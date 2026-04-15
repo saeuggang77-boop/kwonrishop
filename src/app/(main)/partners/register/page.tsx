@@ -270,24 +270,24 @@ export default function PartnerRegisterPage() {
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 overflow-y-auto py-8"
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
+            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
               협력업체 등록 완료!
             </h2>
-            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-5">
+            <p className="text-center text-sm text-gray-600 mb-5">
               서비스가 성공적으로 등록되었습니다. 지금 바로 노출됩니다.
             </p>
 
-            <div className="h-px bg-gradient-to-r from-transparent via-navy-500 to-transparent mb-5"></div>
+            <div className="h-px bg-gradient-to-r from-transparent via-green-500 to-transparent mb-5"></div>
 
             {/* 광고 상품 인라인 선택 */}
             <div className="mb-5">
@@ -308,16 +308,16 @@ export default function PartnerRegisterPage() {
 
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
           {isEditMode ? "협력업체 수정" : "협력업체 등록"}
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">사업자인증을 완료한 협력업체만 등록할 수 있습니다</p>
+        <p className="text-gray-600">사업자인증을 완료한 협력업체만 등록할 수 있습니다</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 업체명 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             업체명 <span className="text-red-500">*</span>
           </label>
           <input
@@ -325,21 +325,21 @@ export default function PartnerRegisterPage() {
             required
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="예: 홍길동 인테리어"
           />
         </div>
 
         {/* 서비스 유형 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             서비스 유형 <span className="text-red-500">*</span>
           </label>
           <select
             required
             value={serviceType}
             onChange={(e) => setServiceType(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
           >
             <option value="">선택하세요</option>
             {Object.entries(SERVICE_TYPE_LABELS).map(([key, label]) => (
@@ -352,7 +352,7 @@ export default function PartnerRegisterPage() {
 
         {/* 서비스 소개 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             서비스 소개 <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -360,15 +360,15 @@ export default function PartnerRegisterPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={6}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none"
             placeholder="서비스 내용, 경력, 강점 등을 상세히 작성해주세요 (최소 10자)"
           />
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{description.length}자</p>
+          <p className="text-sm text-gray-500 mt-1">{description.length}자</p>
         </div>
 
         {/* 서비스 가능 지역 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             서비스 가능 지역 <span className="text-red-500">*</span>
           </label>
           <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
@@ -379,8 +379,8 @@ export default function PartnerRegisterPage() {
                 onClick={() => handleServiceAreaToggle(region)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   serviceArea.includes(region)
-                    ? "bg-navy-700 text-white"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    ? "bg-green-700 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 {region}
@@ -391,11 +391,11 @@ export default function PartnerRegisterPage() {
 
         {/* 위치 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">위치 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">위치 (선택)</label>
           <button
             type="button"
             onClick={handleAddressSearch}
-            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors mb-2"
+            className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl hover:bg-gray-50 transition-colors mb-2"
           >
             주소 검색
           </button>
@@ -405,14 +405,14 @@ export default function PartnerRegisterPage() {
                 type="text"
                 value={addressRoad}
                 readOnly
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl"
               />
               <input
                 type="text"
                 value={addressDetail}
                 onChange={(e) => setAddressDetail(e.target.value)}
                 placeholder="상세 주소 (예: 3층)"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               />
             </div>
           )}
@@ -420,52 +420,52 @@ export default function PartnerRegisterPage() {
 
         {/* 연락처 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">연락처 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">연락처 (선택)</label>
           <input
             type="tel"
             value={contactPhone}
             onChange={(e) => setContactPhone(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="010-0000-0000"
           />
         </div>
 
         {/* 이메일 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">이메일 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">이메일 (선택)</label>
           <input
             type="email"
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="example@email.com"
           />
         </div>
 
         {/* 웹사이트 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">웹사이트 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">웹사이트 (선택)</label>
           <input
             type="url"
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="https://example.com"
           />
         </div>
 
         {/* 사진 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">사진 (선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">사진 (선택)</label>
           <input
             type="file"
             accept="image/*"
             multiple
             onChange={handleImageUpload}
             disabled={uploading}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+            className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
           />
-          {uploading && <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">업로드 중...</p>}
+          {uploading && <p className="text-sm text-gray-500 mt-2">업로드 중...</p>}
           {images.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mt-3">
               {images.map((img, idx) => (
@@ -489,7 +489,7 @@ export default function PartnerRegisterPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           {submitting ? (isEditMode ? "수정 중..." : "등록 중...") : (isEditMode ? "수정하기" : "등록하기")}
         </button>

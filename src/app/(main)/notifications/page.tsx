@@ -108,16 +108,16 @@ export default function NotificationsPage() {
     switch (type) {
       case "CHAT":
         return (
-          <div className="w-10 h-10 rounded-full bg-navy-100 dark:bg-navy-800/30 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-navy-700 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
         );
       case "PRICE_CHANGE":
         return (
-          <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
             </svg>
           </div>
@@ -125,16 +125,16 @@ export default function NotificationsPage() {
       case "LISTING_EXPIRING":
       case "AD_EXPIRING":
         return (
-          <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         );
       case "PAYMENT":
         return (
-          <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -142,8 +142,8 @@ export default function NotificationsPage() {
       case "SYSTEM":
       default:
         return (
-          <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
           </div>
@@ -179,10 +179,10 @@ export default function NotificationsPage() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg w-48" />
+          <div className="h-10 bg-gray-200 rounded-lg w-48" />
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-20 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+              <div key={i} className="h-20 bg-gray-200 rounded-xl" />
             ))}
           </div>
         </div>
@@ -194,9 +194,9 @@ export default function NotificationsPage() {
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">알림</h1>
+          <h1 className="text-2xl font-bold text-gray-900">알림</h1>
           {data.unreadCount > 0 && (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-gray-500 mt-1">
               읽지 않은 알림 {data.unreadCount}개
             </p>
           )}
@@ -204,7 +204,7 @@ export default function NotificationsPage() {
         {data.unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="px-4 py-2 text-sm font-medium text-navy-700 dark:text-navy-400 hover:text-navy-700 dark:hover:text-navy-300 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-green-700 hover:text-green-700 transition-colors"
           >
             모두 읽음
           </button>
@@ -212,9 +212,9 @@ export default function NotificationsPage() {
       </div>
 
       {data.notifications.length === 0 ? (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <svg
-            className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4"
+            className="w-16 h-16 text-gray-300 mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -226,10 +226,10 @@ export default function NotificationsPage() {
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
             />
           </svg>
-          <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+          <p className="text-gray-500 text-lg font-medium">
             알림이 없습니다
           </p>
-          <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+          <p className="text-gray-400 text-sm mt-2">
             새로운 알림이 도착하면 여기에 표시됩니다
           </p>
         </div>
@@ -240,25 +240,25 @@ export default function NotificationsPage() {
               <div
                 key={notif.id}
                 onClick={() => handleNotificationClick(notif)}
-                className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors cursor-pointer hover:border-navy-300 dark:hover:border-navy-700 ${
-                  !notif.read ? "bg-navy-50/50 dark:bg-navy-900/10" : ""
+                className={`bg-white rounded-xl border border-gray-200 p-4 transition-colors cursor-pointer hover:border-green-300 ${
+                  !notif.read ? "bg-green-50/50" : ""
                 }`}
               >
                 <div className="flex gap-4">
                   {getNotificationIcon(notif.type)}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <h3 className="text-sm font-semibold text-gray-900">
                         {notif.title}
                       </h3>
                       {!notif.read && (
-                        <span className="w-2 h-2 bg-navy-700 dark:bg-navy-400 rounded-full flex-shrink-0 mt-1.5" />
+                        <span className="w-2 h-2 bg-green-700 rounded-full flex-shrink-0 mt-1.5" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                       {notif.message}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                    <p className="text-xs text-gray-400 mt-2">
                       {timeAgo(notif.createdAt)}
                     </p>
                   </div>
@@ -273,17 +273,17 @@ export default function NotificationsPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 이전
               </button>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-gray-600">
                 {page} / {data.pagination.totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
                 disabled={page === data.pagination.totalPages}
-                className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 다음
               </button>

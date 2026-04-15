@@ -71,13 +71,13 @@ export default function Step2Category({ onNext, onPrev }: Props) {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <h2 className="text-lg font-bold text-gray-900 mb-1">
         {selectedCategory
           ? `${selectedCategory.name} 중에 업종이 어떻게 되시나요?`
           : "업종이 어떻게 되시나요?"}
       </h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <p className="text-sm text-gray-500 mb-6">
         {selectedCategory ? "세부 업종을 선택해주세요" : "대분류 업종을 먼저 선택해주세요"}
       </p>
 
@@ -85,7 +85,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
         {/* 대분류: 미선택 시 큰 카드, 선택 시 칩으로 축소 */}
         {!selectedCategory ? (
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
               업종 대분류 <span className="text-red-500">*</span>
             </label>
             {loadingCategories && categories.length === 0 ? (
@@ -95,7 +95,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
             ) : error && categories.length === 0 ? (
               <div className="text-center py-6">
                 <p className="text-sm text-red-500 mb-3">{error}</p>
-                <button type="button" onClick={fetchCategories} className="px-4 py-2 text-sm bg-navy-700 text-white rounded-lg hover:bg-navy-600 transition-colors">
+                <button type="button" onClick={fetchCategories} className="px-4 py-2 text-sm bg-green-700 text-white rounded-lg hover:bg-green-600 transition-colors">
                   다시 시도
                 </button>
               </div>
@@ -114,17 +114,17 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     });
                     setError("");
                   }}
-                  className="flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 text-sm transition-all hover:border-navy-400 hover:bg-navy-50/50 dark:hover:bg-navy-900/20 border-gray-200 dark:border-gray-600"
+                  className="flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 text-sm transition-all hover:border-green-400 hover:bg-green-50/50 border-gray-200"
                 >
                   <span className="text-2xl">{cat.icon}</span>
-                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{cat.name}</span>
+                  <span className="text-xs font-medium text-gray-700">{cat.name}</span>
                 </button>
               ))}
             </div>
           </div>
         ) : (
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               선택된 업종
             </label>
             <button
@@ -137,11 +137,11 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   subCategoryName: "",
                 });
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-navy-50 dark:bg-navy-800/30 border border-navy-200 dark:border-navy-600 rounded-full text-sm text-navy-700 dark:text-navy-300 hover:bg-navy-100 dark:hover:bg-navy-900/50 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-sm text-green-700 hover:bg-green-100 transition-colors"
             >
               <span className="text-lg">{selectedCategory.icon}</span>
               <span className="font-medium">{selectedCategory.name}</span>
-              <svg className="w-4 h-4 text-navy-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
             </button>
@@ -151,7 +151,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
         {/* 소분류: 아이콘 카드 그리드 */}
         {selectedCategory && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
               세부 업종 <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -168,8 +168,8 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   }}
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-sm transition-all ${
                     data.subCategoryId === sub.id
-                      ? "border-navy-500 bg-navy-50 dark:bg-navy-800/30 text-navy-700 dark:text-navy-300 shadow-sm"
-                      : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
+                      ? "border-green-500 bg-green-50 text-green-700 shadow-sm"
+                      : "border-gray-200 hover:border-gray-300 text-gray-700"
                   }`}
                 >
                   {sub.icon && <span className="text-xl">{sub.icon}</span>}
@@ -182,12 +182,12 @@ export default function Step2Category({ onNext, onPrev }: Props) {
 
         {/* 금액 - 업종 선택 후 표시 */}
         {data.subCategoryId && (
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
-            <h3 className="font-medium text-gray-900 dark:text-white">거래 금액 (만원)</h3>
+          <div className="border-t border-gray-200 pt-6 space-y-4">
+            <h3 className="font-medium text-gray-900">거래 금액 (만원)</h3>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">보증금</label>
+                <label className="block text-sm text-gray-600 mb-1">보증금</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -195,13 +195,13 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.deposit)}
                     onChange={(e) => handleNumberInput("deposit", e.target.value)}
-                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">월세</label>
+                <label className="block text-sm text-gray-600 mb-1">월세</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -209,7 +209,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.monthlyRent)}
                     onChange={(e) => handleNumberInput("monthlyRent", e.target.value)}
-                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -217,9 +217,9 @@ export default function Step2Category({ onNext, onPrev }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">권리금</label>
+              <label className="block text-sm text-gray-600 mb-1">권리금</label>
               <div className="flex items-center gap-3 mb-2">
-                <label className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                <label className="flex items-center gap-1.5 text-sm text-gray-600">
                   <input
                     type="checkbox"
                     checked={data.premiumNone}
@@ -229,18 +229,18 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                         premium: e.target.checked ? 0 : data.premium,
                       })
                     }
-                    className="rounded border-gray-300 dark:border-gray-600"
+                    className="rounded border-gray-300"
                   />
                   무권리
                 </label>
-                <label className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                <label className="flex items-center gap-1.5 text-sm text-gray-600">
                   <input
                     type="checkbox"
                     checked={data.premiumNegotiable}
                     onChange={(e) =>
                       updateData({ premiumNegotiable: e.target.checked })
                     }
-                    className="rounded border-gray-300 dark:border-gray-600"
+                    className="rounded border-gray-300"
                   />
                   협의가능
                 </label>
@@ -253,7 +253,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     placeholder="0"
                     value={formatNumber(data.premium)}
                     onChange={(e) => handleNumberInput("premium", e.target.value)}
-                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
+                    className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-right"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                 </div>
@@ -261,8 +261,8 @@ export default function Step2Category({ onNext, onPrev }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                관리비 <span className="text-gray-400 dark:text-gray-500">(선택)</span>
+              <label className="block text-sm text-gray-600 mb-1">
+                관리비 <span className="text-gray-400">(선택)</span>
               </label>
               <div className="relative">
                 <input
@@ -271,7 +271,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   placeholder="0"
                   value={data.maintenanceFee !== null ? formatNumber(data.maintenanceFee) : ""}
                   onChange={(e) => handleNumberInput("maintenanceFee", e.target.value)}
-                  className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right"
+                  className="w-full px-3 py-3 min-h-[44px] pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-right"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
               </div>
@@ -279,15 +279,15 @@ export default function Step2Category({ onNext, onPrev }: Props) {
 
             {/* 권리금 산정 (선택) */}
             {!data.premiumNone && data.premium > 0 && (
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
-                <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-sm">
-                  권리금 산정 <span className="text-gray-400 dark:text-gray-500 font-normal">(선택)</span>
+              <div className="border-t border-gray-200 pt-4 mt-2">
+                <h4 className="font-medium text-gray-900 mb-3 text-sm">
+                  권리금 산정 <span className="text-gray-400 font-normal">(선택)</span>
                 </h4>
                 <div className="space-y-3">
                   {/* 영업권리금 */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">영업권리금</label>
+                      <label className="block text-xs text-gray-600 mb-1">영업권리금</label>
                       <div className="relative">
                         <input
                           type="text"
@@ -295,19 +295,19 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                           placeholder="0"
                           value={data.premiumBusiness !== null ? formatNumber(data.premiumBusiness) : ""}
                           onChange={(e) => handleNumberInput("premiumBusiness", e.target.value)}
-                          className="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right text-sm"
+                          className="w-full px-3 py-2 pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-right text-sm"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                      <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
                       <input
                         type="text"
                         placeholder="예: 안정적인 매출, 단골고객 확보"
                         value={data.premiumBusinessDesc}
                         onChange={(e) => updateData({ premiumBusinessDesc: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
                       />
                     </div>
                   </div>
@@ -315,7 +315,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   {/* 시설권리금 */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">시설권리금</label>
+                      <label className="block text-xs text-gray-600 mb-1">시설권리금</label>
                       <div className="relative">
                         <input
                           type="text"
@@ -323,19 +323,19 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                           placeholder="0"
                           value={data.premiumFacility !== null ? formatNumber(data.premiumFacility) : ""}
                           onChange={(e) => handleNumberInput("premiumFacility", e.target.value)}
-                          className="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right text-sm"
+                          className="w-full px-3 py-2 pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-right text-sm"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                      <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
                       <input
                         type="text"
                         placeholder="예: 최신 인테리어, 고가 주방기기"
                         value={data.premiumFacilityDesc}
                         onChange={(e) => updateData({ premiumFacilityDesc: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
                       />
                     </div>
                   </div>
@@ -343,10 +343,10 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                   {/* 바닥권리금 */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                      <label className="block text-xs text-gray-600 mb-1">
                         바닥권리금
                         {!manualLocationEdit && (data.premiumBusiness || data.premiumFacility) ? (
-                          <span className="text-navy-500 ml-1">자동</span>
+                          <span className="text-green-500 ml-1">자동</span>
                         ) : null}
                       </label>
                       <div className="relative">
@@ -359,23 +359,23 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                             setManualLocationEdit(true);
                             handleNumberInput("premiumLocation", e.target.value);
                           }}
-                          className={`w-full px-3 py-2 pr-12 border rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-right text-sm ${
+                          className={`w-full px-3 py-2 pr-12 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-right text-sm ${
                             !manualLocationEdit && (data.premiumBusiness || data.premiumFacility)
-                              ? "border-navy-200 dark:border-navy-600 bg-navy-50/50 dark:bg-navy-800/20 text-gray-900 dark:text-white"
-                              : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                              ? "border-green-200 bg-green-50/50 text-gray-900"
+                              : "border-gray-300 bg-white text-gray-900"
                           }`}
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">만원</span>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                      <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
                       <input
                         type="text"
                         placeholder="예: 역세권, 주요 상권 입지"
                         value={data.premiumLocationDesc}
                         onChange={(e) => updateData({ premiumLocationDesc: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
                       />
                     </div>
                   </div>
@@ -385,15 +385,15 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                     const total = (data.premiumBusiness || 0) + (data.premiumFacility || 0) + (data.premiumLocation || 0);
                     const diff = total - data.premium;
                     return (
-                      <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
-                        <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
+                      <div className="pt-2 border-t border-gray-200">
+                        <div className="flex justify-between text-xs text-gray-600">
                           <span>산정 합계</span>
-                          <span className={`font-medium ${diff === 0 ? "text-navy-700 dark:text-navy-400" : diff > 0 ? "text-red-500" : "text-gray-900 dark:text-white"}`}>
+                          <span className={`font-medium ${diff === 0 ? "text-green-700" : diff > 0 ? "text-red-500" : "text-gray-900"}`}>
                             {formatNumber(total)} 만원
                           </span>
                         </div>
                         {diff === 0 && (
-                          <p className="text-xs text-navy-500 mt-1 flex items-center gap-1">
+                          <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
                             총 권리금과 일치
                           </p>
@@ -405,7 +405,7 @@ export default function Step2Category({ onNext, onPrev }: Props) {
                           </p>
                         )}
                         {diff < 0 && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          <p className="text-xs text-gray-500 mt-1">
                             총 권리금과 차이: {formatNumber(Math.abs(diff))}만원
                           </p>
                         )}
@@ -424,13 +424,13 @@ export default function Step2Category({ onNext, onPrev }: Props) {
       <div className="mt-8 flex justify-between">
         <button
           onClick={onPrev}
-          className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
         >
           이전
         </button>
         <button
           onClick={handleSubmit}
-          className="px-8 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
+          className="px-8 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
         >
           다음
         </button>

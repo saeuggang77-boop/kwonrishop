@@ -15,7 +15,7 @@ const StartupPartnerSection = dynamic(() => import("@/components/listing/Startup
 });
 
 const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
-  loading: () => <div className="h-80 bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
+  loading: () => <div className="h-80 bg-gray-100 rounded-xl animate-pulse" />,
 });
 
 interface Partner {
@@ -77,8 +77,8 @@ export default function PartnerDetailClient() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-6">
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl h-64 animate-pulse mb-6" />
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl h-96 animate-pulse" />
+        <div className="bg-gray-100 rounded-xl h-64 animate-pulse mb-6" />
+        <div className="bg-gray-100 rounded-xl h-96 animate-pulse" />
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default function PartnerDetailClient() {
         <p className="text-gray-400 mb-4">{error}</p>
         <button
           onClick={loadPartner}
-          className="px-6 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600 transition-colors"
+          className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 transition-colors"
         >
           재시도
         </button>
@@ -108,9 +108,9 @@ export default function PartnerDetailClient() {
   const getTierBadge = (tier: Partner["tier"]) => {
     if (tier === "FREE") return null;
     const colors = {
-      BASIC: "bg-navy-100 text-navy-800 dark:bg-navy-900 dark:text-navy-200",
-      PREMIUM: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-      VIP: "bg-navy-100 text-navy-800 dark:bg-navy-900 dark:text-navy-200",
+      BASIC: "bg-green-100 text-green-800",
+      PREMIUM: "bg-gray-100 text-gray-800",
+      VIP: "bg-green-100 text-green-800",
     };
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[tier]}`}>
@@ -125,7 +125,7 @@ export default function PartnerDetailClient() {
       {/* Image Gallery */}
       {partner.images.length > 0 && (
         <div className="mb-6">
-          <div className="relative w-full h-80 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+          <div className="relative w-full h-80 rounded-xl overflow-hidden bg-gray-100">
             <Image
               src={partner.images[currentImageIndex].url}
               alt={partner.companyName}
@@ -142,7 +142,7 @@ export default function PartnerDetailClient() {
                   onClick={() => setCurrentImageIndex(idx)}
                   className={`relative w-20 h-20 rounded-lg overflow-hidden shrink-0 ${
                     idx === currentImageIndex
-                      ? "ring-2 ring-navy-600"
+                      ? "ring-2 ring-green-600"
                       : "opacity-50 hover:opacity-100"
                   }`}
                 >
@@ -155,14 +155,14 @@ export default function PartnerDetailClient() {
       )}
 
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {partner.companyName}
             </h1>
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-navy-100 dark:bg-navy-900 text-navy-800 dark:text-navy-200 rounded-full text-sm font-medium">
+              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                 {SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}
               </span>
               {getTierBadge(partner.tier)}
@@ -173,12 +173,12 @@ export default function PartnerDetailClient() {
         {/* Service Area */}
         {partner.serviceArea.length > 0 && (
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">서비스 가능 지역</h3>
+            <h3 className="text-sm font-medium text-gray-600 mb-2">서비스 가능 지역</h3>
             <div className="flex flex-wrap gap-2">
               {partner.serviceArea.map((area) => (
                 <span
                   key={area}
-                  className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
                 >
                   {area}
                 </span>
@@ -190,19 +190,19 @@ export default function PartnerDetailClient() {
         {/* Description */}
         {partner.description && (
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">서비스 소개</h3>
-            <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{partner.description}</p>
+            <h3 className="text-sm font-medium text-gray-600 mb-2">서비스 소개</h3>
+            <p className="text-gray-900 whitespace-pre-wrap">{partner.description}</p>
           </div>
         )}
 
         {/* Contact Info */}
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+        <div className="pt-4 border-t border-gray-200 space-y-3">
           {partner.contactEmail && (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400 w-20">이메일:</span>
+              <span className="text-sm text-gray-600 w-20">이메일:</span>
               <a
                 href={`mailto:${partner.contactEmail}`}
-                className="text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline"
+                className="text-sm font-medium text-green-700 hover:underline"
               >
                 {partner.contactEmail}
               </a>
@@ -210,12 +210,12 @@ export default function PartnerDetailClient() {
           )}
           {partner.website && (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400 w-20">웹사이트:</span>
+              <span className="text-sm text-gray-600 w-20">웹사이트:</span>
               <a
                 href={partner.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium text-navy-700 dark:text-navy-400 hover:underline"
+                className="text-sm font-medium text-green-700 hover:underline"
               >
                 {partner.website}
               </a>
@@ -223,13 +223,13 @@ export default function PartnerDetailClient() {
           )}
           {partner.addressRoad && (
             <div className="flex items-start gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400 w-20">주소:</span>
+              <span className="text-sm text-gray-600 w-20">주소:</span>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <p className="text-sm font-medium text-gray-900">
                   {partner.addressRoad}
                 </p>
                 {partner.addressDetail && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{partner.addressDetail}</p>
+                  <p className="text-sm text-gray-600">{partner.addressDetail}</p>
                 )}
               </div>
             </div>
@@ -238,30 +238,30 @@ export default function PartnerDetailClient() {
 
         {/* 연락하기 */}
         {partner.contactPhone && (
-          <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
-            <h4 className="font-medium text-gray-900 dark:text-white mb-1">연락하기</h4>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">바로 연락</p>
+          <div className="pt-4 border-t border-gray-200 mt-4">
+            <h4 className="font-medium text-gray-900 mb-1">연락하기</h4>
+            <p className="text-xs text-gray-500 mb-3">바로 연락</p>
             {partner.contactPhoneLocked ? (
-              <div className="flex flex-col items-center gap-3 py-4 bg-blue-50 dark:bg-navy-900/30 rounded-xl border border-blue-100 dark:border-navy-700">
-                <svg className="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex flex-col items-center gap-3 py-4 bg-blue-50 rounded-xl border border-blue-100">
+                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">연락처는 로그인 후 확인할 수 있습니다</p>
-                <Link href="/login" className="px-5 py-2.5 bg-navy-700 text-white text-sm font-medium rounded-xl hover:bg-navy-600 transition-colors">로그인하고 연락하기</Link>
+                <p className="text-sm text-gray-600 text-center">연락처는 로그인 후 확인할 수 있습니다</p>
+                <Link href="/login" className="px-5 py-2.5 bg-green-700 text-white text-sm font-medium rounded-xl hover:bg-green-600 transition-colors">로그인하고 연락하기</Link>
               </div>
             ) : (
               <>
                 <div className="flex gap-3">
-                  <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors">
+                  <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                     전화
                   </a>
-                  <a href={`sms:${partner.contactPhone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${partner.companyName} 서비스를 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-white dark:bg-gray-700 text-navy-700 dark:text-navy-300 border-2 border-navy-700 dark:border-navy-500 rounded-xl font-medium hover:bg-navy-50 dark:hover:bg-gray-600 transition-colors">
+                  <a href={`sms:${partner.contactPhone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${partner.companyName} 서비스를 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-white text-green-700 border-2 border-green-700 rounded-xl font-medium hover:bg-green-50 transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                     문자
                   </a>
                 </div>
-                <p className="mt-2.5 text-xs text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+                <p className="mt-2.5 text-xs text-gray-400 flex items-start gap-1.5">
                   <span className="shrink-0">💡</span>
                   <span>통화 시 <span className="font-medium">&quot;권리샵 보고 연락드렸습니다&quot;</span> 멘트 권장</span>
                 </p>
@@ -271,8 +271,8 @@ export default function PartnerDetailClient() {
         )}
 
         {/* View Count */}
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="pt-4 border-t border-gray-200 mt-4">
+          <p className="text-sm text-gray-500">
             조회 {partner.viewCount.toLocaleString()}
           </p>
         </div>
@@ -280,8 +280,8 @@ export default function PartnerDetailClient() {
 
       {/* Map - if coordinates exist */}
       {partner.latitude && partner.longitude && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">위치</h3>
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">위치</h3>
           <KakaoMap latitude={partner.latitude} longitude={partner.longitude} level={3} className="h-80" showInfoWindow={true} address={partner.addressRoad || ""} />
         </div>
       )}
@@ -296,22 +296,22 @@ export default function PartnerDetailClient() {
       />
 
       {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 md:hidden">
         {partner.contactPhone ? (
           <div className="flex gap-2">
             {!partner.contactPhoneLocked ? (
               <>
-                <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors text-sm">
+                <a href={`tel:${partner.contactPhone}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors text-sm">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                   전화 문의
                 </a>
-                <a href={`sms:${partner.contactPhone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${partner.companyName} 서비스를 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white dark:bg-gray-700 text-navy-700 dark:text-navy-300 border-2 border-navy-700 dark:border-navy-500 rounded-xl font-medium hover:bg-navy-50 dark:hover:bg-gray-600 transition-colors text-sm">
+                <a href={`sms:${partner.contactPhone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${partner.companyName} 서비스를 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white text-green-700 border-2 border-green-700 rounded-xl font-medium hover:bg-green-50 transition-colors text-sm">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                   문자 문의
                 </a>
               </>
             ) : (
-              <Link href="/login" className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 transition-colors">
+              <Link href="/login" className="flex-1 py-3 bg-green-700 text-white rounded-xl font-medium text-center hover:bg-green-600 transition-colors">
                 로그인하고 연락하기
               </Link>
             )}
@@ -319,7 +319,7 @@ export default function PartnerDetailClient() {
         ) : (
           <button
             onClick={() => toast.info("채팅 기능은 곧 지원됩니다")}
-            className="w-full py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors"
+            className="w-full py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors"
           >
             문의하기
           </button>

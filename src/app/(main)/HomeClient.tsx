@@ -228,20 +228,35 @@ export default function HomeClient({
       <NoticeBanner />
 
       {/* ===== 섹션 1: 히어로 + 가치 제안 통합 ===== */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-navy-dark via-navy to-navy-light">
+      <section className="relative overflow-hidden bg-green-700">
+        {/* 배경 장식 — 크림 원 하나가 살짝 비침 */}
+        <div aria-hidden className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-terra-500/10 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-40 -left-20 w-[500px] h-[500px] rounded-full bg-cream/5 blur-3xl" />
+
         {/* 메인 히어로 */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 text-center pt-16 pb-10 md:pt-20 md:pb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight mb-3">
-            상가직거래, <span className="text-white/90">권리샵</span>
+        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-20 pb-12 md:pt-28 md:pb-16">
+          {/* 키커 */}
+          <div className="inline-flex items-center gap-2 text-xs font-semibold text-terra-300 tracking-[0.2em] uppercase mb-5">
+            <span className="w-6 h-px bg-terra-300" />
+            상가 직거래 플랫폼
+            <span className="w-6 h-px bg-terra-300" />
+          </div>
+
+          {/* 메인 카피 — 세리프 이탤릭 강세 */}
+          <h1 className="font-extrabold text-cream leading-[1.05] tracking-tight mb-6 text-4xl md:text-6xl lg:text-7xl">
+            권리금,
+            <br className="md:hidden" />
+            <span className="font-serif italic font-light text-terra-300"> 직접 거래하다.</span>
           </h1>
-          <p className="text-base text-white/60 leading-relaxed max-w-md mx-auto mb-8">
-            중개수수료 없이 권리금 직거래.<br />
-            매물등록부터 거래완료까지 안전하게.
+          <p className="text-base md:text-lg text-cream/70 leading-relaxed max-w-xl mx-auto mb-10">
+            중개수수료 0원. 수천만 원의 권리금은<br />
+            중간자 없이 당사자가 직접 합의할 때 가장 투명합니다.
           </p>
 
+          {/* 검색바 */}
           <form onSubmit={handleSearch} className="max-w-xl mx-auto mb-6">
-            <div className="flex bg-white rounded-2xl p-1.5 pl-5 shadow-lg shadow-black/10">
-              <svg className="w-5 h-5 text-gray-400 mr-2.5 flex-shrink-0 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex bg-cream rounded-full p-1.5 pl-5 shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
+              <svg className="w-5 h-5 text-muted mr-2.5 flex-shrink-0 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8" strokeWidth={2} />
                 <path strokeWidth={2} strokeLinecap="round" d="m21 21-4.35-4.35" />
               </svg>
@@ -249,69 +264,50 @@ export default function HomeClient({
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="지역, 업종 검색"
-                className="flex-1 text-[15px] bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
+                placeholder="지역·업종으로 매물 찾기"
+                className="flex-1 text-[15px] bg-transparent outline-none text-ink placeholder:text-muted"
                 aria-label="매물 검색"
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-navy-700 text-white rounded-xl text-sm font-semibold hover:bg-navy-600 transition-colors"
+                className="px-6 py-3 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors"
               >
                 검색
               </button>
             </div>
           </form>
 
-          <div className="flex gap-3 justify-center">
+          {/* CTA */}
+          <div className="flex gap-3 justify-center flex-wrap">
             <Link
               href="/listings"
-              className="px-7 py-3 bg-white text-navy-700 rounded-xl text-[15px] font-bold hover:bg-white/90 transition-colors shadow-lg"
+              className="px-8 py-3.5 bg-terra-500 text-cream rounded-full text-[15px] font-bold hover:bg-terra-600 active:bg-terra-700 transition-colors shadow-[0_8px_24px_rgba(217,108,79,0.4)]"
             >
-              매물 검색하기
+              매물 둘러보기
             </Link>
             <Link
               href="/sell"
-              className="px-7 py-3 bg-white/10 border border-white/30 text-white rounded-xl text-[15px] font-semibold hover:bg-white/20 transition-colors"
+              className="px-8 py-3.5 bg-transparent border border-cream/40 text-cream rounded-full text-[15px] font-semibold hover:bg-cream/10 transition-colors"
             >
-              내 매물 등록하기
+              내 매물 등록 →
             </Link>
           </div>
         </div>
 
-        {/* 가치 제안 (히어로 안으로 통합) */}
-        <div className="relative z-10 border-t border-white/10 pb-6 pt-5">
-          <div className="max-w-4xl mx-auto px-6 flex flex-wrap justify-center gap-x-10 gap-y-3">
+        {/* 가치 제안 (히어로 하단) */}
+        <div className="relative z-10 border-t border-cream/10 pb-8 pt-6">
+          <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
             {[
-              {
-                title: "중개수수료 0원",
-                desc: "직거래로 비용 절약",
-                icon: <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
-              },
-              {
-                title: "사업자 인증 필수",
-                desc: "검증된 매도인",
-                icon: <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />,
-              },
-              {
-                title: "상권분석 무료",
-                desc: "데이터 기반 의사결정",
-                icon: <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />,
-              },
-              {
-                title: "실시간 채팅",
-                desc: "빠른 소통",
-                icon: <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />,
-              },
+              { title: "중개수수료 0원", desc: "직거래로 비용 절약" },
+              { title: "사업자 인증 필수", desc: "검증된 매도인" },
+              { title: "상권분석 무료", desc: "데이터 기반 의사결정" },
+              { title: "실시간 채팅", desc: "빠른 소통" },
             ].map((item) => (
-              <div key={item.title} className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4.5 h-4.5 text-white/80">
-                    {item.icon}
-                  </svg>
-                </div>
+              <div key={item.title} className="flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-terra-500 mt-1.5 shrink-0" aria-hidden="true" />
                 <div>
-                  <div className="text-sm font-semibold text-white">{item.title}</div>
-                  <div className="text-xs text-white/50">{item.desc}</div>
+                  <div className="text-sm font-semibold text-cream">{item.title}</div>
+                  <div className="text-xs text-cream/50 mt-0.5">{item.desc}</div>
                 </div>
               </div>
             ))}
@@ -320,24 +316,25 @@ export default function HomeClient({
       </section>
 
       {/* ===== 섹션 2: 업종별 매물 찾기 ===== */}
-      <section className="py-8 md:py-12 bg-white dark:bg-navy-900">
+      <section className="py-12 md:py-16 bg-cream">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center">
-              업종별 매물 찾기
+          <div className="text-center mb-8">
+            <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2">Browse by category</div>
+            <h2 className="font-extrabold text-green-700 text-2xl md:text-3xl tracking-tight">
+              업종별로 <span className="font-serif italic font-light text-terra-500">찾아보기</span>
             </h2>
           </div>
-          <div className="grid grid-cols-4 md:grid-cols-8 gap-2.5">
+          <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
             {CATEGORY_ITEMS.map((cat) => (
               <Link
                 key={cat.name}
                 href={cat.link}
-                className="flex flex-col items-center gap-2 py-4 px-2 rounded-xl bg-white dark:bg-navy-900 border border-gray-200 dark:border-navy-700 hover:border-navy-300 dark:hover:border-navy-500 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                className="group flex flex-col items-center gap-2 py-5 px-2 rounded-2xl bg-cream border border-line hover:border-green-700 hover:shadow-[0_8px_24px_rgba(31,63,46,0.08)] hover:-translate-y-1 transition-all"
               >
-                <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-navy-800 flex items-center justify-center text-navy-700 dark:text-navy-300">
+                <div className="w-11 h-11 rounded-full bg-cream-elev group-hover:bg-green-700 flex items-center justify-center text-green-700 group-hover:text-cream transition-colors">
                   {cat.icon}
                 </div>
-                <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">{cat.name}</span>
+                <span className="text-xs font-semibold text-ink">{cat.name}</span>
               </Link>
             ))}
           </div>
@@ -346,18 +343,23 @@ export default function HomeClient({
 
       {/* ===== 섹션 3: 매물 통합 (VIP + 프리미엄/베이직) ===== */}
       {(vipListings.length > 0 || premBasicListings.length > 0) && (
-        <section className="py-8 md:py-12 bg-gray-50 dark:bg-navy-900/50">
+        <section className="py-12 md:py-16 bg-cream-elev">
           <div className="max-w-7xl mx-auto px-6">
             {/* VIP 매물 */}
             {vipListings.length > 0 && (
               <>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 bg-navy-700 text-white text-xs font-bold rounded-md shadow-md">VIP</span>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">매물</h2>
+                <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
+                  <div>
+                    <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2 flex items-center gap-2">
+                      <span className="w-6 h-px bg-terra-500" />
+                      VIP Exclusive
+                    </div>
+                    <h2 className="font-extrabold text-green-700 text-3xl md:text-4xl tracking-tight">
+                      오늘의 <span className="font-serif italic font-light text-terra-500">추천 매물</span>
+                    </h2>
                   </div>
-                  <Link href="/listings" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                    전체보기 →
+                  <Link href="/listings" className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors whitespace-nowrap">
+                    전체 보기 →
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -368,7 +370,7 @@ export default function HomeClient({
                       <Link
                         key={listing.id}
                         href={`/listings/${listing.id}`}
-                        className="flex bg-white rounded-xl overflow-hidden border-2 border-navy-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
+                        className="flex bg-white rounded-xl overflow-hidden border-2 border-green-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
                       >
                         <div className="relative w-[38%] min-h-[200px] bg-gradient-to-br from-gray-100 to-gray-200">
                           {listing.images[0] ? (
@@ -385,7 +387,7 @@ export default function HomeClient({
                               <svg className="w-11 h-11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
                           )}
-                          <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-3 py-1.5 bg-navy-700 text-white text-[11px] font-bold rounded shadow-[0_2px_8px_rgba(27,73,101,0.3)]">
+                          <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-3 py-1.5 bg-green-700 text-white text-[11px] font-bold rounded shadow-[0_2px_8px_rgba(27,73,101,0.3)]">
                             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                             VIP
                           </span>
@@ -407,7 +409,7 @@ export default function HomeClient({
                             </div>
                             <div className="bg-gray-50 rounded-lg p-2 text-center">
                               <p className="text-[11px] text-gray-500 mb-0.5">권리금</p>
-                              <p className="text-sm font-bold text-navy-700">
+                              <p className="text-sm font-bold text-green-700">
                                 {listing.premiumNone ? "무권리" : `${listing.premium.toLocaleString()}만`}
                               </p>
                             </div>
@@ -441,12 +443,12 @@ export default function HomeClient({
             {/* 프리미엄 · 베이직 매물 */}
             {premBasicListings.length > 0 && (
               <>
-                <div className={`${vipListings.length > 0 ? "border-t border-gray-200 pt-8 mt-10" : ""}`}>
-                  <div className="flex items-center justify-between mb-5">
+                <div className={`${vipListings.length > 0 ? "border-t border-line pt-10 mt-12" : ""}`}>
+                  <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 text-[10px] font-bold rounded-md">PREMIUM</span>
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 text-[10px] font-bold rounded-md">BASIC</span>
-                      <h3 className="text-lg font-bold text-gray-900 ml-1">매물</h3>
+                      <span className="px-2.5 py-1 bg-green-700 text-cream text-[10px] font-bold rounded-full tracking-wider">PREMIUM</span>
+                      <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full tracking-wider">BASIC</span>
+                      <h3 className="text-xl font-bold text-ink ml-1 tracking-tight">매물</h3>
                     </div>
                   </div>
                 </div>
@@ -461,14 +463,38 @@ export default function HomeClient({
         </section>
       )}
 
+      {/* ===== Feature Strip — 시그니처 밴드 ===== */}
+      <section className="bg-green-700 py-20 md:py-28 text-center relative overflow-hidden">
+        <div aria-hidden className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-terra-500/15 blur-3xl" />
+        <div className="relative max-w-3xl mx-auto px-6">
+          <p className="text-terra-300 text-xs font-semibold tracking-[0.3em] uppercase mb-4">● Our Promise</p>
+          <h2 className="font-extrabold text-cream text-4xl md:text-6xl leading-[1.1] tracking-tight">
+            수수료 <span className="font-serif italic font-light text-terra-300">0원,</span>
+            <br />
+            그게 직거래다.
+          </h2>
+          <p className="text-cream/60 text-sm md:text-base mt-6 max-w-xl mx-auto">
+            권리샵은 중개인 대신 사장님과 창업자를 직접 연결합니다.
+            <br className="hidden md:block" />
+            수천만 원의 권리금은 당사자 간 정직한 대화로 가장 투명해집니다.
+          </p>
+        </div>
+      </section>
+
       {/* ===== 섹션 4: 프랜차이즈 (가로 스크롤) ===== */}
-      <section className="py-8 md:py-12 bg-white dark:bg-navy-900">
+      <section className="py-12 md:py-16 bg-cream">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">프랜차이즈</h2>
+          <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
+            <div>
+              <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2 flex items-center gap-2">
+                <span className="w-6 h-px bg-terra-500" />
+                Franchise
+              </div>
+              <h2 className="font-extrabold text-green-700 text-3xl md:text-4xl tracking-tight">
+                검증된 <span className="font-serif italic font-light text-terra-500">프랜차이즈</span>
+              </h2>
             </div>
-            <Link href="/franchise" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <Link href="/franchise" className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors whitespace-nowrap">
               더보기 →
             </Link>
           </div>
@@ -521,7 +547,7 @@ export default function HomeClient({
                     </div>
                   ) : (
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${
-                      brand.tier === "GOLD" ? "bg-navy-50 text-navy-700" : "bg-gray-100 text-gray-500"
+                      brand.tier === "GOLD" ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"
                     }`}>
                       {brand.brandName.charAt(0)}
                     </div>
@@ -530,7 +556,7 @@ export default function HomeClient({
                     <h3 className="text-[15px] font-bold text-gray-900">{brand.brandName}</h3>
                     <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
                       brand.tier === "GOLD"
-                        ? "bg-navy-700 text-white"
+                        ? "bg-green-700 text-white"
                         : brand.tier === "SILVER"
                           ? "bg-gray-200 text-gray-600"
                           : "bg-gray-100 text-gray-600"
@@ -558,7 +584,7 @@ export default function HomeClient({
                   {brand.avgRevenue && (
                     <div>
                       <p className="text-[11px] text-gray-500">매출</p>
-                      <p className="text-sm font-bold text-navy-700">{(brand.avgRevenue / 10000).toLocaleString()}만</p>
+                      <p className="text-sm font-bold text-green-700">{(brand.avgRevenue / 10000).toLocaleString()}만</p>
                     </div>
                   )}
                 </div>
@@ -570,35 +596,41 @@ export default function HomeClient({
       </section>
 
       {/* ===== 섹션 5: 협력업체 + 집기장터 탭 통합 ===== */}
-      <section className="py-8 md:py-12 bg-gray-50 dark:bg-navy-900/50">
+      <section className="py-12 md:py-16 bg-cream-elev">
         <div className="max-w-7xl mx-auto px-6">
           {/* 탭 헤더 */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-1 bg-gray-200 dark:bg-navy-800 rounded-full p-1">
-              <button
-                onClick={() => setActiveTab("partners")}
-                className={`px-5 py-3 text-sm font-semibold rounded-full transition-all ${
-                  activeTab === "partners"
-                    ? "bg-white dark:bg-navy-600 text-gray-900 dark:text-white shadow-sm"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                }`}
-              >
-                협력업체
-              </button>
-              <button
-                onClick={() => setActiveTab("equipment")}
-                className={`px-5 py-3 text-sm font-semibold rounded-full transition-all ${
-                  activeTab === "equipment"
-                    ? "bg-white dark:bg-navy-600 text-gray-900 dark:text-white shadow-sm"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                }`}
-              >
-                집기장터
-              </button>
+          <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
+            <div>
+              <div className="text-xs font-semibold text-terra-500 tracking-[0.15em] uppercase mb-2 flex items-center gap-2">
+                <span className="w-6 h-px bg-terra-500" />
+                Partners &amp; Equipment
+              </div>
+              <div className="flex items-center gap-1 bg-cream rounded-full p-1 border border-line">
+                <button
+                  onClick={() => setActiveTab("partners")}
+                  className={`px-5 py-2.5 text-sm font-semibold rounded-full transition-all ${
+                    activeTab === "partners"
+                      ? "bg-green-700 text-cream shadow-sm"
+                      : "text-muted hover:text-ink"
+                  }`}
+                >
+                  협력업체
+                </button>
+                <button
+                  onClick={() => setActiveTab("equipment")}
+                  className={`px-5 py-2.5 text-sm font-semibold rounded-full transition-all ${
+                    activeTab === "equipment"
+                      ? "bg-green-700 text-cream shadow-sm"
+                      : "text-muted hover:text-ink"
+                  }`}
+                >
+                  집기장터
+                </button>
+              </div>
             </div>
             <Link
               href={activeTab === "partners" ? "/partners" : "/equipment"}
-              className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              className="text-sm font-semibold text-green-700 hover:text-terra-500 transition-colors whitespace-nowrap"
             >
               더보기 →
             </Link>
@@ -620,7 +652,7 @@ export default function HomeClient({
                           <Image src={partner.images[0].url} alt={partner.companyName} fill className="object-cover" />
                         </div>
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-navy-50 text-navy-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-green-50 text-green-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
                           {partner.companyName.charAt(0)}
                         </div>
                       )}
@@ -629,7 +661,7 @@ export default function HomeClient({
                         <p className="text-xs text-gray-400">{SERVICE_TYPE_LABELS[partner.serviceType] || partner.serviceType}</p>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 bg-navy-700 text-white text-[10px] font-bold rounded-md">VIP</span>
+                    <span className="px-2 py-0.5 bg-green-700 text-white text-[10px] font-bold rounded-md">VIP</span>
                   </div>
                   {partner.description && (
                     <p className="text-xs text-gray-500 line-clamp-1">{partner.description}</p>
@@ -666,9 +698,9 @@ export default function HomeClient({
                     </div>
                     <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold rounded-md ${
                       partner.tier === "VIP"
-                        ? "bg-navy-700 text-white"
+                        ? "bg-green-700 text-white"
                         : partner.tier === "PREMIUM"
-                          ? "bg-navy-700/85 text-white"
+                          ? "bg-green-700/85 text-white"
                           : "bg-gray-200 text-gray-600"
                     }`}>
                       {partner.tier === "VIP" && (
@@ -704,16 +736,16 @@ export default function HomeClient({
                           <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
                         </div>
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-navy-50 text-navy-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-green-50 text-green-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
                           🛠️
                         </div>
                       )}
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
-                        <p className="text-sm font-bold text-navy-700">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
+                        <p className="text-sm font-bold text-green-700">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 bg-navy-700 text-white text-[10px] font-bold rounded-md">VIP</span>
+                    <span className="px-2 py-0.5 bg-green-700 text-white text-[10px] font-bold rounded-md">VIP</span>
                   </div>
                   <p className="text-xs text-gray-400">
                     {item.condition === "NEW" ? "신품" : item.condition === "USED_LIKE_NEW" ? "거의새것" : "중고"}
@@ -739,14 +771,14 @@ export default function HomeClient({
                       )}
                       <div>
                         <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
-                        <p className="text-sm font-bold text-navy-700">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
+                        <p className="text-sm font-bold text-green-700">{item.price === 0 ? "무료나눔" : `${item.price.toLocaleString()}원`}</p>
                       </div>
                     </div>
                     <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold rounded-md ${
                       item.tier === "VIP"
-                        ? "bg-navy-700 text-white"
+                        ? "bg-green-700 text-white"
                         : item.tier === "PREMIUM"
-                          ? "bg-navy-700/85 text-white"
+                          ? "bg-green-700/85 text-white"
                           : "bg-gray-200 text-gray-600"
                     }`}>
                       {item.tier === "VIP" && (

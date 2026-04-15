@@ -21,12 +21,12 @@ export default function StepIndicator({
     <div>
       {/* 진행률 */}
       <div className="mb-3">
-        <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 text-center mb-2">
-          <span className="text-navy-700 dark:text-navy-400">{currentStep}</span> / {totalSteps} 단계 — {currentStepLabel}
+        <p className="text-sm font-semibold text-gray-600 text-center mb-2">
+          <span className="text-green-700">{currentStep}</span> / {totalSteps} 단계 — {currentStepLabel}
         </p>
-        <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-navy-500 to-navy-600 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-500"
             style={{ width: `${(currentStep / totalSteps) * 100}%` }}
           />
         </div>
@@ -39,10 +39,10 @@ export default function StepIndicator({
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
                   step.number === currentStep
-                    ? "bg-navy-700 text-white"
+                    ? "bg-green-700 text-white"
                     : step.number < currentStep
-                      ? "bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-400"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-200 text-gray-400"
                 }`}
               >
                 {step.number < currentStep ? (
@@ -58,10 +58,10 @@ export default function StepIndicator({
               <span
                 className={`mt-1 whitespace-nowrap ${
                   step.number === currentStep
-                    ? "block text-xs text-navy-700 dark:text-navy-400 font-medium"
+                    ? "block text-xs text-green-700 font-medium"
                     : step.number < currentStep
-                      ? "hidden sm:block text-[10px] text-navy-400 dark:text-navy-500"
-                      : "hidden sm:block text-[10px] text-gray-400 dark:text-gray-500"
+                      ? "hidden sm:block text-[10px] text-green-400"
+                      : "hidden sm:block text-[10px] text-gray-400"
                 }`}
               >
                 {step.label}
@@ -70,7 +70,7 @@ export default function StepIndicator({
             {step.number < steps.length && (
               <div
                 className={`w-4 h-0.5 mt-[-12px] ${
-                  step.number < currentStep ? "bg-navy-300 dark:bg-navy-700" : "bg-gray-200 dark:bg-gray-700"
+                  step.number < currentStep ? "bg-green-300" : "bg-gray-200"
                 }`}
               />
             )}
@@ -80,7 +80,7 @@ export default function StepIndicator({
       {current && (
         <div className="mt-3 flex items-center gap-2">
           {current.icon && <span className="text-lg">{current.icon}</span>}
-          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+          <span className="text-sm font-semibold text-gray-900">
             Step {current.number}/7 — {current.label}
           </span>
         </div>

@@ -16,11 +16,11 @@ import { ListingUpsellBanner } from "@/components/promotion/PromotionCTA";
 import LockedSection from "@/components/listing/LockedSection";
 
 const ReviewSection = dynamic(() => import("@/components/listing/ReviewSection"), {
-  loading: () => <div className="py-4 border-b border-gray-100 dark:border-gray-700"><div className="h-20 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" /></div>,
+  loading: () => <div className="py-4 border-b border-gray-100"><div className="h-20 bg-gray-100 rounded animate-pulse" /></div>,
 });
 
 const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
-  loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
+  loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 rounded-xl animate-pulse" />,
 });
 
 const ShareButton = dynamic(() => import("@/components/listing/ShareButton"), {
@@ -28,11 +28,11 @@ const ShareButton = dynamic(() => import("@/components/listing/ShareButton"), {
 });
 
 const CommercialDistrictSection = dynamic(() => import("@/components/listing/CommercialDistrictSection"), {
-  loading: () => <div className="py-4 border-b border-gray-100 dark:border-gray-700"><div className="h-40 bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" /></div>,
+  loading: () => <div className="py-4 border-b border-gray-100"><div className="h-40 bg-gray-100 rounded-xl animate-pulse" /></div>,
 });
 
 const RentalTrendSection = dynamic(() => import("@/components/listing/RentalTrendSection"), {
-  loading: () => <div className="py-4 border-b border-gray-100 dark:border-gray-700"><div className="h-40 bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" /></div>,
+  loading: () => <div className="py-4 border-b border-gray-100"><div className="h-40 bg-gray-100 rounded-xl animate-pulse" /></div>,
 });
 
 const CrossSellSection = dynamic(() => import("@/components/shared/CrossSellSection"), {
@@ -397,25 +397,25 @@ export default function ListingDetailClient() {
     switch (currentStatus) {
       case "ACTIVE":
         return [
-          { value: "RESERVED", label: "예약중", color: "text-orange-700 dark:text-orange-400" },
-          { value: "SOLD", label: "거래완료", color: "text-gray-700 dark:text-gray-300" },
+          { value: "RESERVED", label: "예약중", color: "text-orange-700" },
+          { value: "SOLD", label: "거래완료", color: "text-gray-700" },
         ];
       case "RESERVED":
         return [
-          { value: "ACTIVE", label: "판매중", color: "text-green-700 dark:text-green-400" },
-          { value: "SOLD", label: "거래완료", color: "text-gray-700 dark:text-gray-300" },
+          { value: "ACTIVE", label: "판매중", color: "text-green-700" },
+          { value: "SOLD", label: "거래완료", color: "text-gray-700" },
         ];
       case "SOLD":
         return [
-          { value: "ACTIVE", label: "판매중", color: "text-green-700 dark:text-green-400" },
+          { value: "ACTIVE", label: "판매중", color: "text-green-700" },
         ];
       case "DRAFT":
         return [
-          { value: "ACTIVE", label: "매물 공개하기", color: "text-green-700 dark:text-green-400" },
+          { value: "ACTIVE", label: "매물 공개하기", color: "text-green-700" },
         ];
       case "EXPIRED":
         return [
-          { value: "ACTIVE", label: "재등록하기", color: "text-navy-700 dark:text-navy-400" },
+          { value: "ACTIVE", label: "재등록하기", color: "text-green-700" },
         ];
       default:
         return [];
@@ -425,17 +425,17 @@ export default function ListingDetailClient() {
   function getStatusDisplay(status: string): { label: string; bgColor: string; textColor: string } {
     switch (status) {
       case "ACTIVE":
-        return { label: "판매중", bgColor: "bg-green-100 dark:bg-green-900", textColor: "text-green-700 dark:text-green-400" };
+        return { label: "판매중", bgColor: "bg-green-100", textColor: "text-green-700" };
       case "RESERVED":
-        return { label: "예약중", bgColor: "bg-orange-100 dark:bg-orange-900", textColor: "text-orange-700 dark:text-orange-400" };
+        return { label: "예약중", bgColor: "bg-orange-100", textColor: "text-orange-700" };
       case "SOLD":
-        return { label: "거래완료", bgColor: "bg-gray-200 dark:bg-gray-700", textColor: "text-gray-500 dark:text-gray-400" };
+        return { label: "거래완료", bgColor: "bg-gray-200", textColor: "text-gray-500" };
       case "DRAFT":
-        return { label: "임시저장", bgColor: "bg-yellow-100 dark:bg-yellow-900", textColor: "text-yellow-700 dark:text-yellow-400" };
+        return { label: "임시저장", bgColor: "bg-yellow-100", textColor: "text-yellow-700" };
       case "EXPIRED":
-        return { label: "만료됨", bgColor: "bg-red-100 dark:bg-red-900", textColor: "text-red-700 dark:text-red-400" };
+        return { label: "만료됨", bgColor: "bg-red-100", textColor: "text-red-700" };
       default:
-        return { label: status, bgColor: "bg-gray-100 dark:bg-gray-700", textColor: "text-gray-600 dark:text-gray-400" };
+        return { label: status, bgColor: "bg-gray-100", textColor: "text-gray-600" };
     }
   }
 
@@ -443,9 +443,9 @@ export default function ListingDetailClient() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="aspect-[16/9] bg-gray-200 dark:bg-gray-700 rounded-xl" />
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+          <div className="aspect-[16/9] bg-gray-200 rounded-xl" />
+          <div className="h-6 bg-gray-200 rounded w-2/3" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
         </div>
       </div>
     );
@@ -454,7 +454,7 @@ export default function ListingDetailClient() {
   if (error) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-        <p className="text-gray-500 dark:text-gray-400 mb-4">매물을 불러올 수 없습니다.</p>
+        <p className="text-gray-500 mb-4">매물을 불러올 수 없습니다.</p>
         <button
           onClick={() => {
             setLoading(true);
@@ -477,7 +477,7 @@ export default function ListingDetailClient() {
                 setLoading(false);
               });
           }}
-          className="px-6 py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
+          className="px-6 py-2.5 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
         >
           다시 시도
         </button>
@@ -535,7 +535,7 @@ export default function ListingDetailClient() {
   const isExpired = listing.status === "EXPIRED";
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6 dark:bg-gray-900">
+    <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
       {jsonLdData && <JsonLd data={jsonLdData} />}
       <Breadcrumb items={[
         { label: "매물검색", href: "/listings" },
@@ -544,8 +544,8 @@ export default function ListingDetailClient() {
 
       {/* ===== DRAFT/EXPIRED 상태 안내 배너 ===== */}
       {isOwner && isDraft && (
-        <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-300 dark:border-yellow-700 rounded-xl">
-          <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">이 매물은 아직 공개되지 않은 임시저장 상태입니다.</p>
+        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-300 rounded-xl">
+          <p className="text-sm font-medium text-yellow-800">이 매물은 아직 공개되지 않은 임시저장 상태입니다.</p>
           <button
             onClick={() => handleStatusChange("ACTIVE")}
             disabled={statusUpdating}
@@ -556,12 +556,12 @@ export default function ListingDetailClient() {
         </div>
       )}
       {isOwner && isExpired && (
-        <div className="mb-4 p-4 bg-red-50 dark:bg-red-950 border border-red-300 dark:border-red-700 rounded-xl">
-          <p className="text-sm font-medium text-red-800 dark:text-red-300">이 매물은 기간이 만료되었습니다. 재등록하면 다시 노출됩니다.</p>
+        <div className="mb-4 p-4 bg-red-50 border border-red-300 rounded-xl">
+          <p className="text-sm font-medium text-red-800">이 매물은 기간이 만료되었습니다. 재등록하면 다시 노출됩니다.</p>
           <button
             onClick={() => handleStatusChange("ACTIVE")}
             disabled={statusUpdating}
-            className="mt-2 px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-600 transition-colors disabled:opacity-50"
+            className="mt-2 px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors disabled:opacity-50"
           >
             {statusUpdating ? "처리 중..." : "재등록하기"}
           </button>
@@ -580,8 +580,8 @@ export default function ListingDetailClient() {
                 onClick={() => setImageTab(tab.key)}
                 className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   imageTab === tab.key
-                    ? "bg-navy-700 text-white"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    ? "bg-green-700 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 {tab.label} {count > 0 && <span className="ml-0.5 opacity-70">{count}</span>}
@@ -592,7 +592,7 @@ export default function ListingDetailClient() {
       )}
 
       <div
-        className="relative aspect-[16/9] bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none"
+        className="relative aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none"
         onTouchStart={handleGalleryTouchStart}
         onTouchEnd={handleGalleryTouchEnd}
       >
@@ -637,21 +637,21 @@ export default function ListingDetailClient() {
             )}
           </>
         ) : filteredImages.length === 0 && imageTab !== "ALL" ? (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
+          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
             해당 카테고리의 사진이 없습니다
           </div>
         ) : isOwner ? (
           <div className="w-full h-full flex flex-col items-center justify-center gap-3 p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400 text-center">사진을 등록하면 조회수가 높아집니다</p>
+            <p className="text-sm text-gray-500 text-center">사진을 등록하면 조회수가 높아집니다</p>
             <Link
               href="/sell/edit"
-              className="px-6 py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors text-sm"
+              className="px-6 py-2.5 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm"
             >
               사진 추가하기
             </Link>
           </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 text-sm md:text-lg">
+          <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm md:text-lg">
             사진 없음
           </div>
         )}
@@ -665,7 +665,7 @@ export default function ListingDetailClient() {
               key={img.id}
               onClick={() => setCurrentImage(idx)}
               className={`shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-colors ${
-                currentImage === idx ? "border-navy-500" : "border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+                currentImage === idx ? "border-green-500" : "border-transparent hover:border-gray-300"
               }`}
             >
               <Image
@@ -681,19 +681,19 @@ export default function ListingDetailClient() {
       )}
 
       {/* ===== 모바일 탭 네비게이션 (sticky) ===== */}
-      <div id="detail-tab-bar" className="md:hidden sticky top-14 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 -mx-4 px-4 mb-4">
+      <div id="detail-tab-bar" className="md:hidden sticky top-14 z-20 bg-white border-b border-gray-200 -mx-4 px-4 mb-4">
         <div className="flex">
           <button onClick={() => handleDetailTabChange("overview")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "overview" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "overview" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>개요</button>
           <button onClick={() => handleDetailTabChange("detail")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "detail" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "detail" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>상세</button>
           <button onClick={() => handleDetailTabChange("location")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "location" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "location" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>위치</button>
           <button onClick={() => handleDetailTabChange("review")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "review" ? "text-navy-700 border-b-2 border-navy-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "review" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>리뷰</button>
         </div>
       </div>
@@ -704,7 +704,7 @@ export default function ListingDetailClient() {
       {listing.themes.length > 0 && (
         <div className="flex gap-2 mb-3">
           {listing.themes.map((t) => (
-            <span key={t} className="px-3 py-1 bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-300 text-xs font-medium rounded-full">
+            <span key={t} className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
               {t}
             </span>
           ))}
@@ -718,64 +718,64 @@ export default function ListingDetailClient() {
       )}
 
       {/* ===== 3. 카테고리/상호명/주소 ===== */}
-      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+      <div className="text-sm text-gray-500 mb-1">
         {listing.category?.icon} {listing.category?.name}
         {listing.subCategory && ` > ${listing.subCategory.name}`}
         {listing.brandType === "FRANCHISE" && (
-          <span className="ml-2 px-2 py-0.5 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-400 text-xs rounded">프랜차이즈</span>
+          <span className="ml-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded">프랜차이즈</span>
         )}
       </div>
       <div className="flex items-center gap-2 mb-1">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-xl font-bold text-gray-900">
           {listing.storeName || listing.addressRoad || "매물 상세"}
         </h1>
         {listing.status === "ACTIVE" && (
-          <span className="shrink-0 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">판매중</span>
+          <span className="shrink-0 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">판매중</span>
         )}
         {listing.status === "RESERVED" && (
-          <span className="shrink-0 px-2 py-0.5 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-400 text-xs font-medium rounded-full">예약중</span>
+          <span className="shrink-0 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">예약중</span>
         )}
         {listing.status === "SOLD" && (
-          <span className="shrink-0 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs font-medium rounded-full">거래완료</span>
+          <span className="shrink-0 px-2 py-0.5 bg-gray-200 text-gray-500 text-xs font-medium rounded-full">거래완료</span>
         )}
         {listing.status === "DRAFT" && (
-          <span className="shrink-0 px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-400 text-xs font-medium rounded-full">임시저장</span>
+          <span className="shrink-0 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">임시저장</span>
         )}
         {listing.status === "EXPIRED" && (
-          <span className="shrink-0 px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-400 text-xs font-medium rounded-full">만료됨</span>
+          <span className="shrink-0 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full">만료됨</span>
         )}
       </div>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+      <p className="text-sm text-gray-500 mb-1">
         {listing.addressRoad}
         {listing.addressDetail && ` ${listing.addressDetail}`}
       </p>
-      <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
+      <p className="text-xs text-gray-400 mb-4">
         등록 {(() => { const days = Math.floor((Date.now() - new Date(listing.createdAt).getTime()) / (1000 * 60 * 60 * 24)); return days === 0 ? "오늘" : `${days}일째`; })()}
         <span className="mx-1">·</span>조회 {listing.viewCount}
         <span className="mx-1">·</span>관심 {listing.favoriteCount}
       </p>
 
       {/* ===== 4. 가격 요약 ===== */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 mb-4">
+      <div className="bg-gray-50 rounded-xl p-4 mb-4">
         <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:gap-4 sm:text-center">
           <div className="flex justify-between sm:block">
-            <p className="text-xs text-gray-400 dark:text-gray-500 sm:mb-1">보증금</p>
-            <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{fmt(listing.deposit)}만</p>
+            <p className="text-xs text-gray-400 sm:mb-1">보증금</p>
+            <p className="text-base sm:text-lg font-bold text-gray-900">{fmt(listing.deposit)}만</p>
           </div>
           <div className="flex justify-between sm:block">
-            <p className="text-xs text-gray-400 dark:text-gray-500 sm:mb-1">월세</p>
-            <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{fmt(listing.monthlyRent)}만</p>
+            <p className="text-xs text-gray-400 sm:mb-1">월세</p>
+            <p className="text-base sm:text-lg font-bold text-gray-900">{fmt(listing.monthlyRent)}만</p>
           </div>
           <div className="flex justify-between sm:block">
-            <p className="text-xs text-gray-400 dark:text-gray-500 sm:mb-1">권리금</p>
-            <p className="text-base sm:text-lg font-bold text-navy-700 dark:text-navy-400">
+            <p className="text-xs text-gray-400 sm:mb-1">권리금</p>
+            <p className="text-base sm:text-lg font-bold text-green-700">
               {listing.premiumNone ? "무권리" : `${fmt(listing.premium)}만`}
               {listing.premiumNegotiable && <span className="text-xs ml-1">(협의)</span>}
             </p>
           </div>
         </div>
         {listing.maintenanceFee !== null && (
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 sm:border-0 sm:pt-0">
+          <p className="text-xs text-gray-400 text-center mt-3 pt-3 border-t border-gray-200 sm:border-0 sm:pt-0">
             관리비 {fmt(listing.maintenanceFee)}만원
           </p>
         )}
@@ -785,17 +785,17 @@ export default function ListingDetailClient() {
       {(() => {
         const cards: { icon: string; label: string; value: string; color: string }[] = [];
         if (listing.monthlyRevenue && listing.monthlyRevenue > 0) {
-          cards.push({ icon: "📊", label: "월매출", value: `${fmt(listing.monthlyRevenue)}만`, color: "bg-navy-50 dark:bg-navy-950 text-navy-700 dark:text-navy-300" });
+          cards.push({ icon: "📊", label: "월매출", value: `${fmt(listing.monthlyRevenue)}만`, color: "bg-green-50 text-green-700" });
         }
         if (listing.monthlyProfit && listing.monthlyRevenue && listing.monthlyRevenue > 0) {
           const profitRate = ((listing.monthlyProfit / listing.monthlyRevenue) * 100).toFixed(0);
-          cards.push({ icon: "💰", label: "순이익률", value: `${profitRate}%`, color: "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300" });
+          cards.push({ icon: "💰", label: "순이익률", value: `${profitRate}%`, color: "bg-green-50 text-green-700" });
         }
         if (investmentTotal > 0 && listing.monthlyProfit && listing.monthlyProfit > 0) {
           const months = (investmentTotal / listing.monthlyProfit).toFixed(0);
-          cards.push({ icon: "⏱", label: "회수기간", value: `${months}개월`, color: "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300" });
+          cards.push({ icon: "⏱", label: "회수기간", value: `${months}개월`, color: "bg-amber-50 text-amber-700" });
           const annualReturn = ((listing.monthlyProfit * 12) / investmentTotal * 100).toFixed(0);
-          cards.push({ icon: "📈", label: "연수익률", value: `${annualReturn}%`, color: "bg-navy-50 dark:bg-navy-900 text-navy-700 dark:text-navy-300" });
+          cards.push({ icon: "📈", label: "연수익률", value: `${annualReturn}%`, color: "bg-green-50 text-green-700" });
         }
         if (cards.length === 0) return null;
         return (
@@ -822,10 +822,10 @@ export default function ListingDetailClient() {
         <Section title="권리금 해부하기">
           <div className="space-y-4">
             {/* 비율 바 */}
-            <div className="flex h-3 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+            <div className="flex h-3 rounded-full overflow-hidden bg-gray-100">
               {listing.premiumBusiness != null && listing.premiumBusiness > 0 && premiumTotal > 0 && (
                 <div
-                  className="bg-navy-500 transition-all"
+                  className="bg-green-500 transition-all"
                   style={{ width: `${(listing.premiumBusiness / premiumTotal) * 100}%` }}
                   title={`영업권리금 ${((listing.premiumBusiness / premiumTotal) * 100).toFixed(1)}%`}
                 />
@@ -849,7 +849,7 @@ export default function ListingDetailClient() {
             {/* 범례 */}
             <div className="space-y-3">
               <PremiumItem
-                color="bg-navy-500"
+                color="bg-green-500"
                 label="영업권리금"
                 value={listing.premiumBusiness}
                 total={premiumTotal}
@@ -872,9 +872,9 @@ export default function ListingDetailClient() {
             </div>
 
             {/* 합계 */}
-            <div className="flex justify-between items-center pt-3 border-t border-gray-200 dark:border-gray-700">
-              <span className="text-sm font-bold text-gray-900 dark:text-white">합계</span>
-              <span className="text-base font-bold text-navy-700 dark:text-navy-400">{fmt(premiumTotal)}만원</span>
+            <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+              <span className="text-sm font-bold text-gray-900">합계</span>
+              <span className="text-base font-bold text-green-700">{fmt(premiumTotal)}만원</span>
             </div>
           </div>
         </Section>
@@ -922,7 +922,7 @@ export default function ListingDetailClient() {
         return (
           <LockedSection isLocked={!session} message="회원가입하고 매출·수익 정보를 확인하세요">
           <Section title="평균 매출정보">
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">허위 기재 시 원아웃 제도로 영구 정지 당할 수 있습니다.</p>
+            <p className="text-xs text-gray-400 mb-4">허위 기재 시 원아웃 제도로 영구 정지 당할 수 있습니다.</p>
             <div className="flex flex-col md:flex-row items-center gap-6">
               {/* 도넛 차트 */}
               <div className="relative flex-shrink-0">
@@ -953,8 +953,8 @@ export default function ListingDetailClient() {
                 </svg>
                 {/* 중앙 텍스트 */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">{fmt(rev)}만원</span>
-                  <span className="text-xs text-gray-400 dark:text-gray-500">월 매출</span>
+                  <span className="text-xl font-bold text-gray-900">{fmt(rev)}만원</span>
+                  <span className="text-xs text-gray-400">월 매출</span>
                 </div>
               </div>
 
@@ -963,13 +963,13 @@ export default function ListingDetailClient() {
                 {segments.map((seg, i) => (
                   <div key={i} className="flex items-center gap-2 py-1">
                     <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: seg.color }} />
-                    <span className="text-xs text-gray-500 dark:text-gray-400 w-14 flex-shrink-0">{seg.label}</span>
+                    <span className="text-xs text-gray-500 w-14 flex-shrink-0">{seg.label}</span>
                     <div className="flex-1 flex items-center gap-2">
-                      <div className="flex-1 h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
                         <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(seg.pct, 100)}%`, backgroundColor: seg.color }} />
                       </div>
-                      <span className="text-sm font-bold text-gray-800 dark:text-gray-200 w-20 text-right">{fmt(seg.value)}만</span>
-                      <span className="text-xs text-gray-400 dark:text-gray-500 w-8 text-right">{seg.pct.toFixed(0)}%</span>
+                      <span className="text-sm font-bold text-gray-800 w-20 text-right">{fmt(seg.value)}만</span>
+                      <span className="text-xs text-gray-400 w-8 text-right">{seg.pct.toFixed(0)}%</span>
                     </div>
                   </div>
                 ))}
@@ -979,32 +979,32 @@ export default function ListingDetailClient() {
             {/* 투자금 & 순이익 요약 */}
             <div className="mt-6 space-y-3">
               {investmentTotal > 0 && (
-                <div className="flex justify-between items-center py-3 border-t border-gray-100 dark:border-gray-700">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">투자금</span>
+                <div className="flex justify-between items-center py-3 border-t border-gray-100">
+                  <span className="text-sm font-medium text-gray-700">투자금</span>
                   <div className="text-right">
-                    <span className="text-base font-bold text-gray-900 dark:text-white">{fmt(investmentTotal)}만원</span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">(보증금 {fmt(listing.deposit)} + 권리금 {listing.premiumNone ? "0" : fmt(listing.premium)})</span>
+                    <span className="text-base font-bold text-gray-900">{fmt(investmentTotal)}만원</span>
+                    <span className="text-xs text-gray-400 ml-1">(보증금 {fmt(listing.deposit)} + 권리금 {listing.premiumNone ? "0" : fmt(listing.premium)})</span>
                   </div>
                 </div>
               )}
 
               {profit > 0 && (
-                <div className="flex justify-between items-center py-3 border-t-2 border-navy-200 dark:border-navy-700 bg-navy-50 dark:bg-navy-900 rounded-lg px-4">
-                  <span className="text-sm font-bold text-navy-700 dark:text-navy-300">월 수익</span>
-                  <span className="text-lg font-bold text-navy-700 dark:text-navy-400">+{fmt(profit)}만원 <span className="text-sm">{profitPct}%</span></span>
+                <div className="flex justify-between items-center py-3 border-t-2 border-green-200 bg-green-50 rounded-lg px-4">
+                  <span className="text-sm font-bold text-green-700">월 수익</span>
+                  <span className="text-lg font-bold text-green-700">+{fmt(profit)}만원 <span className="text-sm">{profitPct}%</span></span>
                 </div>
               )}
 
               {listing.profitDescription && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 px-1">{listing.profitDescription}</p>
+                <p className="text-xs text-gray-500 px-1">{listing.profitDescription}</p>
               )}
             </div>
 
             {/* 인력구성 */}
             {(listing.familyWorkers || listing.employeesFull || listing.employeesPart || listing.operationType !== "SOLO") && (
-              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">인력구성</p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
+              <div className="mt-4 pt-3 border-t border-gray-100">
+                <p className="text-xs text-gray-400 mb-1">인력구성</p>
+                <p className="text-sm text-gray-700">
                   {listing.operationType === "SOLO" && "혼자 운영"}
                   {listing.operationType === "FAMILY" && `가족/동업자${listing.familyWorkers ? ` ${listing.familyWorkers}명` : ""}`}
                   {listing.operationType === "EMPLOYEE" && (
@@ -1021,10 +1021,10 @@ export default function ListingDetailClient() {
 
             {/* 매출 증빙자료 */}
             {listing.documents && listing.documents.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+              <div className="mt-6 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 mb-3">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">매출 증빙자료</h4>
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold rounded">
+                  <h4 className="text-sm font-semibold text-gray-900">매출 증빙자료</h4>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-semibold rounded">
                     <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
@@ -1033,12 +1033,12 @@ export default function ListingDetailClient() {
                 </div>
                 <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
                   {listing.documents.map((doc, i) => (
-                    <div key={doc.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 cursor-pointer hover:border-navy-400 transition-colors" onClick={() => window.open(doc.url, '_blank')}>
+                    <div key={doc.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:border-green-400 transition-colors" onClick={() => window.open(doc.url, '_blank')}>
                       <Image src={doc.url} alt={`매출 증빙 ${i + 1}`} fill className="object-cover" sizes="(max-width:640px) 25vw, 20vw" />
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">클릭하면 원본 크기로 볼 수 있습니다</p>
+                <p className="text-xs text-gray-400 mt-2">클릭하면 원본 크기로 볼 수 있습니다</p>
               </div>
             )}
           </Section>
@@ -1059,7 +1059,7 @@ export default function ListingDetailClient() {
               )}
             </div>
           ) : (
-            <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+            <p className="text-sm text-gray-400 text-center py-4">
               비교 데이터가 부족합니다 (동일 지역 매물 3개 미만)
             </p>
           )}
@@ -1069,7 +1069,7 @@ export default function ListingDetailClient() {
       {/* ===== 10. 매물 설명 ===== */}
       {listing.description && (
         <Section title="매물 설명">
-          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">{listing.description}</p>
+          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{listing.description}</p>
         </Section>
       )}
 
@@ -1078,23 +1078,23 @@ export default function ListingDetailClient() {
         <Section title="가격 변동 이력">
           <div className="relative pl-6 space-y-4">
             {/* 타임라인 라인 */}
-            <div className="absolute left-[7px] top-1 bottom-1 w-0.5 bg-gray-200 dark:bg-gray-700" />
+            <div className="absolute left-[7px] top-1 bottom-1 w-0.5 bg-gray-200" />
             {listing.priceHistory!.map((h) => {
               const diff = h.newValue - h.oldValue;
               const pct = h.oldValue > 0 ? ((diff / h.oldValue) * 100).toFixed(0) : "0";
               const isDown = diff < 0;
               return (
                 <div key={h.id} className="relative">
-                  <div className={`absolute left-[-19px] top-1 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-gray-900 ${
+                  <div className={`absolute left-[-19px] top-1 w-3.5 h-3.5 rounded-full border-2 border-white ${
                     isDown ? "bg-green-500" : "bg-red-500"
                   }`} />
-                  <div className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">
+                  <div className="text-xs text-gray-400 mb-0.5">
                     {new Date(h.createdAt).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <p className="text-sm text-gray-700">
                     <span className="font-medium">{fieldLabels[h.field] || h.field}</span>{" "}
                     {fmt(h.oldValue)}만 → {fmt(h.newValue)}만{" "}
-                    <span className={`text-xs font-medium ${isDown ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+                    <span className={`text-xs font-medium ${isDown ? "text-green-600" : "text-red-600"}`}>
                       ({isDown ? "▼" : "▲"}{Math.abs(Number(pct))}%)
                     </span>
                   </p>
@@ -1103,11 +1103,11 @@ export default function ListingDetailClient() {
             })}
             {/* 최초 등록 */}
             <div className="relative">
-              <div className="absolute left-[-19px] top-1 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-gray-900 bg-gray-400 dark:bg-gray-500" />
-              <div className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">
+              <div className="absolute left-[-19px] top-1 w-3.5 h-3.5 rounded-full border-2 border-white bg-gray-400" />
+              <div className="text-xs text-gray-400 mb-0.5">
                 {new Date(listing.createdAt).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">최초 등록</p>
+              <p className="text-sm text-gray-500">최초 등록</p>
             </div>
           </div>
         </Section>
@@ -1118,10 +1118,10 @@ export default function ListingDetailClient() {
         <Section title="지역 경쟁 분석">
           {listing.regionStats.totalCount >= 3 ? (
             <div className="space-y-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                같은 지역 <span className="font-medium text-gray-900 dark:text-white">{listing.regionStats.region}</span>{" "}
-                <span className="font-medium text-gray-900 dark:text-white">{listing.category?.name}</span> 매물{" "}
-                <span className="font-medium text-navy-700 dark:text-navy-400">{listing.regionStats.totalCount}건</span> 평균 대비
+              <p className="text-sm text-gray-600">
+                같은 지역 <span className="font-medium text-gray-900">{listing.regionStats.region}</span>{" "}
+                <span className="font-medium text-gray-900">{listing.category?.name}</span> 매물{" "}
+                <span className="font-medium text-green-700">{listing.regionStats.totalCount}건</span> 평균 대비
               </p>
               <RegionalPerformanceItem
                 label="조회수"
@@ -1135,7 +1135,7 @@ export default function ListingDetailClient() {
               />
             </div>
           ) : (
-            <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+            <p className="text-sm text-gray-400 text-center py-4">
               비교 데이터 부족 (동일 지역·업종 매물 3건 미만)
             </p>
           )}
@@ -1144,20 +1144,20 @@ export default function ListingDetailClient() {
 
       {/* ===== 12. 판매자 정보 ===== */}
       <Section title="판매자">
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+        <div className="bg-gray-50 rounded-xl p-4">
           <div className="flex items-center gap-3">
             {listing.user.image ? (
               <Image src={listing.user.image} alt={`${listing.user.name || '판매자'} 프로필 사진`} width={48} height={48} className="rounded-full" />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold text-lg">
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
                 {listing.user.name?.[0] || "U"}
               </div>
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <Link href={`/users/${listing.user.id}`} className="font-medium text-gray-900 dark:text-white hover:text-navy-700 dark:hover:text-navy-400">{listing.user.name || "판매자"}</Link>
+                <Link href={`/users/${listing.user.id}`} className="font-medium text-gray-900 hover:text-green-700">{listing.user.name || "판매자"}</Link>
                 {listing.user.businessVerified && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
@@ -1171,30 +1171,30 @@ export default function ListingDetailClient() {
 
         {/* 연락하기 */}
         {listing.contactPublic && listing.user.phone && (
-          <div className="mt-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-            <h4 className="font-medium text-gray-900 dark:text-white mb-1">연락하기</h4>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">바로 연락</p>
+          <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4">
+            <h4 className="font-medium text-gray-900 mb-1">연락하기</h4>
+            <p className="text-xs text-gray-500 mb-3">바로 연락</p>
             {listing.user.phoneLocked ? (
-              <div className="flex flex-col items-center gap-3 py-4 bg-blue-50 dark:bg-navy-900/30 rounded-xl border border-blue-100 dark:border-navy-700">
-                <svg className="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex flex-col items-center gap-3 py-4 bg-blue-50 rounded-xl border border-blue-100">
+                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">판매자 연락처는 로그인 후 확인할 수 있습니다</p>
-                <Link href="/login" className="px-5 py-2.5 bg-navy-700 text-white text-sm font-medium rounded-xl hover:bg-navy-600 transition-colors">로그인하고 연락하기</Link>
+                <p className="text-sm text-gray-600 text-center">판매자 연락처는 로그인 후 확인할 수 있습니다</p>
+                <Link href="/login" className="px-5 py-2.5 bg-green-700 text-white text-sm font-medium rounded-xl hover:bg-green-600 transition-colors">로그인하고 연락하기</Link>
               </div>
             ) : (
               <>
                 <div className="flex gap-3">
-                  <a href={`tel:${listing.user.phone}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors">
+                  <a href={`tel:${listing.user.phone}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                     전화
                   </a>
-                  <a href={`sms:${listing.user.phone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${listing.storeName || '매물'}을(를) 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-white dark:bg-gray-700 text-navy-700 dark:text-navy-300 border-2 border-navy-700 dark:border-navy-500 rounded-xl font-medium hover:bg-navy-50 dark:hover:bg-gray-600 transition-colors">
+                  <a href={`sms:${listing.user.phone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${listing.storeName || '매물'}을(를) 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-white text-green-700 border-2 border-green-700 rounded-xl font-medium hover:bg-green-50 transition-colors">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                     문자
                   </a>
                 </div>
-                <p className="mt-2.5 text-xs text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+                <p className="mt-2.5 text-xs text-gray-400 flex items-start gap-1.5">
                   <span className="shrink-0">💡</span>
                   <span>통화 시 <span className="font-medium">&quot;권리샵 보고 연락드렸습니다&quot;</span> 멘트 권장</span>
                 </p>
@@ -1213,7 +1213,7 @@ export default function ListingDetailClient() {
         <Section title="위치">
           <div className="space-y-3">
             <KakaoMap latitude={listing.latitude} longitude={listing.longitude} level={3} className="h-[300px] md:h-[400px]" showInfoWindow={true} address={listing.addressRoad || ""} />
-            <p className="text-sm text-gray-600 dark:text-gray-400">{listing.addressRoad}{listing.addressDetail && ` ${listing.addressDetail}`}</p>
+            <p className="text-sm text-gray-600">{listing.addressRoad}{listing.addressDetail && ` ${listing.addressDetail}`}</p>
           </div>
         </Section>
       )}
@@ -1273,21 +1273,21 @@ export default function ListingDetailClient() {
               <Link
                 key={item.id}
                 href={`/listings/${item.id}`}
-                className="shrink-0 w-40 md:w-auto md:shrink bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+                className="shrink-0 w-40 md:w-auto md:shrink bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
               >
-                <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
+                <div className="relative aspect-[4/3] bg-gray-100">
                   {item.imageUrl ? (
                     <Image src={item.imageUrl} alt={item.storeName} fill sizes="160px" className="object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 text-xs">
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">
                       {item.categoryIcon || "사진 없음"}
                     </div>
                   )}
                 </div>
                 <div className="p-2">
-                  <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{item.storeName}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{item.addressRoad}</p>
-                  <p className="text-xs font-bold text-navy-700 dark:text-navy-400 mt-1">
+                  <p className="text-xs font-medium text-gray-900 truncate">{item.storeName}</p>
+                  <p className="text-[10px] text-gray-400 truncate">{item.addressRoad}</p>
+                  <p className="text-xs font-bold text-green-700 mt-1">
                     {item.premiumNone ? "무권리" : `${item.premium.toLocaleString()}만`}
                   </p>
                 </div>
@@ -1300,7 +1300,7 @@ export default function ListingDetailClient() {
       </div>
 
       {/* ===== 19. 하단 고정바 ===== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10 md:static md:mt-6 md:rounded-xl md:border md:shadow-sm">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 md:static md:mt-6 md:rounded-xl md:border md:shadow-sm">
         {isOwner ? (
           /* 소유자일 때: 매물 관리 바 */
           <div className="max-w-3xl mx-auto px-4 py-3 relative">
@@ -1321,12 +1321,12 @@ export default function ListingDetailClient() {
                       className="fixed inset-0 z-20"
                       onClick={() => setShowStatusMenu(false)}
                     />
-                    <div className="absolute bottom-full mb-2 left-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1 min-w-[120px] z-30">
+                    <div className="absolute bottom-full mb-2 left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[120px] z-30">
                       {getAvailableStatusTransitions(listing.status).map((status) => (
                         <button
                           key={status.value}
                           onClick={() => handleStatusChange(status.value)}
-                          className={`w-full text-left px-4 py-2 text-sm font-medium ${status.color} hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors`}
+                          className={`w-full text-left px-4 py-2 text-sm font-medium ${status.color} hover:bg-gray-50 transition-colors`}
                         >
                           {status.label}
                         </button>
@@ -1344,9 +1344,9 @@ export default function ListingDetailClient() {
               </Link>
 
               {bumpSubscription ? (
-                <div className="min-h-[44px] flex flex-col items-center justify-center py-2 bg-green-50 dark:bg-green-950 border-2 border-green-400 dark:border-green-700 rounded-xl text-center">
-                  <div className="text-[10px] md:text-xs font-bold text-green-700 dark:text-green-400">자동 끌올 중</div>
-                  <div className="text-[10px] md:text-xs text-green-600 dark:text-green-500">
+                <div className="min-h-[44px] flex flex-col items-center justify-center py-2 bg-green-50 border-2 border-green-400 rounded-xl text-center">
+                  <div className="text-[10px] md:text-xs font-bold text-green-700">자동 끌올 중</div>
+                  <div className="text-[10px] md:text-xs text-green-600">
                     {bumpSubscription.frequency === "TWICE_WEEKLY" && "주 2회"}
                     {bumpSubscription.frequency === "WEEKDAY_DAILY" && "평일 매일"}
                     {bumpSubscription.frequency === "DAILY" && "매일 1회"}
@@ -1366,7 +1366,7 @@ export default function ListingDetailClient() {
               {/* 광고 업그레이드 */}
               <Link
                 href={`/pricing?listingId=${listing.id}`}
-                className={`min-h-[44px] flex items-center justify-center py-2 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-navy-800 transition-colors text-xs md:text-sm ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
+                className={`min-h-[44px] flex items-center justify-center py-2 bg-green-700 text-white rounded-xl font-medium text-center hover:bg-green-600 active:bg-green-800 transition-colors text-xs md:text-sm ${listing.status === "SOLD" ? "opacity-50 pointer-events-none" : ""}`}
               >
                 광고 업그레이드
               </Link>
@@ -1388,7 +1388,7 @@ export default function ListingDetailClient() {
                     alert("삭제 중 오류가 발생했습니다");
                   }
                 }}
-                className="text-xs text-red-400 dark:text-red-500 hover:text-red-600 dark:hover:text-red-400 transition-colors py-1"
+                className="text-xs text-red-400 hover:text-red-600 transition-colors py-1"
               >
                 매물 삭제
               </button>
@@ -1398,15 +1398,15 @@ export default function ListingDetailClient() {
           /* 일반 유저일 때: 채팅/관심 바 */
           <>
             <div className="px-4 pt-2 pb-1 md:hidden">
-              <p className="text-xs text-gray-700 dark:text-gray-300 text-center">
+              <p className="text-xs text-gray-700 text-center">
                 <span className="font-medium">권리금 </span>
-                <span className="font-bold text-navy-700 dark:text-navy-400">
+                <span className="font-bold text-green-700">
                   {listing.premiumNone ? "무권리" : `${fmt(listing.premium)}만`}
                 </span>
-                <span className="mx-1 text-gray-300 dark:text-gray-600">·</span>
+                <span className="mx-1 text-gray-300">·</span>
                 <span className="font-medium">보증금 </span>
                 <span className="font-bold">{fmt(listing.deposit)}만</span>
-                <span className="mx-1 text-gray-300 dark:text-gray-600">·</span>
+                <span className="mx-1 text-gray-300">·</span>
                 <span className="font-medium">월세 </span>
                 <span className="font-bold">{fmt(listing.monthlyRent)}만</span>
               </p>
@@ -1415,7 +1415,7 @@ export default function ListingDetailClient() {
               <button
                 onClick={handleFavorite}
                 aria-label={favorited ? "관심매물 해제" : "관심매물 등록"}
-                className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${favorited ? "border-red-300 dark:border-red-700 text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950" : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600"}`}
+                className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${favorited ? "border-red-300 text-red-500 bg-red-50" : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"}`}
               >
                 {favorited ? "♥" : "♡"} <span className="hidden sm:inline">{listing.favoriteCount}</span>
               </button>
@@ -1423,28 +1423,28 @@ export default function ListingDetailClient() {
                 <>
                   {!listing.user.phoneLocked ? (
                     <>
-                      <a href={`tel:${listing.user.phone}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 active:bg-navy-800 transition-colors text-sm">
+                      <a href={`tel:${listing.user.phone}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 active:bg-green-800 transition-colors text-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                         전화
                       </a>
-                      <a href={`sms:${listing.user.phone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${listing.storeName || '매물'}을(를) 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white dark:bg-gray-700 text-navy-700 dark:text-navy-300 border-2 border-navy-700 dark:border-navy-500 rounded-xl font-medium hover:bg-navy-50 dark:hover:bg-gray-600 transition-colors text-sm">
+                      <a href={`sms:${listing.user.phone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${listing.storeName || '매물'}을(를) 보고 연락드립니다.`)}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white text-green-700 border-2 border-green-700 rounded-xl font-medium hover:bg-green-50 transition-colors text-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                         문자
                       </a>
                     </>
                   ) : (
                     <>
-                      <Link href="/login" className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-navy-700 text-white rounded-xl font-medium hover:bg-navy-600 transition-colors text-sm">
+                      <Link href="/login" className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-green-700 text-white rounded-xl font-medium hover:bg-green-600 transition-colors text-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                         전화
                       </Link>
-                      <Link href="/login" className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white dark:bg-gray-700 text-navy-700 dark:text-navy-300 border-2 border-navy-700 dark:border-navy-500 rounded-xl font-medium hover:bg-navy-50 dark:hover:bg-gray-600 transition-colors text-sm">
+                      <Link href="/login" className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white text-green-700 border-2 border-green-700 rounded-xl font-medium hover:bg-green-50 transition-colors text-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                         문자
                       </Link>
                     </>
                   )}
-                  <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-xl font-medium text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm">
+                  <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-gray-100 text-gray-700 border border-gray-200 rounded-xl font-medium text-center hover:bg-gray-200 transition-colors text-sm">
                     채팅
                   </Link>
                 </>
@@ -1456,7 +1456,7 @@ export default function ListingDetailClient() {
                     title={listing.storeName || listing.addressRoad || "매물 상세"}
                     imageUrl={listing.images.length > 0 ? listing.images[0].url : undefined}
                   />
-                  <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-navy-800 transition-colors text-sm md:text-base">
+                  <Link href={session ? `/chat?listingId=${listing.id}` : "/login"} className="flex-1 py-3 bg-green-700 text-white rounded-xl font-medium text-center hover:bg-green-600 active:bg-green-800 transition-colors text-sm md:text-base">
                     채팅하기
                   </Link>
                 </>
@@ -1495,8 +1495,8 @@ function CompareButton({ listingId }: { listingId: string }) {
       aria-label={inCompare ? "비교함에서 제거" : "비교함에 담기"}
       className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${
         inCompare
-          ? "border-navy-300 dark:border-navy-600 text-navy-700 dark:text-navy-400 bg-navy-50 dark:bg-navy-950"
-          : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600"
+          ? "border-green-300 text-green-700 bg-green-50"
+          : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"
       }`}
     >
       {inCompare ? (
@@ -1520,8 +1520,8 @@ function CompareButton({ listingId }: { listingId: string }) {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="py-4 border-b border-gray-100 dark:border-gray-700">
-      <h2 className="font-bold text-gray-900 dark:text-white mb-3">{title}</h2>
+    <div className="py-4 border-b border-gray-100">
+      <h2 className="font-bold text-gray-900 mb-3">{title}</h2>
       {children}
     </div>
   );
@@ -1534,8 +1534,8 @@ function InfoGrid({ children }: { children: React.ReactNode }) {
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex text-sm">
-      <span className="w-20 sm:w-16 text-gray-400 dark:text-gray-500 shrink-0">{label}</span>
-      <span className="text-gray-700 dark:text-gray-300">{value}</span>
+      <span className="w-20 sm:w-16 text-gray-400 shrink-0">{label}</span>
+      <span className="text-gray-700">{value}</span>
     </div>
   );
 }
@@ -1554,12 +1554,12 @@ function PremiumItem({ color, label, value, total, desc }: {
       <div className={`w-3 h-3 rounded-full ${color} mt-1 shrink-0`} />
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
-          <span className="text-sm text-gray-900 dark:text-gray-100">
-            {value.toLocaleString()}만 <span className="text-xs text-gray-400 dark:text-gray-500">({pct}%)</span>
+          <span className="text-sm font-medium text-gray-700">{label}</span>
+          <span className="text-sm text-gray-900">
+            {value.toLocaleString()}만 <span className="text-xs text-gray-400">({pct}%)</span>
           </span>
         </div>
-        {desc && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{desc}</p>}
+        {desc && <p className="text-xs text-gray-400 mt-0.5 truncate">{desc}</p>}
       </div>
     </div>
   );
@@ -1576,17 +1576,17 @@ function FinanceRow({ label, value, revenue, sub, bold }: {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <span className={`text-sm ${bold ? "font-bold text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400"}`}>{label}</span>
+        <span className={`text-sm ${bold ? "font-bold text-gray-900" : "text-gray-600"}`}>{label}</span>
         <div className="text-right">
-          <span className={`text-sm ${bold ? "font-bold text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-300"}`}>
+          <span className={`text-sm ${bold ? "font-bold text-gray-900" : "text-gray-700"}`}>
             {value.toLocaleString()}만
           </span>
           {pct && (
-            <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">({pct}%)</span>
+            <span className="text-xs text-gray-400 ml-1">({pct}%)</span>
           )}
         </div>
       </div>
-      {sub && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{sub}</p>}
+      {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -1607,15 +1607,15 @@ function CompareGauge({ label, mine, avg, unit }: {
   return (
     <div>
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
-        <span className={`text-xs font-medium ${isCheaper ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+        <span className="text-sm font-medium text-gray-700">{label}</span>
+        <span className={`text-xs font-medium ${isCheaper ? "text-green-600" : "text-red-600"}`}>
           {diffPct > 0 ? "+" : ""}{diffPct.toFixed(0)}%
         </span>
       </div>
-      <div className="relative h-6 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
         {/* Average marker */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-gray-400 dark:bg-gray-500 z-10"
+          className="absolute top-0 bottom-0 w-0.5 bg-gray-400 z-10"
           style={{ left: `${avgPos}%` }}
         />
         {/* My bar */}
@@ -1625,10 +1625,10 @@ function CompareGauge({ label, mine, avg, unit }: {
         />
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400">
+        <span className="text-[10px] text-gray-500">
           이 매물 <span className="font-medium">{mine.toLocaleString()}{unit}</span>
         </span>
-        <span className="text-[10px] text-gray-400 dark:text-gray-500">
+        <span className="text-[10px] text-gray-400">
           평균 {avg.toLocaleString()}{unit}
         </span>
       </div>
@@ -1651,15 +1651,15 @@ function RegionalPerformanceItem({ label, mine, avg }: {
   return (
     <div>
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
-        <span className={`text-xs font-medium ${isAboveAvg ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+        <span className="text-sm font-medium text-gray-700">{label}</span>
+        <span className={`text-xs font-medium ${isAboveAvg ? "text-green-600" : "text-red-600"}`}>
           {diffPct > 0 ? "▲" : "▼"} {Math.abs(diffPct).toFixed(0)}%
         </span>
       </div>
-      <div className="relative h-6 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
         {/* Average marker */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-gray-400 dark:bg-gray-500 z-10"
+          className="absolute top-0 bottom-0 w-0.5 bg-gray-400 z-10"
           style={{ left: `${avgPos}%` }}
         />
         {/* My bar */}
@@ -1669,10 +1669,10 @@ function RegionalPerformanceItem({ label, mine, avg }: {
         />
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[10px] text-gray-700 dark:text-gray-300">
+        <span className="text-[10px] text-gray-700">
           내 매물 <span className="font-medium">{mine.toLocaleString()}회</span>
         </span>
-        <span className="text-[10px] text-gray-400 dark:text-gray-500">
+        <span className="text-[10px] text-gray-400">
           평균 {avg.toLocaleString()}회
         </span>
       </div>

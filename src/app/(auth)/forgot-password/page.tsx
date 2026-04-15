@@ -64,22 +64,22 @@ function RequestResetForm() {
 
   if (sent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="w-full max-w-md text-center">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-            <div className="w-16 h-16 bg-navy-100 dark:bg-navy-900 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-navy-700 dark:text-navy-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">이메일을 확인해주세요</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">이메일을 확인해주세요</h2>
+            <p className="text-sm text-gray-500 mb-6">
               입력하신 이메일로 비밀번호 재설정 링크를 보냈습니다.<br />
               메일함을 확인해주세요.
             </p>
             <Link
               href="/login"
-              className="block w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors text-sm text-center"
+              className="block w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm text-center"
             >
               로그인으로 돌아가기
             </Link>
@@ -90,21 +90,21 @@ function RequestResetForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">권리샵</h1>
-          <p className="mt-1 text-gray-500 dark:text-gray-400">비밀번호 찾기</p>
+          <h1 className="text-3xl font-bold text-gray-900">권리샵</h1>
+          <p className="mt-1 text-gray-500">비밀번호 찾기</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-500 mb-4">
             가입 시 사용한 이메일을 입력하시면 비밀번호 재설정 링크를 보내드립니다.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
                 {error}
               </div>
             )}
@@ -115,20 +115,20 @@ function RequestResetForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="이메일"
               autoComplete="email"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
+              className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
             />
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
+              className="w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "전송 중..." : "재설정 링크 보내기"}
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
-            <Link href="/login" className="font-medium text-navy-700 dark:text-navy-400 hover:underline">
+          <p className="mt-4 text-center text-sm text-gray-500">
+            <Link href="/login" className="font-medium text-green-700 hover:underline">
               로그인으로 돌아가기
             </Link>
           </p>
@@ -188,21 +188,21 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="w-full max-w-md text-center">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-            <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">비밀번호가 변경되었습니다</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">비밀번호가 변경되었습니다</h2>
+            <p className="text-sm text-gray-500 mb-6">
               새 비밀번호로 로그인해주세요.
             </p>
             <Link
               href="/login?reset=true"
-              className="block w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors text-sm text-center"
+              className="block w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm text-center"
             >
               로그인하기
             </Link>
@@ -213,23 +213,23 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">권리샵</h1>
-          <p className="mt-1 text-gray-500 dark:text-gray-400">비밀번호 재설정</p>
+          <h1 className="text-3xl font-bold text-gray-900">권리샵</h1>
+          <p className="mt-1 text-gray-500">비밀번호 재설정</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">새 비밀번호</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">새 비밀번호</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -237,12 +237,12 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="새 비밀번호를 입력하세요"
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
@@ -256,8 +256,8 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
                   <span
                     className={`text-[11px] px-2 py-0.5 rounded-full ${
                       lengthOk
-                        ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-400"
                     }`}
                   >
                     {lengthOk ? "✓" : "○"} 8자 이상
@@ -269,8 +269,8 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
                         key={rule.label}
                         className={`text-[11px] px-2 py-0.5 rounded-full ${
                           passed
-                            ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
-                            : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-100 text-gray-400"
                         }`}
                       >
                         {passed ? "✓" : "○"} {rule.label}
@@ -279,8 +279,8 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
                   })}
                   <span className={`text-[11px] px-2 py-0.5 rounded-full ${
                     passedCategories.length >= 2
-                      ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-400"
                   }`}>
                     {passedCategories.length >= 2 ? "✓" : "○"} 2종 이상 조합
                   </span>
@@ -289,19 +289,19 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">비밀번호 확인</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">비밀번호 확인</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="비밀번호를 다시 입력하세요"
                 autoComplete="new-password"
-                className={`w-full px-4 py-3 border bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none text-sm ${
+                className={`w-full px-4 py-3 border bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm ${
                   confirmPassword.length > 0
                     ? passwordsMatch
-                      ? "border-green-400 dark:border-green-600"
-                      : "border-red-400 dark:border-red-600"
-                    : "border-gray-300 dark:border-gray-600"
+                      ? "border-green-400"
+                      : "border-red-400"
+                    : "border-gray-300"
                 }`}
               />
               {confirmPassword.length > 0 && !passwordsMatch && (
@@ -312,7 +312,7 @@ function ResetPasswordForm({ token, email }: { token: string; email: string }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
+              className="w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "변경 중..." : "비밀번호 변경"}
             </button>

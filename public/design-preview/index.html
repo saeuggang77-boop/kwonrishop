@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>권리샵 디자인 미리보기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    background: #F5F5F5;
+    color: #0D0D0F;
+    padding: 48px 24px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 36px; font-weight: 800; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .sub { color: #666; margin-bottom: 48px; font-size: 15px; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 720px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .card {
+    display: block;
+    border-radius: 20px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+  .preview-a { background: #0D0D0F; color: #FAF7F2; }
+  .preview-b { background: #1F3F2E; color: #FBF8F3; }
+  .preview-c { background: #1A1A1A; color: #FAFAFA; }
+  .card-body { padding: 32px 24px; }
+  .card-label {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 99px;
+    margin-bottom: 16px;
+  }
+  .preview-a .card-label { background: #C9A45C; color: #0D0D0F; }
+  .preview-b .card-label { background: #D96C4F; color: #FBF8F3; }
+  .preview-c .card-label { background: #D4FF4F; color: #1A1A1A; }
+  .card-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.02em; }
+  .card-desc { font-size: 13px; opacity: 0.7; line-height: 1.6; margin-bottom: 20px; }
+  .palette { display: flex; gap: 6px; margin-bottom: 16px; }
+  .swatch { width: 24px; height: 24px; border-radius: 6px; }
+  .open-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 99px;
+    border: 1px solid currentColor;
+  }
+  .meta { display: flex; gap: 12px; font-size: 12px; opacity: 0.6; margin-bottom: 16px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>권리샵 디자인 방향 미리보기</h1>
+  <p class="sub">3가지 브랜드 방향을 실제 컴포넌트로 렌더링했습니다. 각 카드를 클릭하면 전체 페이지를 볼 수 있어요.</p>
+
+  <div class="grid">
+    <a class="card preview-a" href="/design-preview/a.html">
+      <div class="card-body">
+        <span class="card-label">Direction A</span>
+        <div class="card-title">프리미엄 블랙 + 골드</div>
+        <div class="palette">
+          <span class="swatch" style="background:#0D0D0F"></span>
+          <span class="swatch" style="background:#1B1B1E"></span>
+          <span class="swatch" style="background:#FAF7F2"></span>
+          <span class="swatch" style="background:#C9A45C"></span>
+          <span class="swatch" style="background:#8B4513"></span>
+        </div>
+        <div class="meta"><span>명품 부동산</span><span>Sotheby's 톤</span><span>Serif 강세</span></div>
+        <p class="card-desc">경매·명품·프리미엄 브로셔 감성. 권리금의 "큰 돈 거래"와 가장 어울리는 방향.</p>
+        <span class="open-btn">전체 보기 →</span>
+      </div>
+    </a>
+
+    <a class="card preview-b" href="/design-preview/b.html">
+      <div class="card-body">
+        <span class="card-label">Direction B</span>
+        <div class="card-title">딥 그린 + 크림</div>
+        <div class="palette">
+          <span class="swatch" style="background:#1F3F2E"></span>
+          <span class="swatch" style="background:#2D5A3D"></span>
+          <span class="swatch" style="background:#FBF8F3"></span>
+          <span class="swatch" style="background:#D96C4F"></span>
+          <span class="swatch" style="background:#E8DEC7"></span>
+        </div>
+        <div class="meta"><span>따뜻한 실용</span><span>Airbnb 톤</span><span>Sans 강세</span></div>
+        <p class="card-desc">성장·자영업·신뢰 감성. 경쟁사에 전혀 없는 차별적 톤.</p>
+        <span class="open-btn">전체 보기 →</span>
+      </div>
+    </a>
+
+    <a class="card preview-c" href="/design-preview/c.html">
+      <div class="card-body">
+        <span class="card-label">Direction C</span>
+        <div class="card-title">차콜 + 라임</div>
+        <div class="palette">
+          <span class="swatch" style="background:#1A1A1A"></span>
+          <span class="swatch" style="background:#2B2B2B"></span>
+          <span class="swatch" style="background:#FAFAFA"></span>
+          <span class="swatch" style="background:#D4FF4F"></span>
+          <span class="swatch" style="background:#6B7280"></span>
+        </div>
+        <div class="meta"><span>젊고 모던</span><span>Linear 톤</span><span>Mono 강세</span></div>
+        <p class="card-desc">Linear·Arc·Stripe 느낌. 젊은 창업자·테크 타겟에 강함.</p>
+        <span class="open-btn">전체 보기 →</span>
+      </div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

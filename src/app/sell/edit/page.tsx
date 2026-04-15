@@ -242,9 +242,9 @@ export default function ListingEditPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded" />
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded" />
-          <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="h-10 bg-gray-200 rounded" />
+          <div className="h-10 bg-gray-200 rounded" />
+          <div className="h-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -253,11 +253,11 @@ export default function ListingEditPage() {
   if (!listingId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-navy-50 dark:bg-navy-950 border border-navy-200 dark:border-navy-800 rounded-xl p-5 text-center">
-          <p className="text-navy-800 dark:text-navy-300">{message || "등록된 매물이 없습니다."}</p>
+        <div className="bg-green-50 border border-green-200 rounded-xl p-5 text-center">
+          <p className="text-green-800">{message || "등록된 매물이 없습니다."}</p>
           <button
             onClick={() => router.push("/sell")}
-            className="mt-4 px-4 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600"
+            className="mt-4 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
           >
             매물 등록하기
           </button>
@@ -267,53 +267,53 @@ export default function ListingEditPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 dark:bg-gray-900">
-      <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">매물 수정</h1>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4">
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">매물 수정</h1>
+      <p className="text-sm text-gray-500 mt-1 mb-4">
         주소, 업종, 테마는 수정이 불가합니다. 변경이 필요하면 매물을 삭제 후 재등록해주세요.
       </p>
 
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 md:p-5 mb-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 mb-4">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               매물명
             </label>
             <input
               type="text"
               value={formData.storeName}
               onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 보증금 (만원)
               </label>
               <input
                 type="number"
                 value={formData.deposit}
                 onChange={(e) => setFormData({ ...formData, deposit: e.target.value })}
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 월세 (만원)
               </label>
               <input
                 type="number"
                 value={formData.monthlyRent}
                 onChange={(e) => setFormData({ ...formData, monthlyRent: e.target.value })}
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               권리금 (만원)
             </label>
             <input
@@ -321,10 +321,10 @@ export default function ListingEditPage() {
               value={formData.premium}
               onChange={(e) => setFormData({ ...formData, premium: e.target.value })}
               disabled={formData.premiumNone}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 disabled:bg-gray-100 dark:disabled:bg-gray-600 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100 text-base"
             />
             <div className="flex gap-4 mt-2">
-              <label className="flex items-center text-sm text-gray-600 dark:text-gray-400 touch-manipulation">
+              <label className="flex items-center text-sm text-gray-600 touch-manipulation">
                 <input
                   type="checkbox"
                   checked={formData.premiumNone}
@@ -333,7 +333,7 @@ export default function ListingEditPage() {
                 />
                 무권리
               </label>
-              <label className="flex items-center text-sm text-gray-600 dark:text-gray-400 touch-manipulation">
+              <label className="flex items-center text-sm text-gray-600 touch-manipulation">
                 <input
                   type="checkbox"
                   checked={formData.premiumNegotiable}
@@ -346,21 +346,21 @@ export default function ListingEditPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               관리비 (만원)
             </label>
             <input
               type="number"
               value={formData.maintenanceFee}
               onChange={(e) => setFormData({ ...formData, maintenanceFee: e.target.value })}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
             />
           </div>
 
           {/* 층수 / 면적 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 현재 층수
               </label>
               <input
@@ -368,11 +368,11 @@ export default function ListingEditPage() {
                 value={formData.currentFloor}
                 onChange={(e) => setFormData({ ...formData, currentFloor: e.target.value })}
                 placeholder="예: 1 (지하는 음수)"
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 전체 층수
               </label>
               <input
@@ -380,13 +380,13 @@ export default function ListingEditPage() {
                 value={formData.totalFloor}
                 onChange={(e) => setFormData({ ...formData, totalFloor: e.target.value })}
                 placeholder="예: 5"
-                className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               면적 (평)
             </label>
             <input
@@ -395,10 +395,10 @@ export default function ListingEditPage() {
               value={formData.areaPyeong}
               onChange={(e) => setFormData({ ...formData, areaPyeong: e.target.value })}
               placeholder="예: 20"
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
             />
             {formData.areaPyeong && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 ≈ {(parseFloat(formData.areaPyeong) * 3.3058).toFixed(2)}m²
               </p>
             )}
@@ -406,71 +406,71 @@ export default function ListingEditPage() {
 
           {/* 권리금 산정 */}
           {!formData.premiumNone && formData.premium && parseInt(formData.premium) > 0 && (
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">권리금 산정 (선택)</h3>
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="text-sm font-medium text-gray-900 mb-3">권리금 산정 (선택)</h3>
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">영업권리금 (만원)</label>
+                    <label className="block text-xs text-gray-600 mb-1">영업권리금 (만원)</label>
                     <input
                       type="number"
                       value={formData.premiumBusiness}
                       onChange={(e) => setFormData({ ...formData, premiumBusiness: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                    <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
                     <input
                       type="text"
                       placeholder="예: 안정적인 매출, 단골고객 확보"
                       value={formData.premiumBusinessDesc}
                       onChange={(e) => setFormData({ ...formData, premiumBusinessDesc: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">시설권리금 (만원)</label>
+                    <label className="block text-xs text-gray-600 mb-1">시설권리금 (만원)</label>
                     <input
                       type="number"
                       value={formData.premiumFacility}
                       onChange={(e) => setFormData({ ...formData, premiumFacility: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                    <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
                     <input
                       type="text"
                       placeholder="예: 최신 인테리어, 고가 주방기기"
                       value={formData.premiumFacilityDesc}
                       onChange={(e) => setFormData({ ...formData, premiumFacilityDesc: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">바닥권리금 (만원)</label>
+                    <label className="block text-xs text-gray-600 mb-1">바닥권리금 (만원)</label>
                     <input
                       type="number"
                       value={formData.premiumLocation}
                       onChange={(e) => setFormData({ ...formData, premiumLocation: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">산정 사유</label>
+                    <label className="block text-xs text-gray-600 mb-1">산정 사유</label>
                     <input
                       type="text"
                       placeholder="예: 역세권, 주요 상권 입지"
                       value={formData.premiumLocationDesc}
                       onChange={(e) => setFormData({ ...formData, premiumLocationDesc: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     />
                   </div>
                 </div>
@@ -479,54 +479,54 @@ export default function ListingEditPage() {
           )}
 
           {/* 매출/수익 정보 */}
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">매출/수익 정보 (선택)</h3>
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">매출/수익 정보 (선택)</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">월 매출 (만원)</label>
+                <label className="block text-xs text-gray-600 mb-1">월 매출 (만원)</label>
                 <input
                   type="number"
                   value={formData.monthlyRevenue}
                   onChange={(e) => setFormData({ ...formData, monthlyRevenue: e.target.value })}
                   placeholder="예: 500"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">월 순이익 (만원)</label>
+                <label className="block text-xs text-gray-600 mb-1">월 순이익 (만원)</label>
                 <input
                   type="number"
                   value={formData.monthlyProfit}
                   onChange={(e) => setFormData({ ...formData, monthlyProfit: e.target.value })}
                   placeholder="예: 200"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               매물 설명
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={6}
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 text-base resize-none"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base resize-none"
             />
           </div>
 
           {/* 사진 관리 */}
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">사진 관리</h3>
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">사진 관리</h3>
 
             {/* 기존 사진 목록 */}
             {images.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
                 {images.map((img, idx) => (
                   <div key={idx} className="relative group">
-                    <div className="aspect-square relative rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                    <div className="aspect-square relative rounded-lg overflow-hidden border-2 border-gray-200">
                       <Image
                         src={img.url}
                         alt={`매물 사진 ${idx + 1}`}
@@ -559,11 +559,11 @@ export default function ListingEditPage() {
 
             {/* 사진 추가 버튼 */}
             <div>
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-navy-500 hover:bg-navy-50 dark:hover:bg-navy-950 transition-colors">
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className="text-sm font-medium text-gray-700">
                   {uploading ? "업로드 중..." : "사진 추가"}
                 </span>
                 <input
@@ -575,14 +575,14 @@ export default function ListingEditPage() {
                   className="hidden"
                 />
               </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              <p className="text-xs text-gray-500 mt-2">
                 JPG, PNG, GIF, WebP (각 10MB 이하)
               </p>
             </div>
           </div>
 
           <div>
-            <label className="flex items-center text-sm text-gray-700 dark:text-gray-300 touch-manipulation">
+            <label className="flex items-center text-sm text-gray-700 touch-manipulation">
               <input
                 type="checkbox"
                 checked={formData.contactPublic}
@@ -595,7 +595,7 @@ export default function ListingEditPage() {
         </div>
 
         {message && (
-          <div className="mt-4 p-3 rounded-lg text-sm bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+          <div className="mt-4 p-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700">
             {message}
           </div>
         )}
@@ -604,14 +604,14 @@ export default function ListingEditPage() {
           <button
             type="button"
             onClick={() => router.push("/mypage")}
-            className="w-full sm:flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 font-medium touch-manipulation"
+            className="w-full sm:flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 font-medium touch-manipulation"
           >
             취소
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="w-full sm:flex-1 px-4 py-3 bg-navy-700 text-white rounded-lg hover:bg-navy-600 active:bg-navy-800 font-medium disabled:opacity-50 touch-manipulation"
+            className="w-full sm:flex-1 px-4 py-3 bg-green-700 text-white rounded-lg hover:bg-green-600 active:bg-green-800 font-medium disabled:opacity-50 touch-manipulation"
           >
             {saving ? "저장 중..." : "저장"}
           </button>
@@ -619,9 +619,9 @@ export default function ListingEditPage() {
       </form>
 
       {/* Delete Button */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-red-200 dark:border-red-800 p-4 md:p-5">
-        <h3 className="font-bold text-gray-900 dark:text-white mb-2">매물 삭제</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      <div className="bg-white rounded-xl border border-red-200 p-4 md:p-5">
+        <h3 className="font-bold text-gray-900 mb-2">매물 삭제</h3>
+        <p className="text-sm text-gray-600 mb-4">
           매물을 삭제하면 모든 정보가 영구적으로 삭제됩니다.
         </p>
         <button

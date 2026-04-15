@@ -11,7 +11,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import { toast } from "@/lib/toast";
 
 const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
-  loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />,
+  loading: () => <div className="h-[300px] md:h-[400px] bg-gray-100 rounded-xl animate-pulse" />,
 });
 
 const ShareButton = dynamic(() => import("@/components/listing/ShareButton"), {
@@ -169,9 +169,9 @@ export default function EquipmentDetailClient() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-700 rounded-xl" />
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+          <div className="aspect-[4/3] bg-gray-200 rounded-xl" />
+          <div className="h-6 bg-gray-200 rounded w-2/3" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
         </div>
       </div>
     );
@@ -181,16 +181,16 @@ export default function EquipmentDetailClient() {
 
   const isFree = equipment.price === 0;
   const conditionColors: Record<string, string> = {
-    EXCELLENT: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    GOOD: "bg-navy-100 text-navy-800 dark:bg-navy-900 dark:text-navy-200",
-    FAIR: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+    EXCELLENT: "bg-green-100 text-green-800",
+    GOOD: "bg-green-100 text-green-800",
+    FAIR: "bg-red-100 text-red-800",
   };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
       <Breadcrumb items={[{ label: "집기장터", href: "/equipment" }, { label: equipment.title }]} />
       {/* 이미지 갤러리 */}
-      <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none">
+      <div className="relative aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden mb-4 -mx-4 md:mx-0 md:rounded-xl rounded-none">
         {equipment.images.length > 0 ? (
           <>
             <Image
@@ -228,7 +228,7 @@ export default function EquipmentDetailClient() {
             )}
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 text-sm md:text-lg">
+          <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm md:text-lg">
             사진 없음
           </div>
         )}
@@ -236,7 +236,7 @@ export default function EquipmentDetailClient() {
 
       {/* 제목 + 상태 배지 */}
       <div className="flex items-start gap-2 mb-2">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex-1">{equipment.title}</h1>
+        <h1 className="text-xl font-bold text-gray-900 flex-1">{equipment.title}</h1>
         <span className={`px-2 py-1 rounded-full text-xs font-medium shrink-0 ${conditionColors[equipment.condition] || "bg-gray-100 text-gray-800"}`}>
           {EQUIPMENT_CONDITION_LABELS[equipment.condition] || equipment.condition}
         </span>
@@ -244,16 +244,16 @@ export default function EquipmentDetailClient() {
 
       {/* 가격 */}
       <div className="mb-4">
-        <span className={`text-2xl font-bold ${isFree ? "text-green-600 dark:text-green-400" : "text-navy-700 dark:text-navy-400"}`}>
+        <span className={`text-2xl font-bold ${isFree ? "text-green-600" : "text-green-700"}`}>
           {formatPrice(equipment.price)}
         </span>
         {isFree && (
-          <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
+          <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
             무료 나눔
           </span>
         )}
         {equipment.negotiable && !isFree && (
-          <span className="ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full">
+          <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
             협의가능
           </span>
         )}
@@ -275,7 +275,7 @@ export default function EquipmentDetailClient() {
       {/* 설명 */}
       {equipment.description && (
         <Section title="상품 설명">
-          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
             {equipment.description}
           </p>
         </Section>
@@ -293,7 +293,7 @@ export default function EquipmentDetailClient() {
               showInfoWindow={true}
               address={equipment.addressRoad || ""}
             />
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600">
               {equipment.addressRoad}
               {equipment.addressDetail && ` ${equipment.addressDetail}`}
             </p>
@@ -303,7 +303,7 @@ export default function EquipmentDetailClient() {
 
       {!equipment.latitude && equipment.addressRoad && (
         <Section title="거래 위치">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600">
             {equipment.addressRoad}
             {equipment.addressDetail && ` ${equipment.addressDetail}`}
           </p>
@@ -316,15 +316,15 @@ export default function EquipmentDetailClient() {
           {equipment.user.image ? (
             <Image src={equipment.user.image} alt={`${equipment.user.name || '판매자'} 프로필 사진`} width={40} height={40} className="rounded-full" />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold">
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
               {equipment.user.name?.[0] || "U"}
             </div>
           )}
           <div>
             <div className="flex items-center gap-2">
-              <p className="font-medium text-gray-900 dark:text-white">{equipment.user.name || "판매자"}</p>
+              <p className="font-medium text-gray-900">{equipment.user.name || "판매자"}</p>
               {equipment.user.businessVerification?.verified && (
-                <span className="px-1.5 py-0.5 bg-navy-100 dark:bg-navy-900 text-navy-700 dark:text-navy-300 text-[10px] font-medium rounded" title="사업자등록번호 유효성 확인 완료 (본인 확인 아님)">
+                <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded" title="사업자등록번호 유효성 확인 완료 (본인 확인 아님)">
                   사업자번호 확인됨
                 </span>
               )}
@@ -344,21 +344,21 @@ export default function EquipmentDetailClient() {
 
       {/* 목록으로 */}
       <div className="mt-6 text-center">
-        <Link href="/equipment" className="text-sm text-gray-500 dark:text-gray-400 hover:text-navy-700 dark:hover:text-navy-400">
+        <Link href="/equipment" className="text-sm text-gray-500 hover:text-green-700">
           목록으로 돌아가기
         </Link>
       </div>
 
       {/* 하단 액션 바 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-3 z-10 md:static md:border-0 md:p-0 md:mt-6">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-10 md:static md:border-0 md:p-0 md:mt-6">
         <div className="max-w-3xl mx-auto flex items-center gap-2 md:gap-3">
           <button
             onClick={handleFavorite}
             aria-label={favorited ? "관심매물 해제" : "관심매물 등록"}
             className={`min-w-[60px] px-3 md:px-4 py-3 rounded-xl border font-medium transition-colors text-sm md:text-base ${
               favorited
-                ? "border-red-300 dark:border-red-700 text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20"
-                : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100"
+                ? "border-red-300 text-red-500 bg-red-50"
+                : "border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100"
             }`}
           >
             <span aria-hidden="true">{favorited ? "♥" : "♡"}</span> <span className="hidden sm:inline">{equipment.favoriteCount}</span>
@@ -370,7 +370,7 @@ export default function EquipmentDetailClient() {
           />
           <button
             onClick={() => setReportOpen(true)}
-            className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"
+            className="min-w-[60px] px-3 md:px-4 py-3 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors text-sm md:text-base font-medium"
             aria-label="신고하기"
           >
             <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,7 +379,7 @@ export default function EquipmentDetailClient() {
           </button>
           <button
             onClick={handleChat}
-            className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-medium text-center hover:bg-navy-600 active:bg-navy-800 transition-colors text-sm md:text-base"
+            className="flex-1 py-3 bg-green-700 text-white rounded-xl font-medium text-center hover:bg-green-600 active:bg-green-800 transition-colors text-sm md:text-base"
           >
             채팅하기
           </button>
@@ -390,19 +390,19 @@ export default function EquipmentDetailClient() {
       {reportOpen && (
         <>
           <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setReportOpen(false)} />
-          <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-white dark:bg-gray-800 rounded-2xl p-6 z-50">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">신고하기</h3>
+          <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-white rounded-2xl p-6 z-50">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">신고하기</h3>
             <textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               placeholder="신고 사유를 입력해주세요"
               rows={4}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none resize-none mb-4"
+              className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none mb-4"
             />
             <div className="flex gap-2">
               <button
                 onClick={() => setReportOpen(false)}
-                className="flex-1 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
               >
                 취소
               </button>
@@ -419,7 +419,7 @@ export default function EquipmentDetailClient() {
       )}
 
       {/* 메타 */}
-      <div className="text-xs text-gray-400 dark:text-gray-500 text-center mt-4">
+      <div className="text-xs text-gray-400 text-center mt-4">
         조회 {equipment.viewCount} · 관심 {equipment.favoriteCount} · {new Date(equipment.createdAt).toLocaleDateString("ko-KR")}
       </div>
     </div>
@@ -428,8 +428,8 @@ export default function EquipmentDetailClient() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="py-4 border-b border-gray-100 dark:border-gray-700">
-      <h2 className="font-bold text-gray-900 dark:text-white mb-3">{title}</h2>
+    <div className="py-4 border-b border-gray-100">
+      <h2 className="font-bold text-gray-900 mb-3">{title}</h2>
       {children}
     </div>
   );
@@ -442,8 +442,8 @@ function InfoGrid({ children }: { children: React.ReactNode }) {
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex text-sm">
-      <span className="w-20 sm:w-16 text-gray-400 dark:text-gray-500 shrink-0">{label}</span>
-      <span className="text-gray-700 dark:text-gray-300">{value}</span>
+      <span className="w-20 sm:w-16 text-gray-400 shrink-0">{label}</span>
+      <span className="text-gray-700">{value}</span>
     </div>
   );
 }

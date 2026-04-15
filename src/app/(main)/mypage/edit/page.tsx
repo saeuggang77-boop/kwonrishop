@@ -163,8 +163,8 @@ export default function ProfileEditPage() {
     return (
       <div className="max-w-md mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded" />
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="h-10 bg-gray-200 rounded" />
+          <div className="h-10 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -172,17 +172,17 @@ export default function ProfileEditPage() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">프로필 수정</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">프로필 수정</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">프로필 사진</label>
+          <label className="block text-sm font-medium text-gray-700 mb-3">프로필 사진</label>
           <div className="flex items-center gap-4">
             <div className="relative">
               {formData.image ? (
                 <Image src={formData.image} alt="프로필" width={80} height={80} className="w-20 h-20 rounded-full object-cover" />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-navy-100 dark:bg-navy-900 flex items-center justify-center text-navy-700 dark:text-navy-400 text-2xl font-bold">
+                <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-2xl font-bold">
                   {formData.name?.[0] || "U"}
                 </div>
               )}
@@ -190,7 +190,7 @@ export default function ProfileEditPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="absolute -bottom-1 -right-1 w-9 h-9 bg-navy-700 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-navy-600 disabled:opacity-50"
+                className="absolute -bottom-1 -right-1 w-9 h-9 bg-green-700 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 disabled:opacity-50"
               >
                 <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -198,14 +198,14 @@ export default function ProfileEditPage() {
                 </svg>
               </button>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="text-sm text-gray-500">
               <p>JPG, PNG 파일 (최대 5MB)</p>
               {formData.image && (
                 <button type="button" onClick={() => setFormData({ ...formData, image: null })} className="text-red-400 text-xs mt-1 hover:text-red-500">
                   사진 삭제
                 </button>
               )}
-              {uploading && <p className="text-navy-500 text-xs mt-1">업로드 중...</p>}
+              {uploading && <p className="text-green-500 text-xs mt-1">업로드 중...</p>}
             </div>
           </div>
           <input
@@ -218,20 +218,20 @@ export default function ProfileEditPage() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             이름
           </label>
           <input
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
             required
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             휴대폰 번호
           </label>
           <input
@@ -239,15 +239,15 @@ export default function ProfileEditPage() {
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: formatPhoneInput(e.target.value) })}
             placeholder="010-1234-5678"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
           />
         </div>
 
         {message && (
           <div className={`mb-4 p-3 rounded-lg text-sm ${
             message.includes("성공") || message.includes("수정되었습니다")
-              ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400"
-              : "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400"
+              ? "bg-green-50 text-green-700"
+              : "bg-red-50 text-red-700"
           }`}>
             {message}
           </div>
@@ -257,14 +257,14 @@ export default function ProfileEditPage() {
           <button
             type="button"
             onClick={() => router.push("/mypage")}
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium"
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
           >
             취소
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 px-4 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600 font-medium disabled:opacity-50"
+            className="flex-1 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 font-medium disabled:opacity-50"
           >
             {saving ? "저장 중..." : "저장"}
           </button>
@@ -273,27 +273,27 @@ export default function ProfileEditPage() {
 
       {/* 비밀번호 변경 (이메일 가입 사용자만) */}
       {hasPassword && (
-        <form onSubmit={handlePasswordChange} className="mt-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">비밀번호 변경</h2>
+        <form onSubmit={handlePasswordChange} className="mt-6 bg-white rounded-xl border border-gray-200 p-5">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">비밀번호 변경</h2>
 
           <div className="mb-3">
-            <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">현재 비밀번호</label>
+            <label className="block text-sm text-gray-600 mb-1">현재 비밀번호</label>
             <input
               type="password"
               value={passwordData.currentPassword}
               onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-navy-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
 
           <div className="mb-3">
-            <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">새 비밀번호</label>
+            <label className="block text-sm text-gray-600 mb-1">새 비밀번호</label>
             <input
               type="password"
               value={passwordData.newPassword}
               onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-navy-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
               minLength={8}
             />
@@ -301,12 +301,12 @@ export default function ProfileEditPage() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">새 비밀번호 확인</label>
+            <label className="block text-sm text-gray-600 mb-1">새 비밀번호 확인</label>
             <input
               type="password"
               value={passwordData.confirmPassword}
               onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-navy-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
@@ -314,8 +314,8 @@ export default function ProfileEditPage() {
           {passwordMessage && (
             <div className={`mb-4 p-3 rounded-lg text-sm ${
               passwordMessage.includes("변경되었습니다")
-                ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400"
-                : "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400"
+                ? "bg-green-50 text-green-700"
+                : "bg-red-50 text-red-700"
             }`}>
               {passwordMessage}
             </div>
@@ -324,7 +324,7 @@ export default function ProfileEditPage() {
           <button
             type="submit"
             disabled={changingPassword}
-            className="w-full px-4 py-2 bg-navy-700 text-white rounded-lg hover:bg-navy-600 font-medium text-sm disabled:opacity-50"
+            className="w-full px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 font-medium text-sm disabled:opacity-50"
           >
             {changingPassword ? "변경 중..." : "비밀번호 변경"}
           </button>
@@ -332,9 +332,9 @@ export default function ProfileEditPage() {
       )}
 
       {/* 회원탈퇴 */}
-      <div className="mt-8 bg-white dark:bg-gray-900 rounded-xl border border-red-200 dark:border-red-900 p-5">
-        <h2 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">회원탈퇴</h2>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+      <div className="mt-8 bg-white rounded-xl border border-red-200 p-5">
+        <h2 className="text-sm font-semibold text-red-600 mb-2">회원탈퇴</h2>
+        <p className="text-xs text-gray-500 mb-3">
           탈퇴 시 등록한 매물, 집기, 협력업체 정보가 비활성화되며 개인정보가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
         </p>
         <button
@@ -345,7 +345,7 @@ export default function ProfileEditPage() {
             setDeleteAgreed(false);
             setDeleteError("");
           }}
-          className="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 font-medium"
+          className="text-sm text-red-500 hover:text-red-600 font-medium"
         >
           회원탈퇴 하기
         </button>
@@ -354,13 +354,13 @@ export default function ProfileEditPage() {
       {/* 회원탈퇴 확인 모달 */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">회원탈퇴</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl">
+            <h3 className="text-lg font-bold text-gray-900 mb-1">회원탈퇴</h3>
+            <p className="text-sm text-gray-500 mb-4">
               정말로 탈퇴하시겠습니까? 아래 내용을 확인해주세요.
             </p>
 
-            <div className="bg-red-50 dark:bg-red-950 rounded-lg p-3 mb-4 text-xs text-red-700 dark:text-red-400 space-y-1">
+            <div className="bg-red-50 rounded-lg p-3 mb-4 text-xs text-red-700 space-y-1">
               <p>- 등록한 매물/집기/협력업체가 비활성화됩니다</p>
               <p>- 채팅 내역, 즐겨찾기, 알림이 삭제됩니다</p>
               <p>- 개인정보(이름, 연락처, 사진)가 삭제됩니다</p>
@@ -374,26 +374,26 @@ export default function ProfileEditPage() {
                 onChange={(e) => setDeleteAgreed(e.target.checked)}
                 className="mt-0.5 rounded border-gray-300 text-red-600 focus:ring-red-500"
               />
-              <span className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="text-sm text-gray-700">
                 위 내용을 확인했으며, 탈퇴에 동의합니다.
               </span>
             </label>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                확인을 위해 <strong className="text-red-600 dark:text-red-400">회원탈퇴</strong>를 입력해주세요
+              <label className="block text-sm text-gray-600 mb-1">
+                확인을 위해 <strong className="text-red-600">회원탈퇴</strong>를 입력해주세요
               </label>
               <input
                 type="text"
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder="회원탈퇴"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
 
             {deleteError && (
-              <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 rounded-lg text-sm text-red-700 dark:text-red-400">
+              <div className="mb-4 p-3 bg-red-50 rounded-lg text-sm text-red-700">
                 {deleteError}
               </div>
             )}
@@ -403,7 +403,7 @@ export default function ProfileEditPage() {
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={deleting}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium text-sm"
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium text-sm"
               >
                 취소
               </button>

@@ -303,25 +303,31 @@ function ListingsContent() {
 
   return (
     <div>
-      {/* 네이비 헤더 */}
-      <div className="bg-navy-700 px-6 pb-16 pt-10 text-center">
-        <h1 className="text-2xl font-extrabold text-white mb-2">매물 검색</h1>
-        <p className="text-sm text-white/60">전국 상가 매물을 한눈에 비교하세요</p>
+      {/* 히어로 */}
+      <div className="bg-green-700 px-6 pb-20 pt-14 text-center relative overflow-hidden">
+        <div aria-hidden className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-terra-500/10 blur-3xl" />
+        <div className="relative">
+          <div className="text-xs font-semibold text-terra-300 tracking-[0.2em] uppercase mb-3">Listings</div>
+          <h1 className="font-extrabold text-cream text-3xl md:text-5xl tracking-tight mb-3 leading-tight">
+            내 다음 <span className="font-serif italic font-light text-terra-300">가게 찾기</span>
+          </h1>
+          <p className="text-sm text-cream/60">전국 상가 매물을 한눈에 비교하세요</p>
+        </div>
       </div>
 
       {/* 플로팅 검색바 */}
       <div className="mx-auto max-w-2xl px-4 -mt-6 relative z-10">
-        <form onSubmit={handleSearch} className="flex gap-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-1.5">
+        <form onSubmit={handleSearch} className="flex gap-2 bg-white rounded-xl shadow-lg p-1.5">
           <input
             type="text"
             placeholder="지역, 업종, 상호명 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-navy-500 outline-none dark:bg-gray-800 dark:text-white"
+            className="flex-1 px-4 py-3 border-none rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
           />
           <button
             type="submit"
-            className="px-6 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors shrink-0"
+            className="px-6 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors shrink-0"
           >
             검색
           </button>
@@ -335,7 +341,7 @@ function ListingsContent() {
           onClick={() => handleCategoryClick("")}
           className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
             !categoryId
-              ? "bg-navy-700 text-white"
+              ? "bg-green-700 text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
@@ -347,7 +353,7 @@ function ListingsContent() {
             onClick={() => handleCategoryClick(cat.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               categoryId === cat.id
-                ? "bg-navy-700 text-white"
+                ? "bg-green-700 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -364,7 +370,7 @@ function ListingsContent() {
               onClick={() => setSubCategoryId("")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 !subCategoryId
-                  ? "bg-navy-700 text-white"
+                  ? "bg-green-700 text-white"
                   : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
               }`}
             >
@@ -376,7 +382,7 @@ function ListingsContent() {
                 onClick={() => handleSubCategoryClick(sub.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   subCategoryId === sub.id
-                    ? "bg-navy-700 text-white"
+                    ? "bg-green-700 text-white"
                     : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
                 }`}
               >
@@ -406,7 +412,7 @@ function ListingsContent() {
           </svg>
           상세필터
           {activeFilterCount > 0 && (
-            <span className="px-2 py-0.5 bg-navy-700 text-white rounded-full text-xs" aria-label={`${activeFilterCount}개 필터 활성화됨`}>
+            <span className="px-2 py-0.5 bg-green-700 text-white rounded-full text-xs" aria-label={`${activeFilterCount}개 필터 활성화됨`}>
               {activeFilterCount}
             </span>
           )}
@@ -431,7 +437,7 @@ function ListingsContent() {
                 placeholder="예: 강남구, 역삼동"
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               />
             </div>
 
@@ -446,7 +452,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={premiumMin}
                   onChange={(e) => setPremiumMin(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -454,7 +460,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={premiumMax}
                   onChange={(e) => setPremiumMax(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -470,7 +476,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={depositMin}
                   onChange={(e) => setDepositMin(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -478,7 +484,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={depositMax}
                   onChange={(e) => setDepositMax(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -494,7 +500,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={rentMin}
                   onChange={(e) => setRentMin(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -502,7 +508,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={rentMax}
                   onChange={(e) => setRentMax(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -518,7 +524,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={areaMin}
                   onChange={(e) => setAreaMin(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -526,7 +532,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={areaMax}
                   onChange={(e) => setAreaMax(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -542,7 +548,7 @@ function ListingsContent() {
                   onClick={() => handleThemeToggle(theme)}
                   className={`px-3 py-1.5 text-sm rounded-full font-medium transition-colors ${
                     selectedThemes.includes(theme)
-                      ? "bg-navy-700 text-white"
+                      ? "bg-green-700 text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
@@ -563,7 +569,7 @@ function ListingsContent() {
             </button>
             <button
               onClick={() => { setPage(1); fetchListings(); }}
-              className="px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-600 transition-colors"
+              className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
               aria-label="선택한 필터 적용하여 검색"
             >
               필터 적용
@@ -580,13 +586,13 @@ function ListingsContent() {
       >
         {featuredListings.map((listing) => {
           const tierColors: Record<string, string> = {
-            VIP: "border-navy-600 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)]",
-            PREMIUM: "border-navy-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)]",
+            VIP: "border-green-600 shadow-[0_4px_16px_rgba(27,73,101,0.15)] hover:shadow-[0_8px_28px_rgba(27,73,101,0.25)]",
+            PREMIUM: "border-green-300 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)]",
             BASIC: "border-gray-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]",
           };
           const tierBadgeStyles: Record<string, { className: string; showStar: boolean }> = {
-            VIP: { className: "px-3 py-1.5 text-[11px] bg-navy-700 text-white shadow-[0_2px_8px_rgba(27,73,101,0.3)]", showStar: true },
-            PREMIUM: { className: "px-2.5 py-1 text-[10px] bg-navy-700/85 text-white backdrop-blur-sm", showStar: false },
+            VIP: { className: "px-3 py-1.5 text-[11px] bg-green-700 text-white shadow-[0_2px_8px_rgba(27,73,101,0.3)]", showStar: true },
+            PREMIUM: { className: "px-2.5 py-1 text-[10px] bg-green-700/85 text-white backdrop-blur-sm", showStar: false },
             BASIC: { className: "px-2 py-0.5 text-[9px] bg-white/85 text-gray-500 backdrop-blur-sm", showStar: false },
           };
           const tier = listing.featuredTier || "BASIC";
@@ -598,9 +604,9 @@ function ListingsContent() {
             <div
               key={listing.id}
               onClick={() => router.push(`/listings/${listing.id}`)}
-              className={`min-w-[240px] w-[calc(25%-12px)] snap-start rounded-xl border-2 bg-white dark:bg-gray-800 ${tierColors[tier] || tierColors.BASIC} overflow-hidden cursor-pointer transition-all duration-300 shrink-0`}
+              className={`min-w-[240px] w-[calc(25%-12px)] snap-start rounded-xl border-2 bg-white ${tierColors[tier] || tierColors.BASIC} overflow-hidden cursor-pointer transition-all duration-300 shrink-0`}
             >
-              <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700">
+              <div className="relative aspect-[4/3] bg-gray-100">
                 {images?.[0] ? (
                   <Image src={images[0].url} alt={`${listing.storeName || listing.addressRoad || "매물"} 사진`} fill className="object-cover" />
                 ) : (
@@ -623,16 +629,16 @@ function ListingsContent() {
                 })()}
               </div>
               <div className="p-3">
-                <p className="text-sm text-gray-600 dark:text-gray-400 truncate mb-1">{shortAddress}</p>
+                <p className="text-sm text-gray-600 truncate mb-1">{shortAddress}</p>
                 <p className="text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">보증금/월세 </span>
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                  <span className="text-gray-500">보증금/월세 </span>
+                  <span className="font-semibold text-gray-900">
                     {listing.deposit.toLocaleString()} / {listing.monthlyRent.toLocaleString()}만
                   </span>
                 </p>
                 <p className="text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">권리금 </span>
-                  <span className="font-bold text-navy-700 dark:text-navy-400">
+                  <span className="text-gray-500">권리금 </span>
+                  <span className="font-bold text-green-700">
                     {listing.premiumNone
                       ? "무권리"
                       : `${listing.premium.toLocaleString()}만`}
@@ -781,7 +787,7 @@ function ListingsContent() {
                   setSelectedThemes([theme]);
                   setPage(1);
                 }}
-                className="px-4 py-2 bg-navy-50 text-navy-700 rounded-full text-sm font-medium hover:bg-navy-100 transition-colors"
+                className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium hover:bg-green-100 transition-colors"
               >
                 {theme}
               </button>
@@ -810,7 +816,7 @@ function ListingsContent() {
         <div ref={sentinelRef} className="md:hidden py-8">
           {isLoadingMore && (
             <div className="flex flex-col items-center justify-center">
-              <div className="w-8 h-8 border-4 border-navy-600 border-t-transparent rounded-full animate-spin mb-2" />
+              <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-2" />
               <p className="text-sm text-gray-500">매물 불러오는 중...</p>
             </div>
           )}
@@ -852,7 +858,7 @@ function ListingsContent() {
                 onClick={() => setPage(p)}
                 className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
                   page === p
-                    ? "bg-navy-700 text-white"
+                    ? "bg-green-700 text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
                 aria-label={`${p}페이지`}
@@ -916,7 +922,7 @@ function ListingsContent() {
                 placeholder="예: 강남구, 역삼동"
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               />
             </div>
 
@@ -931,7 +937,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={premiumMin}
                   onChange={(e) => setPremiumMin(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -939,7 +945,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={premiumMax}
                   onChange={(e) => setPremiumMax(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -955,7 +961,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={depositMin}
                   onChange={(e) => setDepositMin(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -963,7 +969,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={depositMax}
                   onChange={(e) => setDepositMax(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -979,7 +985,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={rentMin}
                   onChange={(e) => setRentMin(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -987,7 +993,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={rentMax}
                   onChange={(e) => setRentMax(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -1003,7 +1009,7 @@ function ListingsContent() {
                   placeholder="최소"
                   value={areaMin}
                   onChange={(e) => setAreaMin(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
                 <span className="text-gray-400">~</span>
                 <input
@@ -1011,7 +1017,7 @@ function ListingsContent() {
                   placeholder="최대"
                   value={areaMax}
                   onChange={(e) => setAreaMax(e.target.value)}
-                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+                  className="w-full min-h-[48px] px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 />
               </div>
             </div>
@@ -1026,7 +1032,7 @@ function ListingsContent() {
                     onClick={() => handleThemeToggle(theme)}
                     className={`px-4 py-2.5 text-base rounded-full font-medium transition-colors ${
                       selectedThemes.includes(theme)
-                        ? "bg-navy-700 text-white"
+                        ? "bg-green-700 text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >
@@ -1056,7 +1062,7 @@ function ListingsContent() {
                 fetchListings();
                 closeFilterModal();
               }}
-              className="flex-[2] min-h-[48px] px-4 py-3 bg-navy-700 text-white rounded-lg text-base font-medium hover:bg-navy-600 transition-colors"
+              className="flex-[2] min-h-[48px] px-4 py-3 bg-green-700 text-white rounded-lg text-base font-medium hover:bg-green-600 transition-colors"
               aria-label="필터 적용하기"
             >
               필터 적용하기

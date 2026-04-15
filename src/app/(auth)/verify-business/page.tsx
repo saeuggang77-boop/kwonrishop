@@ -138,15 +138,15 @@ function VerifyBusinessContent() {
                        "매물 등록하기";
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-        <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">인증 완료</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">인증 완료</h2>
+          <p className="text-gray-500 mb-6">
             사업자인증이 완료되었습니다.<br />
             {effectiveRole === "FRANCHISE" && "이제 브랜드 페이지를 관리할 수 있습니다."}
             {effectiveRole === "PARTNER" && "이제 협력업체로 등록할 수 있습니다."}
@@ -160,13 +160,13 @@ function VerifyBusinessContent() {
           <div className="space-y-2">
             <Link
               href={successRedirect}
-              className="block w-full px-4 py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors"
+              className="block w-full px-4 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
             >
               {buttonText}
             </Link>
             <Link
               href="/"
-              className="block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="block w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
             >
               홈으로
             </Link>
@@ -177,20 +177,20 @@ function VerifyBusinessContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="w-full max-w-md mx-auto">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">사업자인증</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-900">사업자인증</h1>
+          <p className="mt-1 text-sm text-gray-500">
             {roleMessage}
           </p>
         </div>
 
         {/* 역할 선택 UI (role param 없이 진입 시만 표시) */}
         {!requestedRole && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-5">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">어떤 역할로 활동하시겠어요?</h3>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">인증 후 선택한 역할로 전환됩니다</p>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-5">
+            <h3 className="text-sm font-semibold text-gray-800 mb-1">어떤 역할로 활동하시겠어요?</h3>
+            <p className="text-xs text-gray-400 mb-4">인증 후 선택한 역할로 전환됩니다</p>
             <div className="space-y-3">
               {/* 사장님 */}
               <button
@@ -199,22 +199,22 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("SELLER")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "SELLER"
-                    ? "border-navy-500 bg-navy-50 dark:bg-navy-950"
-                    : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-navy-100 dark:bg-navy-900 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-navy-700 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">사장님 (매물 등록)</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">상가/매장을 직접 등록하고 판매할 수 있습니다</p>
+                    <p className="text-sm font-semibold text-gray-900">사장님 (매물 등록)</p>
+                    <p className="text-xs text-gray-500 mt-0.5">상가/매장을 직접 등록하고 판매할 수 있습니다</p>
                   </div>
                   {selectedRole === "SELLER" && (
-                    <svg className="w-5 h-5 text-navy-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   )}
@@ -228,22 +228,22 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("FRANCHISE")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "FRANCHISE"
-                    ? "border-navy-500 bg-navy-50 dark:bg-navy-950"
-                    : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">프랜차이즈 본사</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">공정위 등록 브랜드를 관리할 수 있습니다</p>
+                    <p className="text-sm font-semibold text-gray-900">프랜차이즈 본사</p>
+                    <p className="text-xs text-gray-500 mt-0.5">공정위 등록 브랜드를 관리할 수 있습니다</p>
                   </div>
                   {selectedRole === "FRANCHISE" && (
-                    <svg className="w-5 h-5 text-navy-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   )}
@@ -257,22 +257,22 @@ function VerifyBusinessContent() {
                 onClick={() => handleRoleSelect("PARTNER")}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedRole === "PARTNER"
-                    ? "border-navy-500 bg-navy-50 dark:bg-navy-950"
-                    : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">협력업체</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">인테리어, 설비, 컨설팅 등 서비스를 등록할 수 있습니다</p>
+                    <p className="text-sm font-semibold text-gray-900">협력업체</p>
+                    <p className="text-xs text-gray-500 mt-0.5">인테리어, 설비, 컨설팅 등 서비스를 등록할 수 있습니다</p>
                   </div>
                   {selectedRole === "PARTNER" && (
-                    <svg className="w-5 h-5 text-navy-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   )}
@@ -284,7 +284,7 @@ function VerifyBusinessContent() {
 
         {/* 프랜차이즈 안내 (역할 선택 또는 URL param으로 FRANCHISE인 경우) */}
         {effectiveRole === "FRANCHISE" && (
-          <div className="mb-5 p-3 bg-navy-50 dark:bg-navy-950 border border-navy-200 dark:border-navy-700 rounded-xl text-xs text-navy-700 dark:text-navy-300 space-y-1">
+          <div className="mb-5 p-3 bg-green-50 border border-green-200 rounded-xl text-xs text-green-700 space-y-1">
             <p className="font-medium">프랜차이즈 본사 인증 안내</p>
             <ul className="list-disc list-inside space-y-0.5">
               <li>공정거래위원회 정보공개서에 등록된 브랜드만 가입 가능합니다</li>
@@ -295,7 +295,7 @@ function VerifyBusinessContent() {
         )}
 
         {/* 개업일자 주의 안내 박스 */}
-        <div className="mb-5 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+        <div className="mb-5 bg-amber-50 border border-amber-200 rounded-xl p-4">
           <div className="flex gap-3">
             <div className="shrink-0 mt-0.5">
               <svg className="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
@@ -303,10 +303,10 @@ function VerifyBusinessContent() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">인증 실패가 잦은 항목: 개업일자</p>
-              <p className="text-xs text-amber-700 dark:text-amber-300 mt-1 leading-relaxed">
+              <p className="text-sm font-semibold text-amber-800">인증 실패가 잦은 항목: 개업일자</p>
+              <p className="text-xs text-amber-700 mt-1 leading-relaxed">
                 사업자등록증에 적힌 <strong>&ldquo;개업연월일&rdquo;</strong>을 정확히 입력해주세요.<br/>
-                <span className="text-amber-600 dark:text-amber-400">발급일, 신청일과 다른 경우가 많습니다.</span>
+                <span className="text-amber-600">발급일, 신청일과 다른 경우가 많습니다.</span>
               </p>
             </div>
           </div>
@@ -314,7 +314,7 @@ function VerifyBusinessContent() {
 
         {/* 인증 실패 시 상세 체크리스트 */}
         {error && hasFailedOnce && (
-          <div className="mb-5 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl p-4">
+          <div className="mb-5 bg-red-50 border border-red-200 rounded-xl p-4">
             <div className="flex gap-3">
               <div className="shrink-0 mt-0.5">
                 <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -322,9 +322,9 @@ function VerifyBusinessContent() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-red-800 dark:text-red-200">인증에 실패했습니다</p>
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 leading-relaxed">다음 항목을 다시 확인해주세요:</p>
-                <ul className="text-xs text-red-600 dark:text-red-400 mt-1 space-y-1 list-none">
+                <p className="text-sm font-semibold text-red-800">인증에 실패했습니다</p>
+                <p className="text-xs text-red-600 mt-1.5 leading-relaxed">다음 항목을 다시 확인해주세요:</p>
+                <ul className="text-xs text-red-600 mt-1 space-y-1 list-none">
                   <li className="flex items-start gap-1.5">
                     <span className="text-red-400 mt-px">1.</span>
                     <span><strong>개업일자</strong> — 등록증의 &ldquo;개업연월일&rdquo;과 일치하나요?<br/>
@@ -346,10 +346,10 @@ function VerifyBusinessContent() {
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-4"
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-4"
         >
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               사업자등록번호 <span className="text-red-500">*</span>
             </label>
             <input
@@ -362,13 +362,13 @@ function VerifyBusinessContent() {
                   businessNumber: formatBusinessNumber(e.target.value),
                 })
               }
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               대표자명 <span className="text-red-500">*</span>
             </label>
             <input
@@ -378,13 +378,13 @@ function VerifyBusinessContent() {
               onChange={(e) =>
                 setForm({ ...form, representativeName: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               개업일자 <span className="text-red-500">*</span>
             </label>
             <input
@@ -393,20 +393,20 @@ function VerifyBusinessContent() {
               onChange={(e) => setForm({ ...form, openDate: e.target.value })}
               className={`w-full px-4 py-3 rounded-lg outline-none ${
                 hasFailedOnce
-                  ? "border-2 border-red-400 bg-red-50 dark:bg-red-950 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  : "border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-navy-500 focus:border-navy-500"
+                  ? "border-2 border-red-400 bg-red-50 text-gray-900 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  : "border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500"
               }`}
               required
             />
             {hasFailedOnce ? (
-              <div className="mt-2 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2.5">
+              <div className="mt-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
                 <div className="flex items-start gap-2">
                   <svg className="w-4 h-4 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd"/>
                   </svg>
                   <div className="text-xs leading-relaxed">
-                    <p className="text-red-700 dark:text-red-300 font-semibold">개업일자를 다시 확인하세요!</p>
-                    <p className="text-red-600 dark:text-red-400 mt-0.5">
+                    <p className="text-red-700 font-semibold">개업일자를 다시 확인하세요!</p>
+                    <p className="text-red-600 mt-0.5">
                       사업자등록증의 <strong>&ldquo;개업연월일&rdquo;</strong>을 입력해야 합니다.<br/>
                       하단의 &ldquo;발급일&rdquo;이나 신청일과 <strong>다른 경우가 많습니다.</strong>
                     </p>
@@ -414,16 +414,16 @@ function VerifyBusinessContent() {
                 </div>
               </div>
             ) : (
-              <div className="mt-2 bg-navy-50 dark:bg-navy-950 border border-navy-100 dark:border-navy-700 rounded-lg px-3 py-2.5">
+              <div className="mt-2 bg-green-50 border border-green-100 rounded-lg px-3 py-2.5">
                 <div className="flex items-start gap-2">
-                  <svg className="w-4 h-4 text-navy-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 text-green-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd"/>
                   </svg>
                   <div className="text-xs leading-relaxed">
-                    <p className="text-navy-800 dark:text-navy-200 font-medium">사업자등록증 확인 방법</p>
-                    <p className="text-navy-700 dark:text-navy-400 mt-0.5">
+                    <p className="text-green-800 font-medium">사업자등록증 확인 방법</p>
+                    <p className="text-green-700 mt-0.5">
                       등록증 중간의 <strong>&ldquo;개업연월일&rdquo;</strong> 항목을 확인하세요.<br/>
-                      하단의 &ldquo;발급일&rdquo;이나 신청일과 <strong className="text-red-500 dark:text-red-400">다를 수 있습니다.</strong>
+                      하단의 &ldquo;발급일&rdquo;이나 신청일과 <strong className="text-red-500">다를 수 있습니다.</strong>
                     </p>
                   </div>
                 </div>
@@ -432,7 +432,7 @@ function VerifyBusinessContent() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               상호명 <span className="text-red-500">*</span>
             </label>
             <input
@@ -442,7 +442,7 @@ function VerifyBusinessContent() {
               onChange={(e) =>
                 setForm({ ...form, businessName: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-navy-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               required
             />
           </div>
@@ -450,12 +450,12 @@ function VerifyBusinessContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "인증 중..." : hasFailedOnce ? "다시 인증하기" : "사업자 인증하기"}
           </button>
 
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+          <p className="text-xs text-gray-400 text-center">
             국세청 사업자등록 진위확인 API를 통해 인증됩니다
           </p>
 
@@ -468,7 +468,7 @@ function VerifyBusinessContent() {
 export default function VerifyBusinessPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-pulse text-gray-400">로딩 중...</div>
       </div>
     }>

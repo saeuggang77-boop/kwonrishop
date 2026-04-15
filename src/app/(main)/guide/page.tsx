@@ -212,12 +212,12 @@ export default function GuidePage() {
   const currentGuide = guideData[activeTab];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-5xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">이용가이드</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">이용가이드</h1>
+          <p className="text-gray-600">
             권리샵 이용 방법을 단계별로 안내해드립니다
           </p>
         </div>
@@ -228,8 +228,8 @@ export default function GuidePage() {
             onClick={() => setActiveTab("buyer")}
             className={`px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
               activeTab === "buyer"
-                ? "bg-navy-700 text-white shadow-lg"
-                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-navy-400 dark:hover:border-navy-500"
+                ? "bg-green-700 text-white shadow-lg"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-green-400"
             }`}
           >
             예비창업자
@@ -238,8 +238,8 @@ export default function GuidePage() {
             onClick={() => setActiveTab("seller")}
             className={`px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
               activeTab === "seller"
-                ? "bg-navy-700 text-white shadow-lg"
-                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-navy-400 dark:hover:border-navy-500"
+                ? "bg-green-700 text-white shadow-lg"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-green-400"
             }`}
           >
             사장님
@@ -248,8 +248,8 @@ export default function GuidePage() {
             onClick={() => setActiveTab("franchise")}
             className={`px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
               activeTab === "franchise"
-                ? "bg-navy-700 text-white shadow-lg"
-                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-navy-400 dark:hover:border-navy-500"
+                ? "bg-green-700 text-white shadow-lg"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-green-400"
             }`}
           >
             프랜차이즈
@@ -258,8 +258,8 @@ export default function GuidePage() {
             onClick={() => setActiveTab("partner")}
             className={`px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
               activeTab === "partner"
-                ? "bg-navy-700 text-white shadow-lg"
-                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-navy-400 dark:hover:border-navy-500"
+                ? "bg-green-700 text-white shadow-lg"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-green-400"
             }`}
           >
             협력업체
@@ -267,12 +267,12 @@ export default function GuidePage() {
         </div>
 
         {/* Guide Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm p-8 mb-8">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
               {currentGuide.title}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">{currentGuide.subtitle}</p>
+            <p className="text-gray-600">{currentGuide.subtitle}</p>
           </div>
 
           {/* Steps */}
@@ -280,15 +280,15 @@ export default function GuidePage() {
             {currentGuide.steps.map((step, index) => (
               <div
                 key={step.id}
-                className="flex gap-4 items-start p-5 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-navy-50 dark:hover:bg-navy-900/20 transition-colors"
+                className="flex gap-4 items-start p-5 rounded-lg bg-gray-50 hover:bg-green-50 transition-colors"
               >
                 {/* Step Number & Icon */}
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-navy-100 dark:bg-navy-800/30 flex items-center justify-center text-2xl">
+                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-2xl">
                     {step.icon}
                   </div>
                   <div className="mt-2 text-center">
-                    <span className="text-xs font-bold text-navy-700 dark:text-navy-400">
+                    <span className="text-xs font-bold text-green-700">
                       STEP {step.id}
                     </span>
                   </div>
@@ -296,17 +296,17 @@ export default function GuidePage() {
 
                 {/* Step Content */}
                 <div className="flex-1 pt-2">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed">
                     {step.description}
                   </p>
                 </div>
 
                 {/* Connector Line (except last item) */}
                 {index < currentGuide.steps.length - 1 && (
-                  <div className="absolute left-8 mt-20 w-0.5 h-6 bg-navy-200 dark:bg-navy-700 hidden md:block" />
+                  <div className="absolute left-8 mt-20 w-0.5 h-6 bg-green-200 hidden md:block" />
                 )}
               </div>
             ))}
@@ -314,37 +314,37 @@ export default function GuidePage() {
         </div>
 
         {/* Additional Tips */}
-        <div className="bg-navy-50 dark:bg-navy-800/20 rounded-xl p-6 border border-navy-200 dark:border-navy-700">
-          <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+        <div className="bg-green-50 rounded-xl p-6 border border-green-200">
+          <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
             💡 추가 도움말
           </h3>
-          <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <ul className="space-y-2 text-sm text-gray-700">
             <li className="flex items-start gap-2">
-              <span className="text-navy-700 dark:text-navy-400 mt-0.5">•</span>
+              <span className="text-green-700 mt-0.5">•</span>
               <span>
                 궁금한 내용은{" "}
-                <a href="/faq" className="text-navy-700 dark:text-navy-400 underline hover:text-navy-700 dark:hover:text-navy-300">
+                <a href="/faq" className="text-green-700 underline hover:text-green-700">
                   자주 묻는 질문
                 </a>
                 에서 확인하세요
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-navy-700 dark:text-navy-400 mt-0.5">•</span>
+              <span className="text-green-700 mt-0.5">•</span>
               <span>
                 문제가 있으시면{" "}
-                <a href="/contact" className="text-navy-700 dark:text-navy-400 underline hover:text-navy-700 dark:hover:text-navy-300">
+                <a href="/contact" className="text-green-700 underline hover:text-green-700">
                   고객센터
                 </a>
                 로 문의하세요
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-navy-700 dark:text-navy-400 mt-0.5">•</span>
+              <span className="text-green-700 mt-0.5">•</span>
               <span>안전한 거래를 위해 반드시 현장 방문 및 서류 확인을 하세요</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-navy-700 dark:text-navy-400 mt-0.5">•</span>
+              <span className="text-green-700 mt-0.5">•</span>
               <span>허위 매물을 발견하시면 즉시 신고해주세요</span>
             </li>
           </ul>
@@ -352,17 +352,17 @@ export default function GuidePage() {
 
         {/* CTA */}
         <div className="mt-8 text-center">
-          <p className="text-gray-600 dark:text-gray-400 mb-4">지금 바로 시작해보세요</p>
+          <p className="text-gray-600 mb-4">지금 바로 시작해보세요</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="/login"
-              className="px-6 py-3 bg-navy-700 text-white font-semibold rounded-lg hover:bg-navy-600 transition-colors"
+              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors"
             >
               회원가입하기
             </a>
             <a
               href="/listings"
-              className="px-6 py-3 bg-white dark:bg-gray-800 text-navy-700 dark:text-navy-400 font-semibold rounded-lg border border-navy-600 dark:border-navy-500 hover:bg-navy-50 dark:hover:bg-navy-900/20 transition-colors"
+              className="px-6 py-3 bg-white text-green-700 font-semibold rounded-lg border border-green-600 hover:bg-green-50 transition-colors"
             >
               매물 둘러보기
             </a>

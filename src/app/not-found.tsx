@@ -14,7 +14,7 @@ export default function NotFound() {
         <div className="flex gap-3 justify-center">
           <Link
             href="/"
-            className="px-6 py-2.5 bg-navy-700 text-white rounded-lg font-medium hover:bg-navy-600 transition-colors text-sm"
+            className="px-6 py-2.5 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm"
           >
             홈으로
           </Link>
