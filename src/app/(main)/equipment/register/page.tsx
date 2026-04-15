@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import { toast } from "@/lib/toast";
@@ -47,6 +47,8 @@ export default function EquipmentRegisterPage() {
   const [purchaseYear, setPurchaseYear] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [addressRoad, setAddressRoad] = useState("");
+  const [showPostcode, setShowPostcode] = useState(false);
+  const postcodeRef = useRef<HTMLDivElement>(null);
   const [addressJibun, setAddressJibun] = useState("");
   const [addressDetail, setAddressDetail] = useState("");
   const [latitude, setLatitude] = useState<number | null>(null);
@@ -98,26 +100,44 @@ export default function EquipmentRegisterPage() {
 
   // Load Daum Postcode script
   useEffect(() => {
-    if (typeof window !== "undefined" && !window.daum) {
-      const script = document.createElement("script");
-      script.src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
-      script.async = true;
-      document.head.appendChild(script);
-    }
+    if (typeof window === "undefined") return;
+    const existing = document.querySelector('script[src*="postcode.v2.js"]');
+    if (existing) return;
+
+    const script = document.createElement("script");
+    script.src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    script.async = true;
+    document.head.appendChild(script);
   }, []);
 
   function handleAddressSearch() {
-    if (!window.daum) {
-      toast.info("주소 검색 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+    if (typeof window === "undefined") return;
+    if (!window.daum?.Postcode) {
+      toast.info("주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
 
-    new window.daum.Postcode({
-      oncomplete: function (data: any) {
-        setAddressRoad(data.roadAddress || data.jibunAddress);
-        setAddressJibun(data.jibunAddress);
-      },
-    }).open();
+    setShowPostcode(true);
+
+    // embed는 다음 렌더 사이클에서 ref가 준비된 후 실행
+    setTimeout(() => {
+      if (!postcodeRef.current) return;
+
+      new window.daum.Postcode({
+        oncomplete: function (data: any) {
+          setAddressRoad(data.roadAddress || data.jibunAddress);
+          setAddressJibun(data.jibunAddress);
+          setShowPostcode(false);
+        },
+        onclose: function (state: string) {
+          if (state === "FORCE_CLOSE") {
+            setShowPostcode(false);
+          }
+        },
+        width: "100%",
+        height: "100%",
+      }).embed(postcodeRef.current);
+    }, 100);
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -515,9 +535,23 @@ export default function EquipmentRegisterPage() {
             onClick={handleAddressSearch}
             className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl hover:bg-gray-50 transition-colors mb-2"
           >
-            주소 검색
+            {showPostcode ? "주소 검색 중..." : "주소 검색"}
           </button>
-          {addressRoad && (
+          {showPostcode && (
+            <div className="mb-2 border border-gray-200 rounded-xl overflow-hidden">
+              <div className="flex justify-end p-2 bg-gray-50">
+                <button
+                  type="button"
+                  onClick={() => setShowPostcode(false)}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                >
+                  닫기 ✕
+                </button>
+              </div>
+              <div ref={postcodeRef} className="w-full h-[400px]" />
+            </div>
+          )}
+          {addressRoad && !showPostcode && (
             <div className="space-y-2">
               <input
                 type="text"
