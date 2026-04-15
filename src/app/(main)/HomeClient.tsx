@@ -33,9 +33,6 @@ interface Listing {
 
 interface HomeClientProps {
   initialListings: Listing[];
-  franchiseCount: number;
-  partnerCount: number;
-  equipmentCount: number;
 }
 
 const CATEGORY_ITEMS = [
@@ -98,9 +95,6 @@ const CATEGORY_ITEMS = [
 
 export default function HomeClient({
   initialListings,
-  franchiseCount,
-  partnerCount,
-  equipmentCount,
 }: HomeClientProps) {
   const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -133,12 +127,12 @@ export default function HomeClient({
             상가 직거래 플랫폼
           </div>
           <h1 className="font-extrabold text-cream leading-[1.15] tracking-tight mb-5 text-4xl md:text-5xl">
-            권리금을
+            상가,
             <span className="block font-light text-terra-300 mt-1">직접 거래하세요.</span>
           </h1>
           <p className="text-sm md:text-[15px] text-cream/65 leading-relaxed max-w-lg mx-auto mb-8">
-            중개수수료 0원. 수천만 원의 권리금은<br />
-            중간자 없이 당사자가 직접 합의할 때 가장 투명합니다.
+            중개수수료 0원, 수천만 원의 권리금은<br />
+            당사자끼리 정할 때 가장 투명합니다.
           </p>
           <form onSubmit={handleSearch} className="max-w-xl mx-auto">
             <div className="flex items-center bg-cream rounded-full p-1.5 pl-6 shadow-[0_16px_48px_rgba(0,0,0,0.15)]">
@@ -239,32 +233,58 @@ export default function HomeClient({
                     </div>
                     <div className="flex-1 p-5 flex flex-col justify-between min-w-0">
                       <div>
-                        <div className="text-[11px] text-terra-500 font-semibold mb-1">
-                          {listing.category?.name}
-                          {listing.subCategory && ` · ${listing.subCategory.name}`}
-                        </div>
+                        {listing.category?.name ? (
+                          <div className="text-[11px] text-terra-500 font-semibold mb-1">
+                            {listing.category.name}
+                            {listing.subCategory && ` · ${listing.subCategory.name}`}
+                          </div>
+                        ) : (
+                          <div className="text-[11px] text-muted font-semibold mb-1">업종 미지정</div>
+                        )}
                         <h3 className="font-bold text-ink text-base md:text-lg tracking-tight mb-1.5 truncate">
                           {shortAddr}
                         </h3>
-                        <div className="text-xs text-muted mb-4">
+                        <div className="text-xs text-muted mb-2.5">
                           {listing.areaPyeong && `${listing.areaPyeong}평`}
                           {listing.currentFloor && ` · ${listing.currentFloor}층`}
                         </div>
-                      </div>
-                      <div className="flex items-baseline justify-between pt-3 border-t border-dashed border-line-deep">
-                        <span className="text-[10px] text-muted uppercase tracking-[0.1em]">권리금</span>
-                        <span className="font-extrabold text-green-700 text-base">
-                          {listing.premiumNone ? (
-                            "무권리"
-                          ) : (
-                            <>
-                              <span className="font-serif italic font-medium text-xl mr-0.5">
-                                {listing.premium.toLocaleString()}
+                        {listing.themes && listing.themes.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-2">
+                            {listing.themes.slice(0, 3).map((theme) => (
+                              <span
+                                key={theme}
+                                className="text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold"
+                              >
+                                {theme}
                               </span>
-                              만
-                            </>
-                          )}
-                        </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="pt-3 border-t border-dashed border-line-deep space-y-1">
+                        <div className="flex justify-between text-xs text-muted">
+                          <span>보증금</span>
+                          <span>{listing.deposit.toLocaleString()}만</span>
+                        </div>
+                        <div className="flex justify-between text-xs text-muted">
+                          <span>월세</span>
+                          <span>{listing.monthlyRent.toLocaleString()}만</span>
+                        </div>
+                        <div className="flex items-baseline justify-between pt-1">
+                          <span className="text-[10px] text-muted uppercase tracking-[0.1em]">권리금</span>
+                          <span className="font-extrabold text-green-700 text-base">
+                            {listing.premiumNone ? (
+                              "무권리"
+                            ) : (
+                              <>
+                                <span className="font-serif italic font-medium text-xl mr-0.5">
+                                  {listing.premium.toLocaleString()}
+                                </span>
+                                만
+                              </>
+                            )}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -317,13 +337,7 @@ export default function HomeClient({
               href="/franchise"
               title="프랜차이즈"
               titleAccent="디렉토리"
-              description={
-                <>
-                  공정위 등록{" "}
-                  <span className="font-serif italic text-green-700">{franchiseCount.toLocaleString()}</span>여 브랜드 ·
-                  창업비·매출을 한눈에
-                </>
-              }
+              description="공정위 등록 브랜드 · 창업비·매출을 한눈에"
               icon={
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M3 21h18M5 21V7l8-4v18m6 0V11l-6-4" />
@@ -335,12 +349,7 @@ export default function HomeClient({
               href="/partners"
               title="협력업체"
               titleAccent="찾기"
-              description={
-                <>
-                  인테리어·세무·마케팅 등{" "}
-                  <span className="font-serif italic text-green-700">{partnerCount.toLocaleString()}</span>개 전문 파트너
-                </>
-              }
+              description="인테리어·세무·마케팅까지, 창업의 모든 파트너"
               icon={
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -353,12 +362,7 @@ export default function HomeClient({
               href="/equipment"
               title="집기"
               titleAccent="장터"
-              description={
-                <>
-                  사장님이 직접 올린{" "}
-                  <span className="font-serif italic text-green-700">{equipmentCount.toLocaleString()}</span>개 중고 집기·인테리어
-                </>
-              }
+              description="사장님이 직접 올린 중고 집기·인테리어"
               icon={
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <rect x="3" y="3" width="7" height="7" />

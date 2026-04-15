@@ -6,47 +6,42 @@ export const revalidate = 30;
 export default async function HomePage() {
   const now = new Date();
 
-  const [rawListings, franchiseCount, partnerCount, equipmentCount] = await Promise.all([
-    prisma.listing.findMany({
-      where: { status: "ACTIVE" },
-      orderBy: [
-        { bumpedAt: { sort: "desc", nulls: "last" } },
-        { createdAt: "desc" },
-      ],
-      take: 20,
-      select: {
-        id: true,
-        addressRoad: true,
-        addressJibun: true,
-        deposit: true,
-        monthlyRent: true,
-        premium: true,
-        premiumNone: true,
-        premiumNegotiable: true,
-        brandType: true,
-        storeName: true,
-        areaPyeong: true,
-        currentFloor: true,
-        themes: true,
-        viewCount: true,
-        favoriteCount: true,
-        createdAt: true,
-        category: { select: { name: true, icon: true } },
-        subCategory: { select: { name: true } },
-        images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true } },
-        adPurchases: {
-          where: { status: "PAID", expiresAt: { gt: now } },
-          include: { product: { select: { id: true, name: true, features: true } } },
-          take: 1,
-          orderBy: { createdAt: "desc" as const },
-        },
-        _count: { select: { documents: true } },
+  const rawListings = await prisma.listing.findMany({
+    where: { status: "ACTIVE" },
+    orderBy: [
+      { bumpedAt: { sort: "desc", nulls: "last" } },
+      { createdAt: "desc" },
+    ],
+    take: 20,
+    select: {
+      id: true,
+      addressRoad: true,
+      addressJibun: true,
+      deposit: true,
+      monthlyRent: true,
+      premium: true,
+      premiumNone: true,
+      premiumNegotiable: true,
+      brandType: true,
+      storeName: true,
+      areaPyeong: true,
+      currentFloor: true,
+      themes: true,
+      viewCount: true,
+      favoriteCount: true,
+      createdAt: true,
+      category: { select: { name: true, icon: true } },
+      subCategory: { select: { name: true } },
+      images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true } },
+      adPurchases: {
+        where: { status: "PAID", expiresAt: { gt: now } },
+        include: { product: { select: { id: true, name: true, features: true } } },
+        take: 1,
+        orderBy: { createdAt: "desc" as const },
       },
-    }),
-    prisma.franchiseBrand.count({ where: { tier: { in: ["GOLD", "SILVER", "BRONZE"] } } }),
-    prisma.partnerService.count({ where: { status: "ACTIVE" } }),
-    prisma.equipment.count({ where: { status: "ACTIVE" } }),
-  ]);
+      _count: { select: { documents: true } },
+    },
+  });
 
   const tierOrder: Record<string, number> = { VIP: 0, PREMIUM: 1, BASIC: 2, FREE: 3 };
   const listings = rawListings
@@ -94,12 +89,5 @@ export default async function HomePage() {
     })
     .sort((a, b) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3));
 
-  return (
-    <HomeClient
-      initialListings={listings}
-      franchiseCount={franchiseCount}
-      partnerCount={partnerCount}
-      equipmentCount={equipmentCount}
-    />
-  );
+  return <HomeClient initialListings={listings} />;
 }
