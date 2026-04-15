@@ -1521,16 +1521,31 @@ export default function ListingDetailClient() {
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                   채팅 문의
                 </Link>
-                {listing.contactPublic && listing.user.phone && !listing.user.phoneLocked && (
+                {listing.contactPublic && listing.user.phone && (
                   <div className="grid grid-cols-2 gap-2">
-                    <a href={`tel:${listing.user.phone}`} className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 018.63 13.37 19.5 19.5 0 015.36 3.18 2 2 0 017.34 1h3a2 2 0 012 1.72"/></svg>
-                      전화
-                    </a>
-                    <a href={`sms:${listing.user.phone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${listing.storeName || '매물'}을(를) 보고 연락드립니다.`)}`} className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                      문자
-                    </a>
+                    {!listing.user.phoneLocked ? (
+                      <>
+                        <a href={`tel:${listing.user.phone}`} className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 018.63 13.37 19.5 19.5 0 015.36 3.18 2 2 0 017.34 1h3a2 2 0 012 1.72"/></svg>
+                          전화
+                        </a>
+                        <a href={`sms:${listing.user.phone}?body=${encodeURIComponent(`안녕하세요, 권리샵에서 ${listing.storeName || '매물'}을(를) 보고 연락드립니다.`)}`} className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                          문자
+                        </a>
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/login" className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 018.63 13.37 19.5 19.5 0 015.36 3.18 2 2 0 017.34 1h3a2 2 0 012 1.72"/></svg>
+                          전화
+                        </Link>
+                        <Link href="/login" className="flex items-center justify-center gap-1 py-2.5 border border-line bg-cream text-green-700 rounded-full font-semibold text-xs hover:border-green-700 transition-colors">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                          문자
+                        </Link>
+                      </>
+                    )}
                   </div>
                 )}
                 <button
