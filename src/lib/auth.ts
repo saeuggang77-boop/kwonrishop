@@ -38,6 +38,11 @@ export const authOptions: NextAuthOptions = {
           throw new Error("탈퇴된 계정입니다. 새로 가입해주세요.");
         }
 
+        // 강제탈퇴된 이메일 패턴으로 직접 로그인 시도 차단
+        if (credentials.email.toLowerCase().includes("@banned.local")) {
+          throw new Error("이 계정은 이용이 중지되었습니다. 고객센터에 문의해주세요.");
+        }
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email.toLowerCase() },
           select: {
@@ -57,6 +62,11 @@ export const authOptions: NextAuthOptions = {
         // 탈퇴 회원 로그인 차단
         if (user.email?.includes("@withdrawn.local") || user.name === "탈퇴회원") {
           throw new Error("탈퇴된 계정입니다. 새로 가입해주세요.");
+        }
+
+        // 강제탈퇴 회원 로그인 차단
+        if (user.email?.includes("@banned.local") || user.name === "강제탈퇴회원") {
+          throw new Error("이 계정은 이용이 중지되었습니다. 고객센터에 문의해주세요.");
         }
 
         if (!user.emailVerified) {
@@ -111,6 +121,11 @@ export const authOptions: NextAuthOptions = {
               return `/login?error=WithdrawnAccount`;
             }
 
+            // 강제탈퇴 회원 재로그인 차단
+            if (existingUser.email?.includes("@banned.local") || existingUser.name === "강제탈퇴회원") {
+              return `/login?error=BannedAccount`;
+            }
+
             // 이미 해당 소셜 계정으로 연결된 경우 → 정상 로그인
             const alreadyLinked = existingUser.accounts.some(
               (a) => a.provider === account.provider
@@ -147,6 +162,10 @@ export const authOptions: NextAuthOptions = {
           if (dbUser.email?.includes("@withdrawn.local") || dbUser.name === "탈퇴회원") {
             return { ...token, id: null, role: null, withdrawn: true };
           }
+          // 강제탈퇴 회원이면 토큰 무효화 → 세션 끊김
+          if (dbUser.email?.includes("@banned.local") || dbUser.name === "강제탈퇴회원") {
+            return { ...token, id: null, role: null, withdrawn: true };
+          }
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.phone = dbUser.phone;
@@ -154,12 +173,18 @@ export const authOptions: NextAuthOptions = {
           token.verified = dbUser.businessVerification?.verified ?? false;
         }
       } else if (token.id && !token.withdrawn) {
-        // 기존 토큰: 탈퇴 여부만 경량 체크 (매 요청)
+        // 기존 토큰: 탈퇴/강제탈퇴 여부만 경량 체크 (매 요청)
         const check = await prisma.user.findUnique({
           where: { id: token.id as string },
           select: { email: true, name: true },
         });
-        if (!check || check.email?.includes("@withdrawn.local") || check.name === "탈퇴회원") {
+        if (
+          !check ||
+          check.email?.includes("@withdrawn.local") ||
+          check.name === "탈퇴회원" ||
+          check.email?.includes("@banned.local") ||
+          check.name === "강제탈퇴회원"
+        ) {
           return { ...token, id: null, role: null, withdrawn: true };
         }
       }

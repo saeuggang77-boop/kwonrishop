@@ -132,7 +132,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (targetUser.role === "ADMIN") {
-      return NextResponse.json({ error: "관리자는 제재할 수 없습니다." }, { status: 400 });
+      return NextResponse.json({ error: "관리자는 강제탈퇴할 수 없습니다." }, { status: 400 });
     }
 
     if (action === "ban") {
@@ -149,14 +149,14 @@ export async function PATCH(req: NextRequest) {
             where: { businessNumber: bv.businessNumber },
             update: {
               type: "BANNED",
-              reason: reason || "관리자 제재",
+              reason: reason || "관리자 강제탈퇴",
               blockedBy: session.user.id,
               expiresAt: null,
             },
             create: {
               businessNumber: bv.businessNumber,
               type: "BANNED",
-              reason: reason || "관리자 제재",
+              reason: reason || "관리자 강제탈퇴",
               blockedBy: session.user.id,
             },
           });
@@ -194,7 +194,7 @@ export async function PATCH(req: NextRequest) {
           where: { id: targetUserId },
           data: {
             email: `banned_${targetUserId}@banned.local`,
-            name: "제재회원",
+            name: "강제탈퇴회원",
             phone: null,
             image: null,
             password: null,
@@ -205,7 +205,7 @@ export async function PATCH(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: `${targetUser.name || targetUser.email} 회원이 제재되었습니다.`,
+        message: `${targetUser.name || targetUser.email} 회원이 강제탈퇴 처리되었습니다.`,
         blacklisted: !!bv,
       });
     }
@@ -224,7 +224,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ error: "지원하지 않는 action입니다." }, { status: 400 });
   } catch (error) {
-    console.error("회원 제재 오류:", error);
-    return NextResponse.json({ error: "제재 처리 중 오류가 발생했습니다." }, { status: 500 });
+    console.error("회원 강제탈퇴 오류:", error);
+    return NextResponse.json({ error: "강제탈퇴 처리 중 오류가 발생했습니다." }, { status: 500 });
   }
 }

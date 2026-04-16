@@ -140,7 +140,15 @@ function LoginContent() {
             </p>
           </div>
         )}
-        {errorParam && !["InvalidToken", "TokenExpired", "RateLimit", "OAuthAccountNotLinked", "WithdrawnAccount"].includes(errorParam) && (
+        {errorParam === "BannedAccount" && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
+            <p className="font-medium mb-1">이용이 중지된 계정입니다</p>
+            <p className="text-xs text-red-500">
+              해당 계정은 강제탈퇴 처리되었습니다. 고객센터에 문의해주세요.
+            </p>
+          </div>
+        )}
+        {errorParam && !["InvalidToken", "TokenExpired", "RateLimit", "OAuthAccountNotLinked", "WithdrawnAccount", "BannedAccount"].includes(errorParam) && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
             로그인에 실패했습니다. 다시 시도해주세요.
           </div>

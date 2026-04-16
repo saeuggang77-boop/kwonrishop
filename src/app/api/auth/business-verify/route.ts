@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   if (blacklisted) {
     if (blacklisted.type === "BANNED") {
       return NextResponse.json(
-        { error: "제재된 사업자등록번호입니다. 고객센터에 문의해주세요." },
+        { error: "강제탈퇴된 사업자등록번호입니다. 고객센터에 문의해주세요." },
         { status: 403 },
       );
     }

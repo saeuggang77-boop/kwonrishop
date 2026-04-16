@@ -32,7 +32,7 @@ export default function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState("");
   const [keyword, setKeyword] = useState("");
 
-  // 제재 모달
+  // 강제탈퇴 모달
   const [banTarget, setBanTarget] = useState<AdminUser | null>(null);
   const [banReason, setBanReason] = useState("");
   const [banning, setBanning] = useState(false);
@@ -47,20 +47,20 @@ export default function AdminUsersPage() {
         body: JSON.stringify({
           targetUserId: banTarget.id,
           action: "ban",
-          reason: banReason || "관리자 제재",
+          reason: banReason || "관리자 강제탈퇴",
         }),
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success(data.message || "제재 완료");
+        toast.success(data.message || "강제탈퇴 완료");
         setBanTarget(null);
         setBanReason("");
         fetchUsers();
       } else {
-        toast.error(data.error || "제재 실패");
+        toast.error(data.error || "강제탈퇴 실패");
       }
     } catch {
-      toast.error("제재 처리 중 오류가 발생했습니다.");
+      toast.error("강제탈퇴 처리 중 오류가 발생했습니다.");
     } finally {
       setBanning(false);
     }
@@ -203,11 +203,11 @@ export default function AdminUsersPage() {
                         onClick={() => setBanTarget(user)}
                         className="px-3 py-1 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors"
                       >
-                        제재
+                        강제탈퇴
                       </button>
                     )}
                     {user.email.includes("@banned.local") && (
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">제재됨</span>
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">강제탈퇴</span>
                     )}
                     {user.email.includes("@withdrawn.local") && (
                       <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">탈퇴</span>
@@ -243,11 +243,11 @@ export default function AdminUsersPage() {
           })()}
         </div>
       )}
-      {/* 제재 모달 */}
+      {/* 강제탈퇴 모달 */}
       {banTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">회원 제재</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">회원 강제탈퇴</h2>
             <div className="mb-4 p-3 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-900 font-medium">{banTarget.name}</p>
               <p className="text-xs text-gray-500">{banTarget.email}</p>
@@ -256,7 +256,7 @@ export default function AdminUsersPage() {
               </p>
             </div>
             <div className="mb-4 p-3 bg-red-50 rounded-lg">
-              <p className="text-xs text-red-700 font-medium mb-1">제재 시 처리 내용:</p>
+              <p className="text-xs text-red-700 font-medium mb-1">강제탈퇴 시 처리 내용:</p>
               <ul className="text-xs text-red-600 space-y-0.5">
                 <li>- 매물/집기/협력업체 전체 비활성화</li>
                 <li>- 사업자번호 영구 블랙리스트 등록</li>
@@ -267,7 +267,7 @@ export default function AdminUsersPage() {
             <textarea
               value={banReason}
               onChange={(e) => setBanReason(e.target.value)}
-              placeholder="제재 사유 (선택)"
+              placeholder="강제탈퇴 사유 (선택)"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none resize-none mb-4"
               rows={2}
             />
@@ -283,7 +283,7 @@ export default function AdminUsersPage() {
                 disabled={banning}
                 className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
               >
-                {banning ? "처리 중..." : "제재 확정"}
+                {banning ? "처리 중..." : "강제탈퇴 확정"}
               </button>
             </div>
           </div>
