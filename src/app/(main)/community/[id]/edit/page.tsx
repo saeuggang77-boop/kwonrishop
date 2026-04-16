@@ -29,7 +29,8 @@ export default function CommunityEditPage() {
       fetch(`/api/community/${postId}`)
         .then((r) => r.json())
         .then((data) => {
-          if (data.author?.id !== session?.user?.id) {
+          const isAdmin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
+          if (data.author?.id !== session?.user?.id && !isAdmin) {
             setError("본인이 작성한 글만 수정할 수 있습니다.");
             setFetching(false);
             return;
