@@ -95,7 +95,7 @@ function LoginContent() {
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="flex justify-center mb-3">
-            <Logo size="lg" href={null} />
+            <Logo size="lg" href="/" />
           </div>
           <p className="text-xs text-muted tracking-wide">상가 직거래 플랫폼</p>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -79,7 +80,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}>
           <div className="p-6 border-b border-gray-200 hidden lg:block">
-            <h1 className="text-xl font-bold text-gray-900">권리샵 관리자</h1>
+            <Link href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
+              권리샵 관리자
+            </Link>
           </div>
           <nav className="p-4">
             {ADMIN_MENU.map((item) => {
@@ -102,6 +105,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </button>
               );
             })}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <Link
+                href="/"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <span className="text-xl">🏠</span>
+                <span>사이트 홈으로</span>
+              </Link>
+            </div>
           </nav>
         </aside>
 
