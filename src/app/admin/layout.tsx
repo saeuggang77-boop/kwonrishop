@@ -15,6 +15,7 @@ const ADMIN_MENU = [
   { href: "/admin/reports", label: "신고관리", icon: "⚠️" },
   { href: "/admin/inquiries", label: "문의관리", icon: "📧" },
   { href: "/admin/users", label: "회원관리", icon: "👥" },
+  { href: "/admin/community", label: "커뮤니티 관리", icon: "💬" },
   { href: "/admin/notices", label: "공지사항", icon: "📢" },
   { href: "/admin/auto-content", label: "자동 콘텐츠", icon: "🤖" },
 ];

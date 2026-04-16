@@ -9,6 +9,7 @@ interface Comment {
   id: string;
   content: string;
   createdAt: string;
+  updatedAt?: string;
   author: { id: string; name: string | null; image: string | null };
   replies?: Comment[];
 }
@@ -35,6 +36,10 @@ export default function CommunityDetailClient() {
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [loading, setLoading] = useState(true);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState("");
+
+  const isAdmin = (session?.user as { role?: string })?.role === "ADMIN";
 
   useEffect(() => {
     fetch(`/api/community/${params.id}`)
@@ -54,6 +59,44 @@ export default function CommunityDetailClient() {
     if (res.ok) {
       const data = await fetch(`/api/community/${params.id}`).then((r) => r.json());
       setPost(data);
+    }
+  }
+
+  function startEditComment(commentId: string, currentContent: string) {
+    setEditingCommentId(commentId);
+    setEditingContent(currentContent);
+  }
+
+  function cancelEditComment() {
+    setEditingCommentId(null);
+    setEditingContent("");
+  }
+
+  async function saveEditComment(commentId: string) {
+    if (!editingContent.trim()) return;
+    const res = await fetch(
+      `/api/community/${params.id}/comments/${commentId}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: editingContent }),
+      },
+    );
+    if (res.ok) {
+      const { comment: updated } = await res.json();
+      setPost((prev) => {
+        if (!prev) return prev;
+        function updateInList(list: Comment[]): Comment[] {
+          return list.map((c) => {
+            if (c.id === commentId) return { ...c, content: updated.content };
+            if (c.replies) return { ...c, replies: updateInList(c.replies) };
+            return c;
+          });
+        }
+        return { ...prev, comments: updateInList(prev.comments) };
+      });
+      setEditingCommentId(null);
+      setEditingContent("");
     }
   }
 
@@ -121,8 +164,11 @@ export default function CommunityDetailClient() {
             <span>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
             <span>조회 {post.viewCount}</span>
           </div>
-          {session?.user?.id === post.author.id && (
-            <div className="flex gap-2">
+          {(session?.user?.id === post.author.id || isAdmin) && (
+            <div className="flex items-center gap-2">
+              {isAdmin && session?.user?.id !== post.author.id && (
+                <span className="text-xs px-1.5 py-0.5 bg-red-100 text-red-600 rounded font-medium">관리자</span>
+              )}
               <button
                 onClick={() => router.push(`/community/${params.id}/edit`)}
                 className="text-sm text-gray-500 hover:text-green-700"
@@ -201,7 +247,36 @@ export default function CommunityDetailClient() {
                       {new Date(c.createdAt).toLocaleDateString("ko-KR")}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-700 mt-1">{c.content}</p>
+                  {editingCommentId === c.id ? (
+                    <div className="mt-1 flex gap-2">
+                      <input
+                        type="text"
+                        value={editingContent}
+                        onChange={(e) => setEditingContent(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") saveEditComment(c.id);
+                          if (e.key === "Escape") cancelEditComment();
+                        }}
+                        maxLength={500}
+                        autoFocus
+                        className="flex-1 px-2 py-1 border border-green-400 rounded text-sm outline-none focus:ring-1 focus:ring-green-600"
+                      />
+                      <button
+                        onClick={() => saveEditComment(c.id)}
+                        className="px-2 py-1 bg-green-700 text-white text-xs rounded hover:bg-green-600"
+                      >
+                        저장
+                      </button>
+                      <button
+                        onClick={cancelEditComment}
+                        className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded hover:bg-gray-300"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-700 mt-1">{c.content}</p>
+                  )}
                   {session && (
                     <div className="flex gap-3 mt-1">
                       <button
@@ -210,13 +285,21 @@ export default function CommunityDetailClient() {
                       >
                         답글
                       </button>
-                      {session.user?.id === c.author.id && (
-                        <button
-                          onClick={() => deleteComment(c.id)}
-                          className="text-xs text-gray-400 hover:text-red-500"
-                        >
-                          삭제
-                        </button>
+                      {(session.user?.id === c.author.id || isAdmin) && (
+                        <>
+                          <button
+                            onClick={() => startEditComment(c.id, c.content)}
+                            className="text-xs text-gray-400 hover:text-blue-500"
+                          >
+                            수정
+                          </button>
+                          <button
+                            onClick={() => deleteComment(c.id)}
+                            className="text-xs text-gray-400 hover:text-red-500"
+                          >
+                            삭제
+                          </button>
+                        </>
                       )}
                     </div>
                   )}
@@ -255,14 +338,51 @@ export default function CommunityDetailClient() {
                             {new Date(r.createdAt).toLocaleDateString("ko-KR")}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-700 mt-0.5 break-words">{r.content}</p>
-                        {session?.user?.id === r.author.id && (
-                          <button
-                            onClick={() => deleteComment(r.id)}
-                            className="text-xs text-gray-400 mt-1 hover:text-red-500"
-                          >
-                            삭제
-                          </button>
+                        {editingCommentId === r.id ? (
+                          <div className="mt-0.5 flex gap-2">
+                            <input
+                              type="text"
+                              value={editingContent}
+                              onChange={(e) => setEditingContent(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") saveEditComment(r.id);
+                                if (e.key === "Escape") cancelEditComment();
+                              }}
+                              maxLength={500}
+                              autoFocus
+                              className="flex-1 px-2 py-1 border border-green-400 rounded text-sm outline-none focus:ring-1 focus:ring-green-600"
+                            />
+                            <button
+                              onClick={() => saveEditComment(r.id)}
+                              className="px-2 py-1 bg-green-700 text-white text-xs rounded hover:bg-green-600"
+                            >
+                              저장
+                            </button>
+                            <button
+                              onClick={cancelEditComment}
+                              className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded hover:bg-gray-300"
+                            >
+                              취소
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-700 mt-0.5 break-words">{r.content}</p>
+                        )}
+                        {session && (session?.user?.id === r.author.id || isAdmin) && (
+                          <div className="flex gap-3 mt-1">
+                            <button
+                              onClick={() => startEditComment(r.id, r.content)}
+                              className="text-xs text-gray-400 hover:text-blue-500"
+                            >
+                              수정
+                            </button>
+                            <button
+                              onClick={() => deleteComment(r.id)}
+                              className="text-xs text-gray-400 hover:text-red-500"
+                            >
+                              삭제
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
