@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Anthropic from "@anthropic-ai/sdk";
 import { GhostPersonality, ContentType } from "@/generated/prisma/client";
@@ -9,16 +7,15 @@ import {
 } from "@/lib/auto-content/prompts";
 import { logAiUsage } from "@/lib/ai-usage";
 import { rateLimitRequest } from "@/lib/rate-limit";
+import { requireAdmin } from "@/lib/admin-guard";
 
 export async function POST(request: NextRequest) {
   try {
     const rateLimitError = await rateLimitRequest(request, 5, 60000);
     if (rateLimitError) return rateLimitError;
 
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     if (!process.env.ANTHROPIC_API_KEY) {
       return NextResponse.json({ error: "AI 서비스를 사용할 수 없습니다" }, { status: 503 });

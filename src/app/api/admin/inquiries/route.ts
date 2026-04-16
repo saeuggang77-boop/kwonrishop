@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-guard";
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
-  }
+  const { error: authError, status: authStatus } = await requireAdmin();
+  if (authError) return NextResponse.json({ error: authError }, { status: authStatus });
 
   try {
     const { searchParams } = new URL(req.url);
@@ -43,10 +40,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
-  }
+  const { error: authError, status: authStatus } = await requireAdmin();
+  if (authError) return NextResponse.json({ error: authError }, { status: authStatus });
 
   try {
     const { id, status, adminNote } = await req.json();

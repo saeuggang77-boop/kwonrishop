@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { GhostPersonality } from "@/generated/prisma/client";
 import { sanitizeInput } from "@/lib/sanitize";
+import { requireAdmin } from "@/lib/admin-guard";
 
 // 형용사 배열 (60개) - 상가거래/창업 맞춤
 const ADJECTIVES = [
@@ -37,10 +36,8 @@ function generateGhostNickname(): string {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const ghostUsers = await prisma.user.findMany({
       where: {
@@ -68,10 +65,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const body = await request.json();
     const { count = 10 } = body;
@@ -165,10 +160,8 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const body = await request.json();
     const { id, name } = body;
@@ -217,10 +210,8 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     // body JSON 또는 query param 둘 다 지원
     let ids: string[] = [];

@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/sanitize";
+import { requireAdmin } from "@/lib/admin-guard";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const poolItems = await prisma.contentPool.findMany({
       where: { type: "POST", isUsed: false },
@@ -34,10 +31,8 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const body = await request.json();
     const { id, title, content, category } = body;
@@ -73,10 +68,8 @@ export async function PUT(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const body = await request.json();
     const { title, content, category, type } = body;
@@ -105,10 +98,8 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const body = await request.json();
     const ids: string[] = body.ids || (body.id ? [body.id] : []);

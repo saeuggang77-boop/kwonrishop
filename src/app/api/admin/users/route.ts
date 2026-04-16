@@ -6,6 +6,9 @@ import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rateLimitError = await rateLimitRequest(request, 60, 60000);
+  if (rateLimitError) return rateLimitError;
+
   try {
     const session = await getServerSession(authOptions);
 

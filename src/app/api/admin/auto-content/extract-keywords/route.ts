@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import Anthropic from "@anthropic-ai/sdk";
+import { requireAdmin } from "@/lib/admin-guard";
 import { logAiUsage } from "@/lib/ai-usage";
 import { rateLimitRequest } from "@/lib/rate-limit";
 
@@ -30,10 +29,8 @@ export async function POST(request: NextRequest) {
     const rateLimitError = await rateLimitRequest(request, 10, 60000);
     if (rateLimitError) return rateLimitError;
 
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     if (!process.env.ANTHROPIC_API_KEY) {
       return NextResponse.json({ error: "AI 서비스를 사용할 수 없습니다" }, { status: 503 });

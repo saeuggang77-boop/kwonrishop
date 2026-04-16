@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-guard";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     // Get or create singleton config
     let config = await prisma.autoContentConfig.findUnique({
@@ -33,10 +30,8 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "권한이 없습니다" }, { status: 401 });
-    }
+    const { error, status } = await requireAdmin();
+    if (error) return NextResponse.json({ error }, { status });
 
     const body = await request.json();
     const {

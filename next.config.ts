@@ -48,6 +48,11 @@ const nextConfig: NextConfig = {
         hostname: "picsum.photos",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "loremflickr.com",
+        pathname: "/**",
+      },
       // Custom S3 endpoint (MinIO, R2 custom domain, etc.)
       ...(process.env.S3_PUBLIC_URL
         ? [

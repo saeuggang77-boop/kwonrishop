@@ -1,6 +1,11 @@
 /**
  * Simple in-memory rate limiter
  * Maps IP/identifier -> { count, resetTime }
+ *
+ * ⚠️ PRODUCTION TODO: Vercel Lambda 환경에서 인스턴스 간 Map 공유 불가.
+ * 분산 환경에서 실질 무제한 → Upstash Redis 또는 Vercel KV로 교체 필요.
+ * 현재는 단일 인스턴스 내에서만 동작 (casual abuse 방어 수준).
+ * 참고: https://github.com/upstash/ratelimit
  */
 
 interface RateLimitEntry {

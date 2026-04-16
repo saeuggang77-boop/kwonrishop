@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { randomUUID } from "crypto";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { validateOrigin } from "@/lib/csrf";
 import { uploadToS3, isS3Configured } from "@/lib/s3";
@@ -62,10 +63,8 @@ export async function POST(req: NextRequest) {
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 15);
-    // UUID 기반 파일명으로 경로 조작 완전 차단
-    const filename = `${timestamp}-${random}${ext}`;
+    // crypto.randomUUID() 기반 파일명으로 경로 조작 완전 차단
+    const filename = `${randomUUID()}${ext}`;
 
     // S3 사용 가능 여부 확인
     if (isS3Configured()) {
