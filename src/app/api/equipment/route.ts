@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   const maxPrice = searchParams.get("maxPrice");
   const keyword = searchParams.get("keyword");
   const featured = searchParams.get("featured") === "true";
+  const excludeFeatured = searchParams.get("excludeFeatured") !== "false";
   const mine = searchParams.get("mine") === "true";
   const sort = searchParams.get("sort") || "latest";
 
@@ -26,8 +27,8 @@ export async function GET(req: NextRequest) {
 
   // Featured equipment - return early
   if (featured) {
-    // Tier hierarchy: BASIC < PREMIUM < VIP
-    const EQUIP_TIERS = ["BASIC", "PREMIUM", "VIP"];
+    // Tier hierarchy: BASIC < PREMIUM < VIP — featured는 상위 2개(PREMIUM, VIP)만
+    const EQUIP_TIERS = ["PREMIUM", "VIP"];
     const minIdx = minTier ? EQUIP_TIERS.indexOf(minTier) : 0;
     const allowedTiers = EQUIP_TIERS.slice(Math.max(0, minIdx));
 
@@ -107,6 +108,13 @@ export async function GET(req: NextRequest) {
     ];
   }
 
+  // Featured 제외: 필터/검색 없을 때만 VIP/PREMIUM 숨김 (mine 조회는 제외 적용 안 함)
+  const hasFilter = !!(keyword || category || condition || tradeMethod || minPrice || maxPrice);
+
+  if (excludeFeatured && !hasFilter && !mine) {
+    where.tier = { notIn: ["VIP", "PREMIUM"] };
+  }
+
   let orderBy: any;
 
   if (sort === "popular") {
@@ -116,9 +124,8 @@ export async function GET(req: NextRequest) {
   } else if (sort === "price_desc") {
     orderBy = { price: "desc" };
   } else {
-    // latest: tier DESC (paid first), then bumpedAt DESC NULLS LAST, then createdAt DESC
+    // latest: 순수 최신순 (bumpedAt 반영, tier 제외)
     orderBy = [
-      { tier: "desc" },
       { bumpedAt: { sort: "desc", nulls: "last" } },
       { createdAt: "desc" },
     ];

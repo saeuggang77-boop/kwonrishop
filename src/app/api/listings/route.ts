@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
   const premiumNone = searchParams.get("premiumNone");
   const brandType = searchParams.get("brandType");
   const featured = searchParams.get("featured") === "true";
+  const excludeFeatured = searchParams.get("excludeFeatured") !== "false";
 
   // New advanced filters
   const region = searchParams.get("region");
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
     const featuredListings = await prisma.listing.findMany({
       where: {
         status: "ACTIVE",
-        tier: { not: "FREE" },
+        tier: { in: ["VIP", "PREMIUM"] },
         OR: [
           { tierExpiresAt: { gt: new Date() } },
           { tierExpiresAt: null },
@@ -194,6 +195,20 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // Featured 제외: 필터/검색 없을 때만 VIP/PREMIUM 숨김 (캐러셀과 중복 방지)
+  const hasFilter = !!(
+    keyword || region || themes ||
+    minDeposit || maxDeposit || minPremium || maxPremium ||
+    premiumMin || premiumMax || depositMin || depositMax ||
+    rentMin || rentMax || areaMin || areaMax ||
+    categoryId || subCategoryId || brandType || premiumNone ||
+    (swLat && swLng && neLat && neLng)
+  );
+
+  if (excludeFeatured && !hasFilter) {
+    where.tier = { notIn: ["VIP", "PREMIUM"] };
+  }
+
   let orderBy: any;
 
   if (sort === "premium_asc") {
@@ -203,9 +218,8 @@ export async function GET(req: NextRequest) {
   } else if (sort === "popular") {
     orderBy = { viewCount: "desc" };
   } else {
-    // latest: tier DESC (VIP→PREMIUM→BASIC→FREE), bumpedAt DESC NULLS LAST, then createdAt DESC
+    // latest: 순수 최신순 (bumpedAt 반영, tier 제외 — 유료는 featured 캐러셀에서만 강조)
     orderBy = [
-      { tier: "desc" },
       { bumpedAt: { sort: "desc", nulls: "last" } },
       { createdAt: "desc" },
     ];

@@ -17,12 +17,13 @@ export async function GET(req: NextRequest) {
   const region = searchParams.get("region");
   const sort = searchParams.get("sort") || "latest";
   const featured = searchParams.get("featured") === "true";
+  const excludeFeatured = searchParams.get("excludeFeatured") !== "false";
   const tier = searchParams.get("tier"); // VIP, PREMIUM, BASIC, FREE
   const minTier = searchParams.get("minTier");
 
   if (featured) {
-    // Tier hierarchy: BASIC < PREMIUM < VIP
-    const PARTNER_TIERS = ["BASIC", "PREMIUM", "VIP"];
+    // Tier hierarchy: BASIC < PREMIUM < VIP — featured는 상위 2개(PREMIUM, VIP)만
+    const PARTNER_TIERS = ["PREMIUM", "VIP"];
     const minIdx = minTier ? PARTNER_TIERS.indexOf(minTier) : 0;
     const allowedTiers = PARTNER_TIERS.slice(Math.max(0, minIdx));
 
@@ -81,14 +82,20 @@ export async function GET(req: NextRequest) {
     where.serviceArea = { has: region };
   }
 
+  // Featured 제외: 필터/검색 없을 때만 VIP/PREMIUM 숨김
+  const hasFilter = !!(keyword || serviceType || region || tier);
+
+  if (excludeFeatured && !hasFilter) {
+    where.tier = { notIn: ["VIP", "PREMIUM"] };
+  }
+
   let orderBy: any;
 
   if (sort === "popular") {
     orderBy = { viewCount: "desc" };
   } else {
-    // latest: tier DESC (paid first), then bumpedAt DESC NULLS LAST, then createdAt DESC
+    // latest: 순수 최신순 (bumpedAt 반영, tier 제외)
     orderBy = [
-      { tier: "desc" },
       { bumpedAt: { sort: "desc", nulls: "last" } },
       { createdAt: "desc" },
     ];
