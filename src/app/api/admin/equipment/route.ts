@@ -26,6 +26,7 @@ export async function GET(request: Request) {
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20") || 20));
     const status = searchParams.get("status") || "";
     const keyword = searchParams.get("keyword") || "";
+    const tier = searchParams.get("tier") || "";
 
     const skip = (page - 1) * limit;
 
@@ -34,6 +35,10 @@ export async function GET(request: Request) {
 
     if (status) {
       where.status = status;
+    }
+
+    if (tier) {
+      where.tier = tier;
     }
 
     if (keyword) {
@@ -61,7 +66,7 @@ export async function GET(request: Request) {
           take: 1,
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
     });
 
     return NextResponse.json({

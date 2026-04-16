@@ -5,10 +5,12 @@ import { toast } from "@/lib/toast";
 
 interface AdminListing {
   id: string;
-  storeName: string;
+  storeName: string | null;
+  tier: string;
+  tierExpiresAt: string | null;
   user: {
-    name: string;
-    email: string;
+    name: string | null;
+    email: string | null;
   };
   status: string;
   viewCount: number;
@@ -24,6 +26,30 @@ const STATUS_OPTIONS = [
   { value: "DELETED", label: "삭제됨" },
 ];
 
+const TIER_OPTIONS = [
+  { value: "", label: "전체 등급" },
+  { value: "FREE", label: "FREE" },
+  { value: "BASIC", label: "BASIC" },
+  { value: "PREMIUM", label: "PREMIUM" },
+  { value: "VIP", label: "VIP" },
+];
+
+function TierBadge({ tier }: { tier: string }) {
+  const cls =
+    tier === "VIP"
+      ? "bg-amber-100 text-amber-800"
+      : tier === "PREMIUM"
+        ? "bg-purple-100 text-purple-700"
+        : tier === "BASIC"
+          ? "bg-blue-100 text-blue-700"
+          : "bg-gray-100 text-gray-700";
+  return (
+    <span className={`px-2 py-1 rounded-full text-xs font-medium ${cls}`}>
+      {tier}
+    </span>
+  );
+}
+
 export default function AdminListingsPage() {
   const [listings, setListings] = useState<AdminListing[]>([]);
   const [total, setTotal] = useState(0);
@@ -32,6 +58,7 @@ export default function AdminListingsPage() {
   const [loading, setLoading] = useState(true);
 
   const [statusFilter, setStatusFilter] = useState("");
+  const [tierFilter, setTierFilter] = useState("");
   const [keyword, setKeyword] = useState("");
 
   const fetchListings = useCallback(async () => {
@@ -39,6 +66,7 @@ export default function AdminListingsPage() {
     const params = new URLSearchParams();
     params.set("page", String(page));
     if (statusFilter) params.set("status", statusFilter);
+    if (tierFilter) params.set("tier", tierFilter);
     if (keyword) params.set("keyword", keyword);
 
     const res = await fetch(`/api/admin/listings?${params}`);
@@ -47,7 +75,7 @@ export default function AdminListingsPage() {
     setTotal(data.pagination?.total || 0);
     setTotalPages(data.pagination?.totalPages || 1);
     setLoading(false);
-  }, [page, statusFilter, keyword]);
+  }, [page, statusFilter, tierFilter, keyword]);
 
   useEffect(() => {
     fetchListings();
@@ -74,19 +102,23 @@ export default function AdminListingsPage() {
 
       {/* Filters */}
       <div className="bg-cream rounded-3xl border border-line p-4 mb-6">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3">
           <select
             value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             className="px-4 py-2 border border-gray-300 rounded-lg outline-none"
           >
             {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          <select
+            value={tierFilter}
+            onChange={(e) => { setTierFilter(e.target.value); setPage(1); }}
+            className="px-4 py-2 border border-gray-300 rounded-lg outline-none"
+          >
+            {TIER_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
           <input
@@ -94,7 +126,7 @@ export default function AdminListingsPage() {
             placeholder="상호명, 작성자 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg outline-none"
+            className="flex-1 min-w-[180px] px-4 py-2 border border-gray-300 rounded-lg outline-none"
           />
           <button
             onClick={() => setPage(1)}
@@ -127,11 +159,13 @@ export default function AdminListingsPage() {
         </div>
       ) : (
         <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+          <table className="w-full min-w-[820px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상호명</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">작성자</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">조회수</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
@@ -141,21 +175,27 @@ export default function AdminListingsPage() {
             <tbody className="divide-y divide-gray-200">
               {listings.map((listing) => (
                 <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">{listing.storeName}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{listing.storeName ?? "-"}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     <div>{listing.user.name}</div>
                     <div className="text-xs text-gray-400">{listing.user.email}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <TierBadge tier={listing.tier} />
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {listing.tier !== "FREE" && listing.tierExpiresAt
+                      ? new Date(listing.tierExpiresAt).toLocaleDateString("ko-KR")
+                      : "-"}
                   </td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         listing.status === "ACTIVE"
                           ? "bg-green-100 text-green-800"
-                          : listing.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : listing.status === "SOLD"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-gray-100 text-gray-800"
+                          : listing.status === "SOLD"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {listing.status}
@@ -174,9 +214,7 @@ export default function AdminListingsPage() {
                       className="text-sm px-3 py-1 border border-gray-300 rounded-lg outline-none"
                     >
                       {STATUS_OPTIONS.filter((opt) => opt.value).map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>
                   </td>

@@ -26,11 +26,16 @@ export async function GET(req: NextRequest) {
     const limit = 20;
     const status = searchParams.get("status") || "";
     const keyword = searchParams.get("keyword") || "";
+    const tier = searchParams.get("tier") || "";
 
     const where: any = {};
 
     if (status) {
       where.status = status;
+    }
+
+    if (tier) {
+      where.tier = tier;
     }
 
     if (keyword) {
@@ -54,7 +59,7 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
       }),
       prisma.partnerService.count({ where }),
     ]);

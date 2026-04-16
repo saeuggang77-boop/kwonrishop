@@ -10,9 +10,11 @@ interface AdminEquipment {
   title: string;
   category: string;
   price: number;
+  tier: string;
+  tierExpiresAt: string | null;
   user: {
-    name: string;
-    email: string;
+    name: string | null;
+    email: string | null;
   };
   status: string;
   images: Array<{ url: string }>;
@@ -29,6 +31,14 @@ const STATUS_OPTIONS = [
   { value: "DRAFT", label: "임시저장" },
 ];
 
+const TIER_OPTIONS = [
+  { value: "", label: "전체 등급" },
+  { value: "FREE", label: "FREE" },
+  { value: "BASIC", label: "BASIC" },
+  { value: "PREMIUM", label: "PREMIUM" },
+  { value: "VIP", label: "VIP" },
+];
+
 const STATUS_LABELS: Record<string, string> = {
   ACTIVE: "활성",
   RESERVED: "예약",
@@ -38,6 +48,22 @@ const STATUS_LABELS: Record<string, string> = {
   DRAFT: "임시저장",
 };
 
+function TierBadge({ tier }: { tier: string }) {
+  const cls =
+    tier === "VIP"
+      ? "bg-amber-100 text-amber-800"
+      : tier === "PREMIUM"
+        ? "bg-purple-100 text-purple-700"
+        : tier === "BASIC"
+          ? "bg-blue-100 text-blue-700"
+          : "bg-gray-100 text-gray-700";
+  return (
+    <span className={`px-2 py-1 rounded-full text-xs font-medium ${cls}`}>
+      {tier}
+    </span>
+  );
+}
+
 export default function AdminEquipmentPage() {
   const [equipment, setEquipment] = useState<AdminEquipment[]>([]);
   const [total, setTotal] = useState(0);
@@ -46,6 +72,7 @@ export default function AdminEquipmentPage() {
   const [loading, setLoading] = useState(true);
 
   const [statusFilter, setStatusFilter] = useState("");
+  const [tierFilter, setTierFilter] = useState("");
   const [keyword, setKeyword] = useState("");
 
   const fetchEquipment = useCallback(async () => {
@@ -54,6 +81,7 @@ export default function AdminEquipmentPage() {
       const params = new URLSearchParams();
       params.set("page", String(page));
       if (statusFilter) params.set("status", statusFilter);
+      if (tierFilter) params.set("tier", tierFilter);
       if (keyword) params.set("keyword", keyword);
 
       const res = await fetch(`/api/admin/equipment?${params}`);
@@ -67,7 +95,7 @@ export default function AdminEquipmentPage() {
       setTotalPages(1);
     }
     setLoading(false);
-  }, [page, statusFilter, keyword]);
+  }, [page, statusFilter, tierFilter, keyword]);
 
   useEffect(() => {
     fetchEquipment();
@@ -114,19 +142,23 @@ export default function AdminEquipmentPage() {
 
       {/* Filters */}
       <div className="bg-cream rounded-3xl border border-line p-4 mb-6">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3">
           <select
             value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             className="px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
           >
             {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          <select
+            value={tierFilter}
+            onChange={(e) => { setTierFilter(e.target.value); setPage(1); }}
+            className="px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
+          >
+            {TIER_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
           <input
@@ -134,7 +166,7 @@ export default function AdminEquipmentPage() {
             placeholder="제목, 설명 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
+            className="flex-1 min-w-[180px] px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
           />
           <button
             onClick={() => setPage(1)}
@@ -167,13 +199,15 @@ export default function AdminEquipmentPage() {
         </div>
       ) : (
         <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
-          <table className="w-full min-w-[800px]">
+          <table className="w-full min-w-[900px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">사진</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">제목</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">카테고리</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">가격</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">판매자</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
@@ -186,12 +220,7 @@ export default function AdminEquipmentPage() {
                   <td className="px-6 py-4">
                     {item.images?.[0]?.url ? (
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
-                        <Image
-                          src={item.images[0].url}
-                          alt={item.title}
-                          fill
-                          className="object-cover"
-                        />
+                        <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
                       </div>
                     ) : (
                       <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
@@ -199,14 +228,20 @@ export default function AdminEquipmentPage() {
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                    {item.title}
-                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{item.title}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     {EQUIPMENT_CATEGORY_LABELS[item.category] || item.category}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900 font-medium">
                     {item.price.toLocaleString()}원
+                  </td>
+                  <td className="px-6 py-4">
+                    <TierBadge tier={item.tier} />
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {item.tier !== "FREE" && item.tierExpiresAt
+                      ? new Date(item.tierExpiresAt).toLocaleDateString("ko-KR")
+                      : "-"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 max-w-[180px]">
                     <div className="truncate">{item.user.name}</div>
@@ -240,9 +275,7 @@ export default function AdminEquipmentPage() {
                         className="text-sm px-3 py-1 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
                       >
                         {STATUS_OPTIONS.filter((opt) => opt.value).map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
                       </select>
                       <button
