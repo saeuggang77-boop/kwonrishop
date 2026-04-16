@@ -56,6 +56,8 @@ export async function GET(req: NextRequest) {
           addressJibun: true,
           deposit: true,
           monthlyRent: true,
+          monthlyProfit: true,
+          monthlyRevenue: true,
           premium: true,
           premiumNone: true,
           premiumNegotiable: true,

@@ -147,9 +147,9 @@ function CommunityContent() {
         </div>
       )}
 
-      {total > 20 && (
+      {total > 15 && (
         <div className="flex justify-center gap-2 mt-8">
-          {Array.from({ length: Math.min(Math.ceil(total / 20), 10) }, (_, i) => i + 1).map((p) => (
+          {Array.from({ length: Math.min(Math.ceil(total / 15), 10) }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
               onClick={() => setPage(p)}

@@ -24,6 +24,8 @@ interface ListingCardProps {
     category: { name: string; icon: string | null } | null;
     subCategory: { name: string } | null;
     images: { url: string }[];
+    monthlyProfit?: number | null;
+    monthlyRevenue?: number | null;
     featuredTier?: string;
     _count?: { documents: number };
   };
@@ -99,6 +101,16 @@ export default function ListingCard({ listing }: ListingCardProps) {
                 {listing.deposit.toLocaleString()} / {listing.monthlyRent.toLocaleString()}만
               </span>
             </div>
+            {(listing.monthlyProfit || listing.monthlyRevenue) && (
+              <div className="flex items-baseline justify-between text-[13px]">
+                <span className="text-muted">
+                  {listing.monthlyProfit ? "월순익" : "월매출"}
+                </span>
+                <span className="font-semibold text-ink">
+                  {(listing.monthlyProfit ?? listing.monthlyRevenue ?? 0).toLocaleString()}만
+                </span>
+              </div>
+            )}
             <div className="flex items-baseline justify-between">
               <span className="text-[13px] text-muted">권리금</span>
               <span className="font-extrabold text-green-700 text-xl leading-none tracking-tight">

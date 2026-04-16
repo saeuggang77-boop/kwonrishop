@@ -21,7 +21,7 @@ const postSelectFields = {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "15")));
   const tag = searchParams.get("tag");
 
   // 전체 보기: 공지 상단 고정 + 나머지 최신순
