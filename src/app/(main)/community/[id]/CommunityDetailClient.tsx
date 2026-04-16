@@ -211,19 +211,24 @@ export default function CommunityDetailClient() {
 
         {/* 댓글 입력 */}
         {session ? (
-          <div className="flex gap-2 mb-6">
-            <input
-              type="text"
-              placeholder="댓글을 입력하세요"
+          <div className="flex gap-2 mb-6 items-start">
+            <textarea
+              placeholder="댓글을 입력하세요 (Shift+Enter 줄바꿈)"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && submitComment()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                  e.preventDefault();
+                  submitComment();
+                }
+              }}
               maxLength={500}
-              className="flex-1 px-3 md:px-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-700"
+              rows={1}
+              className="flex-1 px-3 md:px-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-700 resize-none field-sizing-content min-h-[42px]"
             />
             <button
               onClick={() => submitComment()}
-              className="px-3 md:px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600 active:bg-green-800 min-w-[60px]"
+              className="px-3 md:px-4 py-2.5 bg-green-700 text-white text-sm rounded-lg font-medium hover:bg-green-600 active:bg-green-800 min-w-[60px] shrink-0"
             >
               등록
             </button>
@@ -248,34 +253,37 @@ export default function CommunityDetailClient() {
                     </span>
                   </div>
                   {editingCommentId === c.id ? (
-                    <div className="mt-1 flex gap-2">
-                      <input
-                        type="text"
+                    <div className="mt-1 flex gap-2 items-start">
+                      <textarea
                         value={editingContent}
                         onChange={(e) => setEditingContent(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") saveEditComment(c.id);
+                          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                            e.preventDefault();
+                            saveEditComment(c.id);
+                          }
                           if (e.key === "Escape") cancelEditComment();
                         }}
                         maxLength={500}
                         autoFocus
-                        className="flex-1 px-2 py-1 border border-green-400 rounded text-sm outline-none focus:ring-1 focus:ring-green-600"
+                        rows={1}
+                        className="flex-1 px-2 py-1 border border-green-400 rounded text-sm outline-none focus:ring-1 focus:ring-green-600 resize-none field-sizing-content min-h-[32px]"
                       />
                       <button
                         onClick={() => saveEditComment(c.id)}
-                        className="px-2 py-1 bg-green-700 text-white text-xs rounded hover:bg-green-600"
+                        className="px-2 py-1 bg-green-700 text-white text-xs rounded hover:bg-green-600 shrink-0"
                       >
                         저장
                       </button>
                       <button
                         onClick={cancelEditComment}
-                        className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded hover:bg-gray-300"
+                        className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded hover:bg-gray-300 shrink-0"
                       >
                         취소
                       </button>
                     </div>
                   ) : (
-                    <p className="text-[15px] leading-relaxed text-gray-700 mt-1">{c.content}</p>
+                    <p className="text-[15px] leading-relaxed text-gray-700 mt-1 whitespace-pre-wrap break-words">{c.content}</p>
                   )}
                   {session && (
                     <div className="flex gap-3 mt-1">
@@ -306,19 +314,24 @@ export default function CommunityDetailClient() {
 
                   {/* 답글 입력 */}
                   {replyTo === c.id && (
-                    <div className="flex gap-2 mt-2">
-                      <input
-                        type="text"
-                        placeholder="답글을 입력하세요"
+                    <div className="flex gap-2 mt-2 items-start">
+                      <textarea
+                        placeholder="답글을 입력하세요 (Shift+Enter 줄바꿈)"
                         value={replyContent}
                         onChange={(e) => setReplyContent(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && submitComment(c.id)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-700"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                            e.preventDefault();
+                            submitComment(c.id);
+                          }
+                        }}
+                        rows={1}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-700 resize-none field-sizing-content min-h-[38px]"
                         autoFocus
                       />
                       <button
                         onClick={() => submitComment(c.id)}
-                        className="px-3 py-2 bg-green-700 text-white text-xs rounded-lg"
+                        className="px-3 py-2 bg-green-700 text-white text-xs rounded-lg shrink-0"
                       >
                         등록
                       </button>
@@ -339,34 +352,37 @@ export default function CommunityDetailClient() {
                           </span>
                         </div>
                         {editingCommentId === r.id ? (
-                          <div className="mt-0.5 flex gap-2">
-                            <input
-                              type="text"
+                          <div className="mt-0.5 flex gap-2 items-start">
+                            <textarea
                               value={editingContent}
                               onChange={(e) => setEditingContent(e.target.value)}
                               onKeyDown={(e) => {
-                                if (e.key === "Enter") saveEditComment(r.id);
+                                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                                  e.preventDefault();
+                                  saveEditComment(r.id);
+                                }
                                 if (e.key === "Escape") cancelEditComment();
                               }}
                               maxLength={500}
                               autoFocus
-                              className="flex-1 px-2 py-1 border border-green-400 rounded text-sm outline-none focus:ring-1 focus:ring-green-600"
+                              rows={1}
+                              className="flex-1 px-2 py-1 border border-green-400 rounded text-sm outline-none focus:ring-1 focus:ring-green-600 resize-none field-sizing-content min-h-[32px]"
                             />
                             <button
                               onClick={() => saveEditComment(r.id)}
-                              className="px-2 py-1 bg-green-700 text-white text-xs rounded hover:bg-green-600"
+                              className="px-2 py-1 bg-green-700 text-white text-xs rounded hover:bg-green-600 shrink-0"
                             >
                               저장
                             </button>
                             <button
                               onClick={cancelEditComment}
-                              className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded hover:bg-gray-300"
+                              className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded hover:bg-gray-300 shrink-0"
                             >
                               취소
                             </button>
                           </div>
                         ) : (
-                          <p className="text-sm leading-relaxed text-gray-700 mt-0.5 break-words">{r.content}</p>
+                          <p className="text-sm leading-relaxed text-gray-700 mt-0.5 whitespace-pre-wrap break-words">{r.content}</p>
                         )}
                         {session && (session?.user?.id === r.author.id || isAdmin) && (
                           <div className="flex gap-3 mt-1">
