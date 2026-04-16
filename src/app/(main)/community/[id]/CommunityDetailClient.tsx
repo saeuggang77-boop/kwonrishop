@@ -275,7 +275,7 @@ export default function CommunityDetailClient() {
                       </button>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-700 mt-1">{c.content}</p>
+                    <p className="text-[15px] leading-relaxed text-gray-700 mt-1">{c.content}</p>
                   )}
                   {session && (
                     <div className="flex gap-3 mt-1">
@@ -366,7 +366,7 @@ export default function CommunityDetailClient() {
                             </button>
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-700 mt-0.5 break-words">{r.content}</p>
+                          <p className="text-sm leading-relaxed text-gray-700 mt-0.5 break-words">{r.content}</p>
                         )}
                         {session && (session?.user?.id === r.author.id || isAdmin) && (
                           <div className="flex gap-3 mt-1">
