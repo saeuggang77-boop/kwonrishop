@@ -291,10 +291,57 @@ export async function generateContextualReplies(
 }
 
 /**
+ * 각 메시지에 scheduledFor 시간 할당
+ * - 첫 댓글(replyTo=null 최초): 게시글 작성시간 + 30분~3시간 랜덤
+ * - 이후 댓글: 직전 댓글 + 1~4시간 랜덤, 전체 12시간 이내 분산
+ * - 답글: 부모 메시지 scheduledFor + 2~12시간 랜덤
+ */
+export function computeScheduledTimes(
+  messages: Array<{ replyTo: number | null }>,
+  basePostCreatedAt: Date
+): Date[] {
+  const scheduledTimes: Date[] = new Array(messages.length);
+  const baseMs = basePostCreatedAt.getTime();
+
+  // 첫 최상위 댓글 기준 시간 추적
+  let lastTopLevelMs: number | null = null;
+
+  for (let i = 0; i < messages.length; i++) {
+    const msg = messages[i];
+
+    if (msg.replyTo === null || msg.replyTo === undefined) {
+      // 최상위 댓글
+      if (lastTopLevelMs === null) {
+        // 첫 댓글: 게시글 + 30분~3시간
+        const offsetMs = (30 + Math.floor(Math.random() * 150)) * 60 * 1000;
+        scheduledTimes[i] = new Date(baseMs + offsetMs);
+      } else {
+        // 이후 댓글: 직전 최상위 댓글 + 1~4시간
+        const offsetMs = (60 + Math.floor(Math.random() * 180)) * 60 * 1000;
+        const candidate = lastTopLevelMs + offsetMs;
+        // 전체 12시간 이내 제한
+        const maxMs = baseMs + 12 * 60 * 60 * 1000;
+        scheduledTimes[i] = new Date(Math.min(candidate, maxMs));
+      }
+      lastTopLevelMs = scheduledTimes[i].getTime();
+    } else {
+      // 답글: 부모 scheduledFor + 2~12시간
+      const parentTime = scheduledTimes[msg.replyTo];
+      const parentMs = parentTime ? parentTime.getTime() : baseMs;
+      const offsetMs = (120 + Math.floor(Math.random() * 600)) * 60 * 1000;
+      scheduledTimes[i] = new Date(parentMs + offsetMs);
+    }
+  }
+
+  return scheduledTimes;
+}
+
+/**
  * 게시글에 대한 전체 대화 스레드 생성 (댓글+답글 통합)
+ * AI 1회 호출로 코히런트한 스레드 생성 후 PendingComment에 예약 저장
  */
 export async function generateConversationThread(
-  post: { id: string; title: string; content: string; authorId: string },
+  post: { id: string; title: string; content: string; authorId: string; createdAt?: Date },
   threadSize: number,
   authorReplyRate: number = 50
 ): Promise<{ commentCount: number; replyCount: number }> {
@@ -363,10 +410,8 @@ export async function generateConversationThread(
     // 작성자는 답글(replyTo: 숫자)만 달아야 자연스러움
     const authorNameStr = author.name || "익명";
     const originalLength = parsed.length;
-    parsed = parsed.filter((msg, idx) => {
+    parsed = parsed.filter((msg) => {
       if (msg.name === authorNameStr && (msg.replyTo === null || msg.replyTo === undefined)) {
-        // 첫 메시지가 아닌 경우에만 제거 (replyTo 인덱스 재조정이 복잡해지므로)
-        // 첫 메시지가 작성자인 경우도 제거하고 인덱스 재조정
         return false;
       }
       return true;
@@ -403,7 +448,6 @@ export async function generateConversationThread(
             if (fallbackIdx !== null) {
               return { ...msg, replyTo: fallbackIdx };
             }
-            // 이전 최상위 댓글이 없으면 첫 번째 메시지에 연결
             return { ...msg, replyTo: 0 };
           }
           return { ...msg, replyTo: newReplyTo };
@@ -414,81 +458,58 @@ export async function generateConversationThread(
       // 3.6 2차 안전장치: 인덱스 재조정으로 작성자 최상위 댓글이 새로 생긴 경우 처리
       parsed = parsed.map((msg, idx) => {
         if (msg.name === authorNameStr && (msg.replyTo === null || msg.replyTo === undefined)) {
-          // 가장 가까운 이전 비작성자 최상위 댓글에 답글로 연결
           for (let k = idx - 1; k >= 0; k--) {
             if (parsed[k].name !== authorNameStr && (parsed[k].replyTo === null || parsed[k].replyTo === undefined)) {
               return { ...msg, replyTo: k };
             }
           }
-          // 이전에 없으면 가장 가까운 이후 비작성자 최상위 댓글에 연결
           for (let k = idx + 1; k < parsed.length; k++) {
             if (parsed[k].name !== authorNameStr && (parsed[k].replyTo === null || parsed[k].replyTo === undefined)) {
               return { ...msg, replyTo: k };
             }
           }
-          // 비작성자 최상위 댓글이 없으면 첫 번째 메시지에 연결 (자신이 아닌 경우)
           if (idx !== 0) return { ...msg, replyTo: 0 };
-          // 전부 작성자뿐이면 제거 대상 마킹
           return { ...msg, replyTo: -999 };
         }
         return msg;
       });
-      // -999로 마킹된 항목 제거
       parsed = parsed.filter(msg => msg.replyTo !== -999);
     }
 
-    // 4. name → userId 매핑
+    // 4. name → userId/name 매핑
     const nameToUserId = new Map<string, string>();
+    const nameToAuthorName = new Map<string, string>();
     nameToUserId.set(author.name || "익명", post.authorId);
+    nameToAuthorName.set(author.name || "익명", author.name || "익명");
     commenters.forEach(c => {
       nameToUserId.set(c.name || "익명", c.id);
+      nameToAuthorName.set(c.name || "익명", c.name || "익명");
     });
 
-    // 5. DB에 저장 (순서대로 생성하면서 인덱스→실제ID 매핑)
-    const indexToCommentId = new Map<number, string>();
-    const indexToParentId = new Map<number, string | null>();
+    // 5. 스케줄 시간 계산
+    const basePostCreatedAt = post.createdAt ?? new Date();
+    const scheduledTimes = computeScheduledTimes(parsed, basePostCreatedAt);
+
+    // 6. PendingComment에 저장 (순서대로, 인덱스→PendingComment.id 매핑)
+    const indexToPendingId = new Map<number, string>();
     const messagesByIndex = new Map<number, { name: string; content: string }>();
     let commentCount = 0;
     let replyCount = 0;
 
-    // 시간 오프셋: 순차 누적으로 순서 보장 (첫 메시지가 가장 오래전)
-    const now = Date.now();
-    const intervals: number[] = [];
-    for (let i = 0; i < parsed.length; i++) {
-      intervals.push(Math.floor(Math.random() * 16) + 5); // 5~20분 간격
-    }
-    // 역순 누적: 마지막 메시지 = 가장 최근, 첫 메시지 = 가장 오래전
-    const cumulativeOffsets: number[] = new Array(parsed.length);
-    cumulativeOffsets[parsed.length - 1] = intervals[parsed.length - 1];
-    for (let i = parsed.length - 2; i >= 0; i--) {
-      cumulativeOffsets[i] = cumulativeOffsets[i + 1] + intervals[i];
-    }
-
     for (let i = 0; i < parsed.length; i++) {
       const msg = parsed[i];
       const userId = nameToUserId.get(msg.name) || post.authorId;
+      const authorName = nameToAuthorName.get(msg.name) || msg.name;
 
-      // replyTo가 가리키는 메시지 정보 저장
       messagesByIndex.set(i, { name: msg.name, content: msg.content });
 
-      let parentId: string | null = null;
+      let parentPendingId: string | null = null;
       let finalContent = msg.content;
 
       if (msg.replyTo !== null && msg.replyTo !== undefined) {
-        // 답글인 경우
-        const targetCommentId = indexToCommentId.get(msg.replyTo) || null;
+        parentPendingId = indexToPendingId.get(msg.replyTo) || null;
 
-        // 2단 평탄화: replyTo 대상이 이미 답글(parentId가 있음)이면, 그 최상위로 연결
-        const targetParentId = indexToParentId.get(msg.replyTo);
-        if (targetParentId !== undefined && targetParentId !== null) {
-          // replyTo 대상이 이미 답글이면, 그 부모(최상위)를 사용
-          parentId = targetParentId;
-        } else {
-          // replyTo 대상이 최상위 댓글이면 그대로 사용
-          parentId = targetCommentId;
-        }
-
-        // @이름 prefix 추가: 부모 체인을 거슬러 올라가 다른 사람 이름 찾기
+        // @이름 prefix 추가
         let targetName: string | null = null;
         let currentIdx = msg.replyTo as number;
         for (let depth = 0; depth < 10; depth++) {
@@ -497,13 +518,12 @@ export async function generateConversationThread(
             targetName = searchMsg.name;
             break;
           }
-          // 자기 자신이면 부모의 replyTo를 따라감
           const parentReplyTo = parsed[currentIdx]?.replyTo;
           if (parentReplyTo === null || parentReplyTo === undefined) break;
           currentIdx = parentReplyTo;
         }
 
-        if (parentId && targetName) {
+        if (targetName) {
           const alreadyMentioned = msg.content.startsWith('@') || msg.content.includes(targetName);
           if (!alreadyMentioned) {
             finalContent = `@${targetName} ${msg.content}`;
@@ -511,24 +531,21 @@ export async function generateConversationThread(
         }
       }
 
-      // 시간차 적용: 순차적으로 누적하여 순서 보장
-      // 첫 메시지가 가장 오래전, 이후 메시지가 점점 최근
-      const createdAt = new Date(now - cumulativeOffsets[i] * 60 * 1000);
-
-      const comment = await prisma.comment.create({
+      const pending = await prisma.pendingComment.create({
         data: {
-          authorId: userId,
           postId: post.id,
+          authorId: userId,
+          authorName,
           content: finalContent,
-          parentId,
-          createdAt,
+          parentPendingId,
+          scheduledFor: scheduledTimes[i],
+          status: "PENDING",
         },
       });
 
-      indexToCommentId.set(i, comment.id);
-      indexToParentId.set(i, parentId);
+      indexToPendingId.set(i, pending.id);
 
-      if (parentId === null) {
+      if (msg.replyTo === null || msg.replyTo === undefined) {
         commentCount++;
       } else {
         replyCount++;

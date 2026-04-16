@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
           createdAt: { gte: sevenDaysAgo },
           author: { isGhost: true }, // 고스트 작성 게시글만 (글쓴이가 답글해야 하므로)
         },
-        select: { id: true, title: true, content: true, authorId: true },
+        select: { id: true, title: true, content: true, authorId: true, createdAt: true },
         orderBy: { createdAt: "desc" },
         take: 20,
       });

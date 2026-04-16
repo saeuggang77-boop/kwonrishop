@@ -52,6 +52,7 @@ model User {
   // 자동 콘텐츠 (유령회원)
   isGhost              Boolean           @default(false)
   ghostPersonality     GhostPersonality?
+  pendingComments      PendingComment[]
 }
 
 enum UserRole {
@@ -643,9 +644,10 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  author      User          @relation(fields: [authorId], references: [id])
-  comments    Comment[]
-  contentPool ContentPool[]
+  author          User             @relation(fields: [authorId], references: [id])
+  comments        Comment[]
+  contentPool     ContentPool[]
+  pendingComments PendingComment[]
 
   @@index([tag, createdAt])
   @@index([createdAt])
@@ -1025,4 +1027,32 @@ model AiUsageLog {
   createdAt        DateTime @default(now())
 
   @@index([createdAt])
+}
+
+// ==========================================
+// 댓글/답글 예약 발행 시스템
+// ==========================================
+
+model PendingComment {
+  id               String    @id @default(cuid())
+  postId           String
+  authorId         String
+  authorName       String
+  content          String    @db.Text
+  parentPendingId  String?
+  scheduledFor     DateTime
+  status           String    @default("PENDING") // PENDING | PROCESSING | COMPLETED | FAILED
+  retryCount       Int       @default(0)
+  errorMessage     String?
+  createdCommentId String?
+  createdAt        DateTime  @default(now())
+
+  post          Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author        User            @relation(fields: [authorId], references: [id])
+  parentPending PendingComment? @relation("PendingReply", fields: [parentPendingId], references: [id])
+  replies       PendingComment[] @relation("PendingReply")
+
+  @@index([scheduledFor, status])
+  @@index([postId])
+  @@index([parentPendingId])
 }
