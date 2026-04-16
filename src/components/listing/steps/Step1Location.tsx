@@ -223,7 +223,7 @@ export default function Step1Location({ onNext }: Props) {
             placeholder="건물명, 층수 등"
             value={data.addressDetail}
             onChange={(e) => updateData({ addressDetail: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+            className="w-full px-4 py-3 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
           />
         </div>
 

@@ -123,7 +123,7 @@ export default function HomeClient({
         <div aria-hidden className="absolute -bottom-24 -left-36 w-[400px] h-[400px] rounded-full bg-cream/5 blur-3xl pointer-events-none" />
 
         <div className="relative max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-3 text-[11px] font-bold text-terra-300 tracking-[0.3em] uppercase mb-5 before:content-[''] before:w-6 before:h-px before:bg-terra-300 after:content-[''] after:w-6 after:h-px after:bg-terra-300">
+          <div className="inline-flex items-center gap-3 text-xs font-bold text-terra-300 tracking-[0.3em] uppercase mb-5 before:content-[''] before:w-6 before:h-px before:bg-terra-300 after:content-[''] after:w-6 after:h-px after:bg-terra-300">
             상가 직거래 플랫폼
           </div>
           <h1 className="font-extrabold text-cream leading-[1.15] tracking-tight mb-5 text-4xl md:text-5xl">
@@ -145,12 +145,12 @@ export default function HomeClient({
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 placeholder="지역, 업종, 상호명으로 매물 찾기"
-                className="flex-1 py-3 text-sm bg-transparent outline-none text-ink placeholder:text-muted"
+                className="flex-1 py-3 min-h-[48px] text-sm bg-transparent outline-none text-ink placeholder:text-muted"
                 aria-label="매물 검색"
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors"
+                className="px-5 md:px-6 min-h-[48px] py-3 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors"
               >
                 검색
               </button>
@@ -186,7 +186,7 @@ export default function HomeClient({
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-10 flex-wrap gap-3">
             <div>
-              <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+              <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
                 <span className="w-6 h-px bg-terra-500" />
                 Featured Listings
               </div>
@@ -227,19 +227,19 @@ export default function HomeClient({
                           </span>
                         </div>
                       )}
-                      <span className="absolute top-3.5 left-3.5 px-3 py-1 bg-terra-500 text-cream text-[10px] font-bold rounded-full tracking-wider">
+                      <span className="absolute top-3.5 left-3.5 px-3 py-1 bg-terra-500 text-cream text-xs font-bold rounded-full tracking-wider">
                         VIP
                       </span>
                     </div>
                     <div className="flex-1 p-5 flex flex-col justify-between min-w-0">
                       <div>
                         {listing.category?.name ? (
-                          <div className="text-[11px] text-terra-500 font-semibold mb-1">
+                          <div className="text-xs text-terra-500 font-semibold mb-1">
                             {listing.category.name}
                             {listing.subCategory && ` · ${listing.subCategory.name}`}
                           </div>
                         ) : (
-                          <div className="text-[11px] text-muted font-semibold mb-1">업종 미지정</div>
+                          <div className="text-xs text-muted font-semibold mb-1">업종 미지정</div>
                         )}
                         <h3 className="font-bold text-ink text-base md:text-lg tracking-tight mb-1.5 truncate">
                           {shortAddr}
@@ -253,7 +253,7 @@ export default function HomeClient({
                             {listing.themes.slice(0, 3).map((theme) => (
                               <span
                                 key={theme}
-                                className="text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold"
+                                className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold"
                               >
                                 {theme}
                               </span>
@@ -271,7 +271,7 @@ export default function HomeClient({
                           <span>{listing.monthlyRent.toLocaleString()}만</span>
                         </div>
                         <div className="flex items-baseline justify-between pt-1">
-                          <span className="text-[10px] text-muted uppercase tracking-[0.1em]">권리금</span>
+                          <span className="text-xs text-muted uppercase tracking-[0.1em]">권리금</span>
                           <span className="font-extrabold text-green-700 text-base">
                             {listing.premiumNone ? (
                               "무권리"
@@ -323,7 +323,7 @@ export default function HomeClient({
       <section className="py-16 md:py-20 px-6 bg-cream">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10">
-            <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+            <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
               <span className="w-6 h-px bg-terra-500" />
               More Resources
             </div>

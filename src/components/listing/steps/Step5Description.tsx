@@ -77,14 +77,14 @@ export default function Step5Description({ onNext, onPrev }: Props) {
       <div className="mt-8 flex justify-between">
         <button
           onClick={onPrev}
-          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+          className="px-6 py-3 min-h-[44px] border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
         >
           이전
         </button>
         <button
           onClick={onNext}
           disabled={!isValid || hasContact}
-          className="px-8 py-3 bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="px-8 py-3 min-h-[44px] bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           다음
         </button>

@@ -251,7 +251,7 @@ export default function Step7Confirm({ onPrev }: Props) {
               {data.images.map((img, i) => (
                 <div key={i} className="aspect-square rounded-lg overflow-hidden border border-gray-200 relative">
                   <Image src={img.url} alt={`매물 사진 ${i + 1} - ${img.type === "EXTERIOR" ? "외부" : img.type === "INTERIOR" ? "내부" : img.type === "KITCHEN" ? "주방" : "기타"}`} fill className="object-cover" sizes="150px" />
-                  <span className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] text-center py-0.5">
+                  <span className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs text-center py-0.5">
                     {img.type === "EXTERIOR" ? "외부" : img.type === "INTERIOR" ? "내부" : img.type === "KITCHEN" ? "주방" : "기타"}
                   </span>
                 </div>

@@ -182,7 +182,7 @@ export default function SignupPage() {
               네이버로 시작하기
             </button>
 
-            <p className="text-center text-[11px] text-gray-400 mt-2">
+            <p className="text-center text-xs text-gray-400 mt-2">
               소셜 로그인은 별도 가입 없이 바로 시작됩니다
             </p>
           </div>

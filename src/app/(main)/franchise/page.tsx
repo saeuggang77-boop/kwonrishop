@@ -186,7 +186,7 @@ export default function FranchisePage() {
             {/* GOLD: 2열 가로형 */}
             {goldBrands.length > 0 && (
               <div className="mb-6">
-                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— GOLD</div>
+                <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— GOLD</div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {goldBrands.map((brand) => (
                     <div
@@ -194,8 +194,8 @@ export default function FranchisePage() {
                       onClick={() => router.push(`/franchise/${brand.id}`)}
                       className="flex bg-cream border-2 border-green-700 rounded-3xl overflow-hidden cursor-pointer hover:shadow-[0_16px_40px_rgba(31,63,46,0.14)] hover:-translate-y-1 transition-all"
                     >
-                      <div className="w-[170px] shrink-0 bg-cream-elev flex items-center justify-center relative border-r border-line">
-                        <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-terra-500 text-cream tracking-wider z-10">GOLD</span>
+                      <div className="w-28 sm:w-[170px] shrink-0 bg-cream-elev flex items-center justify-center relative border-r border-line">
+                        <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full text-xs font-bold bg-terra-500 text-cream tracking-wider z-10">GOLD</span>
                         {brand.logo ? (
                           <img src={brand.logo} alt={brand.brandName} className="max-w-[70%] max-h-[70%] object-contain" />
                         ) : (
@@ -205,7 +205,7 @@ export default function FranchisePage() {
                       <div className="flex-1 p-4 min-w-0 flex flex-col gap-2">
                         <div>
                           <h3 className="text-lg font-extrabold text-ink truncate">{brand.brandName}</h3>
-                          <p className="text-[11px] text-muted">
+                          <p className="text-xs text-muted">
                             {brand.companyName}
                             {brand.industry && <> · <span className="text-terra-500 font-semibold">{brand.industry}</span></>}
                           </p>
@@ -216,9 +216,9 @@ export default function FranchisePage() {
                           </p>
                         )}
                         <div className="flex gap-1.5 pt-1.5 border-t border-dashed border-line mt-auto">
-                          <span className="text-[10px] bg-cream-elev text-muted px-2 py-0.5 rounded-full">가맹점 지도</span>
-                          <span className="text-[10px] bg-cream-elev text-muted px-2 py-0.5 rounded-full">비용 계산기</span>
-                          <span className="text-[10px] bg-cream-elev text-muted px-2 py-0.5 rounded-full">상담</span>
+                          <span className="text-xs bg-cream-elev text-muted px-2 py-0.5 rounded-full">가맹점 지도</span>
+                          <span className="text-xs bg-cream-elev text-muted px-2 py-0.5 rounded-full">비용 계산기</span>
+                          <span className="text-xs bg-cream-elev text-muted px-2 py-0.5 rounded-full">상담</span>
                         </div>
                       </div>
                     </div>
@@ -230,7 +230,7 @@ export default function FranchisePage() {
             {/* SILVER: 3열 가로형 */}
             {silverBrands.length > 0 && (
               <div className="mb-6">
-                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— SILVER</div>
+                <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— SILVER</div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {silverBrands.map((brand) => (
                     <div
@@ -238,8 +238,8 @@ export default function FranchisePage() {
                       onClick={() => router.push(`/franchise/${brand.id}`)}
                       className="flex bg-cream border border-line rounded-2xl overflow-hidden cursor-pointer hover:border-green-700 hover:shadow-[0_8px_24px_rgba(31,63,46,0.08)] hover:-translate-y-1 transition-all"
                     >
-                      <div className="w-[110px] shrink-0 bg-cream-elev flex items-center justify-center relative border-r border-line">
-                        <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-green-700 text-cream tracking-wider z-10">SILVER</span>
+                      <div className="w-24 sm:w-[110px] shrink-0 bg-cream-elev flex items-center justify-center relative border-r border-line">
+                        <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-xs font-bold bg-green-700 text-cream tracking-wider z-10">SILVER</span>
                         {brand.logo ? (
                           <img src={brand.logo} alt={brand.brandName} className="max-w-[75%] max-h-[75%] object-contain" />
                         ) : (
@@ -248,12 +248,12 @@ export default function FranchisePage() {
                       </div>
                       <div className="flex-1 p-3 min-w-0 flex flex-col gap-1.5">
                         <h3 className="text-sm font-extrabold text-ink truncate">{brand.brandName}</h3>
-                        <p className="text-[10px] text-muted truncate">
+                        <p className="text-xs text-muted truncate">
                           {brand.companyName}
                           {brand.industry && <> · <span className="text-terra-500 font-semibold">{brand.industry}</span></>}
                         </p>
                         {brand.description && (
-                          <p className="text-[11.5px] text-ink-2 leading-snug line-clamp-2">
+                          <p className="text-xs text-ink-2 leading-snug line-clamp-2">
                             {getTagline(brand.description, 60)}
                           </p>
                         )}
@@ -267,7 +267,7 @@ export default function FranchisePage() {
             {/* BRONZE: 컴팩트 리스트 */}
             {bronzeBrands.length > 0 && (
               <div>
-                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— BRONZE</div>
+                <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-3">— BRONZE</div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {bronzeBrands.map((brand) => (
                     <div
@@ -280,12 +280,12 @@ export default function FranchisePage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-[13px] font-bold text-ink truncate">{brand.brandName}</h3>
-                        <p className="text-[11px] text-muted truncate">
+                        <p className="text-xs text-muted truncate">
                           {brand.companyName}
                           {brand.industry && ` · ${brand.industry}`}
                         </p>
                       </div>
-                      <span className="text-[9px] bg-cream-elev text-muted px-1.5 py-0.5 rounded-full font-bold shrink-0 tracking-wider">BRONZE</span>
+                      <span className="text-xs bg-cream-elev text-muted px-1.5 py-0.5 rounded-full font-bold shrink-0 tracking-wider">BRONZE</span>
                     </div>
                   ))}
                 </div>
@@ -347,7 +347,7 @@ export default function FranchisePage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-gray-900 truncate">{brand.brandName}</p>
-                    <p className="text-[11px] text-gray-400 truncate">{brand.companyName}</p>
+                    <p className="text-xs text-gray-400 truncate">{brand.companyName}</p>
                   </div>
                 </div>
               </div>

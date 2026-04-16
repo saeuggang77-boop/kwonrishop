@@ -271,7 +271,7 @@ export default function ReviewSection({ listingId, sellerId }: ReviewSectionProp
                   <div className="flex items-center gap-2 mb-2">
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-green-100 text-green-600 text-xs font-bold">A</span>
                     <span className="text-sm font-medium text-gray-900">판매자</span>
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-700">판매자</span>
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">판매자</span>
                     {q.answeredAt && (
                       <span className="text-xs text-gray-400">
                         {new Date(q.answeredAt).toLocaleDateString("ko-KR")}

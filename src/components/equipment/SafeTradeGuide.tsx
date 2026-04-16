@@ -137,6 +137,7 @@ export function SafeTradeModal({ open, onClose }: { open: boolean; onClose: () =
             </div>
             <button
               onClick={onClose}
+              aria-label="닫기"
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

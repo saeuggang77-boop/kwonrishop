@@ -412,6 +412,7 @@ export default function PartnerRegisterPage() {
                 value={addressDetail}
                 onChange={(e) => setAddressDetail(e.target.value)}
                 placeholder="상세 주소 (예: 3층)"
+                autoComplete="address-line2"
                 className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
               />
             </div>
@@ -425,6 +426,7 @@ export default function PartnerRegisterPage() {
             type="tel"
             value={contactPhone}
             onChange={(e) => setContactPhone(e.target.value)}
+            autoComplete="tel"
             className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="010-0000-0000"
           />
@@ -437,6 +439,7 @@ export default function PartnerRegisterPage() {
             type="email"
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
+            autoComplete="email"
             className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="example@email.com"
           />

@@ -686,17 +686,17 @@ export default function ListingDetailClient() {
 
       {/* ===== 모바일 탭 네비게이션 (sticky) ===== */}
       <div id="detail-tab-bar" className="md:hidden sticky top-14 z-20 bg-white border-b border-gray-200 -mx-4 px-4 mb-4">
-        <div className="flex">
-          <button onClick={() => handleDetailTabChange("overview")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+        <div className="flex overflow-x-auto scrollbar-hide">
+          <button onClick={() => handleDetailTabChange("overview")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
             activeDetailTab === "overview" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>개요</button>
-          <button onClick={() => handleDetailTabChange("detail")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+          <button onClick={() => handleDetailTabChange("detail")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
             activeDetailTab === "detail" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>상세</button>
-          <button onClick={() => handleDetailTabChange("location")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+          <button onClick={() => handleDetailTabChange("location")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
             activeDetailTab === "location" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>위치</button>
-          <button onClick={() => handleDetailTabChange("review")} className={`flex-1 min-h-[48px] text-sm font-semibold transition-colors ${
+          <button onClick={() => handleDetailTabChange("review")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
             activeDetailTab === "review" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
           }`}>리뷰</button>
         </div>
@@ -1028,7 +1028,7 @@ export default function ListingDetailClient() {
               <div className="mt-6 pt-4 border-t border-line">
                 <div className="flex items-center gap-2 mb-3">
                   <h4 className="text-sm font-semibold text-gray-900">매출 증빙자료</h4>
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-semibold rounded">
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-semibold rounded">
                     <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
@@ -1290,7 +1290,7 @@ export default function ListingDetailClient() {
                 </div>
                 <div className="p-2">
                   <p className="text-xs font-medium text-gray-900 truncate">{item.storeName}</p>
-                  <p className="text-[10px] text-gray-400 truncate">{item.addressRoad}</p>
+                  <p className="text-xs text-gray-400 truncate">{item.addressRoad}</p>
                   <p className="text-xs font-bold text-green-700 mt-1">
                     {item.premiumNone ? "무권리" : `${item.premium.toLocaleString()}만`}
                   </p>
@@ -1303,8 +1303,8 @@ export default function ListingDetailClient() {
 
       </div>
 
-      {/* ===== 19. 하단 고정바 (lg+ 에선 사이드바로 대체) ===== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-line z-10 md:static md:mt-6 md:rounded-xl md:border md:shadow-sm lg:hidden">
+      {/* ===== 19. 하단 고정바 (모바일 fixed, md+ static, lg+ 사이드바로 대체) ===== */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-line z-10 md:static md:bottom-auto md:left-auto md:right-auto md:mt-6 md:rounded-xl md:border md:shadow-sm lg:hidden">
         {isOwner ? (
           /* 소유자일 때: 매물 관리 바 */
           <div className="max-w-3xl mx-auto px-4 py-3 relative">
@@ -1349,8 +1349,8 @@ export default function ListingDetailClient() {
 
               {bumpSubscription ? (
                 <div className="min-h-[44px] flex flex-col items-center justify-center py-2 bg-green-50 border-2 border-green-400 rounded-xl text-center">
-                  <div className="text-[10px] md:text-xs font-bold text-green-700">자동 끌올 중</div>
-                  <div className="text-[10px] md:text-xs text-green-600">
+                  <div className="text-xs md:text-xs font-bold text-green-700">자동 끌올 중</div>
+                  <div className="text-xs md:text-xs text-green-600">
                     {bumpSubscription.frequency === "TWICE_WEEKLY" && "주 2회"}
                     {bumpSubscription.frequency === "WEEKDAY_DAILY" && "평일 매일"}
                     {bumpSubscription.frequency === "DAILY" && "매일 1회"}
@@ -1481,7 +1481,7 @@ export default function ListingDetailClient() {
             <div className="bg-cream rounded-3xl border-2 border-green-700 shadow-[0_8px_32px_rgba(31,63,46,0.08)] p-6">
               {listing.featuredTier && listing.featuredTier !== "FREE" && (
                 <div className="mb-3">
-                  <span className="inline-block px-3 py-1 bg-terra-500 text-cream text-[10px] font-bold rounded-full tracking-wider">
+                  <span className="inline-block px-3 py-1 bg-terra-500 text-cream text-xs font-bold rounded-full tracking-wider">
                     {listing.featuredTier}
                   </span>
                 </div>
@@ -1489,7 +1489,7 @@ export default function ListingDetailClient() {
 
               {/* 권리금 */}
               <div className="mb-5">
-                <div className="text-[10px] text-muted uppercase tracking-[0.15em] mb-1 font-bold">권리금</div>
+                <div className="text-xs text-muted uppercase tracking-[0.15em] mb-1 font-bold">권리금</div>
                 <div className="flex items-baseline gap-1">
                   {listing.premiumNone ? (
                     <span className="text-2xl font-extrabold text-green-700">무권리</span>
@@ -1559,7 +1559,7 @@ export default function ListingDetailClient() {
               </div>
 
               {/* Meta */}
-              <div className="border-t border-line pt-4 mt-4 flex items-center justify-between text-[11px] text-muted">
+              <div className="border-t border-line pt-4 mt-4 flex items-center justify-between text-xs text-muted">
                 <span>조회 <span className="font-serif italic font-medium text-green-700 ml-0.5">{listing.viewCount}</span></span>
                 <span>관심 <span className="font-serif italic font-medium text-terra-500 ml-0.5">{listing.favoriteCount}</span></span>
               </div>
@@ -1656,7 +1656,7 @@ function Section({
   return (
     <div className="py-8 border-b border-line">
       {kicker && (
-        <div className="flex items-center gap-2 mb-2 text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">
+        <div className="flex items-center gap-2 mb-2 text-xs font-bold text-terra-500 tracking-[0.2em] uppercase">
           <span className="w-5 h-px bg-terra-500" />
           {kicker}
         </div>
@@ -1703,9 +1703,9 @@ function PremiumItem({ color, label, value, total, desc }: {
       <div className="flex items-baseline gap-1">
         <span className="font-serif italic font-medium text-xl text-green-700">{value.toLocaleString()}</span>
         <span className="text-xs text-muted font-medium">만</span>
-        <span className="ml-auto text-[11px] text-muted font-semibold">{pct}%</span>
+        <span className="ml-auto text-xs text-muted font-semibold">{pct}%</span>
       </div>
-      {desc && <p className="text-[11px] text-muted mt-1 truncate">{desc}</p>}
+      {desc && <p className="text-xs text-muted mt-1 truncate">{desc}</p>}
     </div>
   );
 }
@@ -1770,10 +1770,10 @@ function CompareGauge({ label, mine, avg, unit }: {
         />
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[10px] text-gray-500">
+        <span className="text-xs text-gray-500">
           이 매물 <span className="font-medium">{mine.toLocaleString()}{unit}</span>
         </span>
-        <span className="text-[10px] text-gray-400">
+        <span className="text-xs text-gray-400">
           평균 {avg.toLocaleString()}{unit}
         </span>
       </div>
@@ -1814,10 +1814,10 @@ function RegionalPerformanceItem({ label, mine, avg }: {
         />
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[10px] text-gray-700">
+        <span className="text-xs text-gray-700">
           내 매물 <span className="font-medium">{mine.toLocaleString()}회</span>
         </span>
-        <span className="text-[10px] text-gray-400">
+        <span className="text-xs text-gray-400">
           평균 {avg.toLocaleString()}회
         </span>
       </div>

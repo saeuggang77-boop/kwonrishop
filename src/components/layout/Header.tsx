@@ -154,7 +154,7 @@ export default function Header() {
             >
               채팅
               {chatUnreadCount > 0 && (
-                <span className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full inline-flex items-center justify-center">
+                <span className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-xs rounded-full inline-flex items-center justify-center">
                   {chatUnreadCount > 9 ? "9+" : chatUnreadCount}
                 </span>
               )}
@@ -419,7 +419,7 @@ export default function Header() {
                   >
                     <span>채팅</span>
                     {chatUnreadCount > 0 && (
-                      <span className="w-5 h-5 bg-red-500 text-white text-[10px] rounded-full inline-flex items-center justify-center">
+                      <span className="w-5 h-5 bg-red-500 text-white text-xs rounded-full inline-flex items-center justify-center">
                         {chatUnreadCount > 9 ? "9+" : chatUnreadCount}
                       </span>
                     )}

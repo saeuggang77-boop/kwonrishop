@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
                         />
                         {/* 날짜 라벨 (5일 간격) */}
                         {(chartData.indexOf(d) % 5 === 0 || chartData.indexOf(d) === chartData.length - 1) && (
-                          <span className="text-[10px] text-gray-400 mt-1 rotate-[-45deg] origin-top-left whitespace-nowrap">
+                          <span className="text-xs text-gray-400 mt-1 rotate-[-45deg] origin-top-left whitespace-nowrap">
                             {dateLabel}
                           </span>
                         )}

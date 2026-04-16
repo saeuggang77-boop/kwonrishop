@@ -324,7 +324,7 @@ export default function EquipmentDetailClient() {
             <div className="flex items-center gap-2">
               <p className="font-medium text-gray-900">{equipment.user.name || "판매자"}</p>
               {equipment.user.businessVerification?.verified && (
-                <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded" title="사업자등록번호 유효성 확인 완료 (본인 확인 아님)">
+                <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded" title="사업자등록번호 유효성 확인 완료 (본인 확인 아님)">
                   사업자번호 확인됨
                 </span>
               )}

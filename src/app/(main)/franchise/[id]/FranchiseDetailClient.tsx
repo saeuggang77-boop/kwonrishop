@@ -132,8 +132,8 @@ export default function FranchiseDetailClient() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-extrabold text-green-700 tracking-tight">{brand.brandName}</h1>
-              {brand.ftcId && <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider bg-green-100 text-green-700">공정위 등록</span>}
-              {brand.tier && <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider ${brand.tier === "GOLD" ? "bg-terra-500 text-cream" : brand.tier === "SILVER" ? "bg-green-700 text-cream" : "bg-green-100 text-green-700"}`}>{brand.tier}</span>}
+              {brand.ftcId && <span className="px-2.5 py-1 rounded-full text-xs font-bold tracking-wider bg-green-100 text-green-700">공정위 등록</span>}
+              {brand.tier && <span className={`px-2.5 py-1 rounded-full text-xs font-bold tracking-wider ${brand.tier === "GOLD" ? "bg-terra-500 text-cream" : brand.tier === "SILVER" ? "bg-green-700 text-cream" : "bg-green-100 text-green-700"}`}>{brand.tier}</span>}
             </div>
             <p className="text-muted">{brand.companyName}</p>
           </div>
@@ -176,7 +176,7 @@ export default function FranchiseDetailClient() {
         {/* ===== 기본정보 ===== */}
         <section id="info" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
           <div className="flex items-center gap-2 mb-5">
-            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Info</span>
+            <span className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase">Info</span>
             <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">기본 <span className="font-light text-terra-500">정보</span></h2>
           </div>
             <div className="space-y-4">
@@ -293,7 +293,7 @@ export default function FranchiseDetailClient() {
         {/* ===== 창업비용 ===== */}
         <section id="fees" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
           <div className="flex items-center gap-2 mb-5">
-            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Fees</span>
+            <span className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase">Fees</span>
             <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">창업 <span className="font-light text-terra-500">비용</span></h2>
           </div>
             <div className="space-y-3 overflow-x-auto">
@@ -348,7 +348,7 @@ export default function FranchiseDetailClient() {
         {/* ===== 창업특혜 ===== */}
         <section id="benefits" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
           <div className="flex items-center gap-2 mb-5">
-            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Benefits</span>
+            <span className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase">Benefits</span>
             <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">창업 <span className="font-light text-terra-500">특혜</span></h2>
           </div>
           <div>{brand.benefits ? <div className="prose max-w-none"><p className="text-ink whitespace-pre-wrap">{brand.benefits}</p></div> : <div className="text-center py-12 text-muted"><p>등록된 창업특혜 정보가 없습니다</p></div>}</div>
@@ -357,7 +357,7 @@ export default function FranchiseDetailClient() {
         {/* ===== 업종분석 ===== */}
         <section id="analysis" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
           <div className="flex items-center gap-2 mb-5">
-            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">Analysis</span>
+            <span className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase">Analysis</span>
             <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">업종 <span className="font-light text-terra-500">분석</span></h2>
           </div>
           <IndustryRevenueSection industry={brand.industry} brandName={brand.brandName} brandAvgRevenue={brand.avgRevenue} />
@@ -366,13 +366,13 @@ export default function FranchiseDetailClient() {
         {/* ===== 문의하기 / 가맹 상담 ===== */}
         <section id="inquiry" className="bg-cream rounded-3xl border border-line overflow-hidden p-6 scroll-mt-32">
           <div className="flex items-center gap-2 mb-5">
-            <span className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase">{brand.managerId ? "Inquiry" : "Contact"}</span>
+            <span className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase">{brand.managerId ? "Inquiry" : "Contact"}</span>
             <h2 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">{brand.managerId ? <>문의 <span className="font-light text-terra-500">하기</span></> : <>가맹 <span className="font-light text-terra-500">상담</span></>}</h2>
           </div>
           {brand.managerId ? (
               <form onSubmit={handleInquirySubmit} className="space-y-4">
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="이름을 입력하세요" /></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="010-0000-0000" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">이름</label><input type="text" required value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="이름을 입력하세요" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">연락처</label><input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" className="w-full px-4 py-3 border border-line bg-cream-elev text-ink rounded-2xl focus:ring-2 focus:ring-green-700/20 focus:border-green-700 focus:bg-cream outline-none transition-all" placeholder="010-0000-0000" /></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">문의내용</label><textarea required value={message} onChange={(e) => setMessage(e.target.value)} rows={6} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none" placeholder="문의하실 내용을 입력하세요" /></div>
                 <button type="submit" disabled={submitting} className="w-full py-3.5 bg-green-700 text-cream rounded-full font-bold hover:bg-green-800 transition-colors disabled:bg-line-deep disabled:cursor-not-allowed">{submitting ? "전송 중..." : "문의하기"}</button>
               </form>

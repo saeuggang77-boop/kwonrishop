@@ -32,7 +32,7 @@ export default function Footer() {
 
         {/* 하단 */}
         <div className="mt-5 pt-4 border-t border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <span className="text-[11px] text-muted">
+          <span className="text-xs text-muted">
             © {new Date().getFullYear()} 권리샵. 중개수수료 없는 상가 직거래 플랫폼.
           </span>
           <div className="text-xs text-muted">

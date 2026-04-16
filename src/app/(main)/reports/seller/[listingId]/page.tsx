@@ -131,7 +131,7 @@ export default function SellerReportPage() {
                 내 매물
               </div>
             </div>
-            <div className="flex justify-between mt-1 text-[10px] text-gray-400">
+            <div className="flex justify-between mt-1 text-xs text-gray-400">
               <span>저가</span>
               <span>평균</span>
               <span>고가</span>
@@ -334,7 +334,7 @@ function PriceCompareBar({ label, mine, avg, diff }: { label: string; mine: numb
       {/* 내 매물 바 */}
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-gray-500 w-10 shrink-0">내 매물</span>
+          <span className="text-xs text-gray-500 w-10 shrink-0">내 매물</span>
           <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full ${isLower ? "bg-green-400" : diff > 0 ? "bg-red-400" : "bg-green-400"}`}
@@ -344,7 +344,7 @@ function PriceCompareBar({ label, mine, avg, diff }: { label: string; mine: numb
           <span className="text-xs font-bold text-gray-900 w-16 text-right">{fmt(mine)}만</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-gray-400 w-10 shrink-0">평균</span>
+          <span className="text-xs text-gray-400 w-10 shrink-0">평균</span>
           <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full bg-gray-300"
@@ -363,7 +363,7 @@ function StatCard({ label, value, sub, valueColor }: { label: string; value: str
     <div className="p-3 bg-gray-50 rounded-lg">
       <p className="text-xs text-gray-500 mb-1">{label}</p>
       <p className={`text-lg font-bold ${valueColor || "text-gray-900"}`}>{value}</p>
-      {sub && <p className="text-[10px] text-gray-400">{sub}</p>}
+      {sub && <p className="text-xs text-gray-400">{sub}</p>}
     </div>
   );
 }
@@ -376,7 +376,7 @@ function TrendItem({ label, value, compare, good }: { label: string; value: stri
         <span className="text-base font-bold text-gray-900">{value}</span>
         <span className={`w-2 h-2 rounded-full ${good ? "bg-green-500" : "bg-orange-500"}`} />
       </div>
-      {compare && <p className="text-[10px] text-gray-400 mt-0.5">{compare}</p>}
+      {compare && <p className="text-xs text-gray-400 mt-0.5">{compare}</p>}
     </div>
   );
 }

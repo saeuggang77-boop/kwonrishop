@@ -216,7 +216,7 @@ function SelectRoleContent() {
               `}
             >
               {role.popular && (
-                <span className="absolute -top-px right-4 bg-green-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-b-lg">
+                <span className="absolute -top-px right-4 bg-green-500 text-white text-xs font-bold px-2.5 py-0.5 rounded-b-lg">
                   가장 많이 선택
                 </span>
               )}
@@ -233,7 +233,7 @@ function SelectRoleContent() {
               </p>
 
               {role.note && (
-                <div className="inline-flex items-center gap-1 text-[11px] text-gray-400 mt-2.5 bg-gray-50 border border-line px-2.5 py-1 rounded-md">
+                <div className="inline-flex items-center gap-1 text-xs text-gray-400 mt-2.5 bg-gray-50 border border-line px-2.5 py-1 rounded-md">
                   <ShieldIcon />
                   {role.note}
                 </div>
@@ -252,7 +252,7 @@ function SelectRoleContent() {
             <RefreshIcon />
             역할 변경이 필요하면 마이페이지 &gt; 사업자인증에서 진행할 수 있습니다
           </div>
-          <p className="text-[11px] text-gray-300">
+          <p className="text-xs text-gray-300">
             선택한 역할에 따라 이용 가능한 기능이 달라집니다
           </p>
         </div>

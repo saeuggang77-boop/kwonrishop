@@ -29,7 +29,7 @@ export default function Toaster() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+    <div className="fixed top-4 left-4 right-4 mx-auto z-[9999] flex flex-col gap-2 max-w-sm w-auto pointer-events-none sm:left-auto sm:right-4 sm:mx-0 sm:w-full">
       {toasts.map((t) => (
         <div
           key={t.id}

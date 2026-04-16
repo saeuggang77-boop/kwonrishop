@@ -160,7 +160,7 @@ export default function AdProductInlineSelect({
               >
                 {p.label}
                 {p.discount && (
-                  <span className={`ml-1 text-[10px] font-semibold ${
+                  <span className={`ml-1 text-xs font-semibold ${
                     period === p.key ? "text-green-100" : "text-red-500"
                   }`}>
                     {p.discount}
@@ -283,7 +283,7 @@ function CompactCard({
     >
       {theme.badge && (
         <div
-          className={`absolute -top-2 left-1/2 -translate-x-1/2 ${theme.badgeBg} px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap`}
+          className={`absolute -top-2 left-1/2 -translate-x-1/2 ${theme.badgeBg} px-2 py-0.5 rounded-full text-xs font-bold whitespace-nowrap`}
         >
           {theme.badge}
         </div>
@@ -298,13 +298,13 @@ function CompactCard({
           <span className="text-xs text-gray-600">만원</span>
         </div>
         {durationLabel && (
-          <p className="text-[10px] text-gray-500">{durationLabel}</p>
+          <p className="text-xs text-gray-500">{durationLabel}</p>
         )}
       </div>
 
       <ul className="space-y-1 mb-3 min-h-[44px]">
         {topTwo.map((h, i) => (
-          <li key={i} className="flex items-center gap-1 text-[11px] text-gray-700">
+          <li key={i} className="flex items-center gap-1 text-xs text-gray-700">
             <span className="text-green-600">✓</span>
             <span className="truncate">{h}</span>
           </li>

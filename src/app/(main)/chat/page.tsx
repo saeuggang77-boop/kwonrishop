@@ -197,12 +197,12 @@ function ChatContent() {
                         </span>
                         <div className="flex items-center gap-1 shrink-0">
                           {lastMsg && (
-                            <span className="text-[10px] text-gray-400">
+                            <span className="text-xs text-gray-400">
                               {new Date(lastMsg.createdAt).toLocaleDateString("ko-KR")}
                             </span>
                           )}
                           {room.unreadCount !== undefined && room.unreadCount > 0 && (
-                            <span className="w-5 h-5 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                            <span className="w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                               {room.unreadCount > 99 ? "99+" : room.unreadCount}
                             </span>
                           )}
@@ -301,7 +301,7 @@ function ChatContent() {
                       >
                         {msg.content}
                         <p
-                          className={`text-[10px] mt-1 ${
+                          className={`text-xs mt-1 ${
                             isMine ? "text-green-200" : "text-gray-400"
                           }`}
                         >
@@ -317,7 +317,7 @@ function ChatContent() {
               </div>
 
               {/* 입력 */}
-              <div className="p-3 md:p-4 border-t border-line">
+              <div className="sticky bottom-0 bg-cream p-3 md:p-4 border-t border-line z-10">
                 <div className="flex gap-2">
                   <input
                     type="text"

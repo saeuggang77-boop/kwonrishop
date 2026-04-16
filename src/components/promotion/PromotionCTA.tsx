@@ -12,7 +12,7 @@ export function ListingInfeedPromo() {
             <h3 className="text-sm font-bold text-gray-900 truncate">
               내 매물, 더 빨리 팔고 싶다면?
             </h3>
-            <span className="shrink-0 rounded bg-green-700 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+            <span className="shrink-0 rounded bg-green-700 px-1.5 py-0.5 text-xs font-semibold text-white">
               AD
             </span>
           </div>

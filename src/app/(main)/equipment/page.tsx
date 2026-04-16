@@ -169,7 +169,7 @@ function EquipmentListContent() {
           </button>
         </div>
         {myLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="bg-gray-100 rounded-xl aspect-[3/4] animate-pulse" />
             ))}
@@ -180,7 +180,7 @@ function EquipmentListContent() {
             <p className="text-sm mt-1">집기를 등록하고 판매해보세요</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {myEquipments.map((eq) => (
               <div
                 key={eq.id}
@@ -237,12 +237,12 @@ function EquipmentListContent() {
           placeholder="집기명, 브랜드 검색"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="flex-1 min-w-[160px] px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 focus:border-green-700 outline-none"
+          className="w-full sm:flex-1 sm:min-w-[160px] px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 focus:border-green-700 outline-none min-h-[40px]"
         />
         <select
           value={category}
           onChange={(e) => handleFilterChange(e.target.value)}
-          className="px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium"
+          className="flex-1 sm:flex-none px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium min-h-[40px]"
         >
           <option value="">카테고리 전체</option>
           {Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([key, label]) => (
@@ -251,7 +251,7 @@ function EquipmentListContent() {
         </select>
         <button
           type="submit"
-          className="px-5 py-2.5 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors"
+          className="w-full sm:w-auto px-5 py-2.5 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors min-h-[40px]"
         >
           검색
         </button>
@@ -289,7 +289,7 @@ function EquipmentListContent() {
           {(vipEquipments.length > 0 || premiumEquipments.length > 0) && (
             <section className="mb-16">
               <div className="mb-8">
-                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
                   <span className="w-6 h-px bg-terra-500" />
                   Featured Equipment
                 </div>
@@ -325,7 +325,7 @@ function EquipmentListContent() {
             <section>
               <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
                 <div>
-                  <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                  <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
                     <span className="w-6 h-px bg-terra-500" />
                     All Equipment
                   </div>
@@ -416,7 +416,7 @@ function TierSection({
               onClick={() => onEquipmentClick(eq.id)}
             >
               <div className="flex">
-                <div className="w-44 h-40 shrink-0 bg-green-800 relative">
+                <div className="w-32 sm:w-44 h-36 sm:h-40 shrink-0 bg-green-800 relative">
                   {eq.images.length > 0 ? (
                     <Image src={eq.images[0].url} alt={eq.title} fill className="object-cover" />
                   ) : (
@@ -424,7 +424,7 @@ function TierSection({
                       <span className="font-extrabold text-5xl text-terra-300">{eq.title.charAt(0)}</span>
                     </div>
                   )}
-                  <div className="absolute top-3 left-3 inline-flex items-center px-3 py-1 bg-terra-500 text-cream text-[10px] font-bold rounded-full tracking-wider">
+                  <div className="absolute top-3 left-3 inline-flex items-center px-3 py-1 bg-terra-500 text-cream text-xs font-bold rounded-full tracking-wider">
                     VIP
                   </div>
                 </div>
@@ -460,7 +460,7 @@ function TierSection({
         {!hideHeader && (
           <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 bg-green-700 text-cream text-[10px] font-bold rounded-full tracking-wider">PREMIUM</span>
+              <span className="px-2.5 py-1 bg-green-700 text-cream text-xs font-bold rounded-full tracking-wider">PREMIUM</span>
               <h3 className="text-lg font-bold text-ink tracking-tight">추천 집기</h3>
             </div>
             {hasMore && (
@@ -468,7 +468,7 @@ function TierSection({
             )}
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {displayed.map((eq) => (
             <div
               key={eq.id}
@@ -490,9 +490,9 @@ function TierSection({
                     <h3 className="font-bold text-ink text-sm truncate tracking-tight">{eq.title}</h3>
                     <p className="font-serif italic font-medium text-base text-green-700 mt-1 tracking-tight">
                       {eq.price === 0 ? "무료 나눔" : `${eq.price.toLocaleString()}원`}
-                      {eq.negotiable && eq.price > 0 && <span className="text-[10px] font-sans not-italic text-muted font-normal"> · 협의</span>}
+                      {eq.negotiable && eq.price > 0 && <span className="text-xs font-sans not-italic text-muted font-normal"> · 협의</span>}
                     </p>
-                    <p className="text-[11px] text-muted mt-1.5">
+                    <p className="text-xs text-muted mt-1.5">
                       {EQUIPMENT_CATEGORY_LABELS[eq.category] || eq.category} · {EQUIPMENT_CONDITION_LABELS[eq.condition] || eq.condition}
                     </p>
                   </div>
@@ -511,7 +511,7 @@ function TierSection({
       {!hideHeader && (
         <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full tracking-wider">BASIC</span>
+            <span className="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full tracking-wider">BASIC</span>
             <h3 className="text-lg font-bold text-ink tracking-tight">등록 집기</h3>
           </div>
           {hasMore && (
@@ -529,8 +529,8 @@ function TierSection({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-sm font-semibold text-ink truncate">{eq.title}</p>
-                <span className="text-[11px] text-line-deep">·</span>
-                <span className="text-[11px] font-serif italic text-green-700 font-medium">
+                <span className="text-xs text-line-deep">·</span>
+                <span className="text-xs font-serif italic text-green-700 font-medium">
                   {eq.price === 0 ? "무료 나눔" : `${eq.price.toLocaleString()}원`}
                 </span>
               </div>
@@ -587,7 +587,7 @@ function FreeSection({
             onClick={() => onEquipmentClick(eq.id)}
           >
             <div className="w-7 h-7 rounded-full bg-cream-elev flex items-center justify-center shrink-0 mr-3">
-              <span className="text-[10px] font-light text-green-700">{eq.title.charAt(0)}</span>
+              <span className="text-xs font-light text-green-700">{eq.title.charAt(0)}</span>
             </div>
             <span className="text-sm text-ink font-medium mr-2 shrink-0">{eq.title}</span>
             <span className="text-xs font-serif italic text-green-700 font-medium shrink-0">
@@ -621,9 +621,9 @@ function SearchResultsView({
   onEquipmentClick: (id: string) => void;
 }) {
   const tierBadge = (tier: string) => {
-    if (tier === "VIP") return <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-700 text-white text-[9px] font-bold rounded"><svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>VIP</span>;
-    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-green-700/85 text-white text-[9px] font-bold rounded">PREMIUM</span>;
-    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded">BASIC</span>;
+    if (tier === "VIP") return <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-700 text-white text-xs font-bold rounded"><svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>VIP</span>;
+    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-green-700/85 text-white text-xs font-bold rounded">PREMIUM</span>;
+    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-xs font-bold rounded">BASIC</span>;
     return null;
   };
 
@@ -749,7 +749,7 @@ export default function EquipmentListPage() {
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-32" />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="bg-gray-100 rounded-xl aspect-[3/4] animate-pulse" />
             ))}

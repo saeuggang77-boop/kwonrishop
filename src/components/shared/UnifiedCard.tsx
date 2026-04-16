@@ -70,10 +70,10 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
             <span
               className={`inline-flex items-center gap-1 font-bold rounded-full tracking-wider ${
                 isTop
-                  ? "px-3 py-1.5 text-[11px] bg-terra-500 text-cream"
+                  ? "px-3 py-1.5 text-xs bg-terra-500 text-cream"
                   : isMid
-                    ? "px-2.5 py-1 text-[10px] bg-green-700 text-cream"
-                    : "px-2 py-0.5 text-[9px] bg-green-100 text-green-700"
+                    ? "px-2.5 py-1 text-xs bg-green-700 text-cream"
+                    : "px-2 py-0.5 text-xs bg-green-100 text-green-700"
               }`}
             >
               {data.tier}
@@ -94,7 +94,7 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
         {data.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {data.tags.slice(0, 2).map((tag) => (
-              <span key={tag} className="px-2 py-0.5 bg-cream-elev text-green-700 text-[11px] rounded-full font-medium">
+              <span key={tag} className="px-2 py-0.5 bg-cream-elev text-green-700 text-xs rounded-full font-medium">
                 {tag}
               </span>
             ))}
@@ -113,7 +113,7 @@ export default function UnifiedCard({ data }: UnifiedCardProps) {
         )}
 
         {(data.viewCount !== undefined || data.favoriteCount !== undefined) && (
-          <div className="flex items-center justify-between text-[11px] text-muted pt-3 mt-3 border-t border-line">
+          <div className="flex items-center justify-between text-xs text-muted pt-3 mt-3 border-t border-line">
             <div className="flex gap-3">
               {data.viewCount !== undefined && <span>조회 {data.viewCount}</span>}
               {data.favoriteCount !== undefined && <span>관심 {data.favoriteCount}</span>}

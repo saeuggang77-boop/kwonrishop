@@ -70,10 +70,10 @@ export default function ListingCard({ listing }: ListingCardProps) {
               <span
                 className={`inline-flex items-center gap-1 font-bold rounded-full tracking-wider ${
                   isTop
-                    ? "px-3 py-1.5 text-[11px] bg-terra-500 text-cream"
+                    ? "px-3 py-1.5 text-xs bg-terra-500 text-cream"
                     : isMid
-                      ? "px-2.5 py-1 text-[10px] bg-green-700 text-cream"
-                      : "px-2 py-0.5 text-[9px] bg-green-100 text-green-700"
+                      ? "px-2.5 py-1 text-xs bg-green-700 text-cream"
+                      : "px-2 py-0.5 text-xs bg-green-100 text-green-700"
                 }`}
               >
                 {tier}
@@ -110,7 +110,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
           </div>
 
           {/* 면적 & 메타 */}
-          <div className="flex items-center justify-between mt-3 text-[11px] text-muted">
+          <div className="flex items-center justify-between mt-3 text-xs text-muted">
             <div className="flex gap-2">
               {listing.areaPyeong && <span>{listing.areaPyeong}평</span>}
               {listing.currentFloor && <span>{listing.currentFloor}층</span>}
@@ -125,12 +125,12 @@ export default function ListingCard({ listing }: ListingCardProps) {
           {(listing.themes.length > 0 || (listing._count?.documents ?? 0) > 0) && (
             <div className="flex flex-wrap gap-1.5 mt-3">
               {listing.themes.slice(0, 2).map((theme) => (
-                <span key={theme} className="px-2 py-0.5 bg-cream-elev text-green-700 text-[10px] rounded-full font-medium">
+                <span key={theme} className="px-2 py-0.5 bg-cream-elev text-green-700 text-xs rounded-full font-medium">
                   {theme}
                 </span>
               ))}
               {(listing._count?.documents ?? 0) > 0 && (
-                <span className="px-2 py-0.5 bg-terra-100 text-terra-700 text-[10px] rounded-full font-bold">
+                <span className="px-2 py-0.5 bg-terra-100 text-terra-700 text-xs rounded-full font-bold">
                   매출인증
                 </span>
               )}

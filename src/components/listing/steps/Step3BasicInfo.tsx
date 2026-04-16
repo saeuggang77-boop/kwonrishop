@@ -145,7 +145,7 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
                 type="text"
                 readOnly
                 value={data.areaSqm !== null ? `${data.areaSqm} m²` : ""}
-                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+                className="w-full px-3 py-2.5 min-h-[44px] border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
               />
             </div>
           </div>

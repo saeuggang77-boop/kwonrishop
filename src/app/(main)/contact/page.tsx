@@ -267,6 +267,7 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  autoComplete="name"
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                   placeholder="홍길동"
                 />
@@ -286,6 +287,7 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  autoComplete="email"
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                   placeholder="example@email.com"
                 />

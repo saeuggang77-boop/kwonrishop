@@ -276,7 +276,7 @@ function LoginContent() {
         </div>
 
         {/* Footer Links */}
-        <p className="mt-6 text-[11px] text-muted text-center leading-relaxed">
+        <p className="mt-6 text-xs text-muted text-center leading-relaxed">
           로그인 시{" "}
           <Link href="/terms" className="underline hover:text-green-700">이용약관</Link> 및{" "}
           <Link href="/privacy" className="underline hover:text-green-700">개인정보처리방침</Link>에

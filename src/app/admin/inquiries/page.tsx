@@ -179,7 +179,7 @@ export default function AdminInquiriesPage() {
                         <span>{new Date(inquiry.createdAt).toLocaleString("ko-KR")}</span>
                       </div>
                     </div>
-                    <button className="text-gray-400 hover:text-gray-600 flex-shrink-0">
+                    <button aria-label={isExpanded ? "접기" : "펼치기"} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
                       <svg
                         className={`w-5 h-5 transition-transform ${isExpanded ? "rotate-180" : ""}`}
                         fill="none"

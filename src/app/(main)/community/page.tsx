@@ -108,7 +108,7 @@ function CommunityContent() {
             >
               <div className="flex items-start gap-3">
                 {post.tag && (
-                  <span className={`px-2.5 py-0.5 text-[11px] rounded-full shrink-0 mt-0.5 font-bold tracking-wide ${
+                  <span className={`px-2.5 py-0.5 text-xs rounded-full shrink-0 mt-0.5 font-bold tracking-wide ${
                     post.tag === "공지"
                       ? "bg-terra-500 text-cream"
                       : post.tag === "사이트이용문의"

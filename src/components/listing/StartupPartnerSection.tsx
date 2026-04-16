@@ -257,7 +257,7 @@ export default function StartupPartnerSection({
         <>
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-bold text-gray-900">창업 파트너</h3>
-            <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-semibold rounded">AD</span>
+            <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded">AD</span>
           </div>
 
           <div className="flex items-center gap-4 border-b border-gray-200 mb-4">
@@ -358,14 +358,14 @@ const TIER_MOBILE_STYLES = {
     card: "p-4 border-2 border-green-300 bg-white",
     icon: "w-16 h-16 rounded-xl bg-gray-50 text-3xl",
     name: "text-base",
-    badge: "px-2 py-0.5 bg-green-700 text-white text-[9px] font-bold rounded",
+    badge: "px-2 py-0.5 bg-green-700 text-white text-xs font-bold rounded",
     arrow: "text-green-300 w-5 h-5",
   },
   2: {
     card: "p-3 border border-gray-200 bg-white",
     icon: "w-12 h-12 rounded-xl bg-gray-50 text-2xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[9px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded",
     arrow: "text-gray-300 w-4 h-4",
   },
   3: {
@@ -382,13 +382,13 @@ const TIER_PC_STYLES = {
     card: "p-5 border-2 border-green-300 bg-white",
     icon: "w-20 h-20 rounded-2xl bg-gray-50 text-4xl",
     name: "text-base",
-    badge: "px-2 py-0.5 bg-green-700 text-white text-[9px] font-bold rounded",
+    badge: "px-2 py-0.5 bg-green-700 text-white text-xs font-bold rounded",
   },
   2: {
     card: "p-4 border border-gray-200 bg-white",
     icon: "w-16 h-16 rounded-xl bg-gray-50 text-3xl",
     name: "text-sm",
-    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[9px] font-bold rounded",
+    badge: "px-1.5 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded",
   },
   3: {
     card: "p-4 border border-gray-200 bg-white",
@@ -443,7 +443,7 @@ function TierCardPC({ href, icon, imageUrl, name, badge, subtitle, extra, tierLe
         <span className={s.badge}>{badge}</span>
       </div>
       <p className="text-xs text-gray-600">{subtitle}</p>
-      {extra && <p className="text-[10px] text-gray-500 mt-1">{extra}</p>}
+      {extra && <p className="text-xs text-gray-500 mt-1">{extra}</p>}
     </Link>
   );
 }

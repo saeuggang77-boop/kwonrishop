@@ -197,7 +197,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                 {guide.icon}
                 <div className="text-center">
                   <p className="text-xs font-medium text-gray-700">{guide.label}</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">{guide.desc}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{guide.desc}</p>
                 </div>
               </div>
             ))}
@@ -242,12 +242,13 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                   <button
                     type="button"
                     onClick={() => removeImage(i)}
+                    aria-label="사진 삭제"
                     className="absolute top-1 right-1 w-8 h-8 bg-black/60 text-white rounded-full flex items-center justify-center text-sm"
                   >
                     X
                   </button>
                   <div className="absolute bottom-0 left-0 right-0 flex items-center">
-                    <span className={`px-2 py-1 text-white text-[11px] font-semibold ${colors.bg} rounded-tr-lg`}>
+                    <span className={`px-2 py-1 text-white text-xs font-semibold ${colors.bg} rounded-tr-lg`}>
                       {typeLabel}
                     </span>
                     <select
@@ -282,9 +283,9 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                   </svg>
                   <span className={`text-xs font-medium ${colors.text}`}>{slot.label}</span>
                   {slot.required ? (
-                    <span className="text-[10px] text-red-400 font-medium mt-0.5">필수</span>
+                    <span className="text-xs text-red-400 font-medium mt-0.5">필수</span>
                   ) : (
-                    <span className="text-[10px] text-gray-400 mt-0.5">선택</span>
+                    <span className="text-xs text-gray-400 mt-0.5">선택</span>
                   )}
                 </button>
               );
@@ -324,7 +325,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               매출 증빙자료
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-semibold rounded">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-semibold rounded">
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
@@ -369,7 +370,7 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                 <button
                   type="button"
                   onClick={() => removeDoc(i)}
-                  className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 text-white rounded-full flex items-center justify-center text-[10px]"
+                  className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 text-white rounded-full flex items-center justify-center text-xs"
                 >
                   X
                 </button>
@@ -384,18 +385,18 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
                 <svg className="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
                 </svg>
-                <span className="text-[10px]">추가</span>
+                <span className="text-xs">추가</span>
               </button>
             )}
           </div>
-          <p className="text-[10px] text-gray-400 mt-2">JPG, PNG 형식만 가능 · 장당 10MB</p>
+          <p className="text-xs text-gray-400 mt-2">JPG, PNG 형식만 가능 · 장당 10MB</p>
         </div>
 
         {/* 연락처 공개 */}
         <div className="border-t border-line pt-6">
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
             연락처 공개 여부
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-semibold rounded">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-semibold rounded">
               공개 추천
             </span>
           </label>
@@ -432,6 +433,8 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
               ) : (
                 <input
                   type="tel"
+                  inputMode="numeric"
+                  maxLength={13}
                   value={data.contactPhone}
                   onChange={(e) => updateData({ contactPhone: formatPhoneInput(e.target.value) })}
                   placeholder="010-1234-5678"

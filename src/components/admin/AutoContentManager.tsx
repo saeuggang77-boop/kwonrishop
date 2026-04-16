@@ -1032,7 +1032,7 @@ export default function AutoContentManager() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                             {recentlyGeneratedAfter && new Date(item.createdAt) >= new Date(recentlyGeneratedAfter) && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-600 text-white animate-pulse">NEW</span>
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-600 text-white animate-pulse">NEW</span>
                             )}
                             <span className="truncate font-medium text-gray-900">{item.title || "제목 없음"}</span>
                           </div>

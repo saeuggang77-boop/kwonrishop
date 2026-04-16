@@ -225,6 +225,7 @@ export default function ProfileEditPage() {
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            autoComplete="name"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
             required
           />
@@ -239,6 +240,7 @@ export default function ProfileEditPage() {
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: formatPhoneInput(e.target.value) })}
             placeholder="010-1234-5678"
+            autoComplete="tel"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
           />
         </div>
@@ -282,6 +284,7 @@ export default function ProfileEditPage() {
               type="password"
               value={passwordData.currentPassword}
               onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+              autoComplete="current-password"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
@@ -293,6 +296,7 @@ export default function ProfileEditPage() {
               type="password"
               value={passwordData.newPassword}
               onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+              autoComplete="new-password"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
               minLength={8}
@@ -306,6 +310,7 @@ export default function ProfileEditPage() {
               type="password"
               value={passwordData.confirmPassword}
               onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+              autoComplete="new-password"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />

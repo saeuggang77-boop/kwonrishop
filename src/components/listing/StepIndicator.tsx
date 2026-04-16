@@ -60,8 +60,8 @@ export default function StepIndicator({
                   step.number === currentStep
                     ? "block text-xs text-green-700 font-medium"
                     : step.number < currentStep
-                      ? "hidden sm:block text-[10px] text-green-400"
-                      : "hidden sm:block text-[10px] text-gray-400"
+                      ? "hidden sm:block text-xs text-green-400"
+                      : "hidden sm:block text-xs text-gray-400"
                 }`}
               >
                 {step.label}

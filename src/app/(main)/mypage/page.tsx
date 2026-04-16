@@ -254,7 +254,7 @@ export default function MyPage() {
       <div className="bg-green-700 rounded-3xl p-6 md:p-8 mb-6 relative overflow-hidden">
         <div aria-hidden className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full bg-terra-500/10 blur-3xl pointer-events-none" />
         <div className="relative">
-          <div className="text-[11px] font-bold text-terra-300 tracking-[0.2em] uppercase mb-2">My Account</div>
+          <div className="text-xs font-bold text-terra-300 tracking-[0.2em] uppercase mb-2">My Account</div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-cream tracking-tight mb-6">마이 <span className="font-light text-terra-300">페이지</span></h1>
           <div className="flex items-center gap-4">
             {data.user.image ? (
@@ -268,7 +268,7 @@ export default function MyPage() {
               <h2 className="text-lg md:text-xl font-bold text-cream truncate">{data.user.name || "사용자"}</h2>
               <p className="text-sm text-cream/60 truncate">{data.user.email}</p>
               <div className="flex items-center gap-2 mt-2 flex-wrap">
-                <span className="inline-block px-2.5 py-0.5 bg-cream text-green-700 text-[11px] font-bold rounded-full tracking-wider">
+                <span className="inline-block px-2.5 py-0.5 bg-cream text-green-700 text-xs font-bold rounded-full tracking-wider">
                   {roleLabel}
                 </span>
                 {data.user.role === "BUYER" && (
@@ -304,7 +304,7 @@ export default function MyPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2.5 min-h-[44px] text-sm font-semibold rounded-full transition-all ${
+            className={`flex-1 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-full transition-all ${
               activeTab === tab.key
                 ? 'bg-green-700 text-cream shadow-[0_4px_12px_rgba(31,63,46,0.2)]'
                 : 'text-muted hover:text-ink'

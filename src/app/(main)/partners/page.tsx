@@ -153,12 +153,12 @@ export default function PartnersPage() {
           placeholder="업체명, 서비스 검색"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="flex-1 min-w-[160px] px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 focus:border-green-700 outline-none"
+          className="w-full sm:flex-1 sm:min-w-[160px] px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 focus:border-green-700 outline-none min-h-[40px]"
         />
         <select
           value={serviceType}
           onChange={(e) => handleFilterChange("serviceType", e.target.value)}
-          className="px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium"
+          className="flex-1 sm:flex-none px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium min-h-[40px]"
         >
           <option value="">서비스 전체</option>
           {Object.entries(SERVICE_TYPE_LABELS).map(([key, label]) => (
@@ -168,7 +168,7 @@ export default function PartnersPage() {
         <select
           value={region}
           onChange={(e) => handleFilterChange("region", e.target.value)}
-          className="px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium"
+          className="flex-1 sm:flex-none px-4 py-2.5 border border-line bg-cream text-ink rounded-full text-sm focus:ring-2 focus:ring-green-700 outline-none font-medium min-h-[40px]"
         >
           <option value="">지역 전체</option>
           {REGION_OPTIONS.map((r) => (
@@ -177,7 +177,7 @@ export default function PartnersPage() {
         </select>
         <button
           type="submit"
-          className="px-5 py-2.5 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors"
+          className="w-full sm:w-auto px-5 py-2.5 bg-green-700 text-cream rounded-full text-sm font-semibold hover:bg-green-800 transition-colors min-h-[40px]"
         >
           검색
         </button>
@@ -215,7 +215,7 @@ export default function PartnersPage() {
           {(vipPartners.length > 0 || premiumPartners.length > 0) && (
             <section className="mb-16">
               <div className="mb-8">
-                <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
                   <span className="w-6 h-px bg-terra-500" />
                   Featured Partners
                 </div>
@@ -251,7 +251,7 @@ export default function PartnersPage() {
             <section>
               <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
                 <div>
-                  <div className="text-[11px] font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                  <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
                     <span className="w-6 h-px bg-terra-500" />
                     All Partners
                   </div>
@@ -342,7 +342,7 @@ function TierSection({
               onClick={() => onPartnerClick(p.id)}
             >
               <div className="flex">
-                <div className="w-44 h-40 shrink-0 bg-green-800 relative">
+                <div className="w-32 sm:w-44 h-36 sm:h-40 shrink-0 bg-green-800 relative">
                   {p.images.length > 0 ? (
                     <Image src={p.images[0].url} alt={p.companyName} fill className="object-cover" />
                   ) : (
@@ -350,7 +350,7 @@ function TierSection({
                       <span className="font-extrabold text-5xl text-terra-300">{p.companyName.charAt(0)}</span>
                     </div>
                   )}
-                  <div className="absolute top-3 left-3 inline-flex items-center px-3 py-1 bg-terra-500 text-cream text-[10px] font-bold rounded-full tracking-wider">
+                  <div className="absolute top-3 left-3 inline-flex items-center px-3 py-1 bg-terra-500 text-cream text-xs font-bold rounded-full tracking-wider">
                     VIP
                   </div>
                 </div>
@@ -368,7 +368,7 @@ function TierSection({
                   {p.serviceArea.length > 0 && (
                     <div className="flex items-center gap-1.5 mt-3 flex-wrap">
                       {p.serviceArea.slice(0, 3).map((area) => (
-                        <span key={area} className="px-2.5 py-0.5 bg-cream text-green-700 text-[10px] font-semibold rounded-full border border-line">{area}</span>
+                        <span key={area} className="px-2.5 py-0.5 bg-cream text-green-700 text-xs font-semibold rounded-full border border-line">{area}</span>
                       ))}
                     </div>
                   )}
@@ -388,7 +388,7 @@ function TierSection({
         {!hideHeader && (
           <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 bg-green-700 text-cream text-[10px] font-bold rounded-full tracking-wider">PREMIUM</span>
+              <span className="px-2.5 py-1 bg-green-700 text-cream text-xs font-bold rounded-full tracking-wider">PREMIUM</span>
               <h3 className="text-lg font-bold text-ink tracking-tight">추천 파트너</h3>
             </div>
             {hasMore && (
@@ -396,7 +396,7 @@ function TierSection({
             )}
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {displayed.map((p) => (
             <div
               key={p.id}
@@ -416,12 +416,12 @@ function TierSection({
                 <div className="flex-1 p-3.5 flex flex-col justify-between min-w-0">
                   <div>
                     <h3 className="font-bold text-ink text-sm truncate tracking-tight">{p.companyName}</h3>
-                    <p className="text-[11px] text-terra-500 font-semibold mt-0.5">
+                    <p className="text-xs text-terra-500 font-semibold mt-0.5">
                       {SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}
                       {p.serviceArea.length > 0 && ` · ${p.serviceArea.slice(0, 2).join(", ")}`}
                     </p>
                     {p.description && (
-                      <p className="text-[11px] text-muted mt-1.5 line-clamp-2 leading-relaxed">{p.description}</p>
+                      <p className="text-xs text-muted mt-1.5 line-clamp-2 leading-relaxed">{p.description}</p>
                     )}
                   </div>
                 </div>
@@ -439,7 +439,7 @@ function TierSection({
       {!hideHeader && (
         <div className="flex items-end justify-between gap-3 mb-5 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full tracking-wider">BASIC</span>
+            <span className="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full tracking-wider">BASIC</span>
             <h3 className="text-lg font-bold text-ink tracking-tight">등록 업체</h3>
           </div>
           {hasMore && (
@@ -457,8 +457,8 @@ function TierSection({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-sm font-semibold text-ink truncate">{p.companyName}</p>
-                <span className="text-[11px] text-line-deep">·</span>
-                <span className="text-[11px] text-terra-500 font-medium">{SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}</span>
+                <span className="text-xs text-line-deep">·</span>
+                <span className="text-xs text-terra-500 font-medium">{SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}</span>
               </div>
               {p.serviceArea.length > 0 && (
                 <p className="text-xs text-muted mt-0.5">{p.serviceArea.slice(0, 2).join(", ")}</p>
@@ -513,7 +513,7 @@ function FreeSection({
             onClick={() => onPartnerClick(p.id)}
           >
             <div className="w-7 h-7 rounded-full bg-cream-elev flex items-center justify-center shrink-0 mr-3">
-              <span className="text-[10px] font-light text-green-700">{p.companyName.charAt(0)}</span>
+              <span className="text-xs font-light text-green-700">{p.companyName.charAt(0)}</span>
             </div>
             <span className="text-sm text-ink font-medium mr-2 shrink-0">{p.companyName}</span>
             <span className="text-xs text-muted shrink-0">{SERVICE_TYPE_LABELS[p.serviceType] || p.serviceType}</span>
@@ -545,9 +545,9 @@ function SearchResultsView({
   onPartnerClick: (id: string) => void;
 }) {
   const tierBadge = (tier: string) => {
-    if (tier === "VIP") return <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-700 text-white text-[9px] font-bold rounded"><svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>VIP</span>;
-    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-green-700/85 text-white text-[9px] font-bold rounded">PREMIUM</span>;
-    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded">BASIC</span>;
+    if (tier === "VIP") return <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-700 text-white text-xs font-bold rounded"><svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>VIP</span>;
+    if (tier === "PREMIUM") return <span className="px-1.5 py-0.5 bg-green-700/85 text-white text-xs font-bold rounded">PREMIUM</span>;
+    if (tier === "BASIC") return <span className="px-1.5 py-0.5 bg-gray-200 text-gray-600 text-xs font-bold rounded">BASIC</span>;
     return null;
   };
 

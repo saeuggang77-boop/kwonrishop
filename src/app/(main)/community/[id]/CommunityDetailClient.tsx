@@ -245,7 +245,7 @@ export default function CommunityDetailClient() {
                   {/* 대댓글 */}
                   {c.replies?.map((r) => (
                     <div key={r.id} className="flex gap-2 md:gap-3 mt-3 ml-2 md:ml-4 pl-2 md:pl-3 border-l-2 border-gray-100">
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400 shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-400 shrink-0">
                         {r.author.name?.[0] || "U"}
                       </div>
                       <div className="flex-1 min-w-0">

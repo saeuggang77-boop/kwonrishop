@@ -412,7 +412,7 @@ function ListingsContent() {
           </svg>
           상세필터
           {activeFilterCount > 0 && (
-            <span className="px-2 py-0.5 bg-terra-500 text-cream rounded-full text-[10px] font-bold" aria-label={`${activeFilterCount}개 필터 활성화됨`}>
+            <span className="px-2 py-0.5 bg-terra-500 text-cream rounded-full text-xs font-bold" aria-label={`${activeFilterCount}개 필터 활성화됨`}>
               {activeFilterCount}
             </span>
           )}
@@ -591,9 +591,9 @@ function ListingsContent() {
             BASIC: "border-gray-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]",
           };
           const tierBadgeStyles: Record<string, { className: string; showStar: boolean }> = {
-            VIP: { className: "px-3 py-1.5 text-[11px] bg-green-700 text-white shadow-[0_2px_8px_rgba(27,73,101,0.3)]", showStar: true },
-            PREMIUM: { className: "px-2.5 py-1 text-[10px] bg-green-700/85 text-white backdrop-blur-sm", showStar: false },
-            BASIC: { className: "px-2 py-0.5 text-[9px] bg-white/85 text-gray-500 backdrop-blur-sm", showStar: false },
+            VIP: { className: "px-3 py-1.5 text-xs bg-green-700 text-white shadow-[0_2px_8px_rgba(27,73,101,0.3)]", showStar: true },
+            PREMIUM: { className: "px-2.5 py-1 text-xs bg-green-700/85 text-white backdrop-blur-sm", showStar: false },
+            BASIC: { className: "px-2 py-0.5 text-xs bg-white/85 text-gray-500 backdrop-blur-sm", showStar: false },
           };
           const tier = listing.featuredTier || "BASIC";
           const address = listing.addressRoad || listing.addressJibun || "주소 미입력";

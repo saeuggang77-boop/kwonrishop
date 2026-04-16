@@ -185,26 +185,26 @@ function PricingContent() {
   return (
     <div>
       {/* 네이비 헤더 */}
-      <div className="bg-gradient-to-br from-green-800 to-green-700 px-6 pb-16 pt-12 text-center">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-3">
+      <div className="bg-gradient-to-br from-green-800 to-green-700 px-4 md:px-6 pb-12 md:pb-16 pt-8 md:pt-12 text-center">
+        <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-2 md:mb-3 leading-snug">
           비즈니스를 성장시키는 프리미엄 서비스
         </h1>
-        <p className="text-white/60 text-lg">
+        <p className="text-white/70 text-sm md:text-lg">
           목적에 맞는 요금제를 선택하고 더 많은 고객에게 다가가세요
         </p>
-        <p className="text-sm text-white/40 mt-2">
+        <p className="text-xs md:text-sm text-white/50 mt-2">
           ※ 모든 가격은 부가세(VAT 10%) 별도입니다
         </p>
       </div>
 
-      {/* 플로팅 탭 */}
-      <div className="flex justify-center -mt-5 relative z-10 mb-8">
-        <div className="inline-flex bg-white rounded-xl p-1 shadow-lg">
+      {/* 플로팅 탭 (모바일 가로 스크롤) */}
+      <div className="relative z-10 -mt-5 mb-6 md:mb-8 px-4 md:flex md:justify-center">
+        <div className="flex overflow-x-auto scrollbar-hide md:overflow-visible md:inline-flex bg-white rounded-xl p-1 shadow-lg gap-0.5 md:gap-0">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`flex-shrink-0 px-4 md:px-6 py-3 md:py-2.5 min-h-[44px] rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
                 activeTab === tab.key
                   ? "bg-green-700 text-white shadow-sm"
                   : "text-gray-500 hover:text-gray-700"
@@ -250,14 +250,14 @@ function PricingContent() {
 
         {/* 프랜차이즈 기간 선택 */}
       {(activeTab === "FRANCHISE" || activeTab === "PARTNER") && (
-        <div className="mb-8">
-          <div className="flex justify-center">
-            <div className="inline-flex bg-gray-100 rounded-xl p-1 gap-1">
+        <div className="mb-6 md:mb-8">
+          <div className="flex md:justify-center -mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto scrollbar-hide">
+            <div className="inline-flex bg-gray-100 rounded-xl p-1 gap-1 md:gap-1">
               {PERIODS.map((period) => (
                 <button
                   key={period.key}
                   onClick={() => setFranchisePeriod(period.key)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
+                  className={`flex-shrink-0 px-3 md:px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-all relative whitespace-nowrap ${
                     franchisePeriod === period.key
                       ? "bg-green-700 text-white shadow-sm"
                       : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
@@ -285,8 +285,8 @@ function PricingContent() {
 
       {/* 패키지 상품 3열 그리드 */}
       {packageProducts.length > 0 && (
-        <div className="mb-14">
-          <div className="grid md:grid-cols-3 gap-6">
+        <div className="mb-10 md:mb-14">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-6">
             {packageProducts.map((product, idx) => (
               <PackageCard
                 key={product.id}
@@ -303,19 +303,19 @@ function PricingContent() {
 
       {/* 정기 끌어올리기 구독 (LISTING 탭에만 표시) */}
       {activeTab === "LISTING" && subscriptionProducts.length > 0 && (
-        <div className="mb-14">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+        <div className="mb-10 md:mb-14">
+          <div className="text-center mb-5 md:mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
               🔄 정기 끌어올리기 구독
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm md:text-base text-gray-600">
               패키지 없이도 매물 노출을 높이고 싶다면, 자동 끌어올리기를 이용해보세요
             </p>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-xs md:text-sm text-gray-400 mt-1">
               매번 수동 끌올 대신 설정한 주기에 맞춰 자동으로 상단에 노출됩니다
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
             {subscriptionProducts.map((product) => (
               <SubscriptionCard
                 key={product.id}
@@ -331,8 +331,8 @@ function PricingContent() {
       {/* 단건 공통 상품 */}
       {singleProducts.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">단건 부가 상품</h2>
-          <div className="grid md:grid-cols-3 gap-4">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-5 md:mb-6">단건 부가 상품</h2>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             {singleProducts.map((product) => (
               <SingleCard
                 key={product.id}
@@ -399,7 +399,7 @@ function PackageCard({
 
   return (
     <div
-      className={`relative rounded-2xl p-6 border-2 ${theme.border} ${theme.bg} ${theme.ring}`}
+      className={`relative rounded-2xl p-5 md:p-6 border-2 ${theme.border} ${theme.bg} ${theme.ring}`}
     >
       {theme.badge && (
         <div
@@ -409,8 +409,8 @@ function PackageCard({
         </div>
       )}
 
-      <div className="text-center mb-6 pt-2">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="text-center mb-5 md:mb-6 pt-2">
+        <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
           {/* Show tier name without period suffix */}
           {features.badge || product.name}
         </h3>
@@ -420,10 +420,10 @@ function PackageCard({
           </div>
         )}
         <div className="flex items-baseline justify-center gap-1">
-          <span className="text-4xl font-bold text-gray-900">
+          <span className="text-3xl md:text-4xl font-bold text-gray-900">
             {(product.price / 10000).toLocaleString()}
           </span>
-          <span className="text-xl text-gray-600">만원</span>
+          <span className="text-lg md:text-xl text-gray-600">만원</span>
         </div>
         {product.duration && (
           <p className="text-sm text-gray-500 mt-1">
@@ -437,7 +437,7 @@ function PackageCard({
         )}
       </div>
 
-      <ul className="space-y-3 mb-6 min-h-[180px]">
+      <ul className="space-y-3 mb-5 md:mb-6 md:min-h-[180px]">
         {featureList.map((f, i) => (
           <Feature key={i} icon={f.icon} text={f.text} />
         ))}
@@ -446,7 +446,7 @@ function PackageCard({
       <button
         onClick={() => onPurchase(product.id)}
         disabled={purchasing}
-        className={`w-full py-3 rounded-xl font-bold text-white transition-colors ${theme.btn} disabled:opacity-50 disabled:cursor-not-allowed`}
+        className={`w-full py-3.5 md:py-3 min-h-[48px] rounded-xl font-bold text-white transition-colors ${theme.btn} disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         {purchasing ? "처리 중..." : "구매하기"}
       </button>
@@ -610,7 +610,7 @@ function SingleCard({
       <button
         onClick={() => onPurchase(product.id)}
         disabled={purchasing}
-        className="w-full py-2.5 bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 active:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+        className="w-full py-3 md:py-2.5 min-h-[44px] bg-green-700 text-white rounded-lg font-medium hover:bg-green-600 active:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
       >
         {purchasing ? "처리 중..." : "구매하기"}
       </button>
@@ -705,7 +705,7 @@ function SubscriptionCard({
       <button
         onClick={() => onPurchase(product.id)}
         disabled={purchasing}
-        className={`w-full py-2.5 rounded-lg font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+        className={`w-full py-3 md:py-2.5 min-h-[44px] rounded-lg font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
           isPopular
             ? "bg-green-700 hover:bg-green-600 active:bg-green-800"
             : "bg-gray-800 hover:bg-gray-900 active:bg-black"

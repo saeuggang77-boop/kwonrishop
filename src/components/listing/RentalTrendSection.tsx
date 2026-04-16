@@ -102,7 +102,7 @@ export default function RentalTrendSection({
             style={{ left: `${avgMarker}%` }}
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full">
-              <span className="text-[10px] text-gray-500 whitespace-nowrap">평균</span>
+              <span className="text-xs text-gray-500 whitespace-nowrap">평균</span>
             </div>
           </div>
 
