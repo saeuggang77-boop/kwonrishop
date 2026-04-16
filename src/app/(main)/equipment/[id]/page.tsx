@@ -36,6 +36,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function EquipmentDetailPage() {
-  return <EquipmentDetailClient />;
+export default async function EquipmentDetailPage({ params }: Props) {
+  const { id } = await params;
+  const equipment = await prisma.equipment.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      price: true,
+      status: true,
+      images: { take: 1, select: { url: true } },
+    },
+  });
+
+  const jsonLd = equipment
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: equipment.title,
+        description: equipment.description?.slice(0, 160) ?? undefined,
+        image: equipment.images[0]?.url ?? undefined,
+        offers: {
+          "@type": "Offer",
+          price: equipment.price,
+          priceCurrency: "KRW",
+          availability:
+            equipment.status === "ACTIVE"
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+        },
+        itemCondition: "https://schema.org/UsedCondition",
+      }
+    : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <EquipmentDetailClient />
+    </>
+  );
 }

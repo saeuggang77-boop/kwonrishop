@@ -56,6 +56,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function Page() {
-  return <ListingDetailClient />;
+export default async function Page({ params }: Props) {
+  const { id } = await params;
+  const listing = await prisma.listing.findUnique({
+    where: { id },
+    select: {
+      storeName: true,
+      description: true,
+      premium: true,
+      premiumNone: true,
+      category: { select: { name: true } },
+      images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true } },
+    },
+  });
+
+  const jsonLd = listing
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: listing.storeName ?? "상가 매물",
+        description: listing.description?.slice(0, 160) ?? listing.category?.name ?? undefined,
+        image: listing.images[0]?.url ?? undefined,
+        offers: {
+          "@type": "Offer",
+          price: listing.premiumNone ? 0 : listing.premium,
+          priceCurrency: "KRW",
+          availability: "https://schema.org/InStock",
+          url: `https://www.kwonrishop.com/listings/${id}`,
+        },
+        category: listing.category?.name ?? undefined,
+        brand: { "@type": "Brand", name: "권리샵" },
+      }
+    : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <ListingDetailClient />
+    </>
+  );
 }

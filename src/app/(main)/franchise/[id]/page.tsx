@@ -59,6 +59,41 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function Page() {
-  return <FranchiseDetailClient />;
+export default async function Page({ params }: Props) {
+  const { id } = await params;
+  const brand = await prisma.franchiseBrand.findUnique({
+    where: { id },
+    select: {
+      brandName: true,
+      description: true,
+      industry: true,
+      totalStores: true,
+      bannerImage: true,
+    },
+  });
+
+  const jsonLd = brand
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: brand.brandName,
+        description: brand.description?.slice(0, 160) ?? undefined,
+        image: brand.bannerImage ?? undefined,
+        url: `https://www.kwonrishop.com/franchise/${id}`,
+        industry: brand.industry ?? undefined,
+        numberOfEmployees: brand.totalStores != null ? `${brand.totalStores} stores` : undefined,
+      }
+    : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <FranchiseDetailClient />
+    </>
+  );
 }

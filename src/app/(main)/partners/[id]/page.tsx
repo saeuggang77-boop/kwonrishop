@@ -35,6 +35,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function PartnerDetailPage() {
-  return <PartnerDetailClient />;
+export default async function PartnerDetailPage({ params }: Props) {
+  const { id } = await params;
+  const partner = await prisma.partnerService.findUnique({
+    where: { id },
+    select: {
+      companyName: true,
+      description: true,
+      addressRoad: true,
+      images: { take: 1, select: { url: true } },
+    },
+  });
+
+  const jsonLd = partner
+    ? {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        name: partner.companyName,
+        description: partner.description?.slice(0, 160) ?? undefined,
+        image: partner.images[0]?.url ?? undefined,
+        url: `https://www.kwonrishop.com/partners/${id}`,
+        address: partner.addressRoad
+          ? {
+              "@type": "PostalAddress",
+              streetAddress: partner.addressRoad,
+              addressCountry: "KR",
+            }
+          : undefined,
+      }
+    : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <PartnerDetailClient />
+    </>
+  );
 }

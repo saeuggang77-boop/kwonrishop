@@ -33,6 +33,50 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function CommunityDetailPage() {
-  return <CommunityDetailClient />;
+export default async function CommunityDetailPage({ params }: Props) {
+  const { id } = await params;
+  const post = await prisma.post.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      content: true,
+      tag: true,
+      createdAt: true,
+      updatedAt: true,
+      author: { select: { name: true } },
+    },
+  });
+
+  const jsonLd = post && post.tag !== "사이트이용문의"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: post.title,
+        description: post.content?.slice(0, 160),
+        author: { "@type": "Person", name: post.author?.name ?? "권리샵 회원" },
+        datePublished: post.createdAt,
+        dateModified: post.updatedAt,
+        publisher: {
+          "@type": "Organization",
+          name: "권리샵",
+          url: "https://www.kwonrishop.com",
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `https://www.kwonrishop.com/community/${id}`,
+        },
+      }
+    : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <CommunityDetailClient />
+    </>
+  );
 }
