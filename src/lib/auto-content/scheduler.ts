@@ -5,8 +5,381 @@ import {
   getContextualCommentPrompt,
   getContextualReplyPrompt,
   getConversationThreadPrompt,
+  getSingleCommenterPrompt,
+  getAuthorReplyPrompt,
+  getCommenterFollowupPrompt,
+  type CommenterArchetype,
 } from "./prompts";
 import { logAiUsage } from "@/lib/ai-usage";
+
+// ============================================================
+// V2 헬퍼: 유사도 검사 / 금지어 / 아키타입 분배
+// ============================================================
+
+const BANNED_SUBSTRINGS = [
+  "무슨 업종이세요",
+  "어떤 업종이신지",
+  "업종이신가요",
+  "여름이라 그런거",
+  "웨이팅까지 생기",
+  "뿌듯하시겠어요",
+  "저희 매장도 비슷",
+  "저희도 요즘",
+  "저희도 지금",
+  "대박이네요!!",
+  "축하드려요!!",
+];
+
+const COMMENTS_BY_ARCHETYPE_ORDER: CommenterArchetype[][] = [
+  // 2명
+  ["QUESTION", "EXPERIENCE"],
+  ["OUTSIDER", "EXPERIENCE"],
+  ["LURKER", "CONTRARIAN"],
+  ["EXPERIENCE", "TANGENT"],
+  // 3명
+  ["QUESTION", "EXPERIENCE", "LURKER"],
+  ["OUTSIDER", "TIPSTER", "CONTRARIAN"],
+  ["EXPERIENCE", "QUESTION", "TANGENT"],
+  ["LURKER", "EXPERIENCE", "OUTSIDER"],
+  // 4명
+  ["QUESTION", "EXPERIENCE", "CONTRARIAN", "LURKER"],
+  ["OUTSIDER", "QUESTION", "TIPSTER", "TANGENT"],
+  ["EXPERIENCE", "LURKER", "CONTRARIAN", "OUTSIDER"],
+  ["TIPSTER", "QUESTION", "TANGENT", "EXPERIENCE"],
+];
+
+function pickArchetypeSet(count: number): CommenterArchetype[] {
+  const candidates = COMMENTS_BY_ARCHETYPE_ORDER.filter((a) => a.length === count);
+  if (candidates.length === 0) {
+    // fallback: OUTSIDER 포함해서 랜덤
+    const pool: CommenterArchetype[] = ["OUTSIDER", "EXPERIENCE", "QUESTION", "LURKER", "CONTRARIAN", "TIPSTER", "TANGENT"];
+    const picked: CommenterArchetype[] = ["OUTSIDER"]; // 최소 1명 외부 시점 강제
+    while (picked.length < count) {
+      const cand = pool[Math.floor(Math.random() * pool.length)];
+      picked.push(cand);
+    }
+    return picked;
+  }
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function tokenize(text: string): Set<string> {
+  const clean = text.replace(/[^\uAC00-\uD7AFa-zA-Z0-9\s]/g, " ").toLowerCase();
+  return new Set(clean.split(/\s+/).filter((t) => t.length >= 2));
+}
+
+function jaccardSimilarity(a: string, b: string): number {
+  const A = tokenize(a);
+  const B = tokenize(b);
+  if (A.size === 0 || B.size === 0) return 0;
+  let intersect = 0;
+  for (const t of A) if (B.has(t)) intersect++;
+  const union = A.size + B.size - intersect;
+  return union === 0 ? 0 : intersect / union;
+}
+
+function containsBannedSubstring(text: string): string | null {
+  for (const banned of BANNED_SUBSTRINGS) {
+    if (text.includes(banned)) return banned;
+  }
+  return null;
+}
+
+function isTooSimilarToExisting(candidate: string, existing: string[], threshold = 0.45): boolean {
+  for (const e of existing) {
+    if (jaccardSimilarity(candidate, e) >= threshold) return true;
+  }
+  return false;
+}
+
+function randomTemperature(): number {
+  // Anthropic 허용 범위 0~1. 댓글러마다 0.6~1.0 랜덤 분산
+  return 0.6 + Math.random() * 0.4;
+}
+
+function parseSingleJsonContent(responseText: string): string {
+  const cleaned = responseText
+    .replace(/^```(?:json)?\s*\n?/i, "")
+    .replace(/\n?```\s*$/i, "")
+    .trim();
+
+  // 1차 시도: 정상 JSON 파싱
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (Array.isArray(parsed)) return parsed[0]?.content ?? "";
+    return parsed?.content ?? "";
+  } catch {
+    // 2차 시도: content 필드 정규식 추출 (줄바꿈/제어문자 이슈 우회)
+    const match = cleaned.match(/"content"\s*:\s*"((?:[^"\\]|\\.|[\r\n])*)"/);
+    if (match) {
+      return match[1]
+        .replace(/\\n/g, "\n")
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, "\\")
+        .trim();
+    }
+    // 3차 시도: 따옴표 없는 텍스트라도 반환
+    return "";
+  }
+}
+
+/**
+ * 단일 댓글러의 댓글 1개 생성 (독립 호출, 재시도 1회)
+ */
+async function generateOneComment(params: {
+  anthropic: Anthropic;
+  personality: GhostPersonality;
+  archetype: CommenterArchetype;
+  postTitle: string;
+  postContent: string;
+  commenterName: string;
+  existingComments: string[];
+}): Promise<string | null> {
+  const { anthropic, personality, archetype, postTitle, postContent, commenterName, existingComments } = params;
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const prompt = getSingleCommenterPrompt(
+      personality,
+      archetype,
+      postTitle,
+      postContent,
+      commenterName,
+      existingComments
+    );
+    const temperature = randomTemperature();
+
+    try {
+      const message = await anthropic.messages.create({
+        model: "claude-sonnet-4-5-20250929",
+        max_tokens: 500,
+        temperature,
+        messages: [{ role: "user", content: prompt }],
+      });
+      await logAiUsage(
+        message.model,
+        message.usage.input_tokens,
+        message.usage.output_tokens,
+        "single-commenter"
+      );
+      const responseText = message.content[0].type === "text" ? message.content[0].text : "";
+      const content = parseSingleJsonContent(responseText).trim();
+      if (!content) continue;
+
+      const banned = containsBannedSubstring(content);
+      if (banned) {
+        if (attempt === 0) continue; // 재시도
+        // 2회차에도 나오면 그냥 그 부분만 제거
+      }
+      if (isTooSimilarToExisting(content, existingComments)) {
+        if (attempt === 0) continue;
+      }
+      return content;
+    } catch (err) {
+      console.error(`[generateOneComment] attempt ${attempt} failed:`, err);
+      if (attempt === 1) return null;
+    }
+  }
+  return null;
+}
+
+async function generateAuthorReplyText(params: {
+  anthropic: Anthropic;
+  authorPersonality: GhostPersonality;
+  authorName: string;
+  postTitle: string;
+  postContent: string;
+  targetCommenterName: string;
+  targetCommentContent: string;
+}): Promise<string | null> {
+  const prompt = getAuthorReplyPrompt(
+    params.authorPersonality,
+    params.authorName,
+    params.postTitle,
+    params.postContent,
+    params.targetCommenterName,
+    params.targetCommentContent
+  );
+  try {
+    const message = await params.anthropic.messages.create({
+      model: "claude-sonnet-4-5-20250929",
+      max_tokens: 300,
+      temperature: randomTemperature(),
+      messages: [{ role: "user", content: prompt }],
+    });
+    await logAiUsage(
+      message.model,
+      message.usage.input_tokens,
+      message.usage.output_tokens,
+      "author-reply"
+    );
+    const responseText = message.content[0].type === "text" ? message.content[0].text : "";
+    return parseSingleJsonContent(responseText).trim() || null;
+  } catch (err) {
+    console.error("[generateAuthorReplyText] failed:", err);
+    return null;
+  }
+}
+
+async function generateCommenterFollowupText(params: {
+  anthropic: Anthropic;
+  personality: GhostPersonality;
+  commenterName: string;
+  postTitle: string;
+  myPreviousComment: string;
+  authorName: string;
+  authorReply: string;
+}): Promise<string | null> {
+  const prompt = getCommenterFollowupPrompt(
+    params.personality,
+    params.commenterName,
+    params.postTitle,
+    params.myPreviousComment,
+    params.authorName,
+    params.authorReply
+  );
+  try {
+    const message = await params.anthropic.messages.create({
+      model: "claude-sonnet-4-5-20250929",
+      max_tokens: 200,
+      temperature: randomTemperature(),
+      messages: [{ role: "user", content: prompt }],
+    });
+    await logAiUsage(
+      message.model,
+      message.usage.input_tokens,
+      message.usage.output_tokens,
+      "commenter-followup"
+    );
+    const responseText = message.content[0].type === "text" ? message.content[0].text : "";
+    return parseSingleJsonContent(responseText).trim() || null;
+  } catch (err) {
+    console.error("[generateCommenterFollowupText] failed:", err);
+    return null;
+  }
+}
+
+/**
+ * V2 독립 호출 아키텍처로 스레드 플랜 생성 (DB 저장 전 단계)
+ * - 각 댓글러별 독립 API 호출 (서로의 댓글을 참조하여 중복 회피)
+ * - archetype 강제 분배 + temperature 분산
+ * - jaccard 유사도 체크
+ */
+export interface ThreadPlanMessage {
+  commenterName: string;
+  commenterUserId: string;
+  content: string;
+  replyToIndex: number | null;
+  isAuthor: boolean;
+}
+
+export async function buildConversationThreadPlan(params: {
+  post: { id: string; title: string; content: string; authorId: string };
+  threadSize: number;
+  authorReplyRate: number;
+}): Promise<ThreadPlanMessage[]> {
+  const { post, threadSize, authorReplyRate } = params;
+  const anthropic = new Anthropic();
+
+  // 1. 글쓴이 조회
+  const author = await prisma.user.findUnique({
+    where: { id: post.authorId },
+    select: { name: true, ghostPersonality: true },
+  });
+  if (!author || !author.ghostPersonality) {
+    throw new Error("Author not found or not a ghost user");
+  }
+  const authorName = author.name || "익명";
+  const authorPersonality = author.ghostPersonality;
+
+  // 2. 댓글러 선정 (2~4명)
+  const commenterCount = Math.max(2, Math.min(4, Math.floor(threadSize / 2)));
+  const commenters = await getRandomGhostUsers(commenterCount, undefined, post.authorId);
+  if (commenters.length === 0) throw new Error("No commenters available");
+
+  // 3. archetype 분배
+  const archetypes = pickArchetypeSet(commenters.length);
+
+  // 4. 각 댓글러 독립 호출 (순차 — 이전 댓글을 existingComments로 주입해야 함)
+  const topLevel: ThreadPlanMessage[] = [];
+  for (let i = 0; i < commenters.length; i++) {
+    const c = commenters[i];
+    const existing = topLevel.map((m) => m.content);
+    const content = await generateOneComment({
+      anthropic,
+      personality: c.ghostPersonality || "CALM",
+      archetype: archetypes[i],
+      postTitle: post.title,
+      postContent: post.content,
+      commenterName: c.name || "익명",
+      existingComments: existing,
+    });
+    if (!content) continue;
+    topLevel.push({
+      commenterName: c.name || "익명",
+      commenterUserId: c.id,
+      content,
+      replyToIndex: null,
+      isAuthor: false,
+    });
+  }
+
+  if (topLevel.length === 0) return [];
+
+  // 5. 글쓴이 답글 (authorReplyRate% 확률로 각 댓글에 답글)
+  const planMessages: ThreadPlanMessage[] = [...topLevel];
+  const authorReplyIndices: number[] = []; // 어떤 topLevel 인덱스에 답글 달렸는지
+
+  for (let i = 0; i < topLevel.length; i++) {
+    if (Math.random() * 100 > authorReplyRate) continue;
+    const target = topLevel[i];
+    const replyContent = await generateAuthorReplyText({
+      anthropic,
+      authorPersonality,
+      authorName,
+      postTitle: post.title,
+      postContent: post.content,
+      targetCommenterName: target.commenterName,
+      targetCommentContent: target.content,
+    });
+    if (!replyContent) continue;
+    const replyIdxInPlan = planMessages.length;
+    planMessages.push({
+      commenterName: authorName,
+      commenterUserId: post.authorId,
+      content: replyContent.startsWith("@") ? replyContent : `@${target.commenterName} ${replyContent}`,
+      replyToIndex: i, // topLevel index
+      isAuthor: true,
+    });
+    authorReplyIndices.push(replyIdxInPlan);
+  }
+
+  // 6. 티키타카 (40% 확률로 댓글러가 글쓴이 답글에 다시 반응)
+  for (const authorReplyIdx of authorReplyIndices) {
+    if (Math.random() > 0.4) continue;
+    const authorReplyMsg = planMessages[authorReplyIdx];
+    const originalTopLevelIdx = authorReplyMsg.replyToIndex!;
+    const originalCommenter = topLevel[originalTopLevelIdx];
+    const followupContent = await generateCommenterFollowupText({
+      anthropic,
+      personality: commenters.find((c) => c.id === originalCommenter.commenterUserId)?.ghostPersonality || "CALM",
+      commenterName: originalCommenter.commenterName,
+      postTitle: post.title,
+      myPreviousComment: originalCommenter.content,
+      authorName,
+      authorReply: authorReplyMsg.content,
+    });
+    if (!followupContent) continue;
+    planMessages.push({
+      commenterName: originalCommenter.commenterName,
+      commenterUserId: originalCommenter.commenterUserId,
+      content: followupContent.startsWith("@") ? followupContent : `@${authorName} ${followupContent}`,
+      replyToIndex: authorReplyIdx,
+      isAuthor: false,
+    });
+  }
+
+  return planMessages;
+}
 
 /**
  * 자정 넘기는 시간대 처리 (예: 14시~4시)
@@ -341,6 +714,65 @@ export function computeScheduledTimes(
  * AI 1회 호출로 코히런트한 스레드 생성 후 PendingComment에 예약 저장
  */
 export async function generateConversationThread(
+  post: { id: string; title: string; content: string; authorId: string; createdAt?: Date },
+  threadSize: number,
+  authorReplyRate: number = 50
+): Promise<{ commentCount: number; replyCount: number }> {
+  try {
+    // V2 독립 호출 아키텍처 사용
+    const plan = await buildConversationThreadPlan({
+      post: { id: post.id, title: post.title, content: post.content, authorId: post.authorId },
+      threadSize,
+      authorReplyRate,
+    });
+
+    if (plan.length === 0) {
+      return { commentCount: 0, replyCount: 0 };
+    }
+
+    // plan을 기존 scheduleTimes/PendingComment 포맷으로 변환
+    const parsedForSchedule = plan.map((m) => ({ replyTo: m.replyToIndex }));
+    const basePostCreatedAt = post.createdAt ?? new Date();
+    const scheduledTimes = computeScheduledTimes(parsedForSchedule, basePostCreatedAt);
+
+    const indexToPendingId = new Map<number, string>();
+    let commentCount = 0;
+    let replyCount = 0;
+
+    for (let i = 0; i < plan.length; i++) {
+      const msg = plan[i];
+      const parentPendingId =
+        msg.replyToIndex !== null ? indexToPendingId.get(msg.replyToIndex) ?? null : null;
+
+      const pending = await prisma.pendingComment.create({
+        data: {
+          postId: post.id,
+          authorId: msg.commenterUserId,
+          authorName: msg.commenterName,
+          content: msg.content,
+          parentPendingId,
+          scheduledFor: scheduledTimes[i],
+          status: "PENDING",
+        },
+      });
+      indexToPendingId.set(i, pending.id);
+
+      if (msg.replyToIndex === null) commentCount++;
+      else replyCount++;
+    }
+
+    return { commentCount, replyCount };
+  } catch (error) {
+    console.error("대화 스레드 생성 실패:", error);
+    throw error;
+  }
+}
+
+/**
+ * @deprecated V1 단일 호출 방식 (참고용으로 보존)
+ * 사용하지 마세요. generateConversationThread를 호출하세요.
+ */
+export async function generateConversationThreadV1(
   post: { id: string; title: string; content: string; authorId: string; createdAt?: Date },
   threadSize: number,
   authorReplyRate: number = 50
