@@ -2,6 +2,7 @@ import "dotenv/config";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client.js";
+import { buildListingImageUrl } from "../src/lib/listing-image-keywords.js";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -1881,17 +1882,25 @@ async function main() {
   // ==========================================
   const imgTypes = ["EXTERIOR", "INTERIOR", "KITCHEN", "OTHER"] as const;
 
+  // subCategoryId → 소분류 이름 매핑 (이미지 URL 생성용)
+  const subIdToName: Record<string, string> = {};
+  const allSubCats = [subCoffee, subJapanese, subHairSalon, subConvenience, subChicken, subBunsik, subKaraoke, subGym, subLaundry, subAcademy, subKorean];
+  for (const sub of allSubCats) {
+    if (sub) subIdToName[sub.id] = sub.name;
+  }
+
   // 매물 이미지 (유료: 5장, 무료: 3장)
   for (let i = 0; i < listingsData.length; i++) {
     const listing = await prisma.listing.findFirst({ where: { userId: listingsData[i].sellerId, status: { not: "DELETED" } } });
     if (!listing) continue;
     await prisma.listingImage.deleteMany({ where: { listingId: listing.id } });
     const imgCount = listingsData[i].tier ? 5 : 3;
+    const subName = subIdToName[listingsData[i].subCategoryId] ?? "default";
     for (let j = 0; j < imgCount; j++) {
       await prisma.listingImage.create({
         data: {
           listingId: listing.id,
-          url: `https://picsum.photos/seed/store-${i}-${j}/800/600`,
+          url: buildListingImageUrl(subName, `store-${i}-${j}`, imgTypes[j % imgTypes.length]),
           type: imgTypes[j % imgTypes.length],
           sortOrder: j,
         },
@@ -2032,17 +2041,18 @@ async function main() {
       status: "ACTIVE",
       user: { email: { notIn: demoEmails } },
     },
-    include: { images: true },
+    include: { images: true, subCategory: true },
   });
   for (const ol of orphanListings) {
     if (ol.images.length === 0 || ol.images.some((img) => img.url.startsWith("/images/"))) {
       // 깨진 이미지 삭제 후 플레이스홀더 추가
+      const olSubName = ol.subCategory?.name ?? "default";
       await prisma.listingImage.deleteMany({ where: { listingId: ol.id } });
       for (let j = 0; j < 3; j++) {
         await prisma.listingImage.create({
           data: {
             listingId: ol.id,
-            url: `https://picsum.photos/seed/orphan-${ol.id.slice(-4)}-${j}/800/600`,
+            url: buildListingImageUrl(olSubName, `orphan-${ol.id.slice(-4)}-${j}`, imgTypes[j % imgTypes.length]),
             type: imgTypes[j % imgTypes.length],
             sortOrder: j,
           },
