@@ -213,15 +213,9 @@ export default function CommunityDetailClient() {
         {session ? (
           <div className="flex gap-2 mb-6 items-start">
             <textarea
-              placeholder="댓글을 입력하세요 (Shift+Enter 줄바꿈)"
+              placeholder="댓글을 입력하세요"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-                  e.preventDefault();
-                  submitComment();
-                }
-              }}
               maxLength={500}
               rows={1}
               className="flex-1 px-3 md:px-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-700 resize-none field-sizing-content min-h-[42px]"
@@ -258,10 +252,6 @@ export default function CommunityDetailClient() {
                         value={editingContent}
                         onChange={(e) => setEditingContent(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-                            e.preventDefault();
-                            saveEditComment(c.id);
-                          }
                           if (e.key === "Escape") cancelEditComment();
                         }}
                         maxLength={500}
@@ -316,15 +306,9 @@ export default function CommunityDetailClient() {
                   {replyTo === c.id && (
                     <div className="flex gap-2 mt-2 items-start">
                       <textarea
-                        placeholder="답글을 입력하세요 (Shift+Enter 줄바꿈)"
+                        placeholder="답글을 입력하세요"
                         value={replyContent}
                         onChange={(e) => setReplyContent(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-                            e.preventDefault();
-                            submitComment(c.id);
-                          }
-                        }}
                         rows={1}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-700 resize-none field-sizing-content min-h-[38px]"
                         autoFocus
@@ -357,10 +341,6 @@ export default function CommunityDetailClient() {
                               value={editingContent}
                               onChange={(e) => setEditingContent(e.target.value)}
                               onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-                                  e.preventDefault();
-                                  saveEditComment(r.id);
-                                }
                                 if (e.key === "Escape") cancelEditComment();
                               }}
                               maxLength={500}
