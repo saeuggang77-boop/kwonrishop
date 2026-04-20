@@ -45,6 +45,9 @@ export async function GET(request: Request) {
       where.OR = [
         { storeName: { contains: search, mode: "insensitive" } },
         { addressRoad: { contains: search, mode: "insensitive" } },
+        { addressJibun: { contains: search, mode: "insensitive" } },
+        { user: { name: { contains: search, mode: "insensitive" } } },
+        { user: { email: { contains: search, mode: "insensitive" } } },
       ];
     }
 
