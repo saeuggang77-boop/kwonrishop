@@ -309,7 +309,7 @@ export async function POST(req: NextRequest) {
   // SELLER 역할 확인
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { role: true },
+    select: { role: true, email: true },
   });
 
   if (user?.role !== "SELLER" && user?.role !== "ADMIN") {
@@ -325,19 +325,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "사업자인증이 필요합니다." }, { status: 403 });
   }
 
-  const existingActiveListing = await prisma.listing.findFirst({
-    where: {
-      userId: session.user.id,
-      status: { not: "DELETED" },
-    },
-    select: { id: true },
-  });
+  // 시드 계정(데모 매물 등록용)은 1인 1매물 제한 우회
+  const seedEmails = (process.env.SEED_SELLER_EMAILS || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  const isSeedAccount = !!user.email && seedEmails.includes(user.email.toLowerCase());
 
-  if (existingActiveListing) {
-    return NextResponse.json(
-      { error: "이미 등록된 매물이 있습니다. 1인 1매물만 등록 가능합니다." },
-      { status: 400 },
-    );
+  if (!isSeedAccount) {
+    // 진행 중인 매물만 체크 (SOLD/DELETED는 거래가 끝났거나 내려간 상태 → 새 매물 등록 허용)
+    const existingActiveListing = await prisma.listing.findFirst({
+      where: {
+        userId: session.user.id,
+        status: { notIn: ["DELETED", "SOLD"] },
+      },
+      select: { id: true },
+    });
+
+    if (existingActiveListing) {
+      return NextResponse.json(
+        { error: "이미 등록된 매물이 있습니다. 1인 1매물만 등록 가능합니다." },
+        { status: 400 },
+      );
+    }
   }
 
   const body = await req.json();

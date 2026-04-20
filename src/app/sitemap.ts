@@ -51,17 +51,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    // Dynamic listing pages
+    // Dynamic listing pages (ACTIVE + SOLD for SEO)
+    // 거래완료 매물도 인덱싱 유지 → 시세 참고 검색 유입 확보
     const listings = await prisma.listing.findMany({
-      where: { status: "ACTIVE" },
-      select: { id: true, updatedAt: true },
+      where: { status: { in: ["ACTIVE", "SOLD"] } },
+      select: { id: true, updatedAt: true, status: true },
     });
 
     const listingPages: MetadataRoute.Sitemap = listings.map((listing) => ({
       url: `${baseUrl}/listings/${listing.id}`,
       lastModified: listing.updatedAt,
-      changeFrequency: "daily",
-      priority: 0.8,
+      changeFrequency: listing.status === "ACTIVE" ? "daily" : "monthly",
+      priority: listing.status === "ACTIVE" ? 0.8 : 0.5,
     }));
 
     // Dynamic franchise pages

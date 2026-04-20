@@ -426,13 +426,17 @@ export async function DELETE(
   }
 
   try {
-    // 소프트 삭제 (status를 DELETED로 변경) + 광고 자동 종료 (환불 없음 — 약관 제10조)
+    // 소유자가 삭제 시 → SOLD(거래완료)로 변경하여 URL 유지 (SEO 보존)
+    // ADMIN이 타인 매물 삭제 시 → DELETED로 하드 제거 (규정위반 등)
+    // 광고는 두 경우 모두 자동 종료 (환불 없음 — 약관 제10조)
+    const isOwner = listing.userId === session.user.id;
+    const newStatus: "SOLD" | "DELETED" = isOwner ? "SOLD" : "DELETED";
     const now = new Date();
     await prisma.$transaction([
       prisma.listing.update({
         where: { id },
         data: {
-          status: "DELETED",
+          status: newStatus,
           tier: "FREE",
           tierExpiresAt: null,
         },
@@ -450,7 +454,13 @@ export async function DELETE(
       }),
     ]);
 
-    return NextResponse.json({ success: true, message: "매물이 삭제되었습니다." });
+    return NextResponse.json({
+      success: true,
+      status: newStatus,
+      message: isOwner
+        ? "매물이 거래완료로 변경되었습니다."
+        : "매물이 삭제되었습니다.",
+    });
   } catch (error) {
     console.error("매물 삭제 오류:", error);
     return NextResponse.json(

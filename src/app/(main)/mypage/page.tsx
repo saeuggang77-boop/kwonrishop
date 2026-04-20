@@ -561,18 +561,22 @@ export default function MyPage() {
               )}
               <button
                 onClick={async () => {
-                  if (!confirm("매물을 삭제하시겠습니까?\n삭제 후 복원할 수 없으며, 진행 중인 광고도 종료됩니다.")) return;
+                  if (!confirm("거래가 완료되셨나요?\n매물은 '거래완료' 상태로 변경되며, 진행 중인 광고는 종료됩니다.")) return;
                   try {
                     const res = await fetch(`/api/listings/${data.listing!.id}`, { method: "DELETE" });
                     if (res.ok) {
-                      toast.success("매물이 삭제되었습니다");
-                      setData(prev => prev ? { ...prev, listing: null, activeListingAd: null } : null);
+                      toast.success("거래완료로 변경되었습니다");
+                      setData(prev => prev ? {
+                        ...prev,
+                        listing: prev.listing ? { ...prev.listing, status: "SOLD" } : null,
+                        activeListingAd: null,
+                      } : null);
                     } else {
                       const err = await res.json();
-                      toast.error(err.error || "삭제 실패");
+                      toast.error(err.error || "처리 실패");
                     }
                   } catch {
-                    toast.error("삭제 중 오류가 발생했습니다");
+                    toast.error("처리 중 오류가 발생했습니다");
                   }
                 }}
                 className="w-full px-4 py-2 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
