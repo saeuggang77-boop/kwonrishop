@@ -129,6 +129,10 @@ export default function Step7Confirm({ onPrev }: Props) {
 
       setRegisteredId(result.id);
       setShowSuccess(true);
+      // 등록 성공 시점에 폼 store 즉시 reset
+      // → 결제 진행·"나중에 하기"·중간 이탈 어느 경로로도 다음 매물 등록 시 fresh state
+      // (기존엔 "나중에 하기"에만 reset() 있어서, 결제 경로로 가면 store 찌꺼기 남아 다음 /sell 진입 시 Step7 복원됨)
+      reset();
     } catch (err) {
       // 예외 발생 시 업로드된 이미지 정리
       await cleanupOrphanImages([...uploadedImageUrls, ...uploadedDocUrls]);
