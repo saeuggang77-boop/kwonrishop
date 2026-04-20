@@ -108,12 +108,32 @@ export async function DELETE(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Hard delete equipment
-    await prisma.equipment.delete({
-      where: { id },
-    });
+    // 소프트 삭제로 변경 (실수 복구 가능, 매물·협력업체와 일관성)
+    // 관련 AdPurchase도 자동 종료 (환불 없음 — 약관 제10조)
+    const now = new Date();
+    await prisma.$transaction([
+      prisma.equipment.update({
+        where: { id },
+        data: {
+          status: "DELETED",
+          tier: "FREE",
+          tierExpiresAt: null,
+        },
+      }),
+      prisma.adPurchase.updateMany({
+        where: {
+          equipmentId: id,
+          status: "PAID",
+          OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+        },
+        data: {
+          status: "EXPIRED",
+          expiresAt: now,
+        },
+      }),
+    ]);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: "집기가 삭제되었습니다." });
   } catch (error: any) {
     console.error("Error deleting equipment:", error);
 

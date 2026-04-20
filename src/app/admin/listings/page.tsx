@@ -123,7 +123,7 @@ export default function AdminListingsPage() {
           </select>
           <input
             type="text"
-            placeholder="상호명, 작성자 검색"
+            placeholder="상호명, 주소, 작성자(이름/이메일) 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="flex-1 min-w-[180px] px-4 py-2 border border-gray-300 rounded-lg outline-none"
