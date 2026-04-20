@@ -79,6 +79,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        {/* Toss Payments 도메인 미리 연결 (DNS/TLS 사전 준비로 결제 진입 속도 향상) */}
+        <link rel="preconnect" href="https://js.tosspayments.com" crossOrigin="" />
+        <link rel="preconnect" href="https://api.tosspayments.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://js.tosspayments.com" />
+        <link rel="dns-prefetch" href="https://api.tosspayments.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

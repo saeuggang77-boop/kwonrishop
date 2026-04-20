@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Script from "next/script";
 import { useSession } from "next-auth/react";
 import { toast } from "@/lib/toast";
 
@@ -728,20 +729,27 @@ function Feature({ icon, text }: { icon: string; text: string }) {
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="animate-pulse space-y-8">
-          <div className="h-12 bg-gray-200 rounded w-1/3 mx-auto" />
-          <div className="h-10 bg-gray-200 rounded w-2/3 mx-auto" />
-          <div className="grid md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-96 bg-gray-200 rounded-xl" />
-            ))}
+    <>
+      {/* 사용자가 상품 고르는 동안 Toss SDK 미리 받아둠 → 체크아웃 페이지 진입 시 즉시 렌더 */}
+      <Script
+        src="https://js.tosspayments.com/v2/standard"
+        strategy="afterInteractive"
+      />
+      <Suspense fallback={
+        <div className="max-w-6xl mx-auto px-4 py-12">
+          <div className="animate-pulse space-y-8">
+            <div className="h-12 bg-gray-200 rounded w-1/3 mx-auto" />
+            <div className="h-10 bg-gray-200 rounded w-2/3 mx-auto" />
+            <div className="grid md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-96 bg-gray-200 rounded-xl" />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    }>
-      <PricingContent />
-    </Suspense>
+      }>
+        <PricingContent />
+      </Suspense>
+    </>
   );
 }
