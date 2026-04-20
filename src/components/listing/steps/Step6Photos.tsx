@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { useListingFormStore } from "@/store/listingForm";
 import { formatPhoneInput } from "@/lib/utils";
+import { compressImage } from "@/lib/image-compress";
 
 const IMAGE_TYPES = [
   { value: "EXTERIOR", label: "외부" },
@@ -106,17 +107,23 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
     fileInputRef.current?.click();
   }
 
-  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     const remaining = 10 - data.images.length;
-    const MAX_SIZE = 10 * 1024 * 1024;
+    const MAX_SIZE = 20 * 1024 * 1024; // 원본 20MB까지 허용 (자동 압축하므로 여유있게)
     const validFiles = files.filter((f) => f.size <= MAX_SIZE);
     if (validFiles.length < files.length) {
       const skipped = files.length - validFiles.length;
-      alert(`${skipped}개 파일이 10MB를 초과하여 제외되었습니다.`);
+      alert(`${skipped}개 파일이 20MB를 초과하여 제외되었습니다.`);
     }
     const filesToAdd = validFiles.slice(0, remaining);
-    const newImages = filesToAdd.map((file, i) => ({
+
+    // 각 파일 자동 압축 (Vercel 4.5MB 한도 대응)
+    const compressed = await Promise.all(
+      filesToAdd.map((f) => compressImage(f)),
+    );
+
+    const newImages = compressed.map((file, i) => ({
       file,
       url: URL.createObjectURL(file),
       type: pendingType,
@@ -140,14 +147,20 @@ export default function Step6Photos({ onNext, onPrev }: Props) {
     updateData({ images: updated });
   }
 
-  function handleDocSelect(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleDocSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     const docRemaining = 20 - data.documents.length;
     const filesToAdd = files.slice(0, docRemaining);
     if (filesToAdd.length < files.length) {
       alert(`매출 증빙자료는 최대 20장까지 가능합니다.`);
     }
-    const newDocs = filesToAdd.map((file, i) => ({
+
+    // 매출 증빙자료는 텍스트 가독성 위해 품질 최대 (0.95)
+    const compressed = await Promise.all(
+      filesToAdd.map((f) => compressImage(f, { maxDim: 2400, quality: 0.95 })),
+    );
+
+    const newDocs = compressed.map((file, i) => ({
       file,
       url: URL.createObjectURL(file),
       sortOrder: data.documents.length + i,
