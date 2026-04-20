@@ -16,10 +16,6 @@ export default function Step5Description({ onNext, onPrev }: Props) {
   const charCount = data.description.length;
   const isValid = charCount >= MIN_LENGTH;
 
-  // 연락처 패턴 감지 (전화번호, 카카오톡 ID, 이메일, SNS 등)
-  const contactPattern = /(\d{2,4}[-.\s]?\d{3,4}[-.\s]?\d{4}|01[016789]\d{7,8}|카카오|카톡|kakao|open\.kakao|오픈채팅|텔레그램|telegram|라인|line(?![\w-])|whatsapp|왓츠앱|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|인스타|instagram|@\w{3,})/i;
-  const hasContact = contactPattern.test(data.description);
-
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6">
       <h2 className="text-lg font-bold text-gray-900 mb-1">매물설명</h2>
@@ -34,14 +30,6 @@ export default function Step5Description({ onNext, onPrev }: Props) {
           매물 설명에 연락처, 카카오톡 아이디를 기재하지 말아주세요.
         </p>
       </div>
-
-      {hasContact && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-sm text-green-700 font-medium">
-            연락처 또는 메신저 정보가 감지되었습니다. 삭제 후 등록해주세요.
-          </p>
-        </div>
-      )}
 
       <textarea
         placeholder={`매물의 장점과 특징을 구체적으로 작성해주세요.\n\n예시:\n- 양도 사유: 개인 사정으로 양도합니다\n- 매장 특징: 역에서 도보 3분, 유동인구 많음\n- 인테리어: 2023년 신규 인테리어 완료\n- 단골 현황: 배달 + 홀 고객 꾸준\n- 기타: 레시피 및 운영 노하우 전수 가능\n\n※ 구체적인 설명이 있을수록 매수자의 관심도가 높아집니다.`}
@@ -83,7 +71,7 @@ export default function Step5Description({ onNext, onPrev }: Props) {
         </button>
         <button
           onClick={onNext}
-          disabled={!isValid || hasContact}
+          disabled={!isValid}
           className="px-8 py-3 min-h-[44px] bg-green-700 text-cream rounded-full font-medium hover:bg-green-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           다음
