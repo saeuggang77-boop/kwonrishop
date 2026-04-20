@@ -43,6 +43,20 @@ export default function Step7Confirm({ onPrev }: Props) {
   }
 
   async function handleSubmit() {
+    // Silent failure 방지: 사진이 하나도 없으면 사용자에게 확인받고 Step6으로 되돌림
+    const hasAnyImage = data.images.some(
+      (img) => img.file || (img.url && !img.url.startsWith("blob:")),
+    );
+    if (!hasAnyImage) {
+      const proceed = confirm(
+        "등록된 사진이 없습니다.\n사진 없이 등록하시면 매수자 관심도가 크게 낮아집니다.\n\n사진을 추가하시겠습니까?\n(확인: 사진 단계로 이동 / 취소: 사진 없이 계속 등록)",
+      );
+      if (proceed) {
+        setStep(6);
+        return;
+      }
+    }
+
     setLoading(true);
     setError("");
 

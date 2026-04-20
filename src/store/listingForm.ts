@@ -161,11 +161,21 @@ export const useListingFormStore = create<ListingFormStore>()(
         typeof window !== "undefined" ? localStorage : noopStorage
       ),
       partialize: (state) => {
-        // images와 documents는 persist에서 제외 (blob URL은 새로고침 시 무효화됨)
-        const { images, documents, ...restData } = state.data;
+        // file 필드가 있는 entry(업로드 진행 중 blob URL)는 제외,
+        // 업로드 완료된 https URL만 localStorage에 보존
+        const persistedImages = state.data.images
+          .filter((img) => !img.file && img.url && !img.url.startsWith("blob:"))
+          .map(({ url, type, sortOrder }) => ({ url, type, sortOrder }));
+        const persistedDocuments = state.data.documents
+          .filter((doc) => !doc.file && doc.url && !doc.url.startsWith("blob:"))
+          .map(({ url, sortOrder }) => ({ url, sortOrder }));
         return {
           currentStep: state.currentStep,
-          data: restData,
+          data: {
+            ...state.data,
+            images: persistedImages,
+            documents: persistedDocuments,
+          },
         };
       },
       merge: (persistedState, currentState) => {
@@ -176,8 +186,6 @@ export const useListingFormStore = create<ListingFormStore>()(
           data: {
             ...currentState.data,
             ...persisted?.data,
-            images: [],
-            documents: [],
           },
         };
       },
