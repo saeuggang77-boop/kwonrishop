@@ -141,7 +141,9 @@ export default function EquipmentEditPage() {
     setUploading(true);
 
     try {
-      const uploadPromises = Array.from(files).map(async (file) => {
+      const { compressImage } = await import("@/lib/image-compress");
+      const uploadPromises = Array.from(files).map(async (rawFile) => {
+        const file = await compressImage(rawFile);
         const formData = new FormData();
         formData.append("file", file);
 

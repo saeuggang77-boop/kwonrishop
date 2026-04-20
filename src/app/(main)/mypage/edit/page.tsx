@@ -51,14 +51,16 @@ export default function ProfileEditPage() {
   }, [status, router]);
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage("파일 크기는 5MB 이하여야 합니다.");
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
+    if (rawFile.size > 20 * 1024 * 1024) {
+      setMessage("파일 크기는 20MB 이하여야 합니다.");
       return;
     }
     setUploading(true);
     try {
+      const { compressImage } = await import("@/lib/image-compress");
+      const file = await compressImage(rawFile);
       const fd = new FormData();
       fd.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: fd });

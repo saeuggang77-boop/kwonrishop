@@ -113,13 +113,18 @@ export default function ListingEditPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    const { compressImage } = await import("@/lib/image-compress");
+
     setUploading(true);
     try {
-      for (const file of Array.from(files)) {
-        if (file.size > 10 * 1024 * 1024) {
-          toast.error(`${file.name}은(는) 10MB를 초과합니다.`);
+      for (const rawFile of Array.from(files)) {
+        if (rawFile.size > 20 * 1024 * 1024) {
+          toast.error(`${rawFile.name}은(는) 20MB를 초과합니다.`);
           continue;
         }
+
+        // 브라우저에서 자동 압축 (Vercel 4.5MB request body 한도 대응)
+        const file = await compressImage(rawFile);
 
         const formData = new FormData();
         formData.append("file", file);
