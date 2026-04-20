@@ -7,7 +7,7 @@ import Image from "next/image";
 import { formatPhoneInput } from "@/lib/utils";
 
 export default function ProfileEditPage() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -145,9 +145,12 @@ export default function ProfileEditPage() {
       const data = await res.json();
 
       if (res.ok) {
+        // JWT 토큰 갱신 트리거 → Header 등 세션 기반 UI가 즉시 새 이름/이미지 반영
+        await update();
         setMessage("프로필이 수정되었습니다.");
         setTimeout(() => {
           router.push("/mypage");
+          router.refresh();
         }, 1000);
       } else {
         setMessage(data.error || "저장에 실패했습니다.");

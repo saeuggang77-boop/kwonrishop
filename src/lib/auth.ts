@@ -167,6 +167,8 @@ export const authOptions: NextAuthOptions = {
             return { ...token, id: null, role: null, withdrawn: true };
           }
           token.id = dbUser.id;
+          token.name = dbUser.name;
+          token.email = dbUser.email;
           token.role = dbUser.role;
           token.phone = dbUser.phone;
           token.roleSelected = !!dbUser.roleSelectedAt;
