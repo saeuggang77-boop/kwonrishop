@@ -242,7 +242,7 @@ export default function HomeClient({
                           <div className="text-xs text-muted font-semibold mb-1">업종 미지정</div>
                         )}
                         <h3 className="font-bold text-ink text-base md:text-lg tracking-tight mb-1.5 truncate">
-                          {shortAddr}
+                          {listing.storeName || shortAddr}
                         </h3>
                         <div className="text-xs text-muted mb-2.5">
                           {listing.areaPyeong && `${listing.areaPyeong}평`}

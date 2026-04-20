@@ -91,7 +91,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
             {listing.subCategory && <span> · {listing.subCategory.name}</span>}
           </div>
 
-          <h3 className="text-base font-bold text-ink truncate mb-1 tracking-tight">{shortAddress}</h3>
+          <h3 className="text-base font-bold text-ink truncate mb-1 tracking-tight">{listing.storeName || shortAddress}</h3>
 
           {/* 금액 영역 — 세리프 이탤릭 강세 + 대시 구분선 */}
           <div className="pt-3 mt-3 border-t border-dashed border-line-deep space-y-1.5">

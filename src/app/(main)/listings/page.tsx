@@ -629,7 +629,7 @@ function ListingsContent() {
                 })()}
               </div>
               <div className="p-3">
-                <p className="text-sm text-gray-600 truncate mb-1">{shortAddress}</p>
+                <p className="text-sm text-gray-600 truncate mb-1">{listing.storeName || shortAddress}</p>
                 <p className="text-sm">
                   <span className="text-gray-500">보증금/월세 </span>
                   <span className="font-semibold text-gray-900">
