@@ -280,23 +280,33 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 동일 상품 중복 결제 방어: 같은 상품에 이미 활성(PAID) 결제가 있으면 차단
-    const existingActive = await prisma.adPurchase.findFirst({
-      where: {
-        userId: session.user.id,
-        productId,
-        status: "PAID",
-        OR: [
-          { expiresAt: { gt: new Date() } },
-          { expiresAt: null },
-        ],
-      },
-    });
-    if (existingActive) {
-      return NextResponse.json(
-        { error: "이미 동일한 상품이 활성 상태입니다. 만료 후 다시 구매해주세요." },
-        { status: 409 }
-      );
+    // 시드 계정(데모용)은 중복 결제 방어 우회 — 같은 상품을 여러 매물에 부여하기 위함
+    const seedEmails = (process.env.SEED_SELLER_EMAILS || "")
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    const userEmail = session.user.email;
+    const isSeedAccount = !!userEmail && seedEmails.includes(userEmail.toLowerCase());
+
+    if (!isSeedAccount) {
+      // 동일 상품 중복 결제 방어: 같은 상품에 이미 활성(PAID) 결제가 있으면 차단
+      const existingActive = await prisma.adPurchase.findFirst({
+        where: {
+          userId: session.user.id,
+          productId,
+          status: "PAID",
+          OR: [
+            { expiresAt: { gt: new Date() } },
+            { expiresAt: null },
+          ],
+        },
+      });
+      if (existingActive) {
+        return NextResponse.json(
+          { error: "이미 동일한 상품이 활성 상태입니다. 만료 후 다시 구매해주세요." },
+          { status: 409 }
+        );
+      }
     }
 
     // 처리 중인(PENDING) 동일 상품 주문 정리
