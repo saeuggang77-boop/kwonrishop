@@ -33,6 +33,7 @@ interface Props {
   equipmentId?: string;
   onSkip: () => void;
   skipLabel?: string;
+  onBeforeNavigate?: () => void;
 }
 
 export default function AdProductInlineSelect({
@@ -42,6 +43,7 @@ export default function AdProductInlineSelect({
   equipmentId,
   onSkip,
   skipLabel = "나중에 하기",
+  onBeforeNavigate,
 }: Props) {
   const router = useRouter();
   const { data: session } = useSession();
@@ -104,7 +106,11 @@ export default function AdProductInlineSelect({
         });
         if (data.supplyPrice) params.set("supplyPrice", data.supplyPrice.toString());
         if (data.vatAmount) params.set("vatAmount", data.vatAmount.toString());
+        // 네비게이션을 먼저 시작한 뒤 store를 reset.
+        // 순서를 뒤집으면 부모(/sell/page.tsx)가 agreedToTerms=false를 감지해
+        // FairTradeAgreementModal로 순간 깜빡이며 보일 수 있음.
         router.push(`/payments/checkout?${params.toString()}`);
+        onBeforeNavigate?.();
       } else {
         toast.error(data.error || "구매 요청 중 오류가 발생했습니다.");
         setPurchasing(null);

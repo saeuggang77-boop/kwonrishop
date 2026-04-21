@@ -129,10 +129,9 @@ export default function Step7Confirm({ onPrev }: Props) {
 
       setRegisteredId(result.id);
       setShowSuccess(true);
-      // 등록 성공 시점에 폼 store 즉시 reset
-      // → 결제 진행·"나중에 하기"·중간 이탈 어느 경로로도 다음 매물 등록 시 fresh state
-      // (기존엔 "나중에 하기"에만 reset() 있어서, 결제 경로로 가면 store 찌꺼기 남아 다음 /sell 진입 시 Step7 복원됨)
-      reset();
+      // reset()은 성공 모달의 네비게이션 시점(나중에 하기 / 결제하기)에 실행.
+      // 여기서 바로 호출하면 agreedToTerms=false로 되돌려 부모(/sell/page.tsx)가
+      // FairTradeAgreementModal로 분기하면서 Step7Confirm을 언마운트 → 성공 모달 소실.
     } catch (err) {
       // 예외 발생 시 업로드된 이미지 정리
       await cleanupOrphanImages([...uploadedImageUrls, ...uploadedDocUrls]);
@@ -201,7 +200,8 @@ export default function Step7Confirm({ onPrev }: Props) {
               <AdProductInlineSelect
                 scope="LISTING"
                 listingId={registeredId}
-                onSkip={() => { reset(); router.push(`/listings/${registeredId}`); }}
+                onBeforeNavigate={reset}
+                onSkip={() => { router.push(`/listings/${registeredId}`); reset(); }}
                 skipLabel="나중에 하기 (내 매물로 이동)"
               />
             </div>
