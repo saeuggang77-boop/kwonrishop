@@ -26,6 +26,25 @@ const PERIODS: { key: PeriodKey; label: string; discount: string | null }[] = [
   { key: "12m", label: "12개월", discount: "-20%" },
 ];
 
+const SCOPE_COPY: Record<Scope, { title: string; sub: string }> = {
+  LISTING: {
+    title: "⚡ 빠른 매각을 원한다면, 지금 상단에 노출하세요",
+    sub: "상단 노출로 매수자 눈에 먼저 띄어야 빠르게 거래됩니다",
+  },
+  EQUIPMENT: {
+    title: "⚡ 빠른 판매를 원한다면, 지금 상단에 노출하세요",
+    sub: "상단 노출로 구매자 눈에 먼저 띄어야 빠르게 거래됩니다",
+  },
+  FRANCHISE: {
+    title: "⚡ 빠른 가맹점 모집을 원한다면, 지금 상단에 노출하세요",
+    sub: "상단 노출로 예비 창업자 눈에 먼저 띄어야 빠르게 상담 문의가 들어옵니다",
+  },
+  PARTNER: {
+    title: "⚡ 빠른 고객 유치를 원한다면, 지금 상단에 노출하세요",
+    sub: "상단 노출로 사장님들 눈에 먼저 띄어야 빠르게 의뢰가 들어옵니다",
+  },
+};
+
 interface Props {
   scope: Scope;
   listingId?: string;
@@ -143,10 +162,10 @@ export default function AdProductInlineSelect({
       {/* 헤더 */}
       <div className="text-center mb-4">
         <h3 className="text-base font-bold text-gray-900 mb-1">
-          💎 더 많은 고객에게 노출하세요
+          {SCOPE_COPY[scope].title}
         </h3>
         <p className="text-xs text-gray-500">
-          광고 상품 선택 시 결제 페이지로 이동합니다 · VAT 10% 별도
+          {SCOPE_COPY[scope].sub} · VAT 10% 별도
         </p>
       </div>
 

@@ -253,12 +253,6 @@ export default function FranchiseEditPage() {
         {/* 유료 구독 인라인 선택 (무료 등급일 때만) */}
         {brand.tier === null && (
           <div className="bg-green-50 border border-green-200 rounded-xl p-5">
-            <div className="mb-4">
-              <h4 className="text-sm font-semibold text-green-900 mb-1">💎 브랜드 노출을 강화하세요</h4>
-              <p className="text-xs text-green-700">
-                유료 구독 시 메인 노출, 전용 상세 페이지, 문의 접수 등 추가 기능을 이용할 수 있습니다.
-              </p>
-            </div>
             <AdProductInlineSelect
               scope="FRANCHISE"
               onSkip={() => router.push(`/franchise/${brand.id}`)}
