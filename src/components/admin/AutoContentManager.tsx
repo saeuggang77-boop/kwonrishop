@@ -667,7 +667,9 @@ export default function AutoContentManager() {
 
           <div className="rounded-md bg-blue-50 border border-blue-200 p-3 text-xs text-gray-700 space-y-1">
             <p>게시글마다 총 대화 수(댓글+글쓴이 답글)가 최소~최대 범위 내에서 랜덤 결정됩니다.</p>
-            <p>글쓴이가 설정된 비율만큼 답글에 참여하여 자연스러운 대화를 형성합니다.</p>
+            <p>글쓴이 답글 확률은 <b>각 댓글 하나하나에 글쓴이가 답글 달 확률</b>입니다 (전체 발화 비율 ≠ 이 값).</p>
+            <p>자연스러움을 위해 100%로 설정해도 <b>각 게시글마다 댓글의 30%는 답글 없이</b> 남겨집니다.</p>
+            <p>한 게시글의 댓글은 며칠에 걸쳐 산발적으로 쌓입니다 (한 번에 4개씩 분산 발행).</p>
             <p>요일별 자동 변동: 금·토 +20~30% | 월·화 -10~20% | 수·목·일 ±10%</p>
             <p>예시: 게시글 8개 × 대화 2~10개 = 하루 약 48개 (게시글별 편중 적용)</p>
           </div>
@@ -709,7 +711,7 @@ export default function AutoContentManager() {
               </div>
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">글쓴이 답글 비율 (최소~최대 %)</label>
+              <label className="block text-sm font-medium text-gray-700">글쓴이 답글 확률 (최소~최대 %)</label>
               <div className="flex items-center gap-2">
                 <input
                   type="number"
