@@ -123,6 +123,15 @@ export default function AutoContentManager() {
   const [createForm, setCreateForm] = useState({ title: "", content: "", category: "STARTUP" });
   const [recentlyGeneratedAfter, setRecentlyGeneratedAfter] = useState<string | null>(null);
   const [filterRecentOnly, setFilterRecentOnly] = useState(false);
+  // 트렌드 영감 원고 추가 모달
+  const [showTrendForm, setShowTrendForm] = useState(false);
+  const [trendForm, setTrendForm] = useState({
+    keyword: "",
+    count: 10,
+    source: "blog" as "blog" | "cafe",
+    category: "FREE",
+  });
+  const [generatingTrend, setGeneratingTrend] = useState(false);
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -219,6 +228,42 @@ export default function AutoContentManager() {
       toast.error("생성 중 오류가 발생했습니다");
     } finally {
       setGenerating(null);
+    }
+  };
+
+  const handleGenerateFromTrend = async () => {
+    if (!trendForm.keyword.trim()) {
+      toast.error("검색 키워드를 입력해주세요");
+      return;
+    }
+    setGeneratingTrend(true);
+    try {
+      const res = await fetch("/api/admin/auto-content/generate-from-trend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(trendForm),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        toast.success(data.message);
+        setShowTrendForm(false);
+        setTrendForm({ keyword: "", count: 10, source: "blog", category: "FREE" });
+        await refreshStats();
+        if (data.generatedAfter) {
+          setRecentlyGeneratedAfter(data.generatedAfter);
+          setFilterRecentOnly(true);
+          setShowPoolItems(true);
+          await loadPoolItems();
+        }
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "트렌드 원고 생성에 실패했습니다");
+      }
+    } catch (error) {
+      toast.error("트렌드 원고 생성 중 오류가 발생했습니다");
+    } finally {
+      setGeneratingTrend(false);
     }
   };
 
@@ -558,6 +603,103 @@ export default function AutoContentManager() {
                   className="bg-blue-600 text-white rounded-lg hover:bg-blue-700 px-4 py-2"
                 >
                   저장
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Trend Inspiration Modal */}
+      {showTrendForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">🌐 트렌드 영감 원고 추가</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              네이버 블로그/카페에서 검색어 관련 최근 글의 <b>제목과 요약만</b> 가져와 AI가 영감을 받고 표현은 100% 새로 작성합니다. 본문은 가져오지 않으므로 저작권 문제가 없습니다.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  검색 키워드 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={trendForm.keyword}
+                  onChange={(e) => setTrendForm({ ...trendForm, keyword: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="예: 카페 매매, 키오스크 후기, 권리금 협상"
+                />
+                <p className="text-xs text-gray-500 mt-1">시의성 있는 주제일수록 자연스러운 글이 나옵니다</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">검색 출처</label>
+                  <select
+                    value={trendForm.source}
+                    onChange={(e) => setTrendForm({ ...trendForm, source: e.target.value as "blog" | "cafe" })}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="blog">네이버 블로그</option>
+                    <option value="cafe">네이버 카페</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">생성 개수</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={30}
+                    value={trendForm.count}
+                    onChange={(e) => setTrendForm({ ...trendForm, count: Math.min(30, Math.max(1, parseInt(e.target.value) || 1)) })}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">1~30개</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">카테고리</label>
+                <select
+                  value={trendForm.category}
+                  onChange={(e) => setTrendForm({ ...trendForm, category: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  {CATEGORY_OPTIONS.map((cat) => (
+                    <option key={cat.key} value={cat.key}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="rounded-md bg-amber-50 border border-amber-200 p-3 text-xs text-gray-700 space-y-1">
+                <p>📌 <b>저작권 회피 동작</b></p>
+                <p>• 네이버에서 본문은 절대 가져오지 않습니다 (제목+요약만)</p>
+                <p>• AI는 영감만 받고 100% 새로운 표현으로 작성합니다</p>
+                <p>• 생성된 원고는 풀에 저장되며, 검수 후 발행됩니다</p>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    setShowTrendForm(false);
+                    setTrendForm({ keyword: "", count: 10, source: "blog", category: "FREE" });
+                  }}
+                  disabled={generatingTrend}
+                  className="border border-gray-300 rounded-lg hover:bg-gray-50 px-4 py-2 disabled:opacity-50"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleGenerateFromTrend}
+                  disabled={generatingTrend || !trendForm.keyword.trim()}
+                  className="bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 px-4 py-2 disabled:opacity-50"
+                >
+                  {generatingTrend ? "생성 중... (1~2분 소요)" : "원고 생성"}
                 </button>
               </div>
             </div>
@@ -969,6 +1111,16 @@ export default function AutoContentManager() {
               className="text-sm border border-gray-300 rounded-lg hover:bg-gray-50 px-4 py-2"
             >
               원고 추가
+            </button>
+          )}
+          {showPoolItems && (
+            <button
+              onClick={() => setShowTrendForm(true)}
+              className="text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 px-4 py-2 flex items-center gap-1"
+              title="네이버 검색 트렌드를 영감으로 받아 자연스러운 원고 생성"
+            >
+              <span>🌐</span>
+              <span>트렌드 영감 추가</span>
             </button>
           )}
           {showPoolItems && selectedPoolIds.size > 0 && (

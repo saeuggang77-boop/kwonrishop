@@ -734,4 +734,83 @@ ${PERSONALITY_PROMPTS[personality]}
 {"content": "답글내용"}`;
 }
 
+/**
+ * 트렌드 영감 기반 게시글 생성 프롬프트
+ * - 네이버 검색 API의 title+description만 활용 (본문 미사용)
+ * - 영감만 받고 표현은 100% 새로 작성 (저작권 회피 + 표절 검출 회피)
+ */
+export function getTrendInspiredPostsPrompt(
+  personality: GhostPersonality,
+  count: number,
+  searchKeyword: string,
+  trendItems: Array<{ title: string; description: string; postdate?: string }>,
+  categories?: string[]
+): string {
+  const titleGuide = TITLE_LENGTH_GUIDE[personality];
+
+  // 영감 자료 — 너무 많으면 모방 위험, 30개 정도가 적정
+  const inspirationSection = trendItems
+    .slice(0, 30)
+    .map((item, i) => {
+      const date = item.postdate ? ` (${item.postdate.slice(0, 4)}.${item.postdate.slice(4, 6)})` : "";
+      return `${i + 1}.${date} 제목: ${item.title}\n   요약: ${item.description}`;
+    })
+    .join("\n");
+
+  const cats = categories || Array.from({ length: count }, () => "FREE");
+  const styleAssignments = Array.from({ length: count }, (_, i) => {
+    const cat = cats[i] || "FREE";
+    const catInfo = CATEGORY_TOPICS[cat] || CATEGORY_TOPICS.FREE;
+    return `[글 ${i + 1}] 카테고리: ${catInfo.name}
+${getRandomStyle()}`;
+  });
+  const styleSection = styleAssignments.join("\n\n");
+
+  return `${MASTER_SYSTEM_PROMPT}
+
+${PERSONALITY_PROMPTS[personality]}
+
+${titleGuide}
+
+🌐 트렌드 영감 자료 (검색어: "${searchKeyword}")
+아래는 네이버 블로그/카페에서 최근 사람들이 ${searchKeyword} 관련해 어떤 주제로 글을 쓰고 있는지 파악하기 위한 자료입니다.
+이 자료에서 **요즘 화제/관심사/트렌드만** 파악하고, 새 글은 **본인의 일상 경험인 것처럼** 완전히 새로 작성하세요.
+
+${inspirationSection}
+
+🚫🚫🚫 절대 금지 (저작권 + 표절 회피 — 가장 중요):
+1. 위 자료의 표현/문구를 그대로 가져오지 말 것 — 100% 본인 말로 새로 쓰기
+2. 자료에 나온 인명/지명/상호명/연락처/숫자/구체적 사례를 그대로 옮기지 말 것
+   - 지명: 자료에 "강남 신사동" 나왔다면 다른 지역으로 (예: "분당 야탑동")
+   - 상호: 자료에 "스타벅스 강남점" 나왔다면 일반 표현으로 (예: "근처 카페")
+   - 숫자: 자료의 가격/매출 그대로 옮기지 말 것 — 본인이 본 다른 케이스로
+3. 자료의 글쓴이 시점(부동산 중개사 등)을 그대로 차용하지 말 것 — 권리샵의 일반 사장/예비 창업자 시점으로
+4. 자료를 **요약**하거나 **재구성**하지 말 것 — 영감만 받고 새 주제·새 일화 창작
+5. 한 글에 여러 자료를 짜깁기하지 말 것 — 본인 한 사람의 일관된 경험담으로
+
+✅ 권장 작성 태도:
+- 자료를 읽고 "아, 요즘 이런 게 화제구나" 정도만 파악
+- 그 화제와 관련된 **본인의(= 권리샵 사장님의) 일상 한 토막**을 떠올린 것처럼 작성
+- 자료에 없는 본인만의 디테일 추가 (예: 그날 날씨, 손님 한마디, 잠깐 고민, 동료 사장과의 짧은 대화)
+- 결론 없는 일상 푸념도 OK (실유저 게시판은 결론 없음이 자연스러움)
+
+본문은 최소 150자 이상 작성하세요.
+
+🔥 가장 중요: 각 글은 완전히 다른 사람이 쓴 것처럼 보여야 합니다!
+- 글의 구조/길이/톤/줄바꿈 패턴 모두 달라야 함
+- "- " 하이픈 리스트 형식 절대 금지
+
+각 글의 카테고리와 스타일:
+
+${styleSection}
+
+${count}개의 게시글을 생성해주세요.
+
+🚫🚫🚫 반드시 존댓말만 사용하세요. 반말 사용 시 결과물은 폐기됩니다.
+문장 끝은 반드시 "~요", "~네요", "~어요", "~습니다", "~인가요?" 등 존댓말로 끝내야 합니다.
+
+반드시 아래 JSON 배열 형식으로만 반환하세요 (다른 텍스트 없이):
+[{"title": "제목", "content": "내용"}]`;
+}
+
 export { MASTER_SYSTEM_PROMPT, PERSONALITY_PROMPTS, COMMENT_SYSTEM_PROMPT };
