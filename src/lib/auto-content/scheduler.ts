@@ -308,8 +308,9 @@ export async function buildConversationThreadPlan(params: {
   const authorName = author.name || "익명";
   const authorPersonality = author.ghostPersonality;
 
-  // 2. 댓글러 선정 (2~4명)
-  const commenterCount = Math.max(2, Math.min(4, Math.floor(threadSize / 2)));
+  // 2. 댓글러 선정 (1~2명) — 한 cron 호출당 적게 만들고, 다음 cron에서 점진적으로 누적
+  // 자연스러운 게시판은 댓글이 며칠에 걸쳐 산발적으로 달림. 한 번에 4명이 들이닥치는 건 봇 티 남.
+  const commenterCount = Math.max(1, Math.min(2, Math.floor(threadSize / 2) || 1));
   const commenters = await getRandomGhostUsers(commenterCount, undefined, post.authorId);
   if (commenters.length === 0) throw new Error("No commenters available");
 
@@ -342,11 +343,21 @@ export async function buildConversationThreadPlan(params: {
 
   if (topLevel.length === 0) return [];
 
-  // 5. 글쓴이 답글 (authorReplyRate% 확률로 각 댓글에 답글)
+  // 5. 글쓴이 답글 (authorReplyRate% 확률 + 답글 없는 댓글 30% 강제 보장)
+  // 자연스러운 게시판: 모든 댓글에 글쓴이가 답글 다는 건 부자연스러움.
+  // 항상 최소 30%(최소 1개)는 답글 없이 그대로 둠.
   const planMessages: ThreadPlanMessage[] = [...topLevel];
   const authorReplyIndices: number[] = []; // 어떤 topLevel 인덱스에 답글 달렸는지
 
+  // 답글 안 달 인덱스 강제 선정 (최소 1개 또는 30% 중 큰 값)
+  const skipCount = Math.max(1, Math.ceil(topLevel.length * 0.3));
+  const skipIndices = new Set<number>();
+  while (skipIndices.size < Math.min(skipCount, topLevel.length)) {
+    skipIndices.add(Math.floor(Math.random() * topLevel.length));
+  }
+
   for (let i = 0; i < topLevel.length; i++) {
+    if (skipIndices.has(i)) continue; // 강제 답글 미생성
     if (Math.random() * 100 > authorReplyRate) continue;
     const target = topLevel[i];
     const replyContent = await generateAuthorReplyText({

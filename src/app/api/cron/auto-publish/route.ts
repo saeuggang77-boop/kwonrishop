@@ -176,6 +176,7 @@ export async function GET(request: NextRequest) {
       const pendingCountMap = new Map(pendingCommentCounts.map(c => [c.postId, c._count]));
 
       // 게시글별 ID 기반 결정론적 목표로 대화가 부족한 게시글 선별
+      const oneHourAgoMs = Date.now() - 60 * 60 * 1000;
       const needThreads = existingPosts
         .map(post => ({
           ...post,
@@ -183,12 +184,23 @@ export async function GET(request: NextRequest) {
           target: getPostConversationTarget(post.id, config.commentsPerPostMin ?? 2, config.commentsPerPostMax ?? 10),
         }))
         .filter(p => p.current < p.target)
-        .sort((a, b) => (b.target - b.current) - (a.target - a.current))
+        // 정렬 우선순위: (1) 1시간 내 + 댓글 0개인 새 글 최우선 (죽은 게시판 인상 해소)
+        // (2) 그 외는 부족분이 큰 순서
+        .sort((a, b) => {
+          const aFresh = a.createdAt.getTime() >= oneHourAgoMs && a.current === 0 ? 1 : 0;
+          const bFresh = b.createdAt.getTime() >= oneHourAgoMs && b.current === 0 ? 1 : 0;
+          if (aFresh !== bFresh) return bFresh - aFresh;
+          return (b.target - b.current) - (a.target - a.current);
+        })
         .slice(0, Math.min(threadQuota, 3)); // 한 번에 최대 3개 게시글
+
+      // 한 cron 호출에서 한 글에 만드는 댓글 수 캡
+      // 작아야 며칠에 걸쳐 자연스럽게 댓글이 쌓임 (어제 PendingComment 합산 fix 덕분에 다음 cron이 알아서 채움)
+      const PER_CRON_THREAD_CAP = 4;
 
       for (const post of needThreads) {
         try {
-          const remaining = post.target - post.current;
+          const remaining = Math.min(post.target - post.current, PER_CRON_THREAD_CAP);
           // 글쓴이 답글 비율: min~max% 사이 랜덤
           const authorReplyRate = (config.authorReplyRateMin ?? 20) +
             Math.floor(Math.random() * ((config.authorReplyRateMax ?? 60) - (config.authorReplyRateMin ?? 20) + 1));
