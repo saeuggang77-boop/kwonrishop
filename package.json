@@ -3,13 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/db-banner.cjs",
     "dev": "prisma generate && next dev",
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "db:reset": "node scripts/safe-db-cmd.cjs reset",
+    "db:push": "node scripts/safe-db-cmd.cjs push",
+    "db:seed": "node scripts/safe-db-cmd.cjs seed",
+    "db:migrate-deploy": "node scripts/safe-db-cmd.cjs migrate-deploy",
+    "db:migrate-dev": "node scripts/safe-db-cmd.cjs migrate-dev",
+    "db:studio": "node scripts/safe-db-cmd.cjs studio",
+    "db:execute": "node scripts/safe-db-cmd.cjs db-execute"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",
