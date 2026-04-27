@@ -754,18 +754,15 @@ function ListingsContent() {
           />
         )
       ) : loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 bg-cream rounded-2xl border border-line overflow-hidden">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-200 animate-pulse">
-              <div className="aspect-[4/3] bg-gray-200" />
-              <div className="p-3 space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
-                <div className="h-4 bg-gray-200 rounded w-1/2" />
-                <div className="h-4 bg-gray-200 rounded w-2/3" />
-                <div className="flex gap-2 mt-2">
-                  <div className="h-3 bg-gray-200 rounded w-12" />
-                  <div className="h-3 bg-gray-200 rounded w-12" />
-                </div>
+            <div key={i} className="flex gap-4 px-5 py-4 border-b border-line animate-pulse">
+              <div className="flex-shrink-0 w-[100px] h-[100px] md:w-[130px] md:h-[130px] bg-gray-200 rounded-2xl" />
+              <div className="flex-1 space-y-2 py-2">
+                <div className="h-4 bg-gray-200 rounded w-1/3" />
+                <div className="h-3 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-2/3" />
+                <div className="h-6 bg-gray-200 rounded w-1/2" />
               </div>
             </div>
           ))}
@@ -795,11 +792,11 @@ function ListingsContent() {
           </div>
         </div>
       ) : (
-        <div className={gridMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" : "flex flex-col gap-3"}>
+        <div className={gridMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-x-6 bg-cream rounded-2xl border border-line overflow-hidden" : "flex flex-col"}>
           {listings.map((listing, index) => (
             <React.Fragment key={listing.id}>
               {index === 5 && gridMode === "grid" && (
-                <div className="col-span-2 md:col-span-3 lg:col-span-4">
+                <div className="md:col-span-2 px-5 py-4 border-b border-line">
                   <ListingInfeedPromo />
                 </div>
               )}

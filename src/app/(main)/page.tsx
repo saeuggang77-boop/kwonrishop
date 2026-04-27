@@ -89,5 +89,50 @@ export default async function HomePage() {
     })
     .sort((a, b) => (tierOrder[a.featuredTier] ?? 3) - (tierOrder[b.featuredTier] ?? 3));
 
-  return <HomeClient initialListings={listings} />;
+  // 추천 프랜차이즈 (avgRevenue 기준 상위, 이미지 X 정보 사용)
+  const franchises = await prisma.franchiseBrand.findMany({
+    where: { avgRevenue: { not: null, gt: 0 } },
+    orderBy: { avgRevenue: "desc" },
+    take: 4,
+    select: {
+      id: true,
+      brandName: true,
+      industry: true,
+      avgRevenue: true,
+      franchiseFee: true,
+      totalStores: true,
+    },
+  });
+
+  // 공지사항 + 이용가이드 (각 5개)
+  const [notices, guides] = await Promise.all([
+    prisma.post.findMany({
+      where: { tag: "공지" },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, title: true, createdAt: true },
+    }),
+    prisma.post.findMany({
+      where: { tag: "이용가이드" },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, title: true, createdAt: true },
+    }),
+  ]);
+
+  return (
+    <HomeClient
+      initialListings={listings}
+      franchises={franchises.map((f) => ({
+        id: f.id,
+        brandName: f.brandName,
+        industry: f.industry,
+        avgRevenue: f.avgRevenue,
+        franchiseFee: f.franchiseFee,
+        totalStores: f.totalStores,
+      }))}
+      notices={notices.map((n) => ({ id: n.id, title: n.title, createdAt: n.createdAt.toISOString() }))}
+      guides={guides.map((g) => ({ id: g.id, title: g.title, createdAt: g.createdAt.toISOString() }))}
+    />
+  );
 }

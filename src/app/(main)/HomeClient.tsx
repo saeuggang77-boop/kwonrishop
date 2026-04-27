@@ -31,8 +31,26 @@ interface Listing {
   _count?: { documents: number };
 }
 
+interface FranchiseSummary {
+  id: string;
+  brandName: string;
+  industry: string | null;
+  avgRevenue: number | null;
+  franchiseFee: number | null;
+  totalStores: number | null;
+}
+
+interface NoticeItem {
+  id: string;
+  title: string;
+  createdAt: string;
+}
+
 interface HomeClientProps {
   initialListings: Listing[];
+  franchises?: FranchiseSummary[];
+  notices?: NoticeItem[];
+  guides?: NoticeItem[];
 }
 
 const CATEGORY_ITEMS = [
@@ -95,6 +113,9 @@ const CATEGORY_ITEMS = [
 
 export default function HomeClient({
   initialListings,
+  franchises = [],
+  notices = [],
+  guides = [],
 }: HomeClientProps) {
   const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -181,7 +202,7 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* ===== 3. 추천 매물 통합 ===== */}
+      {/* ===== 3. 프리미엄 매물 (광고) ===== */}
       <section className="py-16 md:py-20 px-6 bg-cream">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-10 flex-wrap gap-3">
@@ -190,13 +211,23 @@ export default function HomeClient({
                 <span className="w-6 h-px bg-terra-500" />
                 Featured Listings
               </div>
-              <h2 className="font-extrabold text-green-700 tracking-tight text-2xl md:text-3xl">
-                오늘의 <span className="font-light text-terra-500">추천 매물</span>
-              </h2>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h2 className="font-extrabold text-green-700 tracking-tight text-2xl md:text-3xl">
+                  프리미엄 <span className="font-light text-terra-500">매물</span>
+                </h2>
+                <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-bold tracking-wider text-muted bg-cream-elev border border-line rounded-full">
+                  AD
+                </span>
+              </div>
             </div>
-            <Link href="/listings" className="text-sm font-bold text-green-700 hover:text-terra-500 transition-colors">
-              전체 매물 →
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/pricing" className="text-sm text-muted hover:text-terra-500 transition-colors">
+                광고 등록 →
+              </Link>
+              <Link href="/listings" className="text-sm font-bold text-green-700 hover:text-terra-500 transition-colors">
+                전체 매물 →
+              </Link>
+            </div>
           </div>
 
           {vipListings.length > 0 && (
@@ -293,8 +324,32 @@ export default function HomeClient({
             </div>
           )}
 
+          {/* 빠른 필터 탭 */}
           {otherListings.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex gap-1 mb-2 -mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto border-b border-line scrollbar-hide">
+              <Link href="/listings" className="px-4 py-3 text-sm font-extrabold text-ink whitespace-nowrap border-b-2 border-ink">
+                프리미엄
+              </Link>
+              <Link href="/listings?keyword=서울" className="px-4 py-3 text-sm font-semibold text-muted hover:text-ink whitespace-nowrap border-b-2 border-transparent">
+                서울
+              </Link>
+              <Link href="/listings?keyword=경기" className="px-4 py-3 text-sm font-semibold text-muted hover:text-ink whitespace-nowrap border-b-2 border-transparent">
+                경기
+              </Link>
+              <Link href="/listings?keyword=부산" className="px-4 py-3 text-sm font-semibold text-muted hover:text-ink whitespace-nowrap border-b-2 border-transparent">
+                부산·경남
+              </Link>
+              <Link href="/listings?keyword=대구" className="px-4 py-3 text-sm font-semibold text-muted hover:text-ink whitespace-nowrap border-b-2 border-transparent">
+                대구·경북
+              </Link>
+              <Link href="/listings" className="px-4 py-3 text-sm font-semibold text-muted hover:text-ink whitespace-nowrap border-b-2 border-transparent">
+                그 외
+              </Link>
+            </div>
+          )}
+
+          {otherListings.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 -mx-5 md:mx-0 bg-cream rounded-2xl md:border md:border-line overflow-hidden">
               {otherListings.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
               ))}
@@ -318,6 +373,55 @@ export default function HomeClient({
           </p>
         </div>
       </section>
+
+      {/* ===== 4.5. 추천 프랜차이즈 ===== */}
+      {franchises.length > 0 && (
+        <section className="py-16 md:py-20 px-6 bg-cream">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
+              <div>
+                <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                  <span className="w-6 h-px bg-terra-500" />
+                  Recommended Brands
+                </div>
+                <h2 className="font-extrabold text-green-700 tracking-tight text-2xl md:text-3xl">
+                  추천 <span className="font-light text-terra-500">프랜차이즈</span>
+                </h2>
+                <p className="text-sm text-muted mt-2">검증된 가맹 브랜드 모음</p>
+              </div>
+              <Link href="/franchise" className="text-sm font-bold text-green-700 hover:text-terra-500 transition-colors">
+                전체 보기 →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {franchises.map((f) => (
+                <Link
+                  key={f.id}
+                  href={`/franchise/${f.id}`}
+                  className="bg-white rounded-2xl border border-line overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all"
+                >
+                  <div className="h-28 md:h-36 bg-gradient-to-br from-green-100 to-terra-100 flex items-center justify-center">
+                    <span className="text-3xl md:text-4xl font-extrabold text-green-700">
+                      {f.brandName.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="p-4">
+                    {f.industry && (
+                      <div className="text-[11px] text-terra-500 font-bold mb-1">{f.industry}</div>
+                    )}
+                    <div className="font-extrabold text-ink text-sm md:text-base mb-2 truncate">{f.brandName}</div>
+                    <div className="text-[12px] text-muted leading-relaxed space-y-0.5">
+                      {f.avgRevenue && <div>월매출 약 {f.avgRevenue.toLocaleString()}만</div>}
+                      {f.franchiseFee && <div>가맹비 {f.franchiseFee.toLocaleString()}만</div>}
+                      {f.totalStores && <div>전국 {f.totalStores.toLocaleString()}개점</div>}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ===== 5. 창업 리소스 3카드 ===== */}
       <section className="py-16 md:py-20 px-6 bg-cream">
@@ -375,6 +479,81 @@ export default function HomeClient({
           </div>
         </div>
       </section>
+
+      {/* ===== 6. 공지사항 + 이용가이드 ===== */}
+      {(notices.length > 0 || guides.length > 0) && (
+        <section className="py-16 md:py-20 px-6 bg-cream-elev/40">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <div className="text-xs font-bold text-terra-500 tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
+                <span className="w-6 h-px bg-terra-500" />
+                Notices &amp; Guides
+              </div>
+              <h2 className="font-extrabold text-green-700 tracking-tight text-2xl md:text-3xl">
+                공지사항 · <span className="font-light text-terra-500">이용가이드</span>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {notices.length > 0 && (
+                <div className="bg-cream rounded-2xl border border-line p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-bold text-ink text-base">📢 공지사항</h3>
+                    <Link href="/community?tag=공지" className="text-xs text-muted hover:text-green-700 font-semibold">
+                      더 보기 →
+                    </Link>
+                  </div>
+                  <ul className="divide-y divide-line">
+                    {notices.map((n) => (
+                      <li key={n.id}>
+                        <Link
+                          href={`/community/${n.id}`}
+                          className="flex items-center gap-2 py-2.5 text-sm hover:text-green-700 transition-colors"
+                        >
+                          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-terra-100 text-terra-500 flex-shrink-0">
+                            공지
+                          </span>
+                          <span className="flex-1 truncate">{n.title}</span>
+                          <span className="text-[11px] text-muted flex-shrink-0">
+                            {n.createdAt.slice(5, 10).replace("-", ".")}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {guides.length > 0 && (
+                <div className="bg-cream rounded-2xl border border-line p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-bold text-ink text-base">📘 이용가이드</h3>
+                    <Link href="/community?tag=이용가이드" className="text-xs text-muted hover:text-green-700 font-semibold">
+                      더 보기 →
+                    </Link>
+                  </div>
+                  <ul className="divide-y divide-line">
+                    {guides.map((g) => (
+                      <li key={g.id}>
+                        <Link
+                          href={`/community/${g.id}`}
+                          className="flex items-center gap-2 py-2.5 text-sm hover:text-green-700 transition-colors"
+                        >
+                          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-green-100 text-green-700 flex-shrink-0">
+                            가이드
+                          </span>
+                          <span className="flex-1 truncate">{g.title}</span>
+                          <span className="text-[11px] text-muted flex-shrink-0">
+                            {g.createdAt.slice(5, 10).replace("-", ".")}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }
