@@ -149,22 +149,37 @@ export async function GET(request: NextRequest) {
         take: 20,
       });
 
-      // 각 게시글의 총 댓글+답글 수 집계
-      const allCommentCounts = await prisma.comment.groupBy({
-        by: ["postId"],
-        where: {
-          author: { isGhost: true },
-          postId: { in: existingPosts.map(p => p.id) },
-        },
-        _count: true,
-      });
+      // 각 게시글의 총 댓글+답글 수 집계 (게시 완료 + 예약 대기 합산)
+      // PendingComment를 포함하지 않으면 같은 글에 cron이 반복 호출되며 누적되는 버그 발생
+      const postIds = existingPosts.map(p => p.id);
+
+      const [allCommentCounts, pendingCommentCounts] = await Promise.all([
+        prisma.comment.groupBy({
+          by: ["postId"],
+          where: {
+            author: { isGhost: true },
+            postId: { in: postIds },
+          },
+          _count: true,
+        }),
+        prisma.pendingComment.groupBy({
+          by: ["postId"],
+          where: {
+            postId: { in: postIds },
+            status: { in: ["PENDING", "PROCESSING"] },
+          },
+          _count: true,
+        }),
+      ]);
+
       const totalCountMap = new Map(allCommentCounts.map(c => [c.postId, c._count]));
+      const pendingCountMap = new Map(pendingCommentCounts.map(c => [c.postId, c._count]));
 
       // 게시글별 ID 기반 결정론적 목표로 대화가 부족한 게시글 선별
       const needThreads = existingPosts
         .map(post => ({
           ...post,
-          current: totalCountMap.get(post.id) || 0,
+          current: (totalCountMap.get(post.id) || 0) + (pendingCountMap.get(post.id) || 0),
           target: getPostConversationTarget(post.id, config.commentsPerPostMin ?? 2, config.commentsPerPostMax ?? 10),
         }))
         .filter(p => p.current < p.target)
