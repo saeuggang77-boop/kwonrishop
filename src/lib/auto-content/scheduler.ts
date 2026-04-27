@@ -26,26 +26,43 @@ const BANNED_SUBSTRINGS = [
   "저희 매장도 비슷",
   "저희도 요즘",
   "저희도 지금",
+  "저희도 작년",
+  "저희도 그런",
   "대박이네요!!",
   "축하드려요!!",
+  // 클리셰 숫자 사례 + 반복되는 장비 언급 (실측 데이터 기반)
+  "전기세 80만원",
+  "전기세 120만원",
+  "전기세 100만원",
+  "에어컴프레서 중고로 들였",
+  "에어컴프레셔 중고로 들였",
+  "용접기 중고로 들였",
+  "제빙기 중고로 들였",
+  // 줄바꿈 잘게 자르는 패턴 직접 차단
+  "/  / ",
 ];
 
 const COMMENTS_BY_ARCHETYPE_ORDER: CommenterArchetype[][] = [
-  // 2명
-  ["QUESTION", "EXPERIENCE"],
-  ["OUTSIDER", "EXPERIENCE"],
+  // 2명 — LURKER 1개 보장
+  ["LURKER", "QUESTION"],
+  ["LURKER", "EXPERIENCE"],
   ["LURKER", "CONTRARIAN"],
-  ["EXPERIENCE", "TANGENT"],
-  // 3명
-  ["QUESTION", "EXPERIENCE", "LURKER"],
-  ["OUTSIDER", "TIPSTER", "CONTRARIAN"],
-  ["EXPERIENCE", "QUESTION", "TANGENT"],
+  ["LURKER", "TANGENT"],
+  ["OUTSIDER", "LURKER"],
+  ["EXPERIENCE", "LURKER"],
+  // 3명 — 항상 LURKER 1명 포함
+  ["LURKER", "QUESTION", "EXPERIENCE"],
+  ["LURKER", "OUTSIDER", "TIPSTER"],
+  ["LURKER", "CONTRARIAN", "EXPERIENCE"],
+  ["LURKER", "TANGENT", "QUESTION"],
   ["LURKER", "EXPERIENCE", "OUTSIDER"],
-  // 4명
-  ["QUESTION", "EXPERIENCE", "CONTRARIAN", "LURKER"],
-  ["OUTSIDER", "QUESTION", "TIPSTER", "TANGENT"],
-  ["EXPERIENCE", "LURKER", "CONTRARIAN", "OUTSIDER"],
-  ["TIPSTER", "QUESTION", "TANGENT", "EXPERIENCE"],
+  // 4명 — LURKER 1~2명 포함 (자연스러운 게시판은 짧은 리액션이 절반)
+  ["LURKER", "QUESTION", "EXPERIENCE", "CONTRARIAN"],
+  ["LURKER", "LURKER", "OUTSIDER", "EXPERIENCE"],
+  ["LURKER", "OUTSIDER", "QUESTION", "TIPSTER"],
+  ["LURKER", "TANGENT", "EXPERIENCE", "CONTRARIAN"],
+  ["LURKER", "LURKER", "QUESTION", "EXPERIENCE"],
+  ["LURKER", "EXPERIENCE", "OUTSIDER", "TANGENT"],
 ];
 
 function pickArchetypeSet(count: number): CommenterArchetype[] {
