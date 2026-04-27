@@ -43,6 +43,9 @@ const BANNED_SUBSTRINGS = [
 ];
 
 const COMMENTS_BY_ARCHETYPE_ORDER: CommenterArchetype[][] = [
+  // 1명 — LURKER 비중 ↑ (38%) + 다양한 톤
+  ["LURKER"], ["LURKER"], ["LURKER"],
+  ["QUESTION"], ["EXPERIENCE"], ["OUTSIDER"], ["TANGENT"], ["CONTRARIAN"],
   // 2명 — LURKER 1개 보장
   ["LURKER", "QUESTION"],
   ["LURKER", "EXPERIENCE"],
@@ -349,8 +352,12 @@ export async function buildConversationThreadPlan(params: {
   const planMessages: ThreadPlanMessage[] = [...topLevel];
   const authorReplyIndices: number[] = []; // 어떤 topLevel 인덱스에 답글 달렸는지
 
-  // 답글 안 달 인덱스 강제 선정 (최소 1개 또는 30% 중 큰 값)
-  const skipCount = Math.max(1, Math.ceil(topLevel.length * 0.3));
+  // 답글 안 달 인덱스 선정
+  // - topLevel 1~2개: 30% 확률로 1개 skip (강제 skip 시 글쓴이 답글이 0이 되어 비율 추락)
+  // - topLevel 3개+: 30% 강제 skip (최소 1개)
+  const skipCount = topLevel.length <= 2
+    ? (Math.random() < 0.3 ? 1 : 0)
+    : Math.max(1, Math.ceil(topLevel.length * 0.3));
   const skipIndices = new Set<number>();
   while (skipIndices.size < Math.min(skipCount, topLevel.length)) {
     skipIndices.add(Math.floor(Math.random() * topLevel.length));
