@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import PushPromptCard from "@/components/PushPromptCard";
 
 type RoleOption = {
   value: "BUYER" | "SELLER" | "FRANCHISE" | "PARTNER";
@@ -244,6 +245,15 @@ function SelectRoleContent() {
               </span>
             </button>
           ))}
+        </div>
+
+        {/* 푸시 알림 권한 유도 카드 (가입 직후 자연스러운 시점) */}
+        <div className="mt-6">
+          <PushPromptCard
+            accentColor="green"
+            customTitle="매물 문의 즉시 알림 받기"
+            customDescription="채팅·댓글·결제, 1초라도 빠른 응답이 거래로 이어집니다"
+          />
         </div>
 
         {/* Footer */}
