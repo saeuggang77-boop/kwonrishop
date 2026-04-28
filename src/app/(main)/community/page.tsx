@@ -7,6 +7,10 @@ import Link from "next/link";
 
 const TAGS = ["전체", "공지", "자유게시판", "양도후기", "사이트이용문의"];
 
+const NEW_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+const isNewPost = (createdAt: string) =>
+  Date.now() - new Date(createdAt).getTime() < NEW_THRESHOLD_MS;
+
 interface Post {
   id: string;
   title: string;
@@ -123,9 +127,14 @@ function CommunityContent() {
                   </span>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-ink truncate">
-                    {post.title}
-                    {post.tag === "사이트이용문의" && <span className="ml-1.5 text-muted">🔒</span>}
+                  <h3 className="text-sm font-semibold text-ink flex items-center gap-1.5 min-w-0">
+                    <span className="truncate">{post.title}</span>
+                    {isNewPost(post.createdAt) && (
+                      <span className="bg-terra-500 text-cream text-[10px] px-1.5 leading-4 rounded font-extrabold tracking-wider shrink-0">
+                        NEW
+                      </span>
+                    )}
+                    {post.tag === "사이트이용문의" && <span className="text-muted shrink-0">🔒</span>}
                   </h3>
                   <div className="flex items-center gap-3 mt-1.5 text-xs text-muted">
                     <span className="font-medium">{post.author.name || "익명"}</span>
