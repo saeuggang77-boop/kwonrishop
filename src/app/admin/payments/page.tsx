@@ -146,8 +146,32 @@ export default function AdminPaymentsPage() {
     return `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
   }
 
-  function targetName(p: Payment) {
-    return p.listing?.storeName || p.equipment?.title || "-";
+  function renderTarget(p: Payment) {
+    if (p.listing) {
+      return (
+        <Link
+          href={`/listings/${p.listing.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-green-700 hover:underline"
+        >
+          {p.listing.storeName || "(이름 없음)"}
+        </Link>
+      );
+    }
+    if (p.equipment) {
+      return (
+        <Link
+          href={`/equipment/${p.equipment.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-green-700 hover:underline"
+        >
+          {p.equipment.title}
+        </Link>
+      );
+    }
+    return <span className="text-gray-400">-</span>;
   }
 
   return (
@@ -303,7 +327,7 @@ export default function AdminPaymentsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-gray-700 max-w-[200px] truncate">
-                      {targetName(p)}
+                      {renderTarget(p)}
                     </td>
                     <td className="px-4 py-3 text-right font-semibold text-gray-900 whitespace-nowrap">
                       {p.amount.toLocaleString()}원
