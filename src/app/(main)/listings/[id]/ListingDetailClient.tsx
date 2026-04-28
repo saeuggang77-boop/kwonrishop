@@ -160,6 +160,8 @@ export default function ListingDetailClient() {
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+  const isManualScrollRef = useRef(false);
+  const manualScrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setError(false);
@@ -298,15 +300,61 @@ export default function ListingDetailClient() {
     }
   }, [filteredImages.length]);
 
-  // Tab change handler with scroll
+  // Tab change handler: anchor scroll to corresponding section
   const handleDetailTabChange = useCallback((tab: "overview" | "detail" | "location" | "review") => {
     setActiveDetailTab(tab);
-    // 탭바 위치로 부드러운 스크롤
-    const tabBar = document.getElementById('detail-tab-bar');
-    if (tabBar) {
-      const top = tabBar.getBoundingClientRect().top + window.scrollY - 56; // 헤더 높이
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+    const target = document.getElementById(`section-${tab}`);
+    if (!target) return;
+    const headerHeight = 56; // 모바일 헤더 높이
+    const stickyTabHeight = 48; // sticky 탭 바 높이
+    const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - stickyTabHeight - 8;
+    // IntersectionObserver의 자동 활성화를 잠시 차단 (사용자 클릭 의도 보호)
+    isManualScrollRef.current = true;
+    if (manualScrollTimerRef.current) clearTimeout(manualScrollTimerRef.current);
+    manualScrollTimerRef.current = setTimeout(() => {
+      isManualScrollRef.current = false;
+    }, 800);
+    window.scrollTo({ top, behavior: "smooth" });
+  }, []);
+
+  // IntersectionObserver: 스크롤 위치에 따라 활성 탭 자동 변경
+  useEffect(() => {
+    if (!listing) return;
+    const sectionIds = ["overview", "detail", "location", "review"] as const;
+    const sections = sectionIds
+      .map((key) => document.getElementById(`section-${key}`))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isManualScrollRef.current) return;
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length === 0) return;
+        // 화면 상단에 가장 가까운 visible 섹션 선택
+        const topMost = visible.reduce((a, b) =>
+          a.boundingClientRect.top < b.boundingClientRect.top ? a : b
+        );
+        const id = topMost.target.id; // section-xxx
+        const tab = id.replace("section-", "") as "overview" | "detail" | "location" | "review";
+        if (sectionIds.includes(tab)) {
+          setActiveDetailTab(tab);
+        }
+      },
+      {
+        rootMargin: "-100px 0px -60% 0px",
+        threshold: 0,
+      }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, [listing?.id]);
+
+  // Cleanup manual scroll timer on unmount
+  useEffect(() => {
+    return () => {
+      if (manualScrollTimerRef.current) clearTimeout(manualScrollTimerRef.current);
+    };
   }, []);
 
   async function handleFavorite() {
@@ -684,26 +732,26 @@ export default function ListingDetailClient() {
         </div>
       )}
 
-      {/* ===== 모바일 탭 네비게이션 (sticky) ===== */}
-      <div id="detail-tab-bar" className="md:hidden sticky top-14 z-20 bg-white border-b border-gray-200 -mx-4 px-4 mb-4">
+      {/* ===== 섹션 탭 네비게이션 (sticky, 모바일+PC) ===== */}
+      <div id="detail-tab-bar" className="sticky top-14 md:top-16 z-20 bg-cream/95 backdrop-blur supports-[backdrop-filter]:bg-cream/80 border-b border-line -mx-4 px-4 mb-4">
         <div className="flex overflow-x-auto scrollbar-hide">
           <button onClick={() => handleDetailTabChange("overview")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "overview" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "overview" ? "text-green-700 border-b-2 border-green-700" : "text-gray-400 border-b-2 border-transparent"
           }`}>개요</button>
           <button onClick={() => handleDetailTabChange("detail")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "detail" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "detail" ? "text-green-700 border-b-2 border-green-700" : "text-gray-400 border-b-2 border-transparent"
           }`}>상세</button>
           <button onClick={() => handleDetailTabChange("location")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "location" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "location" ? "text-green-700 border-b-2 border-green-700" : "text-gray-400 border-b-2 border-transparent"
           }`}>위치</button>
           <button onClick={() => handleDetailTabChange("review")} className={`flex-shrink-0 px-5 min-h-[48px] text-sm font-semibold transition-colors ${
-            activeDetailTab === "review" ? "text-green-700 border-b-2 border-green-600" : "text-gray-400 border-b-2 border-transparent"
+            activeDetailTab === "review" ? "text-green-700 border-b-2 border-green-700" : "text-gray-400 border-b-2 border-transparent"
           }`}>리뷰</button>
         </div>
       </div>
 
-      {/* ===== 개요 탭 콘텐츠 ===== */}
-      <div className={activeDetailTab === "overview" ? "block" : "hidden md:block"}>
+      {/* ===== 개요 섹션 ===== */}
+      <div id="section-overview" className="scroll-mt-32">
       {/* ===== 2. 테마 태그 + TierBadge ===== */}
       {listing.themes.length > 0 && (
         <div className="flex gap-2 mb-3">
@@ -819,8 +867,8 @@ export default function ListingDetailClient() {
 
       </div>
 
-      {/* ===== 상세 탭 콘텐츠 ===== */}
-      <div className={activeDetailTab === "detail" ? "block" : "hidden md:block"}>
+      {/* ===== 상세 섹션 ===== */}
+      <div id="section-detail" className="scroll-mt-32">
       {/* ===== 5. 권리금 해부하기 ===== */}
       {hasPremiumBreakdown && (
         <Section title="권리금 해부하기" subtitle="총 권리금이 어떻게 구성되어 있는지 한눈에 확인하세요">
@@ -1210,8 +1258,8 @@ export default function ListingDetailClient() {
 
       </div>
 
-      {/* ===== 위치 탭 콘텐츠 ===== */}
-      <div className={activeDetailTab === "location" ? "block" : "hidden md:block"}>
+      {/* ===== 위치 섹션 ===== */}
+      <div id="section-location" className="scroll-mt-32">
       {/* ===== 13. 위치 (카카오맵) ===== */}
       {listing.latitude && listing.longitude && (
         <Section title="위치">
@@ -1253,8 +1301,8 @@ export default function ListingDetailClient() {
 
       </div>
 
-      {/* ===== 리뷰 탭 콘텐츠 ===== */}
-      <div className={activeDetailTab === "review" ? "block" : "hidden md:block"}>
+      {/* ===== 리뷰 섹션 ===== */}
+      <div id="section-review" className="scroll-mt-32">
       {/* ===== 16. 블라인드 리뷰 ===== */}
       <ReviewSection listingId={listing.id} sellerId={listing.user.id} />
 
