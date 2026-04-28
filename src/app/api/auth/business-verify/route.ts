@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
   if (!businessNumber || !cleanRepName || !openDate) {
     return NextResponse.json(
-      { error: "사업자등록번호, 대표자명, 개업일자는 필수입니다." },
+      { error: "사업자등록번호, 대표자명, 개업일자는 필수입니다.", errorCode: "MISSING_FIELDS" },
       { status: 400 },
     );
   }
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
   if (existing?.verified) {
     return NextResponse.json(
-      { error: "이미 사업자인증이 완료되었습니다." },
+      { error: "이미 사업자인증이 완료되었습니다.", errorCode: "ALREADY_VERIFIED" },
       { status: 400 },
     );
   }
@@ -59,14 +59,14 @@ export async function POST(req: NextRequest) {
   if (blacklisted) {
     if (blacklisted.type === "BANNED") {
       return NextResponse.json(
-        { error: "강제탈퇴된 사업자등록번호입니다. 고객센터에 문의해주세요." },
+        { error: "강제탈퇴된 사업자등록번호입니다. 고객센터에 문의해주세요.", errorCode: "BLACKLIST_BANNED" },
         { status: 403 },
       );
     }
     if (blacklisted.type === "COOLDOWN" && blacklisted.expiresAt && blacklisted.expiresAt > new Date()) {
       const remainDays = Math.ceil((blacklisted.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
       return NextResponse.json(
-        { error: `탈퇴 후 30일간 재인증이 제한됩니다. (${remainDays}일 남음)` },
+        { error: `탈퇴 후 30일간 재인증이 제한됩니다. (${remainDays}일 남음)`, errorCode: "BLACKLIST_COOLDOWN" },
         { status: 400 },
       );
     }
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
   if (duplicateCheck && duplicateCheck.userId !== session.user.id) {
     return NextResponse.json(
-      { error: "이미 다른 계정에서 인증된 사업자등록번호입니다." },
+      { error: "이미 다른 계정에서 인증된 사업자등록번호입니다.", errorCode: "DUPLICATE" },
       { status: 400 },
     );
   }
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     const result = await validateBusiness(cleanNumber, cleanRepName, openDate, cleanBusinessName || undefined);
 
     if (!result.valid) {
-      return NextResponse.json({ error: result.message }, { status: 400 });
+      return NextResponse.json({ error: result.message, errorCode: "VERIFY_FAIL" }, { status: 400 });
     }
 
     // 사용자의 pendingRole 확인 (서버 측 데이터 우선)
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
       // 4) 이미 다른 사용자가 관리자로 등록된 브랜드인지 확인
       if (brand.managerId && brand.managerId !== session.user.id) {
         return NextResponse.json(
-          { error: "이미 다른 관리자가 등록된 브랜드입니다. 본사 담당자 변경은 고객센터에 문의해주세요." },
+          { error: "이미 다른 관리자가 등록된 브랜드입니다. 본사 담당자 변경은 고객센터에 문의해주세요.", errorCode: "BRAND_TAKEN" },
           { status: 400 },
         );
       }
@@ -200,7 +200,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("사업자인증 오류:", error);
     return NextResponse.json(
-      { error: "인증 처리 중 오류가 발생했습니다." },
+      { error: "인증 처리 중 오류가 발생했습니다.", errorCode: "SYSTEM_ERROR" },
       { status: 500 },
     );
   }

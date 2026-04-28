@@ -21,6 +21,7 @@ function VerifyBusinessContent() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState<string>("");
   const [hasFailedOnce, setHasFailedOnce] = useState(false);
   const [success, setSuccess] = useState(false);
   const [matchedBrandId, setMatchedBrandId] = useState<string | null>(null);
@@ -79,6 +80,7 @@ function VerifyBusinessContent() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setErrorCode("");
     setLoading(true);
 
     try {
@@ -98,6 +100,7 @@ function VerifyBusinessContent() {
 
       if (!res.ok) {
         setError(data.error);
+        setErrorCode(data.errorCode || "");
         setHasFailedOnce(true);
         return;
       }
@@ -312,8 +315,8 @@ function VerifyBusinessContent() {
           </div>
         </div>
 
-        {/* 인증 실패 시 상세 체크리스트 */}
-        {error && hasFailedOnce && (
+        {/* 인증 실패 안내 — errorCode에 따라 표시 분기 */}
+        {error && hasFailedOnce && errorCode === "VERIFY_FAIL" && (
           <div className="mb-5 bg-red-50 border border-red-200 rounded-xl p-4">
             <div className="flex gap-3">
               <div className="shrink-0 mt-0.5">
@@ -339,6 +342,32 @@ function VerifyBusinessContent() {
                     <span><strong>상호명</strong> — 등록증에 적힌 상호와 동일하게 입력</span>
                   </li>
                 </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 명확한 사유(중복/블랙리스트/이미 인증/시스템 오류 등) — 체크리스트 없이 메시지만 */}
+        {error && hasFailedOnce && errorCode && errorCode !== "VERIFY_FAIL" && (
+          <div className="mb-5 bg-red-50 border border-red-200 rounded-xl p-4">
+            <div className="flex gap-3">
+              <div className="shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd"/>
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-red-800">{error}</p>
+                {(errorCode === "DUPLICATE" || errorCode === "ALREADY_VERIFIED") && (
+                  <p className="text-xs text-red-600 mt-1.5 leading-relaxed">
+                    이미 등록된 사업자등록번호입니다. 본인 명의가 맞다면 <Link href="/contact" className="underline font-semibold">고객센터</Link>로 문의해주세요.
+                  </p>
+                )}
+                {(errorCode === "BLACKLIST_BANNED" || errorCode === "BRAND_TAKEN") && (
+                  <p className="text-xs text-red-600 mt-1.5 leading-relaxed">
+                    <Link href="/contact" className="underline font-semibold">고객센터</Link>로 문의해주세요.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -392,13 +421,13 @@ function VerifyBusinessContent() {
               value={form.openDate}
               onChange={(e) => setForm({ ...form, openDate: e.target.value })}
               className={`w-full px-4 py-3 rounded-lg outline-none ${
-                hasFailedOnce
+                hasFailedOnce && errorCode === "VERIFY_FAIL"
                   ? "border-2 border-red-400 bg-red-50 text-gray-900 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   : "border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500"
               }`}
               required
             />
-            {hasFailedOnce ? (
+            {hasFailedOnce && errorCode === "VERIFY_FAIL" ? (
               <div className="mt-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
                 <div className="flex items-start gap-2">
                   <svg className="w-4 h-4 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
