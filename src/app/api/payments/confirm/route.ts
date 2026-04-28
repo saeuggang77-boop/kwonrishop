@@ -163,7 +163,14 @@ export async function POST(request: NextRequest) {
         }
       })();
       return NextResponse.json(
-        { error: userMessage },
+        {
+          error: userMessage,
+          // 임시 디버그: 라이브 키 전환 후 실패 원인 추적용
+          debug: {
+            tossCode: tossData.code,
+            tossMessage: tossData.message,
+          },
+        },
         { status: 400 }
       );
     }
