@@ -346,9 +346,12 @@ export default function MyPage() {
       {/* 최근 본 매물 (BUYER만) */}
       {data.user.role === "BUYER" && <RecentlyViewedSection />}
 
-      {/* KPI 카드 */}
+      {/* KPI 카드 — 클릭 시 해당 페이지로 이동 */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-        <div className="bg-cream rounded-3xl border border-line p-4 text-center">
+        <Link
+          href="/mypage/favorites"
+          className="bg-cream rounded-3xl border border-line p-4 text-center hover:border-green-700 hover:shadow-[0_4px_16px_rgba(31,63,46,0.08)] transition-all"
+        >
           <div className="flex justify-center mb-2">
             <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -358,8 +361,11 @@ export default function MyPage() {
             {data.favoriteCount + data.equipmentFavoriteCount}
           </div>
           <div className="text-xs text-gray-500">관심매물</div>
-        </div>
-        <div className="bg-cream rounded-3xl border border-line p-4 text-center">
+        </Link>
+        <Link
+          href="/chat"
+          className="bg-cream rounded-3xl border border-line p-4 text-center hover:border-green-700 hover:shadow-[0_4px_16px_rgba(31,63,46,0.08)] transition-all"
+        >
           <div className="flex justify-center mb-2">
             <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -369,8 +375,11 @@ export default function MyPage() {
             {data.chatCount}
           </div>
           <div className="text-xs text-gray-500">채팅</div>
-        </div>
-        <div className="bg-cream rounded-3xl border border-line p-4 text-center">
+        </Link>
+        <Link
+          href="/notifications"
+          className="bg-cream rounded-3xl border border-line p-4 text-center hover:border-green-700 hover:shadow-[0_4px_16px_rgba(31,63,46,0.08)] transition-all"
+        >
           <div className="flex justify-center mb-2">
             <svg className="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -380,7 +389,7 @@ export default function MyPage() {
             {data.unreadChatCount}
           </div>
           <div className="text-xs text-gray-500">안읽음</div>
-        </div>
+        </Link>
       </div>
         </>
       )}
