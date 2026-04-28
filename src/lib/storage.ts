@@ -7,7 +7,7 @@ import { put, del } from "@vercel/blob";
  * @param contentType - MIME 타입
  * @returns 업로드된 파일의 공개 URL
  */
-export async function uploadToS3(
+export async function uploadToBlob(
   file: Buffer,
   key: string,
   contentType: string
@@ -24,11 +24,9 @@ export async function uploadToS3(
  * Vercel Blob에서 파일 삭제
  * @param urlOrKey - 삭제할 파일의 URL
  */
-export async function deleteFromS3(urlOrKey: string): Promise<void> {
+export async function deleteFromBlob(urlOrKey: string): Promise<void> {
   try {
-    // Vercel Blob은 전체 URL로 삭제
-    const url = urlOrKey.startsWith("http") ? urlOrKey : urlOrKey;
-    await del(url);
+    await del(urlOrKey);
   } catch (error) {
     console.error("Blob 삭제 실패:", error);
   }
@@ -38,6 +36,6 @@ export async function deleteFromS3(urlOrKey: string): Promise<void> {
  * Vercel Blob 설정이 올바른지 확인
  * @returns 사용 가능 여부
  */
-export function isS3Configured(): boolean {
+export function isBlobConfigured(): boolean {
   return !!process.env.BLOB_READ_WRITE_TOKEN;
 }

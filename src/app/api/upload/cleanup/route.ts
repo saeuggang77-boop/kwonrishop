@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { validateOrigin } from "@/lib/csrf";
-import { deleteFromS3, isS3Configured } from "@/lib/s3";
+import { deleteFromBlob, isBlobConfigured } from "@/lib/storage";
 import { unlink } from "fs/promises";
 import path from "path";
 
@@ -39,9 +39,9 @@ async function cleanupImages(urls: string[]): Promise<number> {
 
   for (const url of urls) {
     try {
-      if (isS3Configured()) {
+      if (isBlobConfigured()) {
         // Vercel Blob에서 삭제 (전체 URL 전달)
-        await deleteFromS3(url);
+        await deleteFromBlob(url);
         deletedCount++;
       } else {
         // 로컬 파일시스템에서 삭제

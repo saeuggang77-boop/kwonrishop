@@ -6,7 +6,7 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { validateOrigin } from "@/lib/csrf";
-import { uploadToS3, isS3Configured } from "@/lib/s3";
+import { uploadToBlob, isBlobConfigured } from "@/lib/storage";
 
 export async function POST(req: NextRequest) {
   // Rate limiting: 30 uploads per minute (사진 15장 + 증빙자료)
@@ -66,14 +66,14 @@ export async function POST(req: NextRequest) {
     // crypto.randomUUID() 기반 파일명으로 경로 조작 완전 차단
     const filename = `${randomUUID()}${ext}`;
 
-    // S3 사용 가능 여부 확인
-    if (isS3Configured()) {
-      // S3에 업로드
+    // Blob 사용 가능 여부 확인
+    if (isBlobConfigured()) {
+      // Vercel Blob에 업로드
       const key = `uploads/${filename}`;
-      const url = await uploadToS3(buffer, key, file.type);
+      const url = await uploadToBlob(buffer, key, file.type);
       return NextResponse.json({ url });
     } else {
-      // S3 미설정 시 로컬 파일시스템 사용 (개발용)
+      // Blob 미설정 시 로컬 파일시스템 사용 (개발용)
       const uploadDir = path.join(process.cwd(), "public", "uploads");
       await mkdir(uploadDir, { recursive: true });
 

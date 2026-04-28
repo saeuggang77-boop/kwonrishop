@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyBearerToken } from "@/lib/cron-auth";
 import { rateLimitRequest } from "@/lib/rate-limit";
-import { deleteFromS3, isS3Configured } from "@/lib/s3";
+import { isBlobConfigured } from "@/lib/storage";
 import { unlink, readdir } from "fs/promises";
 import path from "path";
 
@@ -34,8 +34,8 @@ export async function GET(request: NextRequest) {
 
     let deletedCount = 0;
 
-    if (isS3Configured()) {
-      // S3 환경: DB에서 사용 중인 모든 이미지 URL 수집
+    if (isBlobConfigured()) {
+      // Blob 환경: DB에서 사용 중인 모든 이미지 URL 수집
       const [listingImages, listingDocs, partnerImages, equipmentImages] = await Promise.all([
         prisma.listingImage.findMany({ select: { url: true } }),
         prisma.listingDocument.findMany({ select: { url: true } }),
@@ -50,10 +50,10 @@ export async function GET(request: NextRequest) {
         ...equipmentImages.map(img => img.url),
       ]);
 
-      // S3의 모든 파일 목록 가져오기는 비용이 많이 들므로
+      // Blob의 모든 파일 목록 가져오기는 비용이 많이 들므로
       // 로컬 임시 테이블이나 별도 추적 시스템 필요
       // 현재는 cleanup API를 통한 즉시 삭제로 처리
-      console.log("S3 환경: cleanup API를 통한 즉시 삭제 방식 사용");
+      console.log("Blob 환경: cleanup API를 통한 즉시 삭제 방식 사용");
     } else {
       // 로컬 파일시스템: 고아 파일 직접 스캔
       const uploadDir = path.join(process.cwd(), "public", "uploads");
