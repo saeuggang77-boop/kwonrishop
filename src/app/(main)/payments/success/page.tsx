@@ -58,10 +58,7 @@ function SuccessContent() {
           // 이미 처리된 주문 (새로고침 등) → 성공으로 처리
           setOrderInfo({ alreadyProcessed: true });
         } else {
-          const debugStr = data.debug
-            ? ` [code=${data.debug.tossCode ?? "-"}, msg=${data.debug.tossMessage ?? "-"}]`
-            : "";
-          setError((data.error || "결제 승인에 실패했습니다.") + debugStr);
+          setError(data.error || "결제 승인에 실패했습니다.");
         }
       } catch (err) {
         console.error("Payment confirmation error:", err);
