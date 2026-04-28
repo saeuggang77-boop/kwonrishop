@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notifyPaymentSuccess } from "@/lib/kakao-alimtalk";
-import { sendPushToUser } from "@/lib/push";
+import { sendPushToUser, sendPushToUsers } from "@/lib/push";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { calculateNextBumpTime } from "@/lib/bump-utils";
@@ -446,6 +446,44 @@ export async function POST(request: NextRequest) {
       `${order.product.name} 상품을 구매하셨습니다.`,
       "/mypage"
     ).catch(() => {});
+
+    // 관리자 알림 — 결제 발생 시 사이트 알림 + 푸시 (non-blocking)
+    void (async () => {
+      try {
+        const buyer = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { name: true },
+        });
+        const admins = await prisma.user.findMany({
+          where: { role: "ADMIN" },
+          select: { id: true },
+        });
+        if (admins.length === 0) return;
+
+        const buyerName = buyer?.name || "회원";
+        const title = "새 결제가 발생했습니다";
+        const message = `${buyerName}님이 ${order.product.name} (${expectedTotalAmount.toLocaleString()}원)을 결제했습니다.`;
+        const link = "/admin/paid-dashboard";
+
+        await prisma.notification.createMany({
+          data: admins.map((a) => ({
+            userId: a.id,
+            type: "ADMIN_PAYMENT",
+            title,
+            message,
+            link,
+          })),
+        });
+        await sendPushToUsers(
+          admins.map((a) => a.id),
+          title,
+          message,
+          link,
+        );
+      } catch (err) {
+        console.error("[admin payment notify] failed:", err);
+      }
+    })();
 
     return NextResponse.json({
       success: true,

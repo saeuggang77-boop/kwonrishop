@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(
   req: NextRequest,
@@ -58,6 +59,57 @@ export async function POST(
       author: { select: { id: true, name: true, image: true } },
     },
   });
+
+  // 알림 발송 (사이트 Notification + 푸시). 본인 행위는 제외.
+  // - 답글(parentId 있음): 부모 댓글 작성자에게만
+  // - 일반 댓글: 게시글 작성자에게
+  void (async () => {
+    try {
+      const writerName = comment.author.name || "누군가";
+      const postInfo = await prisma.post.findUnique({
+        where: { id: postId },
+        select: { authorId: true, title: true },
+      });
+      if (!postInfo) return;
+
+      let targetUserId: string | null = null;
+      let title = "";
+      let message = "";
+
+      if (parentId) {
+        const parent = await prisma.comment.findUnique({
+          where: { id: parentId },
+          select: { authorId: true },
+        });
+        if (parent && parent.authorId !== session.user.id) {
+          targetUserId = parent.authorId;
+          title = "내 댓글에 답글이 달렸어요";
+          message = `${writerName}: ${comment.content.slice(0, 60)}`;
+        }
+      } else if (postInfo.authorId !== session.user.id) {
+        targetUserId = postInfo.authorId;
+        title = "내 게시글에 댓글이 달렸어요";
+        message = `${writerName}: ${comment.content.slice(0, 60)}`;
+      }
+
+      if (!targetUserId) return;
+
+      const link = `/community/${postId}`;
+
+      await prisma.notification.create({
+        data: {
+          userId: targetUserId,
+          type: "COMMUNITY_COMMENT",
+          title,
+          message,
+          link,
+        },
+      });
+      await sendPushToUser(targetUserId, title, message, link);
+    } catch (err) {
+      console.error("[community comment] notify failed:", err);
+    }
+  })();
 
   return NextResponse.json(comment);
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyBearerToken } from "@/lib/cron-auth";
+import { sendPushToUsers } from "@/lib/push";
 import {
   isWithinActiveHours,
   getActiveHoursCount,
@@ -420,6 +421,14 @@ export async function GET(request: NextRequest) {
               link: "/admin/auto-content",
             })),
           });
+
+          // 푸시 알림 (관리자 전체)
+          void sendPushToUsers(
+            admins.map((a) => a.id),
+            "원고 부족 알림",
+            `게시글 원고가 ${remainingPool}개 남았습니다. 추가 생성이 필요합니다.`,
+            "/admin/auto-content",
+          );
 
           poolAlert = true;
         }
