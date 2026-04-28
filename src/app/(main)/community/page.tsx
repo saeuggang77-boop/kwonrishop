@@ -129,9 +129,12 @@ function CommunityContent() {
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-ink flex items-center gap-1.5 min-w-0">
                     <span className="truncate">{post.title}</span>
+                    {post._count.comments > 0 && (
+                      <span className="text-terra-500 font-semibold shrink-0">[{post._count.comments}]</span>
+                    )}
                     {isNewPost(post.createdAt) && (
-                      <span className="bg-terra-500 text-cream text-[10px] px-1.5 leading-4 rounded font-extrabold tracking-wider shrink-0">
-                        NEW
+                      <span className="inline-flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[10px] leading-none font-bold rounded-full shrink-0">
+                        N
                       </span>
                     )}
                     {post.tag === "사이트이용문의" && <span className="text-muted shrink-0">🔒</span>}
@@ -142,12 +145,6 @@ function CommunityContent() {
                     <span>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
                     <span className="text-line-deep">·</span>
                     <span>조회 {post.viewCount}</span>
-                    {post._count.comments > 0 && (
-                      <>
-                        <span className="text-line-deep">·</span>
-                        <span className="text-terra-500 font-semibold">댓글 {post._count.comments}</span>
-                      </>
-                    )}
                   </div>
                 </div>
               </div>
