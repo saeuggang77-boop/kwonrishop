@@ -159,36 +159,36 @@ export default function AdminListingsPage() {
         </div>
       ) : (
         <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
-          <table className="w-full min-w-[820px]">
+          <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상호명</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">작성자</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">조회수</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">상호명</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">작성자</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">조회수</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {listings.map((listing) => (
                 <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">{listing.storeName ?? "-"}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900">{listing.storeName ?? "-"}</td>
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     <div>{listing.user.name}</div>
                     <div className="text-xs text-gray-400">{listing.user.email}</div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <TierBadge tier={listing.tier} />
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {listing.tier !== "FREE" && listing.tierExpiresAt
                       ? new Date(listing.tierExpiresAt).toLocaleDateString("ko-KR")
                       : "-"}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         listing.status === "ACTIVE"
@@ -201,17 +201,17 @@ export default function AdminListingsPage() {
                       {listing.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {listing.viewCount.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {new Date(listing.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <select
                       value={listing.status}
                       onChange={(e) => handleStatusChange(listing.id, e.target.value)}
-                      className="text-sm px-3 py-1 border border-gray-300 rounded-lg outline-none"
+                      className="text-sm px-2 md:px-3 py-1 border border-gray-300 rounded-lg outline-none"
                     >
                       {STATUS_OPTIONS.filter((opt) => opt.value).map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>

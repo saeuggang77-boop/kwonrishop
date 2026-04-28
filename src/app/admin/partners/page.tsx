@@ -194,40 +194,40 @@ export default function AdminPartnersPage() {
         </div>
       ) : (
         <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
-          <table className="w-full min-w-[820px]">
+          <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">업체명</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">서비스유형</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록자</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">조회수</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">업체명</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">서비스</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">등록자</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">조회수</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {partners.map((partner) => (
                 <tr key={partner.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900 font-medium">{partner.companyName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900 font-medium">{partner.companyName}</td>
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-600">
                     {SERVICE_TYPE_LABEL[partner.serviceType] || partner.serviceType}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <TierBadge tier={partner.tier} />
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {partner.tier !== "FREE" && partner.tierExpiresAt
                       ? new Date(partner.tierExpiresAt).toLocaleDateString("ko-KR")
                       : "-"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     <div>{partner.user.name}</div>
                     <div className="text-xs text-gray-400">{partner.user.email}</div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         partner.status === "ACTIVE"
@@ -240,18 +240,18 @@ export default function AdminPartnersPage() {
                       {partner.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {partner.viewCount.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {new Date(partner.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
+                  <td className="px-3 md:px-6 py-4">
+                    <div className="flex flex-col md:flex-row gap-1 md:gap-2">
                       <select
                         value={partner.status}
                         onChange={(e) => handleStatusChange(partner.id, e.target.value)}
-                        className="text-sm px-3 py-1 border border-gray-300 rounded-lg outline-none"
+                        className="text-xs md:text-sm px-2 md:px-3 py-1 border border-gray-300 rounded-lg outline-none"
                       >
                         {STATUS_OPTIONS.filter((opt) => opt.value).map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -259,7 +259,7 @@ export default function AdminPartnersPage() {
                       </select>
                       <button
                         onClick={() => handleDelete(partner.id)}
-                        className="text-sm px-3 py-1 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="text-xs md:text-sm px-2 md:px-3 py-1 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         삭제
                       </button>

@@ -199,55 +199,55 @@ export default function AdminEquipmentPage() {
         </div>
       ) : (
         <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
-          <table className="w-full min-w-[900px]">
+          <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">사진</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">제목</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">카테고리</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">가격</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">판매자</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">사진</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">제목</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">카테고리</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">가격</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">판매자</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">등록일</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {equipment.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     {item.images?.[0]?.url ? (
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+                      <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden bg-gray-100">
                         <Image src={item.images[0].url} alt={item.title} fill className="object-cover" />
                       </div>
                     ) : (
-                      <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-[10px] md:text-xs">
                         사진없음
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{item.title}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900 max-w-[120px] md:max-w-xs truncate">{item.title}</td>
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {EQUIPMENT_CATEGORY_LABELS[item.category] || item.category}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 font-medium">
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900 font-medium whitespace-nowrap">
                     {item.price.toLocaleString()}원
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="hidden md:table-cell px-6 py-4">
                     <TierBadge tier={item.tier} />
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {item.tier !== "FREE" && item.tierExpiresAt
                       ? new Date(item.tierExpiresAt).toLocaleDateString("ko-KR")
                       : "-"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 max-w-[180px]">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600 max-w-[180px]">
                     <div className="truncate">{item.user.name}</div>
                     <div className="text-xs text-gray-400 truncate">{item.user.email}</div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         item.status === "ACTIVE"
@@ -264,15 +264,15 @@ export default function AdminEquipmentPage() {
                       {STATUS_LABELS[item.status] || item.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
+                  <td className="px-3 md:px-6 py-4">
+                    <div className="flex flex-col md:flex-row gap-1 md:gap-2">
                       <select
                         value={item.status}
                         onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                        className="text-sm px-3 py-1 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
+                        className="text-xs md:text-sm px-2 md:px-3 py-1 border border-gray-300 bg-white text-gray-900 rounded-lg outline-none"
                       >
                         {STATUS_OPTIONS.filter((opt) => opt.value).map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -280,7 +280,7 @@ export default function AdminEquipmentPage() {
                       </select>
                       <button
                         onClick={() => handleDelete(item.id, item.title)}
-                        className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                        className="px-2 md:px-3 py-1 text-xs md:text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         삭제
                       </button>

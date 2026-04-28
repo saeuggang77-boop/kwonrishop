@@ -176,17 +176,17 @@ export default function AdminFranchisePage() {
       {/* Brand Table */}
       <div className="bg-cream rounded-3xl border border-line overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[820px]">
+          <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">브랜드명</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">회사명</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">업종</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">매장수</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">등급</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">만료일</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">공정위 등록</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">등록일</th>
+                <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">브랜드명</th>
+                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">회사명</th>
+                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">업종</th>
+                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">매장수</th>
+                <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">등급</th>
+                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">만료일</th>
+                <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">공정위</th>
+                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">등록일</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -201,37 +201,38 @@ export default function AdminFranchisePage() {
               ) : (
                 brands.map((brand) => (
                   <tr key={brand.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
+                    <td className="px-3 md:px-4 py-3">
                       <button
                         onClick={() => router.push(`/franchise/${brand.id}`)}
-                        className="font-medium text-blue-600 hover:text-blue-700"
+                        className="font-medium text-blue-600 hover:text-blue-700 text-left"
                       >
                         {brand.brandName}
                       </button>
+                      <div className="md:hidden text-xs text-gray-400 mt-0.5 truncate max-w-[140px]">{brand.companyName}</div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{brand.companyName}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{brand.industry || "-"}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">{brand.companyName}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">{brand.industry || "-"}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
                       {brand.totalStores ? `${brand.totalStores.toLocaleString()}개` : "-"}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 md:px-4 py-3">
                       <TierBadge tier={brand.tier} />
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
                       {brand.tier !== "FREE" && brand.tierExpiresAt
                         ? new Date(brand.tierExpiresAt).toLocaleDateString("ko-KR")
                         : "-"}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 md:px-4 py-3">
                       {brand.ftcId ? (
                         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          등록됨
+                          등록
                         </span>
                       ) : (
                         <span className="text-xs text-gray-400">-</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
                       {new Date(brand.createdAt).toLocaleDateString("ko-KR")}
                     </td>
                   </tr>

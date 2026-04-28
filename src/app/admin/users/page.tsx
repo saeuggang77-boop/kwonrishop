@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
 
       {/* Filters */}
       <div className="bg-cream rounded-3xl border border-line p-4 mb-6">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3">
           <select
             value={roleFilter}
             onChange={(e) => {
@@ -111,7 +111,7 @@ export default function AdminUsersPage() {
             placeholder="이름, 이메일 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg outline-none"
+            className="flex-1 min-w-[180px] px-4 py-2 border border-gray-300 rounded-lg outline-none"
           />
           <button
             onClick={() => setPage(1)}
@@ -144,24 +144,27 @@ export default function AdminUsersPage() {
         </div>
       ) : (
         <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+          <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">이름</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">이메일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">역할</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">인증</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">매물수</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">가입일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">이름</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">이메일</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">역할</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">인증</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">매물수</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">가입일</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">{user.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900">
+                    <div>{user.name}</div>
+                    <div className="md:hidden text-xs text-gray-400 truncate max-w-[140px]">{user.email}</div>
+                  </td>
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">{user.email}</td>
+                  <td className="px-3 md:px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         user.role === "ADMIN"
@@ -184,24 +187,24 @@ export default function AdminUsersPage() {
                       } as Record<string, string>)[user.role] || user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="hidden md:table-cell px-6 py-4">
                     {user.isVerified ? (
                       <span className="text-green-600 text-sm">✓ 인증완료</span>
                     ) : (
                       <span className="text-gray-400 text-sm">미인증</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {user.listingCount.toLocaleString()}개
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     {user.role !== "ADMIN" && !user.email.includes("@banned.local") && !user.email.includes("@withdrawn.local") && (
                       <button
                         onClick={() => setBanTarget(user)}
-                        className="px-3 py-1 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors"
+                        className="px-3 py-1 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors whitespace-nowrap"
                       >
                         강제탈퇴
                       </button>

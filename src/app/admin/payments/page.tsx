@@ -175,24 +175,24 @@ export default function AdminPaymentsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="flex items-center justify-between mb-6">
+    <div>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">결제 내역</h1>
           <p className="text-sm text-gray-500 mt-1">
             전체 결제 시간순 조회 · 환불 처리 · CSV 다운로드
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link
             href="/admin/paid-dashboard"
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-3 md:px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             통계 대시보드
           </Link>
           <button
             onClick={downloadCSV}
-            className="px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-800"
+            className="px-3 md:px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-800"
           >
             CSV 다운로드
           </button>
@@ -288,13 +288,13 @@ export default function AdminPaymentsPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr className="text-left text-xs font-semibold text-gray-600 uppercase">
-                <th className="px-4 py-3">결제일시</th>
-                <th className="px-4 py-3">회원</th>
-                <th className="px-4 py-3">상품</th>
-                <th className="px-4 py-3">대상</th>
-                <th className="px-4 py-3 text-right">금액</th>
-                <th className="px-4 py-3">상태</th>
-                <th className="px-4 py-3 text-center">작업</th>
+                <th className="hidden md:table-cell px-4 py-3">결제일시</th>
+                <th className="px-3 md:px-4 py-3">회원</th>
+                <th className="px-3 md:px-4 py-3">상품</th>
+                <th className="hidden md:table-cell px-4 py-3">대상</th>
+                <th className="px-3 md:px-4 py-3 text-right">금액</th>
+                <th className="px-3 md:px-4 py-3">상태</th>
+                <th className="px-3 md:px-4 py-3 text-center">작업</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -313,36 +313,40 @@ export default function AdminPaymentsPage() {
               ) : (
                 data.items.map((p) => (
                   <tr key={p.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-700">
+                    <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-gray-700">
                       {fmtDateTime(p.createdAt)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 md:px-4 py-3">
                       <div className="font-medium text-gray-900">{p.user.name || "-"}</div>
-                      <div className="text-xs text-gray-500">{p.user.email}</div>
+                      <div className="text-xs text-gray-500 truncate max-w-[120px]">{p.user.email}</div>
+                      <div className="md:hidden text-xs text-gray-400 mt-0.5">{fmtDateTime(p.createdAt)}</div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-gray-900">{p.product.name}</div>
+                    <td className="px-3 md:px-4 py-3">
+                      <div className="font-medium text-gray-900 truncate max-w-[120px] md:max-w-none">{p.product.name}</div>
                       <div className="text-xs text-gray-500">
                         {SCOPE_LABEL[p.product.categoryScope] || p.product.categoryScope}
                       </div>
+                      <div className="md:hidden text-xs text-gray-400 truncate max-w-[120px]">
+                        {renderTarget(p)}
+                      </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-700 max-w-[200px] truncate">
+                    <td className="hidden md:table-cell px-4 py-3 text-gray-700 max-w-[200px] truncate">
                       {renderTarget(p)}
                     </td>
-                    <td className="px-4 py-3 text-right font-semibold text-gray-900 whitespace-nowrap">
+                    <td className="px-3 md:px-4 py-3 text-right font-semibold text-gray-900 whitespace-nowrap">
                       {p.amount.toLocaleString()}원
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 md:px-4 py-3">
                       <StatusBadge status={p.status} />
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-3 md:px-4 py-3 text-center">
                       {p.status === "PAID" ? (
                         <button
                           onClick={() => handleRefund(p)}
                           disabled={refundingId === p.id}
-                          className="px-3 py-1 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 disabled:opacity-50"
+                          className="px-2 md:px-3 py-1 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 disabled:opacity-50 whitespace-nowrap"
                         >
-                          {refundingId === p.id ? "처리 중..." : "환불"}
+                          {refundingId === p.id ? "..." : "환불"}
                         </button>
                       ) : (
                         <span className="text-xs text-gray-400">-</span>

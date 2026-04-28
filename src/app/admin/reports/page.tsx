@@ -110,29 +110,32 @@ export default function AdminReportsPage() {
         </div>
       ) : (
         <div className="bg-cream rounded-3xl border border-line overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+          <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">신고자</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">대상 유형</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">신고 사유</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">신고일</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">신고자</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">대상</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">사유</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">상태</th>
+                <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">신고일</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">액션</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {reports.map((report) => (
                 <tr key={report.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900">
                     <div>{report.reporter.name}</div>
-                    <div className="text-xs text-gray-400">{report.reporter.email}</div>
+                    <div className="text-xs text-gray-400 truncate max-w-[120px]">{report.reporter.email}</div>
+                    <div className="md:hidden text-xs text-gray-400 mt-0.5">
+                      {report.targetType} · {new Date(report.createdAt).toLocaleDateString()}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{report.targetType}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">{report.targetType}</td>
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900 max-w-[140px] md:max-w-xs truncate">
                     {report.reason}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         report.status === "PENDING"
@@ -149,11 +152,11 @@ export default function AdminReportsPage() {
                       {report.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {new Date(report.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
+                  <td className="px-3 md:px-6 py-4">
+                    <div className="flex flex-wrap gap-1 md:gap-2">
                       {report.status === "PENDING" && (
                         <button
                           onClick={() => handleStatusChange(report.id, "REVIEWED")}

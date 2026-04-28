@@ -62,17 +62,17 @@ export default function ListingMapView({ listings, filterParams }: ListingMapVie
               <div style="font-weight:600;font-size:14px;margin-bottom:4px;">
                 ${listing.category?.icon || ""} ${listing.storeName || listing.addressRoad || "매물"}
               </div>
-              <div style="font-size:12px;color:#666;margin-bottom:6px;">
+              <div style="font-size:13px;color:#666;margin-bottom:6px;">
                 ${listing.addressRoad || ""}
               </div>
-              <div style="display:flex;gap:8px;font-size:12px;">
+              <div style="display:flex;gap:8px;font-size:13px;">
                 <span>보증 <b>${listing.deposit.toLocaleString()}만</b></span>
                 <span>월세 <b>${listing.monthlyRent.toLocaleString()}만</b></span>
               </div>
-              <div style="font-size:12px;color:#2563eb;margin-top:4px;">
+              <div style="font-size:13px;color:#2563eb;margin-top:4px;">
                 권리금 <b>${listing.premium.toLocaleString()}만</b>
               </div>
-              <div style="margin-top:8px;font-size:11px;color:#2563eb;">
+              <div style="margin-top:8px;font-size:12px;color:#2563eb;">
                 클릭하여 상세보기 →
               </div>
             </div>

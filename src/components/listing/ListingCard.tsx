@@ -93,7 +93,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
               {listing.currentFloor && listing.areaPyeong && " · "}
               {listing.areaPyeong && `${listing.areaPyeong}평`}
             </span>
-            {isAd && <span className="text-[9px] text-muted border border-line px-1 py-px rounded">광고</span>}
+            {isAd && <span className="text-[10px] text-muted border border-line px-1 py-px rounded">광고</span>}
           </div>
         </div>
 

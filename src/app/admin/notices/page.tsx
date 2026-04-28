@@ -164,19 +164,19 @@ export default function AdminNoticesPage() {
       )}
 
       <div className="bg-cream rounded-2xl border border-line overflow-x-auto">
-        <table className="w-full min-w-[600px]">
+        <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 제목
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 작성자
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 작성일
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 관리
               </th>
             </tr>
@@ -191,21 +191,24 @@ export default function AdminNoticesPage() {
             ) : (
               notices.map((notice) => (
                 <tr key={notice.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <div className="font-medium text-gray-900">
                       {notice.title}
                     </div>
                     <div className="text-sm text-gray-500 mt-1 line-clamp-1">
                       {notice.content}
                     </div>
+                    <div className="md:hidden text-xs text-gray-400 mt-1">
+                      {notice.author.name || "관리자"} · {new Date(notice.createdAt).toLocaleDateString("ko-KR")}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {notice.author.name || "관리자"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {new Date(notice.createdAt).toLocaleDateString("ko-KR")}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-4">
                     <button
                       onClick={() => handleDelete(notice.id)}
                       className="text-red-600 hover:text-red-800 text-sm font-medium"

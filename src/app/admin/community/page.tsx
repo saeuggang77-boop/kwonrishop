@@ -268,10 +268,10 @@ export default function AdminCommunityPage() {
 
       {/* Table */}
       <div className="bg-cream rounded-2xl border border-line overflow-x-auto">
-        <table className="w-full min-w-[700px]">
+        <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left">
+              <th className="px-3 md:px-4 py-3 text-left">
                 <input
                   type="checkbox"
                   checked={posts.length > 0 && selectedIds.size === posts.length}
@@ -279,25 +279,25 @@ export default function AdminCommunityPage() {
                   className="rounded border-gray-300"
                 />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 제목
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 작성자
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 카테고리
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 댓글
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 조회
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 작성일
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 관리
               </th>
             </tr>
@@ -318,7 +318,7 @@ export default function AdminCommunityPage() {
             ) : (
               posts.map((post) => (
                 <tr key={post.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">
+                  <td className="px-3 md:px-4 py-3">
                     <input
                       type="checkbox"
                       checked={selectedIds.has(post.id)}
@@ -326,18 +326,27 @@ export default function AdminCommunityPage() {
                       className="rounded border-gray-300"
                     />
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 md:px-4 py-3">
                     <a
                       href={`/community/${post.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium text-gray-900 hover:text-blue-600 line-clamp-1 max-w-[240px] block"
+                      className="font-medium text-gray-900 hover:text-blue-600 line-clamp-1 max-w-[140px] md:max-w-[240px] block"
                       title={post.title}
                     >
                       {post.title}
                     </a>
+                    <div className="md:hidden text-xs text-gray-400 mt-1 flex items-center gap-2 flex-wrap">
+                      <span>{post.author.name || "익명"}{post.author.isGhost && " 🤖"}</span>
+                      {post.tag && (
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${TAG_COLORS[post.tag] || "bg-gray-100 text-gray-600"}`}>
+                          {post.tag}
+                        </span>
+                      )}
+                      <span>댓 {post._count.comments} · 조 {post.viewCount}</span>
+                    </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="hidden md:table-cell px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm text-gray-700">
                         {post.author.name || "알 수 없음"}
@@ -349,7 +358,7 @@ export default function AdminCommunityPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="hidden md:table-cell px-4 py-3">
                     {post.tag ? (
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
@@ -362,16 +371,16 @@ export default function AdminCommunityPage() {
                       <span className="text-gray-400 text-xs">-</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
                     {post._count.comments.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
                     {post.viewCount.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                  <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
                     {new Date(post.createdAt).toLocaleDateString("ko-KR")}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 md:px-4 py-3">
                     <div className="flex items-center gap-2">
                       <a
                         href={`/community/${post.id}`}
