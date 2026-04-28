@@ -2,7 +2,6 @@
 
 import { RefObject, useEffect, useState } from "react";
 import BottomSheet from "./BottomSheet";
-import Select from "./Select";
 
 interface ParkingSheetProps {
   open: boolean;
@@ -25,13 +24,19 @@ export default function ParkingSheet({
   initial,
   onApply,
   anchorRef,
-  popoverWidth = 320,
+  popoverWidth = 360,
 }: ParkingSheetProps) {
   const [value, setValue] = useState(initial);
 
   useEffect(() => {
     if (open) setValue(initial);
   }, [open, initial]);
+
+  const select = (v: string) => {
+    setValue(v);
+    onApply(v);
+    onClose();
+  };
 
   return (
     <BottomSheet
@@ -41,14 +46,29 @@ export default function ParkingSheet({
       onSubmit={() => onApply(value)}
       anchorRef={anchorRef}
       popoverWidth={popoverWidth}
+      hideSubmit
     >
-      <Select
-        label="주차 가능 여부"
-        value={value}
-        onChange={setValue}
-        options={PARKING_OPTIONS}
-        placeholder="선택"
-      />
+      <div className="flex flex-wrap gap-2">
+        {PARKING_OPTIONS.map((opt) => {
+          const active = value === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => select(opt.value)}
+              className={`
+                px-4 py-2 rounded-full text-sm font-semibold transition-all
+                ${active
+                  ? "bg-green-700 text-cream shadow-[0_4px_12px_rgba(31,63,46,0.2)]"
+                  : "bg-white border border-line text-ink hover:border-green-700"
+                }
+              `}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
     </BottomSheet>
   );
 }

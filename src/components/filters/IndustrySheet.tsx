@@ -66,6 +66,7 @@ export default function IndustrySheet({
       onSubmit={() => onApply({ categoryId, subCategoryId })}
       anchorRef={anchorRef}
       popoverWidth={popoverWidth}
+      hideSubmit
     >
       <div className="space-y-4">
         <Select
@@ -74,6 +75,7 @@ export default function IndustrySheet({
           onChange={(v) => {
             setCategoryId(v);
             setSubCategoryId("");
+            onApply({ categoryId: v, subCategoryId: "" });
           }}
           options={categoryOptions}
           placeholder="업종 선택"
@@ -81,7 +83,11 @@ export default function IndustrySheet({
         <Select
           label="상세업종"
           value={subCategoryId}
-          onChange={setSubCategoryId}
+          onChange={(v) => {
+            setSubCategoryId(v);
+            onApply({ categoryId, subCategoryId: v });
+            onClose();
+          }}
           options={subOptions}
           placeholder="상세업종 선택"
           disabled={!categoryId}

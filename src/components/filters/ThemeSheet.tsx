@@ -29,9 +29,14 @@ export default function ThemeSheet({
   }, [open, initialThemes]);
 
   const toggle = (theme: string) => {
-    setSelected((prev) =>
-      prev.includes(theme) ? prev.filter((t) => t !== theme) : [...prev, theme]
-    );
+    setSelected((prev) => {
+      const next = prev.includes(theme)
+        ? prev.filter((t) => t !== theme)
+        : [...prev, theme];
+      onApply(next);
+      return next;
+    });
+    onClose();
   };
 
   return (
@@ -42,8 +47,9 @@ export default function ThemeSheet({
       onSubmit={() => onApply(selected)}
       anchorRef={anchorRef}
       popoverWidth={popoverWidth}
+      hideSubmit
     >
-      <p className="text-xs text-muted mb-4">여러 개 선택 가능</p>
+      <p className="text-xs text-muted mb-4">한 개 선택 후 자동 닫힘 — 추가는 테마 버튼 다시 누르기</p>
       <div className="flex flex-wrap gap-2">
         {THEMES.map((theme) => {
           const active = selected.includes(theme);

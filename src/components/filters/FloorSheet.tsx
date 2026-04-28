@@ -34,9 +34,11 @@ export default function FloorSheet({
   }, [open, initial]);
 
   const toggle = (value: string) => {
-    setSelected((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    );
+    // 단일 선택: 같은 것 다시 누르면 해제, 아니면 덮어쓰기
+    const next = selected.includes(value) && selected.length === 1 ? [] : [value];
+    setSelected(next);
+    onApply(next);
+    onClose();
   };
 
   return (
@@ -47,8 +49,9 @@ export default function FloorSheet({
       onSubmit={() => onApply(selected)}
       anchorRef={anchorRef}
       popoverWidth={popoverWidth}
+      hideSubmit
     >
-      <p className="text-xs text-muted mb-4">여러 층 선택 가능</p>
+      <p className="text-xs text-muted mb-4">한 개 선택 후 자동 닫힘</p>
       <div className="flex flex-wrap gap-2">
         {FLOOR_OPTIONS.map((opt) => {
           const active = selected.includes(opt.value);

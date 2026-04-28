@@ -64,7 +64,11 @@ export default function PriceSheet({
   }, [open, initial]);
 
   const update = <K extends keyof PriceState>(key: K, value: PriceState[K]) => {
-    setState((prev) => ({ ...prev, [key]: value }));
+    setState((prev) => {
+      const next = { ...prev, [key]: value };
+      onApply(next);
+      return next;
+    });
   };
 
   return (
@@ -75,6 +79,8 @@ export default function PriceSheet({
       onSubmit={() => onApply(state)}
       anchorRef={anchorRef}
       popoverWidth={popoverWidth}
+      hideSubmitOnDesktop={false}
+      submitLabel="닫기"
     >
       <div className="space-y-7">
         {/* 권리금 */}
@@ -94,6 +100,13 @@ export default function PriceSheet({
             valueMax={state.premiumMax}
             onChange={({ min, max }) =>
               setState((prev) => ({ ...prev, premiumMin: min, premiumMax: max }))
+            }
+            onChangeEnd={({ min, max }) =>
+              setState((prev) => {
+                const next = { ...prev, premiumMin: min, premiumMax: max };
+                onApply(next);
+                return next;
+              })
             }
             labels={PREMIUM_LABELS}
           />
@@ -149,6 +162,13 @@ export default function PriceSheet({
             onChange={({ min, max }) =>
               setState((prev) => ({ ...prev, depositMin: min, depositMax: max }))
             }
+            onChangeEnd={({ min, max }) =>
+              setState((prev) => {
+                const next = { ...prev, depositMin: min, depositMax: max };
+                onApply(next);
+                return next;
+              })
+            }
             labels={DEPOSIT_LABELS}
           />
         </div>
@@ -170,6 +190,13 @@ export default function PriceSheet({
             valueMax={state.rentMax}
             onChange={({ min, max }) =>
               setState((prev) => ({ ...prev, rentMin: min, rentMax: max }))
+            }
+            onChangeEnd={({ min, max }) =>
+              setState((prev) => {
+                const next = { ...prev, rentMin: min, rentMax: max };
+                onApply(next);
+                return next;
+              })
             }
             labels={RENT_LABELS}
           />

@@ -9,6 +9,11 @@ interface DualRangeSliderProps {
   valueMin: number;
   valueMax: number;
   onChange: (next: { min: number; max: number }) => void;
+  /**
+   * 슬라이더 release(mouseup/touchend/keyup) 시점에 호출.
+   * onChange는 드래그 동안 매 프레임 호출되므로 fetch 같은 비싼 작업은 onChangeEnd에서 트리거.
+   */
+  onChangeEnd?: (next: { min: number; max: number }) => void;
   /** 균등 배치 라벨 (5개 권장) */
   labels: string[];
   /** 값 단위 (예: "만") — 기본값으로는 미사용 */
@@ -31,8 +36,13 @@ export default function DualRangeSlider({
   valueMin,
   valueMax,
   onChange,
+  onChangeEnd,
   labels,
 }: DualRangeSliderProps) {
+  const handleCommit = useCallback(() => {
+    if (!onChangeEnd) return;
+    onChangeEnd({ min: valueMin, max: valueMax });
+  }, [onChangeEnd, valueMin, valueMax]);
   const minPct = useMemo(() => {
     const span = max - min;
     return span > 0 ? ((valueMin - min) / span) * 100 : 0;
@@ -82,6 +92,9 @@ export default function DualRangeSlider({
           step={step}
           value={valueMin}
           onChange={handleMinChange}
+          onMouseUp={handleCommit}
+          onTouchEnd={handleCommit}
+          onKeyUp={handleCommit}
           aria-label="최소값"
           className="dual-range-input dual-range-input--min"
           style={{ zIndex: minPct > 90 ? 5 : 3 }}
@@ -94,6 +107,9 @@ export default function DualRangeSlider({
           step={step}
           value={valueMax}
           onChange={handleMaxChange}
+          onMouseUp={handleCommit}
+          onTouchEnd={handleCommit}
+          onKeyUp={handleCommit}
           aria-label="최대값"
           className="dual-range-input dual-range-input--max"
           style={{ zIndex: 4 }}

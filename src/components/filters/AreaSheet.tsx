@@ -55,6 +55,8 @@ export default function AreaSheet({
       onSubmit={() => onApply(state)}
       anchorRef={anchorRef}
       popoverWidth={popoverWidth}
+      hideSubmitOnDesktop={false}
+      submitLabel="닫기"
     >
       <div className="space-y-6">
         <div>
@@ -72,6 +74,11 @@ export default function AreaSheet({
             valueMin={state.areaMin}
             valueMax={state.areaMax}
             onChange={({ min, max }) => setState({ areaMin: min, areaMax: max })}
+            onChangeEnd={({ min, max }) => {
+              const next = { areaMin: min, areaMax: max };
+              setState(next);
+              onApply(next);
+            }}
             labels={AREA_LABELS}
           />
         </div>
@@ -85,9 +92,11 @@ export default function AreaSheet({
                 <button
                   key={preset.label}
                   type="button"
-                  onClick={() =>
-                    setState({ areaMin: preset.min, areaMax: preset.max })
-                  }
+                  onClick={() => {
+                    const next = { areaMin: preset.min, areaMax: preset.max };
+                    setState(next);
+                    onApply(next);
+                  }}
                   className={`
                     px-4 py-2 rounded-full text-sm font-semibold transition-all
                     ${active

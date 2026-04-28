@@ -54,6 +54,7 @@ export default function RegionSheet({
       onSubmit={() => onApply({ sido, sigungu })}
       anchorRef={anchorRef}
       popoverWidth={popoverWidth}
+      hideSubmit
     >
       <div className="space-y-4">
         <Select
@@ -62,6 +63,7 @@ export default function RegionSheet({
           onChange={(v) => {
             setSido(v);
             setSigungu("");
+            onApply({ sido: v, sigungu: "" });
           }}
           options={sidoOptions}
           placeholder="시/도 선택"
@@ -69,7 +71,11 @@ export default function RegionSheet({
         <Select
           label="시/군/구"
           value={sigungu}
-          onChange={setSigungu}
+          onChange={(v) => {
+            setSigungu(v);
+            onApply({ sido, sigungu: v });
+            onClose();
+          }}
           options={sigunguOptions}
           placeholder="시/군/구 선택"
           disabled={!sido}

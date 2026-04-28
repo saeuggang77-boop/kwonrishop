@@ -15,8 +15,10 @@ interface BottomSheetProps {
   anchorRef?: RefObject<HTMLElement | null>;
   /** PC popover 가로 크기(px). 기본 480 */
   popoverWidth?: number;
-  /** PC popover에서 검색 버튼 숨김 (기본 true). PC는 외부 클릭/ESC 시 자동으로 onSubmit 호출 */
+  /** PC popover에서 검색 버튼 숨김 (기본 true). 옵션 선택 시 각 시트가 즉시 onApply 호출하므로 검색 버튼 불필요 */
   hideSubmitOnDesktop?: boolean;
+  /** 모바일 시트에서도 검색 버튼 숨김 (기본 false). 자동 닫기되는 시트에서는 true */
+  hideSubmit?: boolean;
 }
 
 /**
@@ -25,8 +27,8 @@ interface BottomSheetProps {
  * - PC(>=768px) + anchorRef 제공: 칩 바로 아래 인라인 popover
  *   - 위치: 칩 bottom + 8px, 가운데 정렬, viewport 경계 보정
  *   - 화살표(꼬리): popover 상단 가운데 정사각형 회전
- *   - 검색 버튼 없음 (옵션 변경 시 자동 onSubmit, 닫힐 때 자동 onSubmit)
- *   - 외부 클릭/ESC로 닫힘
+ *   - 검색 버튼 없음 — 옵션 선택 시 각 시트가 즉시 onApply 호출
+ *   - 외부 클릭/ESC로 닫기만 수행 (onSubmit 호출하지 않음)
  */
 export default function BottomSheet({
   open,
@@ -38,6 +40,7 @@ export default function BottomSheet({
   anchorRef,
   popoverWidth = 480,
   hideSubmitOnDesktop = true,
+  hideSubmit = false,
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -135,10 +138,31 @@ export default function BottomSheet({
   }, [open, isPopoverMode]);
 
   // 뒤로가기(popstate) — 모바일(시트) 모드에서만
+  // open=true가 되면 pushState, open=false (외부 close)가 되면 history 정리
+  const wasOpenRef = useRef(false);
+  useEffect(() => {
+    if (isPopoverMode) {
+      wasOpenRef.current = open;
+      return;
+    }
+
+    if (open && !wasOpenRef.current) {
+      // 새로 열림 → pushState
+      window.history.pushState({ filterSheet: true }, "");
+    } else if (!open && wasOpenRef.current) {
+      // 자동/외부 닫기 → dirty history 정리
+      if (window.history.state?.filterSheet) {
+        // popstate 리스너 제거 후 back 호출 (재진입 방지)
+        window.history.back();
+      }
+    }
+
+    wasOpenRef.current = open;
+  }, [open, isPopoverMode]);
+
   useEffect(() => {
     if (!open || isPopoverMode) return;
 
-    window.history.pushState({ filterSheet: true }, "");
     const handlePopState = () => {
       onClose();
     };
@@ -149,7 +173,7 @@ export default function BottomSheet({
     };
   }, [open, isPopoverMode, onClose]);
 
-  // PC popover: 외부 클릭 감지 → 자동 onSubmit + close
+  // PC popover: 외부 클릭 감지 → close만 (옵션 변경 시 이미 즉시 onApply 됐으므로)
   useEffect(() => {
     if (!open || !isPopoverMode) return;
 
@@ -158,21 +182,16 @@ export default function BottomSheet({
       if (!target) return;
       if (sheetRef.current?.contains(target)) return;
       if (anchorRef?.current?.contains(target)) return;
-      onSubmit();
       onClose();
     };
 
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [open, isPopoverMode, onSubmit, onClose, anchorRef]);
+  }, [open, isPopoverMode, onClose, anchorRef]);
 
   const handleClose = useCallback(() => {
-    if (!isPopoverMode && window.history.state?.filterSheet) {
-      window.history.back();
-    } else {
-      onClose();
-    }
-  }, [onClose, isPopoverMode]);
+    onClose();
+  }, [onClose]);
 
   const handleSubmit = useCallback(() => {
     onSubmit();
@@ -300,16 +319,18 @@ export default function BottomSheet({
         {/* Body (스크롤 가능) */}
         <div className="flex-1 overflow-y-auto px-6 py-4">{children}</div>
 
-        {/* Sticky 검색 버튼 */}
-        <div className="px-6 py-4 border-t border-line bg-cream rounded-b-none md:rounded-b-3xl pb-safe">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="w-full py-3.5 bg-green-700 text-cream rounded-full font-semibold text-base hover:bg-green-800 transition-colors shadow-[0_4px_16px_rgba(31,63,46,0.2)]"
-          >
-            {submitLabel}
-          </button>
-        </div>
+        {/* Sticky 검색 버튼 (자동 닫기 시트는 hideSubmit으로 숨김) */}
+        {!hideSubmit && (
+          <div className="px-6 py-4 border-t border-line bg-cream rounded-b-none md:rounded-b-3xl pb-safe">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="w-full py-3.5 bg-green-700 text-cream rounded-full font-semibold text-base hover:bg-green-800 transition-colors shadow-[0_4px_16px_rgba(31,63,46,0.2)]"
+            >
+              {submitLabel}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

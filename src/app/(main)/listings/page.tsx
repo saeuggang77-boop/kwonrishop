@@ -374,9 +374,8 @@ function ListingsContent() {
     setPage(1);
   };
 
-  // 시트 닫기 후 스크롤 리셋 헬퍼
+  // 필터 적용 후 매물 리스트/페이지 리셋 (시트는 닫지 않음 — 외부 클릭/ESC/검색 버튼으로만 닫힘)
   const closeSheetAndRefetch = () => {
-    setOpenSheet(null);
     setListings([]);
     setPage(1);
   };
