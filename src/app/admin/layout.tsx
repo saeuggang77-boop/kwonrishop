@@ -9,6 +9,7 @@ import { toast } from "@/lib/toast";
 const ADMIN_MENU = [
   { href: "/admin", label: "대시보드", icon: "📊" },
   { href: "/admin/paid-dashboard", label: "유료 현황", icon: "💎" },
+  { href: "/admin/payments", label: "결제 내역", icon: "🧾" },
   { href: "/admin/listings", label: "매물관리", icon: "🏪" },
   { href: "/admin/equipment", label: "집기장터", icon: "🛠️" },
   { href: "/admin/partners", label: "협력업체", icon: "🤝" },
