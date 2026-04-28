@@ -27,6 +27,8 @@ export async function GET(req: NextRequest) {
 
   // New advanced filters
   const region = searchParams.get("region");
+  const sido = searchParams.get("sido");
+  const sigungu = searchParams.get("sigungu");
   const premiumMin = searchParams.get("premiumMin");
   const premiumMax = searchParams.get("premiumMax");
   const depositMin = searchParams.get("depositMin");
@@ -36,6 +38,11 @@ export async function GET(req: NextRequest) {
   const areaMin = searchParams.get("areaMin");
   const areaMax = searchParams.get("areaMax");
   const themes = searchParams.get("themes");
+  const currentFloorParam = searchParams.get("currentFloor");
+  const parkingParam = searchParams.get("parking");
+  const premiumNoneParam = searchParams.get("premiumNone");
+  const premiumNegotiableParam = searchParams.get("premiumNegotiable");
+  const hasRevenueDocParam = searchParams.get("hasRevenueDoc");
 
   // Featured listings query - return early
   if (featured) {
@@ -122,9 +129,11 @@ export async function GET(req: NextRequest) {
   if (categoryId) where.categoryId = categoryId;
   if (subCategoryId) where.subCategoryId = subCategoryId;
   if (brandType) where.brandType = brandType;
-  if (premiumNone === "true") where.premiumNone = true;
 
-  // Build keyword and region filters (AND relationship between them)
+  // 누적 AND 절 (모든 추가 필터가 AND로 묶임)
+  const andClauses: any[] = [];
+
+  // Build keyword and region filters
   const keywordConditions: any[] = [];
   const regionConditions: any[] = [];
 
@@ -137,7 +146,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Region filter - search both road and jibun addresses
+  // 기존 region 텍스트 입력 (하위호환)
   if (region) {
     regionConditions.push(
       { addressRoad: { contains: region, mode: "insensitive" } },
@@ -145,18 +154,29 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // keyword AND region (not OR)
-  if (keywordConditions.length > 0 && regionConditions.length > 0) {
-    const existingAnd = Array.isArray(where.AND) ? where.AND : [];
-    where.AND = [
-      ...existingAnd,
-      { OR: keywordConditions },
-      { OR: regionConditions },
-    ];
-  } else if (keywordConditions.length > 0) {
-    where.OR = keywordConditions;
-  } else if (regionConditions.length > 0) {
-    where.OR = regionConditions;
+  // 신규: sido + sigungu 분리된 지역 필터 (각각 AND 로 별도 조건)
+  if (sido) {
+    andClauses.push({
+      OR: [
+        { addressRoad: { contains: sido, mode: "insensitive" } },
+        { addressJibun: { contains: sido, mode: "insensitive" } },
+      ],
+    });
+  }
+  if (sigungu) {
+    andClauses.push({
+      OR: [
+        { addressRoad: { contains: sigungu, mode: "insensitive" } },
+        { addressJibun: { contains: sigungu, mode: "insensitive" } },
+      ],
+    });
+  }
+
+  if (keywordConditions.length > 0) {
+    andClauses.push({ OR: keywordConditions });
+  }
+  if (regionConditions.length > 0) {
+    andClauses.push({ OR: regionConditions });
   }
 
   // New advanced filters for premium range (DB stores in 만원 units, no conversion needed)
@@ -187,21 +207,108 @@ export async function GET(req: NextRequest) {
     if (areaMax) (where.areaPyeong as Record<string, number>).lte = parseFloat(areaMax);
   }
 
-  // Themes filter
-  if (themes) {
-    const themeArray = themes.split(",").filter(Boolean);
+  // Themes + 층수 필터 (둘 다 있고 테마에 "1층" 이 있으면 OR 매칭)
+  const themeArray = themes ? themes.split(",").filter(Boolean) : [];
+  const floorValues = currentFloorParam
+    ? currentFloorParam.split(",").filter(Boolean)
+    : [];
+
+  const themeHasFloor1 = themeArray.includes("1층");
+  const floorHas1 = floorValues.includes("1");
+
+  if (themeArray.length > 0 && floorValues.length > 0 && themeHasFloor1 && floorHas1) {
+    // 테마 "1층" + currentFloor "1" 동시 → OR 매칭으로 합침
+    const themeOnly = themeArray.filter((t) => t !== "1층");
+    const floorOr: any[] = [];
+    if (floorValues.includes("1")) floorOr.push({ currentFloor: 1 });
+    if (floorValues.includes("2")) floorOr.push({ currentFloor: 2 });
+    if (floorValues.includes("3plus")) floorOr.push({ currentFloor: { gte: 3 } });
+    if (floorValues.includes("basement")) floorOr.push({ isBasement: true });
+    // "1층" 테마는 currentFloor=1 과 의미 동일 → floorOr 에 이미 포함됨
+
+    const orGroup: any[] = [...floorOr];
+    if (themeOnly.length > 0) {
+      orGroup.push({ themes: { hasSome: themeOnly } });
+    }
+    // 테마 "1층" 자체도 themes 컬럼에 들어있는 케이스 보장
+    orGroup.push({ themes: { has: "1층" } });
+
+    andClauses.push({ OR: orGroup });
+  } else {
+    // 일반 경로
     if (themeArray.length > 0) {
       where.themes = { hasSome: themeArray };
     }
+    if (floorValues.length > 0) {
+      const floorOr: any[] = [];
+      if (floorValues.includes("1")) floorOr.push({ currentFloor: 1 });
+      if (floorValues.includes("2")) floorOr.push({ currentFloor: 2 });
+      if (floorValues.includes("3plus")) floorOr.push({ currentFloor: { gte: 3 } });
+      if (floorValues.includes("basement")) floorOr.push({ isBasement: true });
+      if (floorOr.length > 0) andClauses.push({ OR: floorOr });
+    }
+  }
+
+  // 주차 필터
+  if (parkingParam === "yes") {
+    andClauses.push({
+      AND: [
+        { parkingNone: false },
+        { parkingTotal: { gt: 0 } },
+      ],
+    });
+  } else if (parkingParam === "no") {
+    where.parkingNone = true;
+  }
+
+  // 권리금 옵션: 무권리 + 협의 가능 (둘 다 켜져있으면 OR로 묶음)
+  if (premiumNoneParam === "true" && premiumNegotiableParam === "true") {
+    andClauses.push({
+      OR: [
+        { premiumNone: true },
+        { themes: { has: "무권리" } },
+        { premiumNegotiable: true },
+      ],
+    });
+  } else if (premiumNoneParam === "true") {
+    andClauses.push({
+      OR: [
+        { premiumNone: true },
+        { themes: { has: "무권리" } },
+      ],
+    });
+  } else if (premiumNegotiableParam === "true") {
+    where.premiumNegotiable = true;
+  }
+  // 하위호환: 옛 ?premiumNone= 키 (다른 진입 경로 보호)
+  if (premiumNone === "true" && premiumNoneParam !== "true" && premiumNegotiableParam !== "true") {
+    where.premiumNone = true;
+  }
+
+  // 매출증빙 필터: monthlyRevenue가 있거나 documents (REVENUE_PROOF) 가 1개 이상
+  if (hasRevenueDocParam === "true") {
+    andClauses.push({
+      OR: [
+        { monthlyRevenue: { not: null } },
+        { documents: { some: { type: "REVENUE_PROOF" } } },
+      ],
+    });
+  }
+
+  // 누적된 AND 절을 where 에 반영 (기존 OR 와 충돌 방지)
+  if (andClauses.length > 0) {
+    where.AND = andClauses;
   }
 
   // Featured 제외: 필터/검색 없을 때만 VIP/PREMIUM 숨김 (캐러셀과 중복 방지)
   const hasFilter = !!(
-    keyword || region || themes ||
+    keyword || region || sido || sigungu || themes ||
     minDeposit || maxDeposit || minPremium || maxPremium ||
     premiumMin || premiumMax || depositMin || depositMax ||
     rentMin || rentMax || areaMin || areaMax ||
     categoryId || subCategoryId || brandType || premiumNone ||
+    premiumNoneParam === "true" || premiumNegotiableParam === "true" ||
+    currentFloorParam || parkingParam || hasRevenueDocParam === "true" ||
     (swLat && swLng && neLat && neLng)
   );
 
