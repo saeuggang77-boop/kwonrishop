@@ -3,6 +3,16 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "@/lib/toast";
 
+function getUserFilterFromUrl() {
+  if (typeof window === "undefined") return { userId: "", name: "", email: "" };
+  const params = new URLSearchParams(window.location.search);
+  return {
+    userId: params.get("userId") || "",
+    name: params.get("name") || "",
+    email: params.get("email") || "",
+  };
+}
+
 interface AdminListing {
   id: string;
   storeName: string | null;
@@ -60,6 +70,11 @@ export default function AdminListingsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [tierFilter, setTierFilter] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [userFilter, setUserFilter] = useState({ userId: "", name: "", email: "" });
+
+  useEffect(() => {
+    setUserFilter(getUserFilterFromUrl());
+  }, []);
 
   const fetchListings = useCallback(async () => {
     setLoading(true);
@@ -68,6 +83,7 @@ export default function AdminListingsPage() {
     if (statusFilter) params.set("status", statusFilter);
     if (tierFilter) params.set("tier", tierFilter);
     if (keyword) params.set("keyword", keyword);
+    if (userFilter.userId) params.set("userId", userFilter.userId);
 
     const res = await fetch(`/api/admin/listings?${params}`);
     const data = await res.json();
@@ -75,7 +91,15 @@ export default function AdminListingsPage() {
     setTotal(data.pagination?.total || 0);
     setTotalPages(data.pagination?.totalPages || 1);
     setLoading(false);
-  }, [page, statusFilter, tierFilter, keyword]);
+  }, [page, statusFilter, tierFilter, keyword, userFilter.userId]);
+
+  function clearUserFilter() {
+    setUserFilter({ userId: "", name: "", email: "" });
+    setPage(1);
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", "/admin/listings");
+    }
+  }
 
   useEffect(() => {
     fetchListings();
@@ -99,6 +123,27 @@ export default function AdminListingsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">매물관리</h1>
+
+      {/* User filter banner */}
+      {userFilter.userId && (
+        <div className="mb-4 flex items-center justify-between gap-3 bg-blue-50 border border-blue-200 rounded-2xl px-4 py-3">
+          <div className="text-sm">
+            <span className="text-blue-700 font-medium">
+              {userFilter.name || userFilter.email || "선택한 회원"}님
+            </span>
+            <span className="text-gray-600">의 매물만 보는 중</span>
+            {userFilter.email && userFilter.name && (
+              <span className="text-xs text-gray-400 ml-2">{userFilter.email}</span>
+            )}
+          </div>
+          <button
+            onClick={clearUserFilter}
+            className="text-xs px-3 py-1.5 bg-white border border-blue-300 text-blue-700 rounded-lg font-medium hover:bg-blue-100 transition-colors whitespace-nowrap"
+          >
+            전체 매물 보기
+          </button>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-cream rounded-3xl border border-line p-4 mb-6">

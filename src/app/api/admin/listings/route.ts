@@ -27,6 +27,7 @@ export async function GET(request: Request) {
     const status = searchParams.get("status") || "";
     const search = searchParams.get("keyword") || searchParams.get("search") || "";
     const tier = searchParams.get("tier") || "";
+    const userId = searchParams.get("userId") || "";
 
     const skip = (page - 1) * limit;
 
@@ -39,6 +40,10 @@ export async function GET(request: Request) {
 
     if (tier) {
       where.tier = tier;
+    }
+
+    if (userId) {
+      where.userId = userId;
     }
 
     if (search) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { toast } from "@/lib/toast";
 
 interface AdminUser {
@@ -188,14 +189,25 @@ export default function AdminUsersPage() {
                     </span>
                   </td>
                   <td className="hidden md:table-cell px-6 py-4">
-                    {user.isVerified ? (
+                    {user.role === "BUYER" || user.role === "ADMIN" ? (
+                      <span className="text-gray-300 text-sm">—</span>
+                    ) : user.isVerified ? (
                       <span className="text-green-600 text-sm">✓ 인증완료</span>
                     ) : (
                       <span className="text-gray-400 text-sm">미인증</span>
                     )}
                   </td>
-                  <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
-                    {user.listingCount.toLocaleString()}개
+                  <td className="hidden md:table-cell px-6 py-4 text-sm">
+                    {user.listingCount > 0 ? (
+                      <Link
+                        href={`/admin/listings?userId=${user.id}&name=${encodeURIComponent(user.name || "")}&email=${encodeURIComponent(user.email || "")}`}
+                        className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                      >
+                        {user.listingCount.toLocaleString()}개
+                      </Link>
+                    ) : (
+                      <span className="text-gray-400">0개</span>
+                    )}
                   </td>
                   <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     {new Date(user.createdAt).toLocaleDateString()}

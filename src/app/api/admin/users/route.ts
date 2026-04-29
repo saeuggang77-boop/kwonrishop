@@ -63,6 +63,9 @@ export async function GET(request: Request) {
         role: true,
         emailVerified: true,
         createdAt: true,
+        businessVerification: {
+          select: { verified: true },
+        },
         listings: {
           where: { status: { not: "DELETED" } },
           select: { id: true },
@@ -73,7 +76,9 @@ export async function GET(request: Request) {
 
     const transformedUsers = users.map((u) => ({
       ...u,
+      isVerified: !!u.businessVerification?.verified,
       listingCount: u.listings.length,
+      businessVerification: undefined,
       listings: undefined,
     }));
 
