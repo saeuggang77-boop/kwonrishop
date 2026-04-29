@@ -1,6 +1,6 @@
 /**
  * PWA 아이콘 생성 스크립트
- * Option A: 테라코타 솔리드 + 흰 동그라미 ●
+ * 시안: C-1 — 어닝(차양) 점포 + 코인 (권리샵 = 상가 직거래)
  *
  * 출력:
  *   public/icons/icon-192.png        — 192x192 (Android)
@@ -14,51 +14,45 @@ const { chromium } = require("playwright");
 
 const OUTPUT_DIR = path.resolve(__dirname, "..", "public", "icons");
 
-const TERRA = "#D96C4F";
 const CREAM = "#FBF8F3";
+const TERRA = "#D96C4F";
+const GREEN = "#1F3F2E";
 
-// any 아이콘: 흰 동그라미 직경 = 캔버스의 32%
+// any 아이콘: 코인(테라코타) 원 안에 어닝 점포
 function makeAnyHtml(size) {
-  const dotDiameter = Math.round(size * 0.32);
   return `<!doctype html><html><body style="margin:0;padding:0;background:transparent">
-<div style="
-  width:${size}px;
-  height:${size}px;
-  background:${TERRA};
-  display:flex;
-  align-items:center;
-  justify-content:center;
-">
-  <div style="
-    width:${dotDiameter}px;
-    height:${dotDiameter}px;
-    border-radius:50%;
-    background:${CREAM};
-  "></div>
-</div>
+<svg viewBox="0 0 192 192" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="${CREAM}"/>
+  <circle cx="96" cy="96" r="78" fill="${TERRA}"/>
+  <circle cx="96" cy="96" r="64" fill="none" stroke="${CREAM}" stroke-width="3" opacity="0.55"/>
+  <rect x="60" y="76" width="72" height="50" fill="${CREAM}"/>
+  <polygon points="56,76 136,76 128,62 64,62" fill="${GREEN}"/>
+  <line x1="76" y1="62" x2="72" y2="76" stroke="${CREAM}" stroke-width="2.5"/>
+  <line x1="92" y1="62" x2="90" y2="76" stroke="${CREAM}" stroke-width="2.5"/>
+  <line x1="108" y1="62" x2="108" y2="76" stroke="${CREAM}" stroke-width="2.5"/>
+  <line x1="120" y1="62" x2="124" y2="76" stroke="${CREAM}" stroke-width="2.5"/>
+  <rect x="86" y="98" width="20" height="28" rx="2" fill="${GREEN}"/>
+  <rect x="65" y="82" width="16" height="14" fill="${GREEN}" opacity="0.18"/>
+  <rect x="111" y="82" width="16" height="14" fill="${GREEN}" opacity="0.18"/>
+</svg>
 </body></html>`;
 }
 
-// maskable: 흰 동그라미 직경을 안전 영역(중앙 80%)에 맞춰 줄임
-// 안전 영역 = canvas * 0.8. 그 안에서 32% 비율 유지 → 캔버스의 25.6% ≈ 26%
+// maskable: 코랄 배경 풀스크린 + 콘텐츠를 중앙 80% safe zone에 배치 (코인 외곽 원 제거)
 function makeMaskableHtml(size) {
-  const dotDiameter = Math.round(size * 0.26);
   return `<!doctype html><html><body style="margin:0;padding:0;background:transparent">
-<div style="
-  width:${size}px;
-  height:${size}px;
-  background:${TERRA};
-  display:flex;
-  align-items:center;
-  justify-content:center;
-">
-  <div style="
-    width:${dotDiameter}px;
-    height:${dotDiameter}px;
-    border-radius:50%;
-    background:${CREAM};
-  "></div>
-</div>
+<svg viewBox="0 0 240 240" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="240" fill="${TERRA}"/>
+  <rect x="84" y="100" width="72" height="50" fill="${CREAM}"/>
+  <polygon points="80,100 160,100 152,86 88,86" fill="${GREEN}"/>
+  <line x1="100" y1="86" x2="96" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
+  <line x1="116" y1="86" x2="114" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
+  <line x1="132" y1="86" x2="132" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
+  <line x1="144" y1="86" x2="148" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
+  <rect x="110" y="122" width="20" height="28" rx="2" fill="${GREEN}"/>
+  <rect x="89" y="106" width="16" height="14" fill="${GREEN}" opacity="0.18"/>
+  <rect x="135" y="106" width="16" height="14" fill="${GREEN}" opacity="0.18"/>
+</svg>
 </body></html>`;
 }
 
