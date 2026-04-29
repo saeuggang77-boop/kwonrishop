@@ -78,7 +78,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         {/* Toss Payments 도메인 미리 연결 (DNS/TLS 사전 준비로 결제 진입 속도 향상) */}

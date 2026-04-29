@@ -38,20 +38,24 @@ function makeAnyHtml(size) {
 </body></html>`;
 }
 
-// maskable: 코랄 배경 풀스크린 + 콘텐츠를 중앙 80% safe zone에 배치 (코인 외곽 원 제거)
+// maskable: 코랄 풀배경 + 가게 콘텐츠가 캔버스의 약 60% 차지 (safe zone 80% 내 충분히 큼)
 function makeMaskableHtml(size) {
   return `<!doctype html><html><body style="margin:0;padding:0;background:transparent">
-<svg viewBox="0 0 240 240" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="240" height="240" fill="${TERRA}"/>
-  <rect x="84" y="100" width="72" height="50" fill="${CREAM}"/>
-  <polygon points="80,100 160,100 152,86 88,86" fill="${GREEN}"/>
-  <line x1="100" y1="86" x2="96" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
-  <line x1="116" y1="86" x2="114" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
-  <line x1="132" y1="86" x2="132" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
-  <line x1="144" y1="86" x2="148" y2="100" stroke="${CREAM}" stroke-width="2.5"/>
-  <rect x="110" y="122" width="20" height="28" rx="2" fill="${GREEN}"/>
-  <rect x="89" y="106" width="16" height="14" fill="${GREEN}" opacity="0.18"/>
-  <rect x="135" y="106" width="16" height="14" fill="${GREEN}" opacity="0.18"/>
+<svg viewBox="0 0 192 192" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="${TERRA}"/>
+  <!-- 가게 본체 (캔버스 폭의 58%) -->
+  <rect x="40" y="76" width="112" height="80" fill="${CREAM}"/>
+  <!-- 어닝 -->
+  <polygon points="32,76 160,76 148,52 44,52" fill="${GREEN}"/>
+  <line x1="60" y1="52" x2="56" y2="76" stroke="${CREAM}" stroke-width="3.5"/>
+  <line x1="84" y1="52" x2="82" y2="76" stroke="${CREAM}" stroke-width="3.5"/>
+  <line x1="108" y1="52" x2="108" y2="76" stroke="${CREAM}" stroke-width="3.5"/>
+  <line x1="132" y1="52" x2="136" y2="76" stroke="${CREAM}" stroke-width="3.5"/>
+  <!-- 문 -->
+  <rect x="80" y="112" width="32" height="44" rx="3" fill="${GREEN}"/>
+  <!-- 쇼윈도우 -->
+  <rect x="48" y="86" width="24" height="20" fill="${GREEN}" opacity="0.18"/>
+  <rect x="120" y="86" width="24" height="20" fill="${GREEN}" opacity="0.18"/>
 </svg>
 </body></html>`;
 }
