@@ -275,7 +275,7 @@ export default function EquipmentDetailClient() {
       {/* 설명 */}
       {equipment.description && (
         <Section title="상품 설명">
-          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
+          <p className="text-base text-gray-700 whitespace-pre-wrap leading-relaxed">
             {equipment.description}
           </p>
         </Section>

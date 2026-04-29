@@ -1123,7 +1123,7 @@ export default function ListingDetailClient() {
       {/* ===== 10. 매물 설명 ===== */}
       {listing.description && (
         <Section title="매물 설명">
-          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{listing.description}</p>
+          <p className="text-base text-gray-700 whitespace-pre-wrap leading-relaxed">{listing.description}</p>
         </Section>
       )}
 
