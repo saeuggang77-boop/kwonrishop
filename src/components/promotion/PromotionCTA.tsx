@@ -8,14 +8,9 @@ export function ListingInfeedPromo() {
     <div className="relative rounded-lg border border-dashed border-gray-300 bg-gray-50/60 px-4 py-3">
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="text-sm font-bold text-gray-900 truncate">
-              내 매물, 더 빨리 팔고 싶다면?
-            </h3>
-            <span className="shrink-0 rounded bg-green-700 px-1.5 py-0.5 text-xs font-semibold text-white">
-              AD
-            </span>
-          </div>
+          <h3 className="mb-0.5 text-sm font-bold text-gray-900 leading-snug">
+            내 매물, 더 빨리 팔고 싶다면?
+          </h3>
           <p className="text-xs text-gray-500">
             프리미엄 사장님의 평균 문의량 <span className="font-semibold text-green-700">3배 ↑</span>
           </p>

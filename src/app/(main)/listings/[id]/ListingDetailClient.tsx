@@ -869,9 +869,9 @@ export default function ListingDetailClient() {
 
       {/* ===== 상세 섹션 ===== */}
       <div id="section-detail" className="scroll-mt-32">
-      {/* ===== 5. 권리금 해부하기 ===== */}
+      {/* ===== 5. 권리금 내역 ===== */}
       {hasPremiumBreakdown && (
-        <Section title="권리금 해부하기" subtitle="총 권리금이 어떻게 구성되어 있는지 한눈에 확인하세요">
+        <Section title="권리금 내역" subtitle="총 권리금이 어떻게 구성되어 있는지 한눈에 확인하세요">
           <div>
             {/* 비율 스택바 (pill) */}
             <div className="flex h-8 rounded-full overflow-hidden shadow-[0_2px_8px_rgba(31,63,46,0.08)] mb-4">
