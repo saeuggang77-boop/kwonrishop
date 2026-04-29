@@ -61,7 +61,7 @@ export default function EquipmentRegisterPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/equipment/register");
+      router.replace("/login?callbackUrl=/equipment/register");
       return;
     }
 
@@ -69,7 +69,7 @@ export default function EquipmentRegisterPage() {
       const role = (session?.user as any)?.role;
       if (!["SELLER", "FRANCHISE", "PARTNER", "ADMIN"].includes(role)) {
         toast.info("사업자 회원만 집기를 등록할 수 있습니다.");
-        router.push("/");
+        router.replace("/");
         return;
       }
 
@@ -79,7 +79,7 @@ export default function EquipmentRegisterPage() {
         .then((data) => {
           if (!data.verified) {
             toast.info("사업자인증이 필요합니다.");
-            router.push("/verify-business");
+            router.replace("/verify-business");
           } else {
             // 등록 수 제한 확인
             fetch("/api/equipment/my-count")
@@ -87,7 +87,7 @@ export default function EquipmentRegisterPage() {
               .then((countData) => {
                 if (countData.count >= 10) {
                   toast.info("집기는 최대 10개까지 등록할 수 있습니다.");
-                  router.push("/equipment");
+                  router.replace("/equipment");
                 } else {
                   setCheckingVerification(false);
                 }

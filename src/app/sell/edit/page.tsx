@@ -49,7 +49,7 @@ export default function ListingEditPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/sell/edit");
+      router.replace("/login?callbackUrl=/sell/edit");
       return;
     }
     if (status === "authenticated") {

@@ -19,7 +19,7 @@ export default function SellerReportPage() {
 
   useEffect(() => {
     if (authStatus === "unauthenticated") {
-      router.push("/login?callbackUrl=" + encodeURIComponent(`/reports/seller/${listingId}`));
+      router.replace("/login?callbackUrl=" + encodeURIComponent(`/reports/seller/${listingId}`));
       return;
     }
     if (authStatus !== "authenticated") return;

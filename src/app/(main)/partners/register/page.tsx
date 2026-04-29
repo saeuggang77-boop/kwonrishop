@@ -43,7 +43,7 @@ export default function PartnerRegisterPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/partners/register");
+      router.replace("/login?callbackUrl=/partners/register");
       return;
     }
 
@@ -51,7 +51,7 @@ export default function PartnerRegisterPage() {
       // 역할 확인 (session에서 직접 가져옴)
       if (session?.user?.role !== "PARTNER" && session?.user?.role !== "ADMIN") {
         toast.info("협력업체 회원만 등록할 수 있습니다.");
-        router.push("/");
+        router.replace("/");
         return;
       }
 
@@ -66,7 +66,7 @@ export default function PartnerRegisterPage() {
         .then((data) => {
           if (!data.verified) {
             toast.info("사업자인증이 필요합니다.");
-            router.push("/verify-business");
+            router.replace("/verify-business");
           } else {
             // If edit mode, fetch existing data
             if (editMode) {

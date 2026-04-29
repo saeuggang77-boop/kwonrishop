@@ -45,7 +45,7 @@ export default function CommunityDetailClient() {
     fetch(`/api/community/${params.id}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.error) { router.push("/community"); return; }
+        if (data.error) { router.replace("/community"); return; }
         setPost(data);
         setLoading(false);
       });

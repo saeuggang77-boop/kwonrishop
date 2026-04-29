@@ -68,14 +68,14 @@ export default function EquipmentEditPage() {
         .then((data) => {
           if (data.error) {
             toast.error("집기를 찾을 수 없습니다.");
-            router.push("/equipment");
+            router.replace("/equipment");
             return;
           }
 
           // Owner check
           if (data.user?.id !== (session?.user as any)?.id && (session?.user as any)?.role !== "ADMIN") {
             toast.error("수정 권한이 없습니다.");
-            router.push(`/equipment/${id}`);
+            router.replace(`/equipment/${id}`);
             return;
           }
 
@@ -106,7 +106,7 @@ export default function EquipmentEditPage() {
         })
         .catch(() => {
           toast.error("데이터를 불러올 수 없습니다.");
-          router.push("/equipment");
+          router.replace("/equipment");
         });
     }
   }, [status, session, id, router]);

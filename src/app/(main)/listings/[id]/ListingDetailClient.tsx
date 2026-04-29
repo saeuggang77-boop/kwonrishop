@@ -172,7 +172,7 @@ export default function ListingDetailClient() {
       })
       .then((data) => {
         if (data.error) {
-          router.push("/listings");
+          router.replace("/listings");
           return;
         }
         setListing(data);
@@ -514,7 +514,7 @@ export default function ListingDetailClient() {
               })
               .then((data) => {
                 if (data.error) {
-                  router.push("/listings");
+                  router.replace("/listings");
                   return;
                 }
                 setListing(data);

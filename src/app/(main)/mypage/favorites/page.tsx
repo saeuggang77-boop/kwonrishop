@@ -20,7 +20,7 @@ export default function FavoritesPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/mypage/favorites");
+      router.replace("/login?callbackUrl=/mypage/favorites");
       return;
     }
     if (status === "authenticated") {

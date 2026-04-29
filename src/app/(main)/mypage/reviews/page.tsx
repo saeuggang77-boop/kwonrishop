@@ -52,7 +52,7 @@ export default function ReviewsPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/mypage/reviews");
+      router.replace("/login?callbackUrl=/mypage/reviews");
       return;
     }
     if (status === "authenticated") {

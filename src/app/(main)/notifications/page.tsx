@@ -37,7 +37,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/notifications");
+      router.replace("/login?callbackUrl=/notifications");
       return;
     }
     if (status === "authenticated") {

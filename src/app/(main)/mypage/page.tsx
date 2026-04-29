@@ -127,7 +127,7 @@ export default function MyPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/mypage");
+      router.replace("/login?callbackUrl=/mypage");
       return;
     }
     if (status === "authenticated") {

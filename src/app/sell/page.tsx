@@ -93,7 +93,7 @@ export default function SellPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/sell");
+      router.replace("/login?callbackUrl=/sell");
       return;
     }
 
@@ -102,7 +102,7 @@ export default function SellPage() {
         .then((res) => res.json())
         .then((d) => {
           if (!d.verified) {
-            router.push("/verify-business?role=SELLER");
+            router.replace("/verify-business?role=SELLER");
           } else {
             setCheckingVerification(false);
           }

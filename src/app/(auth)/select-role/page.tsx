@@ -119,7 +119,7 @@ function SelectRoleContent() {
   }
 
   if (!session) {
-    router.push("/login?callbackUrl=/select-role");
+    router.replace("/login?callbackUrl=/select-role");
     return null;
   }
 

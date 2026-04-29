@@ -32,12 +32,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (status === "loading") return;
     if (!session) {
-      router.push("/login");
+      router.replace("/login");
       return;
     }
     if (session.user.role !== "ADMIN") {
       toast.error("관리자만 접근 가능합니다");
-      router.push("/");
+      router.replace("/");
     }
   }, [session, status, router]);
 

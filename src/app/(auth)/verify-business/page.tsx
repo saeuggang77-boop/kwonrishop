@@ -66,7 +66,7 @@ function VerifyBusinessContent() {
   }
 
   if (!session) {
-    router.push("/login?callbackUrl=/verify-business");
+    router.replace("/login?callbackUrl=/verify-business");
     return null;
   }
 

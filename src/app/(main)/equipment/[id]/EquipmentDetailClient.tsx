@@ -72,7 +72,7 @@ export default function EquipmentDetailClient() {
       .then((r) => r.json())
       .then((data) => {
         if (data.error) {
-          router.push("/equipment");
+          router.replace("/equipment");
           return;
         }
         setEquipment(data);
@@ -80,7 +80,7 @@ export default function EquipmentDetailClient() {
         setLoading(false);
       })
       .catch(() => {
-        router.push("/equipment");
+        router.replace("/equipment");
       });
   }, [id, router]);
 

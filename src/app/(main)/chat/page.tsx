@@ -147,7 +147,7 @@ function ChatContent() {
   }
 
   if (!session) {
-    router.push("/login?callbackUrl=/chat");
+    router.replace("/login?callbackUrl=/chat");
     return null;
   }
 

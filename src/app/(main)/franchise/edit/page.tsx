@@ -34,7 +34,7 @@ export default function FranchiseEditPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/franchise/edit");
+      router.replace("/login?callbackUrl=/franchise/edit");
       return;
     }
 
@@ -60,12 +60,12 @@ export default function FranchiseEditPage() {
               .catch(() => setLoading(false));
           } else {
             toast.error("프랜차이즈 본사 계정이 아닙니다.");
-            router.push("/mypage");
+            router.replace("/mypage");
           }
         })
         .catch(() => {
           toast.error("데이터를 불러오는데 실패했습니다.");
-          router.push("/mypage");
+          router.replace("/mypage");
         });
     }
   }, [status, router]);

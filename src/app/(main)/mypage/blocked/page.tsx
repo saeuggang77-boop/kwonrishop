@@ -24,7 +24,7 @@ export default function BlockedUsersPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/mypage/blocked");
+      router.replace("/login?callbackUrl=/mypage/blocked");
       return;
     }
     if (status === "authenticated") {

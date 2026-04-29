@@ -30,7 +30,7 @@ export default function StatsPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/mypage/stats");
+      router.replace("/login?callbackUrl=/mypage/stats");
       return;
     }
     if (status === "authenticated") {

@@ -42,7 +42,7 @@ export default function MyAdsPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/mypage/ads");
+      router.replace("/login?callbackUrl=/mypage/ads");
       return;
     }
     if (status === "authenticated") {

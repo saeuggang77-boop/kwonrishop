@@ -31,7 +31,7 @@ export default function ProfileEditPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/mypage/edit");
+      router.replace("/login?callbackUrl=/mypage/edit");
       return;
     }
     if (status === "authenticated") {

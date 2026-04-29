@@ -23,7 +23,7 @@ function CommunityWriteContent() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/community/write");
+      router.replace("/login?callbackUrl=/community/write");
     }
   }, [status, router]);
 
