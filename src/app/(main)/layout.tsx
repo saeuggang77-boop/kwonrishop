@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CompareBar from "@/components/listing/CompareBar";
 import BottomNav from "@/components/layout/BottomNav";
+import ContextualFAB from "@/components/layout/ContextualFAB";
 
 export const metadata: Metadata = {
   title: "권리샵 - 상가직거래 플랫폼",
@@ -20,6 +21,7 @@ export default function MainLayout({
       <main className="min-h-[calc(100vh-3.5rem)] pb-16 md:pb-0">{children}</main>
       <Footer />
       <CompareBar />
+      <ContextualFAB />
       <BottomNav />
     </>
   );

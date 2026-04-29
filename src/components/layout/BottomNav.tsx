@@ -85,22 +85,22 @@ export default function BottomNav() {
           <span className="text-xs mt-0.5 font-medium">매물</span>
         </Link>
 
-        {/* 등록 (FAB 스타일) */}
+        {/* 커뮤니티 */}
         <Link
-          href="/sell"
-          className="flex flex-col items-center justify-center -mt-6"
+          href="/community"
+          className={`flex flex-col items-center justify-center flex-1 min-w-[44px] min-h-[44px] transition-colors ${
+            isActive("/community") ? "text-green-700" : "text-muted"
+          }`}
         >
-          <div className="w-14 h-14 rounded-full bg-terra-500 text-cream flex items-center justify-center shadow-[0_8px_24px_rgba(217,108,79,0.35)] hover:shadow-[0_12px_32px_rgba(217,108,79,0.45)] transition-shadow">
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-          </div>
-          <span className="text-xs mt-1 font-medium text-green-700">등록</span>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+            />
+          </svg>
+          <span className="text-xs mt-0.5 font-medium">커뮤니티</span>
         </Link>
 
         {/* 채팅 */}
