@@ -22,6 +22,18 @@ interface AdminStats {
   };
   popularCategories?: { name: string; count: number }[];
   popularRegions?: { name: string; count: number }[];
+  signupStats?: {
+    totals: { today: number; yesterday: number; last7days: number; last30days: number };
+    byRole: {
+      role: string;
+      today: number;
+      yesterday: number;
+      last7days: number;
+      last30days: number;
+      total: number;
+    }[];
+    verification: { role: string; total: number; verified: number }[];
+  };
 }
 
 type ChartTab = "revenue" | "signups" | "listings";
@@ -127,6 +139,84 @@ export default function AdminDashboardPage() {
               </div>
             ))}
           </div>
+
+          {/* 신규 가입 현황 */}
+          {stats?.signupStats && (
+            <div className="bg-cream rounded-3xl border border-line p-6 mt-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">신규 가입 현황</h2>
+
+              {/* 기간별 카드 */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                {[
+                  { label: "오늘", value: stats.signupStats.totals.today, color: "bg-blue-50 text-blue-700" },
+                  { label: "어제", value: stats.signupStats.totals.yesterday, color: "bg-indigo-50 text-indigo-700" },
+                  { label: "최근 7일", value: stats.signupStats.totals.last7days, color: "bg-emerald-50 text-emerald-700" },
+                  { label: "최근 30일", value: stats.signupStats.totals.last30days, color: "bg-amber-50 text-amber-700" },
+                ].map((c) => (
+                  <div key={c.label} className={`rounded-2xl p-4 ${c.color}`}>
+                    <p className="text-xs font-medium opacity-80">{c.label}</p>
+                    <p className="text-2xl font-bold mt-1">{c.value.toLocaleString()}<span className="text-base font-medium ml-0.5">명</span></p>
+                  </div>
+                ))}
+              </div>
+
+              {/* 역할별 표 */}
+              <div className="overflow-x-auto -mx-2">
+                <table className="w-full min-w-[500px] text-sm">
+                  <thead>
+                    <tr className="text-gray-500 border-b border-gray-200">
+                      <th className="text-left py-2 px-2 font-medium">역할</th>
+                      <th className="text-right py-2 px-2 font-medium">오늘</th>
+                      <th className="text-right py-2 px-2 font-medium">어제</th>
+                      <th className="text-right py-2 px-2 font-medium">7일</th>
+                      <th className="text-right py-2 px-2 font-medium">30일</th>
+                      <th className="text-right py-2 px-2 font-medium">누적</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stats.signupStats.byRole.map((r) => (
+                      <tr key={r.role} className="border-b border-gray-100">
+                        <td className="py-2.5 px-2 text-gray-900 font-medium">{roleLabel[r.role] || r.role}</td>
+                        <td className={`text-right py-2.5 px-2 ${r.today > 0 ? "text-blue-700 font-semibold" : "text-gray-400"}`}>{r.today.toLocaleString()}</td>
+                        <td className="text-right py-2.5 px-2 text-gray-700">{r.yesterday.toLocaleString()}</td>
+                        <td className="text-right py-2.5 px-2 text-gray-700">{r.last7days.toLocaleString()}</td>
+                        <td className="text-right py-2.5 px-2 text-gray-700">{r.last30days.toLocaleString()}</td>
+                        <td className="text-right py-2.5 px-2 text-gray-900 font-semibold">{r.total.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* 사업자인증 진행률 */}
+              {stats.signupStats.verification.length > 0 && (
+                <div className="mt-6 pt-5 border-t border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">사업자인증 진행률</h3>
+                  <div className="space-y-2.5">
+                    {stats.signupStats.verification.map((v) => {
+                      const pct = v.total > 0 ? Math.round((v.verified / v.total) * 100) : 0;
+                      return (
+                        <div key={v.role} className="flex items-center gap-3">
+                          <div className="w-24 text-sm text-gray-700 font-medium flex-shrink-0">{roleLabel[v.role] || v.role}</div>
+                          <div className="flex-1 relative h-6 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className="absolute inset-y-0 left-0 bg-emerald-500 transition-all"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <div className="text-xs text-gray-600 whitespace-nowrap min-w-[140px] text-right">
+                            <span className="font-semibold text-emerald-700">{v.verified.toLocaleString()}</span>
+                            <span className="text-gray-400"> / {v.total.toLocaleString()}명</span>
+                            <span className="ml-2 text-gray-500 font-medium">({pct}%)</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {stats?.usersByRole && stats.usersByRole.length > 0 && (
             <div className="bg-cream rounded-3xl border border-line p-6 mt-6">
