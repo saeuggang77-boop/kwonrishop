@@ -5,6 +5,8 @@ import SessionProvider from "@/components/providers/SessionProvider";
 import SkipLink from "@/components/ui/SkipLink";
 import Toaster from "@/components/ui/Toaster";
 import PushNotificationManager from "@/components/PushNotificationManager";
+import InstallPwaPrompt from "@/components/InstallPwaPrompt";
+import PushPermissionPrompt from "@/components/PushPermissionPrompt";
 import "./globals.css";
 
 const geist = Geist({
@@ -76,7 +78,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         {/* Toss Payments 도메인 미리 연결 (DNS/TLS 사전 준비로 결제 진입 속도 향상) */}
@@ -105,6 +107,8 @@ export default function RootLayout({
         <SkipLink />
         <SessionProvider>
           <PushNotificationManager />
+          <InstallPwaPrompt />
+          <PushPermissionPrompt />
           <div id="main-content">{children}</div>
           <Toaster />
         </SessionProvider>

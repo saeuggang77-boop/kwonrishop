@@ -147,6 +147,11 @@ function SelectRoleContent() {
         // JWT 쿠키 갱신 대기
         await new Promise(resolve => setTimeout(resolve, 500));
 
+        // 가입 직후 푸시 알림 권한 모달 노출 플래그
+        if (typeof window !== "undefined") {
+          localStorage.setItem("push-prompt-pending", "true");
+        }
+
         if (callbackUrl && callbackUrl.startsWith("/")) {
           const redirectUrl = new URL(data.redirect, window.location.origin);
           redirectUrl.searchParams.set("callbackUrl", callbackUrl);

@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/ui/Logo";
+import InstallShortcutButton from "@/components/InstallShortcutButton";
 
 interface Notification {
   id: string;
@@ -333,13 +334,15 @@ export default function Header() {
             </Link>
           )}
 
-          {/* 모바일 메뉴 버튼 */}
-          <button
-            className="md:hidden p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-expanded={mobileMenuOpen}
-            aria-label="모바일 메뉴"
-          >
+          {/* 모바일 PWA 설치 바로가기 + 햄버거 묶음 (모바일 전용 간격 축소) */}
+          <div className="md:hidden flex items-center gap-1.5 -ml-1.5">
+            <InstallShortcutButton />
+            <button
+              className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-label="모바일 메뉴"
+            >
             <svg
               className="w-6 h-6 text-gray-600"
               fill="none"
@@ -362,7 +365,8 @@ export default function Header() {
                 />
               )}
             </svg>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
 
