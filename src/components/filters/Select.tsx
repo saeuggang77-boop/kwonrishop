@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 export interface SelectOption {
   value: string;
@@ -18,11 +19,10 @@ interface SelectProps {
 
 /**
  * 커스텀 드롭다운 (네이티브 select 안 씀)
- * - 닫힘: cream-elev 배경 + line-soft 1px + chevron
- * - 호버: green-700 보더
- * - 펼침: white 배경 + 다층 그림자, 옵션 hover cream-elev, 선택 옵션 green-700
- * - 외부 클릭 시 닫힘
- * - max-height 320px + scroll
+ * - 옵션 패널은 Portal로 document.body에 렌더 + fixed 포지션
+ *   → 부모 컨테이너의 overflow:hidden/auto에 클리핑되지 않음 (BottomSheet 안에서도 정상)
+ * - 위/아래 공간 비교 후 자동으로 펼침 방향 결정
+ * - 스크롤/리사이즈 시 위치 재계산
  */
 export default function Select({
   value,
@@ -33,34 +33,70 @@ export default function Select({
   label,
 }: SelectProps) {
   const [open, setOpen] = useState(false);
-  const [dropUp, setDropUp] = useState(false);
+  const [pos, setPos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    maxHeight: number;
+  } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const selected = options.find((o) => o.value === value);
 
-  // 옵션 펼칠 때 viewport 하단 공간이 부족하면 위로 펼치기 (모바일 시트 하단 select 대응)
-  useEffect(() => {
-    if (!open || !buttonRef.current) {
-      setDropUp(false);
+  // 옵션 패널 위치 계산: 아래 공간 우선, 부족하면 위로
+  const computePos = useCallback(() => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    const margin = 8;
+    const spaceBelow = window.innerHeight - rect.bottom - margin;
+    const spaceAbove = rect.top - margin;
+    const desiredHeight = Math.min(320, options.length * 44 + 8);
+
+    const dropUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
+    const maxHeight = Math.max(120, Math.min(desiredHeight, dropUp ? spaceAbove : spaceBelow));
+    const top = dropUp ? Math.max(margin, rect.top - maxHeight - 6) : rect.bottom + 6;
+
+    setPos({
+      top,
+      left: rect.left,
+      width: rect.width,
+      maxHeight,
+    });
+  }, [options.length]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setPos(null);
       return;
     }
-    const rect = buttonRef.current.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const estDropdownHeight = Math.min(320, options.length * 44 + 8);
-    setDropUp(spaceBelow < estDropdownHeight + 20);
-  }, [open, options.length]);
+    computePos();
+  }, [open, computePos]);
 
-  // 외부 클릭 시 닫힘
+  // 스크롤/리사이즈 시 위치 재계산
+  useEffect(() => {
+    if (!open) return;
+    const onScrollResize = () => computePos();
+    window.addEventListener("scroll", onScrollResize, true);
+    window.addEventListener("resize", onScrollResize);
+    return () => {
+      window.removeEventListener("scroll", onScrollResize, true);
+      window.removeEventListener("resize", onScrollResize);
+    };
+  }, [open, computePos]);
+
+  // 외부 클릭 시 닫힘 (트리거 + 드롭다운 외부)
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
+      const target = e.target as Node;
+      if (containerRef.current?.contains(target)) return;
+      if (dropdownRef.current?.contains(target)) return;
+      setOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -83,6 +119,46 @@ export default function Select({
     },
     [onChange]
   );
+
+  const dropdown =
+    open && pos && mounted
+      ? createPortal(
+          <ul
+            ref={dropdownRef}
+            role="listbox"
+            className="fixed z-[100] overflow-y-auto bg-white border border-line rounded-xl shadow-[0_8px_32px_rgba(31,63,46,0.12),0_2px_8px_rgba(31,63,46,0.06)] py-1"
+            style={{
+              top: pos.top,
+              left: pos.left,
+              width: pos.width,
+              maxHeight: pos.maxHeight,
+            }}
+          >
+            {options.length === 0 && (
+              <li className="px-4 py-2.5 text-sm text-muted">옵션이 없습니다</li>
+            )}
+            {options.map((opt) => {
+              const isSelected = opt.value === value;
+              return (
+                <li
+                  key={opt.value}
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => handleSelect(opt.value)}
+                  className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${
+                    isSelected
+                      ? "bg-green-700 text-cream font-semibold"
+                      : "text-ink hover:bg-cream-elev"
+                  }`}
+                >
+                  {opt.label}
+                </li>
+              );
+            })}
+          </ul>,
+          document.body
+        )
+      : null;
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -123,44 +199,7 @@ export default function Select({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-
-      {open && (
-        <ul
-          role="listbox"
-          className={`
-            absolute z-20 left-0 right-0
-            max-h-[320px] overflow-y-auto
-            bg-white border border-line rounded-xl
-            shadow-[0_8px_32px_rgba(31,63,46,0.12),0_2px_8px_rgba(31,63,46,0.06)]
-            py-1
-            ${dropUp ? "bottom-full mb-1.5" : "top-full mt-1.5"}
-          `}
-        >
-          {options.length === 0 && (
-            <li className="px-4 py-2.5 text-sm text-muted">옵션이 없습니다</li>
-          )}
-          {options.map((opt) => {
-            const isSelected = opt.value === value;
-            return (
-              <li
-                key={opt.value}
-                role="option"
-                aria-selected={isSelected}
-                onClick={() => handleSelect(opt.value)}
-                className={`
-                  px-4 py-2.5 text-sm cursor-pointer transition-colors
-                  ${isSelected
-                    ? "bg-green-700 text-cream font-semibold"
-                    : "text-ink hover:bg-cream-elev"
-                  }
-                `}
-              >
-                {opt.label}
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      {dropdown}
     </div>
   );
 }
