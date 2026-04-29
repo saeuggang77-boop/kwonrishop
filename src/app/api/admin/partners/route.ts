@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-        orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
+        orderBy: { createdAt: "desc" },
       }),
       prisma.partnerService.count({ where }),
     ]);

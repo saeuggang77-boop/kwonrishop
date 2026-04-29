@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
+        orderBy: { createdAt: "desc" },
       }),
       prisma.franchiseBrand.count({ where }),
     ]);

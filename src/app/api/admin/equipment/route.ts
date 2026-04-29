@@ -66,7 +66,7 @@ export async function GET(request: Request) {
           take: 1,
         },
       },
-      orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json({

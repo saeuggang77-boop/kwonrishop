@@ -72,7 +72,7 @@ export async function GET(request: Request) {
           },
         },
       },
-      orderBy: [{ tier: "desc" }, { createdAt: "desc" }],
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json({
