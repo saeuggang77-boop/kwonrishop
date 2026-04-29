@@ -70,11 +70,7 @@ export default function AdminListingsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [tierFilter, setTierFilter] = useState("");
   const [keyword, setKeyword] = useState("");
-  const [userFilter, setUserFilter] = useState({ userId: "", name: "", email: "" });
-
-  useEffect(() => {
-    setUserFilter(getUserFilterFromUrl());
-  }, []);
+  const [userFilter, setUserFilter] = useState(() => getUserFilterFromUrl());
 
   const fetchListings = useCallback(async () => {
     setLoading(true);
@@ -220,7 +216,18 @@ export default function AdminListingsPage() {
             <tbody className="divide-y divide-gray-200">
               {listings.map((listing) => (
                 <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900">{listing.storeName ?? "-"}</td>
+                  <td className="px-3 md:px-6 py-4 text-sm">
+                    <a
+                      href={`/listings/${listing.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline font-medium inline-flex items-center gap-1"
+                      title="새 탭에서 매물 상세 보기"
+                    >
+                      {listing.storeName ?? "[제목 없음]"}
+                      <span className="text-xs opacity-60">↗</span>
+                    </a>
+                  </td>
                   <td className="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                     <div>{listing.user.name}</div>
                     <div className="text-xs text-gray-400">{listing.user.email}</div>
