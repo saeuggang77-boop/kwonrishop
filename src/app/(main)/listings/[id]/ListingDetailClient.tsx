@@ -1071,32 +1071,34 @@ export default function ListingDetailClient() {
               </div>
             )}
 
-            {/* 매출 증빙자료 */}
-            {listing.documents && listing.documents.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-line">
-                <div className="flex items-center gap-2 mb-3">
-                  <h4 className="text-sm font-semibold text-gray-900">매출 증빙자료</h4>
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-semibold rounded">
-                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    매출인증
-                  </span>
-                </div>
-                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                  {listing.documents.map((doc, i) => (
-                    <div key={doc.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:border-green-400 transition-colors" onClick={() => window.open(doc.url, '_blank')}>
-                      <Image src={doc.url} alt={`매출 증빙 ${i + 1}`} fill className="object-cover" sizes="(max-width:640px) 25vw, 20vw" />
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-400 mt-2">클릭하면 원본 크기로 볼 수 있습니다</p>
-              </div>
-            )}
           </Section>
           </LockedSection>
         );
       })()}
+
+      {/* ===== 7-1. 매출 증빙자료 (월매출 입력 여부와 무관하게 표시) ===== */}
+      {listing.documents && listing.documents.length > 0 && (
+        <LockedSection isLocked={!session} message="회원가입하고 매출 증빙자료를 확인하세요">
+          <Section title="매출 증빙자료">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-semibold rounded">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                매출인증
+              </span>
+            </div>
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              {listing.documents.map((doc, i) => (
+                <div key={doc.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:border-green-400 transition-colors" onClick={() => window.open(doc.url, '_blank')}>
+                  <Image src={doc.url} alt={`매출 증빙 ${i + 1}`} fill className="object-cover" sizes="(max-width:640px) 25vw, 20vw" />
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 mt-2">클릭하면 원본 크기로 볼 수 있습니다</p>
+          </Section>
+        </LockedSection>
+      )}
 
 
       {/* ===== 9. 지역 시세 비교 ===== */}
