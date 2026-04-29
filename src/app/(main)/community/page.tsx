@@ -61,9 +61,9 @@ function CommunityContent() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-8">
-        {/* 글쓰기 버튼 */}
+        {/* 글쓰기 버튼 (PC 전용 — 모바일은 ContextualFAB로 대체) */}
         {session && (
-          <div className="flex justify-end mb-4">
+          <div className="hidden md:flex justify-end mb-4">
             <Link
               href={`/community/write${activeTag !== "전체" ? `?tag=${encodeURIComponent(activeTag)}` : ""}`}
               className="px-5 py-2.5 bg-terra-500 text-cream text-sm rounded-full font-semibold hover:bg-terra-600 transition-colors shadow-[0_4px_16px_rgba(217,108,79,0.3)]"
