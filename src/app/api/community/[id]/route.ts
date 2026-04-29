@@ -96,17 +96,24 @@ export async function PUT(
     return NextResponse.json({ error: "게시글을 찾을 수 없습니다." }, { status: 404 });
   }
 
-  if (post.authorId !== session.user.id) {
+  // 작성자 본인 또는 관리자만 수정 가능
+  const editorRole = post.authorId === session.user.id
+    ? null
+    : (await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { role: true },
+      }))?.role;
+  if (post.authorId !== session.user.id && editorRole !== "ADMIN") {
     return NextResponse.json({ error: "수정 권한이 없습니다." }, { status: 403 });
   }
 
-  // 공지 태그는 관리자만
+  // 공지 태그는 관리자만 (작성자가 본인이어도 ADMIN이 아니면 차단)
   if (tag === "공지") {
-    const user = await prisma.user.findUnique({
+    const role = editorRole ?? (await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { role: true },
-    });
-    if (user?.role !== "ADMIN") {
+    }))?.role;
+    if (role !== "ADMIN") {
       return NextResponse.json({ error: "공지는 관리자만 작성할 수 있습니다." }, { status: 403 });
     }
   }
