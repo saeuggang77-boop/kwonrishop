@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import ListingDetailClient from "./ListingDetailClient";
@@ -6,10 +7,8 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-
-  const listing = await prisma.listing.findUnique({
+const getListingForSsr = cache(async (id: string) =>
+  prisma.listing.findUnique({
     where: { id },
     select: {
       storeName: true,
@@ -22,7 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       category: { select: { name: true } },
       images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true } },
     },
-  });
+  }),
+);
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+
+  const listing = await getListingForSsr(id);
 
   if (!listing) {
     return { title: "매물을 찾을 수 없습니다 - 권리샵" };
@@ -58,17 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
-  const listing = await prisma.listing.findUnique({
-    where: { id },
-    select: {
-      storeName: true,
-      description: true,
-      premium: true,
-      premiumNone: true,
-      category: { select: { name: true } },
-      images: { take: 1, orderBy: { sortOrder: "asc" }, select: { url: true } },
-    },
-  });
+  const listing = await getListingForSsr(id);
 
   const jsonLd = listing
     ? {

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import EquipmentDetailClient from "./EquipmentDetailClient";
@@ -6,12 +7,23 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+const getEquipmentForSsr = cache(async (id: string) =>
+  prisma.equipment.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      price: true,
+      status: true,
+      category: true,
+      images: { take: 1, select: { url: true } },
+    },
+  }),
+);
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const equipment = await prisma.equipment.findUnique({
-    where: { id },
-    select: { title: true, description: true, price: true, category: true, images: { take: 1, select: { url: true } } },
-  });
+  const equipment = await getEquipmentForSsr(id);
 
   if (!equipment) {
     return { title: "상품을 찾을 수 없습니다 - 권리샵" };
@@ -38,16 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function EquipmentDetailPage({ params }: Props) {
   const { id } = await params;
-  const equipment = await prisma.equipment.findUnique({
-    where: { id },
-    select: {
-      title: true,
-      description: true,
-      price: true,
-      status: true,
-      images: { take: 1, select: { url: true } },
-    },
-  });
+  const equipment = await getEquipmentForSsr(id);
 
   const jsonLd = equipment
     ? {

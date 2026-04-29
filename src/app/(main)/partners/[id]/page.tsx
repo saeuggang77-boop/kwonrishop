@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import PartnerDetailClient from "./PartnerDetailClient";
@@ -6,12 +7,22 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+const getPartnerForSsr = cache(async (id: string) =>
+  prisma.partnerService.findUnique({
+    where: { id },
+    select: {
+      companyName: true,
+      description: true,
+      serviceType: true,
+      addressRoad: true,
+      images: { take: 1, select: { url: true } },
+    },
+  }),
+);
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const partner = await prisma.partnerService.findUnique({
-    where: { id },
-    select: { companyName: true, description: true, serviceType: true, images: { take: 1, select: { url: true } } },
-  });
+  const partner = await getPartnerForSsr(id);
 
   if (!partner) {
     return { title: "협력업체를 찾을 수 없습니다 - 권리샵" };
@@ -37,15 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PartnerDetailPage({ params }: Props) {
   const { id } = await params;
-  const partner = await prisma.partnerService.findUnique({
-    where: { id },
-    select: {
-      companyName: true,
-      description: true,
-      addressRoad: true,
-      images: { take: 1, select: { url: true } },
-    },
-  });
+  const partner = await getPartnerForSsr(id);
 
   const jsonLd = partner
     ? {

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import CommunityDetailClient from "./CommunityDetailClient";
@@ -6,12 +7,23 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+const getPostForSsr = cache(async (id: string) =>
+  prisma.post.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      content: true,
+      tag: true,
+      createdAt: true,
+      updatedAt: true,
+      author: { select: { name: true } },
+    },
+  }),
+);
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const post = await prisma.post.findUnique({
-    where: { id },
-    select: { title: true, content: true, tag: true, author: { select: { name: true } } },
-  });
+  const post = await getPostForSsr(id);
 
   if (!post) {
     return { title: "게시글을 찾을 수 없습니다 - 권리샵" };
@@ -35,17 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CommunityDetailPage({ params }: Props) {
   const { id } = await params;
-  const post = await prisma.post.findUnique({
-    where: { id },
-    select: {
-      title: true,
-      content: true,
-      tag: true,
-      createdAt: true,
-      updatedAt: true,
-      author: { select: { name: true } },
-    },
-  });
+  const post = await getPostForSsr(id);
 
   const jsonLd = post && post.tag !== "사이트이용문의"
     ? {

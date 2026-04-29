@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import FranchiseDetailClient from "./FranchiseDetailClient";
@@ -6,10 +7,8 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-
-  const brand = await prisma.franchiseBrand.findUnique({
+const getBrandForSsr = cache(async (id: string) =>
+  prisma.franchiseBrand.findUnique({
     where: { id },
     select: {
       brandName: true,
@@ -22,7 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       bannerImage: true,
       majorProductName: true,
     },
-  });
+  }),
+);
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+
+  const brand = await getBrandForSsr(id);
 
   if (!brand) {
     return { title: "브랜드를 찾을 수 없습니다 - 권리샵" };
@@ -61,16 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
-  const brand = await prisma.franchiseBrand.findUnique({
-    where: { id },
-    select: {
-      brandName: true,
-      description: true,
-      industry: true,
-      totalStores: true,
-      bannerImage: true,
-    },
-  });
+  const brand = await getBrandForSsr(id);
 
   const jsonLd = brand
     ? {
