@@ -8,19 +8,19 @@ import { toast } from "@/lib/toast";
 
 const ADMIN_MENU = [
   { href: "/admin", label: "대시보드", icon: "📊" },
-  { href: "/admin/paid-dashboard", label: "유료 현황", icon: "💎" },
+  { href: "/admin/users", label: "회원관리", icon: "👥" },
   { href: "/admin/payments", label: "결제 내역", icon: "🧾" },
+  { href: "/admin/auto-content", label: "자동 콘텐츠", icon: "🤖" },
   { href: "/admin/listings", label: "매물관리", icon: "🏪" },
+  { href: "/admin/paid-dashboard", label: "유료 현황", icon: "💎" },
+  { href: "/admin/reports", label: "신고관리", icon: "⚠️" },
+  { href: "/admin/inquiries", label: "문의관리", icon: "📧" },
   { href: "/admin/equipment", label: "집기장터", icon: "🛠️" },
   { href: "/admin/partners", label: "협력업체", icon: "🤝" },
   { href: "/admin/franchise", label: "프랜차이즈", icon: "🏢" },
-  { href: "/admin/products", label: "광고상품", icon: "💎" },
-  { href: "/admin/reports", label: "신고관리", icon: "⚠️" },
-  { href: "/admin/inquiries", label: "문의관리", icon: "📧" },
-  { href: "/admin/users", label: "회원관리", icon: "👥" },
   { href: "/admin/community", label: "커뮤니티 관리", icon: "💬" },
   { href: "/admin/notices", label: "공지사항", icon: "📢" },
-  { href: "/admin/auto-content", label: "자동 콘텐츠", icon: "🤖" },
+  { href: "/admin/products", label: "광고상품", icon: "💎" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
