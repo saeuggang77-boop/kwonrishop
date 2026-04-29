@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* 모바일 가로 스크롤 누출 방지 — 어떤 컴포넌트가 viewport 너비를 살짝 초과해도 사이트가 좌우로 흔들리지 않도록 */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 :root {
   --background: #FBF8F3;
   --foreground: #1A2620;

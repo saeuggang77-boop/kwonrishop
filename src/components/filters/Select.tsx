@@ -33,9 +33,23 @@ export default function Select({
   label,
 }: SelectProps) {
   const [open, setOpen] = useState(false);
+  const [dropUp, setDropUp] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const selected = options.find((o) => o.value === value);
+
+  // 옵션 펼칠 때 viewport 하단 공간이 부족하면 위로 펼치기 (모바일 시트 하단 select 대응)
+  useEffect(() => {
+    if (!open || !buttonRef.current) {
+      setDropUp(false);
+      return;
+    }
+    const rect = buttonRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const estDropdownHeight = Math.min(320, options.length * 44 + 8);
+    setDropUp(spaceBelow < estDropdownHeight + 20);
+  }, [open, options.length]);
 
   // 외부 클릭 시 닫힘
   useEffect(() => {
@@ -78,6 +92,7 @@ export default function Select({
         </label>
       )}
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => !disabled && setOpen((o) => !o)}
         disabled={disabled}
@@ -112,13 +127,14 @@ export default function Select({
       {open && (
         <ul
           role="listbox"
-          className="
-            absolute z-20 left-0 right-0 mt-1.5
+          className={`
+            absolute z-20 left-0 right-0
             max-h-[320px] overflow-y-auto
             bg-white border border-line rounded-xl
             shadow-[0_8px_32px_rgba(31,63,46,0.12),0_2px_8px_rgba(31,63,46,0.06)]
             py-1
-          "
+            ${dropUp ? "bottom-full mb-1.5" : "top-full mt-1.5"}
+          `}
         >
           {options.length === 0 && (
             <li className="px-4 py-2.5 text-sm text-muted">옵션이 없습니다</li>
