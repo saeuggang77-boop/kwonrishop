@@ -1,17 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "@/lib/toast";
 
-function getUserFilterFromUrl() {
-  if (typeof window === "undefined") return { userId: "", name: "", email: "" };
-  const params = new URLSearchParams(window.location.search);
-  return {
-    userId: params.get("userId") || "",
-    name: params.get("name") || "",
-    email: params.get("email") || "",
-  };
-}
+export const dynamic = "force-dynamic";
 
 interface AdminListing {
   id: string;
@@ -70,7 +63,17 @@ export default function AdminListingsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [tierFilter, setTierFilter] = useState("");
   const [keyword, setKeyword] = useState("");
-  const [userFilter, setUserFilter] = useState(() => getUserFilterFromUrl());
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId") || "";
+  const userName = searchParams.get("name") || "";
+  const userEmail = searchParams.get("email") || "";
+
+  // URL의 userId가 바뀌면 항상 1페이지부터 다시 조회
+  useEffect(() => {
+    setPage(1);
+  }, [userId]);
 
   const fetchListings = useCallback(async () => {
     setLoading(true);
@@ -79,7 +82,7 @@ export default function AdminListingsPage() {
     if (statusFilter) params.set("status", statusFilter);
     if (tierFilter) params.set("tier", tierFilter);
     if (keyword) params.set("keyword", keyword);
-    if (userFilter.userId) params.set("userId", userFilter.userId);
+    if (userId) params.set("userId", userId);
 
     const res = await fetch(`/api/admin/listings?${params}`);
     const data = await res.json();
@@ -87,14 +90,10 @@ export default function AdminListingsPage() {
     setTotal(data.pagination?.total || 0);
     setTotalPages(data.pagination?.totalPages || 1);
     setLoading(false);
-  }, [page, statusFilter, tierFilter, keyword, userFilter.userId]);
+  }, [page, statusFilter, tierFilter, keyword, userId]);
 
   function clearUserFilter() {
-    setUserFilter({ userId: "", name: "", email: "" });
-    setPage(1);
-    if (typeof window !== "undefined") {
-      window.history.replaceState({}, "", "/admin/listings");
-    }
+    router.replace("/admin/listings");
   }
 
   useEffect(() => {
@@ -121,16 +120,14 @@ export default function AdminListingsPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">매물관리</h1>
 
       {/* User filter banner */}
-      {userFilter.userId && (
+      {userId && (
         <div className="mb-4 flex items-center justify-between gap-3 bg-blue-50 border border-blue-200 rounded-2xl px-4 py-3">
           <div className="text-sm">
-            <span className="text-blue-700 font-medium">
-              {userFilter.name || userFilter.email || "선택한 회원"}님
-            </span>
-            <span className="text-gray-600">의 매물만 보는 중</span>
-            {userFilter.email && userFilter.name && (
-              <span className="text-xs text-gray-400 ml-2">{userFilter.email}</span>
+            <span className="text-blue-700 font-semibold">{userEmail || "선택한 회원"}</span>
+            {userName && (
+              <span className="text-gray-500 ml-2">({userName})</span>
             )}
+            <span className="text-gray-600 ml-1">의 매물만 보는 중</span>
           </div>
           <button
             onClick={clearUserFilter}
