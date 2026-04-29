@@ -165,7 +165,7 @@ export default function HomeClient({
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="지역, 업종, 상호명으로 매물 찾기"
+                placeholder="지역, 업종, 제목으로 매물 찾기"
                 className="flex-1 py-3 min-h-[48px] text-sm bg-transparent outline-none text-ink placeholder:text-muted"
                 aria-label="매물 검색"
               />

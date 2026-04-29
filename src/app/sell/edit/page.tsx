@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 import Image from "next/image";
+import { validatePostTitle, TITLE_MAX } from "@/lib/validate-title";
 
 type ImageData = {
   id?: string;
@@ -169,6 +170,13 @@ export default function ListingEditPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const titleResult = validatePostTitle(formData.storeName);
+    if (!titleResult.ok) {
+      toast.info(titleResult.error || "제목을 확인해주세요.");
+      return;
+    }
+
     setSaving(true);
     setMessage("");
 
@@ -182,6 +190,7 @@ export default function ListingEditPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          storeName: titleResult.sanitized!,
           deposit: parseInt(formData.deposit) || 0,
           monthlyRent: parseInt(formData.monthlyRent) || 0,
           premium: parseInt(formData.premium) || 0,
@@ -282,14 +291,31 @@ export default function ListingEditPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              매물명
+              게시글 제목 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
+              required
+              maxLength={50}
               value={formData.storeName}
               onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
+              placeholder="예: 강남역 도보 5분 한식당 양도양수"
               className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base"
             />
+            <div className="mt-1 flex justify-between items-start gap-2">
+              <p className="text-xs text-gray-500">
+                5~30자 · 매물 목록·검색에 그대로 노출됩니다 · 이모지·★·# 등 특수문자 사용 불가
+              </p>
+              <span
+                className={`text-xs flex-shrink-0 ${
+                  formData.storeName.trim().length > TITLE_MAX
+                    ? "text-red-600 font-semibold"
+                    : "text-gray-400"
+                }`}
+              >
+                {formData.storeName.trim().length}/{TITLE_MAX}
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

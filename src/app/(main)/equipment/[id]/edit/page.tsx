@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EQUIPMENT_CATEGORY_LABELS, EQUIPMENT_CONDITION_LABELS } from "@/lib/constants";
 import Image from "next/image";
 import { toast } from "@/lib/toast";
+import { validatePostTitle, TITLE_MAX } from "@/lib/validate-title";
 
 declare global {
   interface Window {
@@ -178,8 +179,9 @@ export default function EquipmentEditPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!title.trim()) {
-      toast.info("제목을 입력해주세요.");
+    const titleResult = validatePostTitle(title);
+    if (!titleResult.ok) {
+      toast.info(titleResult.error || "제목을 확인해주세요.");
       return;
     }
     if (!category) {
@@ -210,7 +212,7 @@ export default function EquipmentEditPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: title.trim(),
+          title: titleResult.sanitized!,
           category,
           condition,
           price: isFree ? 0 : price,
@@ -275,11 +277,26 @@ export default function EquipmentEditPage() {
           <input
             type="text"
             required
+            maxLength={50}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
             placeholder="예: 업소용 냉장고 1200L 판매합니다"
           />
+          <div className="mt-1 flex justify-between items-start gap-2">
+            <p className="text-xs text-gray-500">
+              5~30자 · 이모지·★·# 등 특수문자 사용 불가
+            </p>
+            <span
+              className={`text-xs flex-shrink-0 ${
+                title.trim().length > TITLE_MAX
+                  ? "text-red-600 font-semibold"
+                  : "text-gray-400"
+              }`}
+            >
+              {title.trim().length}/{TITLE_MAX}
+            </span>
+          </div>
         </div>
 
         {/* 카테고리 */}

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
+import { validatePostTitle } from "@/lib/validate-title";
 
 // 집기 상세 조회
 export async function GET(
@@ -124,6 +125,16 @@ export async function PUT(
   try {
     const body = await req.json();
 
+    // 제목 형식 검증 (title이 명시적으로 전달된 경우만 적용)
+    let validatedEditTitle: string | undefined = undefined;
+    if ("title" in body) {
+      const titleResult = validatePostTitle(body.title);
+      if (!titleResult.ok) {
+        return NextResponse.json({ error: titleResult.error }, { status: 400 });
+      }
+      validatedEditTitle = titleResult.sanitized;
+    }
+
     // Validate status - only ADMIN can set any status; users limited to allowed values
     const allowedUserStatuses = ["ACTIVE", "RESERVED", "SOLD"];
     let newStatus = equipment.status;
@@ -142,7 +153,7 @@ export async function PUT(
 
     const updateData: Record<string, unknown> = {
       status: newStatus,
-      title: body.title ? sanitizeInput(body.title) : undefined,
+      title: validatedEditTitle,
       description: body.description ? sanitizeHtml(body.description) : undefined,
       category: body.category || undefined,
       condition: body.condition || undefined,

@@ -538,7 +538,7 @@ function ListingsContent() {
         <form onSubmit={handleSearch} className="flex gap-2 bg-cream rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.15)] p-1.5 pl-5">
           <input
             type="text"
-            placeholder="지역, 업종, 상호명 검색"
+            placeholder="지역, 업종, 제목 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="flex-1 px-2 py-3 bg-transparent border-none outline-none text-ink placeholder:text-muted"

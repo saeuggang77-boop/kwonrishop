@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useListingFormStore } from "@/store/listingForm";
+import { validatePostTitle, TITLE_MAX } from "@/lib/validate-title";
 
 const THEMES = ["무권리", "급매", "프랜차이즈", "사무실", "공실", "임대인매물", "신규인테리어", "역세권", "대로변", "1층", "배달전문"];
 
@@ -11,6 +13,17 @@ interface Props {
 
 export default function Step3BasicInfo({ onNext, onPrev }: Props) {
   const { data, updateData } = useListingFormStore();
+  const [titleError, setTitleError] = useState<string>("");
+
+  function handleStoreNameChange(value: string) {
+    updateData({ storeName: value });
+    if (value.trim().length === 0) {
+      setTitleError("");
+      return;
+    }
+    const v = validatePostTitle(value);
+    setTitleError(v.ok ? "" : v.error || "");
+  }
 
   function toggleTheme(theme: string) {
     const current = data.themes || [];
@@ -59,18 +72,37 @@ export default function Step3BasicInfo({ onNext, onPrev }: Props) {
           </div>
         </div>
 
-        {/* 상호명 */}
+        {/* 게시글 제목 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            상호명
+            게시글 제목 <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            placeholder="미입력 시 주소가 대신 표시됩니다"
-            value={data.storeName}
-            onChange={(e) => updateData({ storeName: e.target.value })}
-            className="w-full px-4 py-3 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+            placeholder="예: 강남역 도보 5분 한식당 양도양수"
+            maxLength={50}
+            value={data.storeName ?? ""}
+            onChange={(e) => handleStoreNameChange(e.target.value)}
+            className={`w-full px-4 py-3 min-h-[44px] border rounded-lg focus:ring-2 outline-none ${
+              titleError
+                ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-green-500 focus:border-green-500"
+            }`}
           />
+          <div className="mt-1 flex justify-between items-start gap-2">
+            <p className={`text-xs ${titleError ? "text-red-600" : "text-gray-500"}`}>
+              {titleError || "5~30자 · 매물 목록·검색에 그대로 노출됩니다 · 이모지·★·# 등 특수문자 사용 불가"}
+            </p>
+            <span
+              className={`text-xs flex-shrink-0 ${
+                (data.storeName?.trim().length ?? 0) > TITLE_MAX
+                  ? "text-red-600 font-semibold"
+                  : "text-gray-400"
+              }`}
+            >
+              {data.storeName?.trim().length ?? 0}/{TITLE_MAX}
+            </span>
+          </div>
         </div>
 
         {/* 층수 */}

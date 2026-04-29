@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
+import { validatePostTitle } from "@/lib/validate-title";
 
 // 집기 목록 조회
 export async function GET(req: NextRequest) {
@@ -237,6 +238,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "필수 항목을 모두 입력해주세요." }, { status: 400 });
   }
 
+  // 제목 형식 검증
+  const titleResult = validatePostTitle(body.title);
+  if (!titleResult.ok) {
+    return NextResponse.json({ error: titleResult.error }, { status: 400 });
+  }
+  const validatedTitle = titleResult.sanitized!;
+
   if (body.description.length < 10) {
     return NextResponse.json({ error: "설명은 최소 10자 이상 입력해주세요." }, { status: 400 });
   }
@@ -254,7 +262,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: session.user.id,
         status: "ACTIVE",
-        title: sanitizeInput(body.title),
+        title: validatedTitle,
         description: sanitizeHtml(body.description),
         category: body.category,
         condition: body.condition,

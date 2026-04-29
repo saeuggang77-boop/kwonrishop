@@ -240,7 +240,7 @@ export default function Step7Confirm({ onPrev }: Props) {
 
         <Section title="기본정보" onEdit={() => setStep(3)}>
           <Info label="운영형태" value={data.brandType === "FRANCHISE" ? "프랜차이즈" : "개인매장"} />
-          {data.storeName && <Info label="상호명" value={data.storeName} />}
+          {data.storeName && <Info label="게시글 제목" value={data.storeName} />}
           {data.areaPyeong && <Info label="면적" value={`${data.areaPyeong}평 (${data.areaSqm}m²)`} />}
           {data.currentFloor && (
             <Info label="층수" value={`${data.isBasement ? "지하 " : ""}${data.currentFloor}층 / ${data.totalFloor}층`} />

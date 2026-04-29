@@ -158,7 +158,7 @@ export default function ComparePage() {
                             href={`/listings/${listing.id}`}
                             className="text-sm font-semibold text-gray-900 hover:text-green-700"
                           >
-                            {listing.storeName || "상호명 미입력"}
+                            {listing.storeName || "제목 미입력"}
                           </Link>
                           <button
                             onClick={() => removeFromCompare(listing.id)}

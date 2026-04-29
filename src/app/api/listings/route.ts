@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { sanitizeHtml, sanitizeInput } from "@/lib/sanitize";
+import { validatePostTitle } from "@/lib/validate-title";
 
 // 매물 목록 조회
 export async function GET(req: NextRequest) {
@@ -459,6 +460,13 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
+  // 게시글 제목 검증 (필수)
+  const titleResult = validatePostTitle(body.storeName);
+  if (!titleResult.ok) {
+    return NextResponse.json({ error: titleResult.error }, { status: 400 });
+  }
+  const validatedStoreName = titleResult.sanitized!;
+
   try {
     // 연락처 공개 시 전화번호를 User에 저장
     if (body.contactPhone) {
@@ -493,7 +501,7 @@ export async function POST(req: NextRequest) {
         premiumLocationDesc: body.premiumLocationDesc ?? null,
         maintenanceFee: body.maintenanceFee ?? null,
         brandType: body.brandType || "PRIVATE",
-        storeName: body.storeName ? sanitizeInput(body.storeName) : null,
+        storeName: validatedStoreName,
         currentFloor: body.currentFloor ?? null,
         totalFloor: body.totalFloor ?? null,
         isBasement: body.isBasement ?? false,

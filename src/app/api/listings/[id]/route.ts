@@ -7,6 +7,7 @@ import { validateOrigin } from "@/lib/csrf";
 import { rateLimitRequest } from "@/lib/rate-limit";
 import { sendPushToUser } from "@/lib/push";
 import { maskPhone } from "@/lib/mask";
+import { validatePostTitle } from "@/lib/validate-title";
 
 export async function GET(
   _req: NextRequest,
@@ -182,6 +183,16 @@ export async function PUT(
   try {
     const body = await req.json();
 
+    // 게시글 제목 검증 (storeName이 명시적으로 전달된 경우만 적용)
+    let validatedStoreName: string | null = listing.storeName;
+    if ("storeName" in body) {
+      const titleResult = validatePostTitle(body.storeName);
+      if (!titleResult.ok) {
+        return NextResponse.json({ error: titleResult.error }, { status: 400 });
+      }
+      validatedStoreName = titleResult.sanitized!;
+    }
+
     // 상태 전환 검증 (state machine)
     const VALID_TRANSITIONS: Record<string, string[]> = {
       ACTIVE: ["RESERVED", "SOLD"],
@@ -229,7 +240,7 @@ export async function PUT(
       maintenanceFee: "maintenanceFee" in body ? (body.maintenanceFee ?? null) : listing.maintenanceFee,
       // 상가 정보
       brandType: "brandType" in body ? (body.brandType || "PRIVATE") : listing.brandType,
-      storeName: "storeName" in body ? (body.storeName ? sanitizeInput(body.storeName) : null) : listing.storeName,
+      storeName: validatedStoreName,
       currentFloor: "currentFloor" in body ? (body.currentFloor ?? null) : listing.currentFloor,
       totalFloor: "totalFloor" in body ? (body.totalFloor ?? null) : listing.totalFloor,
       isBasement: "isBasement" in body ? (body.isBasement ?? false) : listing.isBasement,

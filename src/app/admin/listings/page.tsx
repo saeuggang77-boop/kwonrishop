@@ -161,7 +161,7 @@ export default function AdminListingsPage() {
           </select>
           <input
             type="text"
-            placeholder="상호명, 주소, 작성자(이름/이메일) 검색"
+            placeholder="제목, 주소, 작성자(이름/이메일) 검색"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="flex-1 min-w-[180px] px-4 py-2 border border-gray-300 rounded-lg outline-none"
@@ -200,7 +200,7 @@ export default function AdminListingsPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">상호명</th>
+                <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">제목</th>
                 <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">작성자</th>
                 <th className="px-3 md:px-6 py-3 text-left text-sm font-medium text-gray-600">등급</th>
                 <th className="hidden md:table-cell px-6 py-3 text-left text-sm font-medium text-gray-600">만료일</th>

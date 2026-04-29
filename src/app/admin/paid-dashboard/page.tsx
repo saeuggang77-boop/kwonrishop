@@ -168,7 +168,7 @@ export default function PaidDashboardPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-5 py-3 text-left text-sm font-medium text-gray-600">유형</th>
-                  <th className="px-5 py-3 text-left text-sm font-medium text-gray-600">상호명</th>
+                  <th className="px-5 py-3 text-left text-sm font-medium text-gray-600">제목</th>
                   <th className="px-5 py-3 text-left text-sm font-medium text-gray-600">등급</th>
                   <th className="px-5 py-3 text-left text-sm font-medium text-gray-600">만료일</th>
                   <th className="px-5 py-3 text-left text-sm font-medium text-gray-600">액션</th>
